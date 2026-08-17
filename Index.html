@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0"/>
+
+  <title>StockFlow Mobile</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+  <!-- SONIDO -->
+<audio id="scanSound" preload="auto">
+  <source src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"
+          type="audio/mp3">
+</audio>
+<audio id="errorSound" preload="auto">
+  <source src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3" type="audio/mp3">
+</audio>
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+#reader video{
+    width:100% !important;
+    height:320px !important;
+    object-fit:cover !important;
+    border-radius:20px;
+}
+    body{
+
+      font-family:'Poppins',sans-serif;
+
+      background:
+      linear-gradient(180deg,
+      #0f172a,
+      #1e3a8a,
+      #2563eb);
+
+      min-height:100vh;
+
+      color:white;
+
+      padding:15px;
+    }
+
+    .container{
+
+      width:100%;
+
+      max-width:500px;
+
+      margin:auto;
+    }
+
+    .header{
+
+      text-align:center;
+
+      margin-bottom:20px;
+    }
+
+    .logo{
+
+      width:90px;
+      height:90px;
+
+      border-radius:25px;
+
+      background:
+      linear-gradient(135deg,
+      #3b82f6,
+      #1d4ed8);
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:center;
+
+      margin:auto;
+
+      font-size:2.5rem;
+
+      box-shadow:
+      0 15px 30px rgba(0,0,0,.35);
+    }
+
+    .header h1{
+
+      margin-top:15px;
+
+      font-size:2.3rem;
+
+      font-weight:700;
+    }
+
+    .header p{
+
+      opacity:.8;
+
+      margin-top:5px;
+
+      font-size:.95rem;
+    }
+
+    .mode-selector{
+
+      display:flex;
+
+      flex-direction:column;
+
+      gap:14px;
+
+      margin-top:25px;
+    }
+
+    .mode-btn{
+
+      border:none;
+
+      border-radius:18px;
+
+      padding:18px;
+
+      font-size:1rem;
+
+      font-weight:700;
+
+      color:white;
+
+      cursor:pointer;
+
+      transition:.3s;
+
+      box-shadow:
+      0 10px 25px rgba(0,0,0,.25);
+    }
+
+    .mode-btn:active{
+      transform:scale(.96);
+    }
+
+    .venta-btn{
+      background:
+      linear-gradient(135deg,
+      #ef4444,
+      #dc2626);
+    }
+
+    .recarga-btn{
+      background:
+      linear-gradient(135deg,
+      #22c55e,
+      #16a34a);
+    }
+
+    .agregar-btn{
+      background:
+      linear-gradient(135deg,
+      #f59e0b,
+      #d97706);
+    }
+
+    .consulta-btn{
+      background:
+      linear-gradient(135deg,
+      #8b5cf6,
+      #6d28d9);
+    }
+
+    .active{
+
+      outline:
+      4px solid rgba(255,255,255,.25);
+    }
+
+    .scanner-card{
+
+      margin-top:22px;
+
+      background:
+      rgba(255,255,255,.12);
+
+      backdrop-filter:blur(15px);
+
+      border-radius:28px;
+
+      padding:18px;
+
+      border:
+      1px solid rgba(255,255,255,.12);
+
+      box-shadow:
+      0 15px 35px rgba(0,0,0,.25);
+    }
+
+    .scanner-title{
+
+      text-align:center;
+
+      margin-bottom:15px;
+
+      font-size:1.2rem;
+
+      font-weight:700;
+    }
+
+#reader{
+  width:100%;
+  height:320px;
+  object-fit:cover;
+  border-radius:20px;
+  background:#000;
+}
+
+    .status{
+
+      margin-top:18px;
+
+      text-align:center;
+
+      font-size:1rem;
+
+      font-weight:600;
+    }
+
+    .result{
+
+      margin-top:18px;
+
+      background:
+      rgba(255,255,255,.10);
+
+      border-radius:22px;
+
+      padding:20px;
+
+      min-height:100px;
+
+      text-align:center;
+
+      font-size:1.05rem;
+
+      backdrop-filter:blur(10px);
+
+      line-height:1.6;
+    }
+
+    .precio-box{
+
+      font-size:3rem;
+
+      font-weight:700;
+
+      margin-top:10px;
+
+      color:#22c55e;
+    }
+
+    .form-producto{
+
+      margin-top:20px;
+
+      background:white;
+
+      border-radius:25px;
+
+      padding:22px;
+
+      color:#111827;
+
+      display:none;
+    }
+
+    .form-producto h3{
+
+      text-align:center;
+
+      margin-bottom:18px;
+
+      color:#1e3a8a;
+    }
+
+    .codigo-box{
+
+      background:#f3f4f6;
+
+      padding:14px;
+
+      border-radius:14px;
+
+      text-align:center;
+
+      font-weight:700;
+
+      margin-bottom:18px;
+    }
+
+    .form-group{
+
+      margin-bottom:16px;
+    }
+
+    .form-group label{
+
+      display:block;
+
+      margin-bottom:7px;
+
+      font-weight:600;
+    }
+
+    .form-group input{
+
+      width:100%;
+
+      padding:14px;
+
+      border-radius:14px;
+
+      border:
+      2px solid #d1d5db;
+
+      font-size:1rem;
+    }
+
+    .form-group input:focus{
+
+      outline:none;
+
+      border-color:#2563eb;
+    }
+
+    .save-btn{
+
+      width:100%;
+
+      padding:16px;
+
+      border:none;
+
+      border-radius:16px;
+
+      background:
+      linear-gradient(135deg,
+      #2563eb,
+      #1d4ed8);
+
+      color:white;
+
+      font-size:1rem;
+
+      font-weight:700;
+
+      cursor:pointer;
+    }
+
+    .log{
+
+      margin-top:20px;
+
+      background:
+      rgba(255,255,255,.10);
+
+      border-radius:25px;
+
+      padding:20px;
+
+      backdrop-filter:blur(10px);
+    }
+
+    .log h3{
+
+      margin-bottom:15px;
+    }
+
+    .log-item{
+
+      background:
+      rgba(255,255,255,.08);
+
+      border-radius:15px;
+
+      padding:12px;
+
+      margin-bottom:10px;
+
+      line-height:1.5;
+    }
+
+    .log-item small{
+
+      display:block;
+
+      opacity:.7;
+
+      margin-bottom:4px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+
+    <h1>ANLUSOFT</h1>
+
+    <p>
+      Sistema móvil de inventario
+    </p>
+
+  </div>
+
+  <div class="mode-selector">
+
+    <button id="btnVenta"
+            class="mode-btn venta-btn active">
+
+      🔴 VENTA
+
+    </button>
+
+    <button id="btnRecarga"
+            class="mode-btn recarga-btn">
+
+      🟢 RECARGAR STOCK
+
+    </button>
+
+    <button id="btnAgregar"
+            class="mode-btn agregar-btn">
+
+      ➕ AGREGAR PRODUCTO
+
+    </button>
+
+    <button id="btnConsulta"
+            class="mode-btn consulta-btn">
+
+      💲 CONSULTA PRECIO
+
+    </button>
+
+  </div>
+
+  <div class="scanner-card">
+
+    <div id="modoActual"
+         class="scanner-title">
+
+      Modo: 🔴 VENTAS
+
+    </div>
+
+<div
+    id="reader"
+    autoplay
+    playsinline
+    muted
+    style="
+      width:100%;
+      min-height:300px;
+      border-radius:20px;
+      background:black;
+    ">
+</div>
+
+    <div class="status">
+
+      <span id="status">
+
+        Apunta el código a la cámara...
+
+      </span>
+
+    </div>
+
+  </div>
+
+  <div class="result"
+       id="result">
+
+    Esperando escaneo...
+
+  </div>
+
+  <!-- FORM -->
+
+  <div class="form-producto"
+       id="formProducto">
+
+    <h3>
+      ➕ Nuevo Producto
+    </h3>
+
+    <div class="codigo-box">
+
+      Código:
+      <span id="codigoEscaneado"></span>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Producto</label>
+
+      <input type="text"
+             id="nombreProducto"
+             placeholder="Ej: Coca Cola 3L">
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Stock</label>
+
+      <input type="number"
+             id="stockProducto"
+             placeholder="Ej: 20">
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Precio</label>
+
+      <input type="number"
+             id="precioProducto"
+             placeholder="Ej: 8.50">
+
+    </div>
+
+    <button class="save-btn"
+            onclick="guardarProducto()">
+
+      💾 Guardar Producto
+
+    </button>
+
+  </div>
+
+  <div class="log">
+
+    <h3>
+      📋 Historial
+    </h3>
+
+    <div id="log"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+let currentMode = "venta";
+
+let isScanning = false;
+
+let lastScanTime = 0;
+
+let codigoNuevoProducto = "";
+
+const COOLDOWN_TIME = 1800;
+
+const scanSound =
+document.getElementById("scanSound");
+const errorSound = document.getElementById("errorSound");
+const btnVenta =
+document.getElementById("btnVenta");
+
+const btnRecarga =
+document.getElementById("btnRecarga");
+
+const btnAgregar =
+document.getElementById("btnAgregar");
+
+const btnConsulta =
+document.getElementById("btnConsulta");
+
+const modoActual =
+document.getElementById("modoActual");
+
+const status =
+document.getElementById("status");
+
+const result =
+document.getElementById("result");
+
+const logDiv =
+document.getElementById("log");
+
+const formProducto =
+document.getElementById("formProducto");
+
+const codigoEscaneado =
+document.getElementById("codigoEscaneado");
+
+const URL_API =
+"https://script.google.com/macros/s/AKfycbwVEGPR42esK-0tLcciRkw4r22Mx6M_kWwVt7PmwDPhu0XoK9v9m5E611UZunsGFtM0/exec";
+
+function playScanSound(){
+
+  scanSound.currentTime = 0;
+
+  scanSound.play().catch(err => {});
+}
+function showErrorSound(){
+  errorSound.currentTime = 0;
+  errorSound.play().catch(()=>{});
+}
+function resetButtons(){
+
+  btnVenta.classList.remove("active");
+  btnRecarga.classList.remove("active");
+  btnAgregar.classList.remove("active");
+  btnConsulta.classList.remove("active");
+}
+
+btnVenta.onclick = () => {
+
+  currentMode = "venta";
+
+  resetButtons();
+
+  btnVenta.classList.add("active");
+
+  modoActual.innerHTML =
+  "Modo: 🔴 VENTAS";
+
+  formProducto.style.display = "none";
+};
+
+btnRecarga.onclick = () => {
+
+  currentMode = "recarga";
+
+  resetButtons();
+
+  btnRecarga.classList.add("active");
+
+  modoActual.innerHTML =
+  "Modo: 🟢 RECARGAR STOCK";
+
+  formProducto.style.display = "none";
+};
+
+btnAgregar.onclick = () => {
+
+  currentMode = "agregar";
+
+  resetButtons();
+
+  btnAgregar.classList.add("active");
+
+  modoActual.innerHTML =
+  "Modo: ➕ AGREGAR PRODUCTO";
+};
+
+btnConsulta.onclick = () => {
+
+  currentMode = "consultaprecio";
+
+  resetButtons();
+
+  btnConsulta.classList.add("active");
+
+  modoActual.innerHTML =
+  "Modo: 💲 CONSULTA PRECIO";
+
+  formProducto.style.display = "none";
+};
+let html5QrCode;
+async function startScanner() {
+
+  try {
+
+    html5QrCode = new Html5Qrcode("reader");
+
+    await html5QrCode.start(
+
+      {
+        facingMode: "environment"
+      },
+
+      {
+        fps: 10,
+
+        qrbox: function(viewfinderWidth, viewfinderHeight){
+
+          let minEdge =
+            Math.min(viewfinderWidth,
+                     viewfinderHeight);
+
+          let size =
+            Math.floor(minEdge * 0.9);
+
+          return {
+            width: size,
+            height: size
+          };
+        }
+      },
+
+      function(decodedText){
+
+        console.log("ESCANEADO:", decodedText);
+
+        handleScan(decodedText);
+      },
+
+      function(errorMessage){
+      }
+
+    );
+
+    status.innerHTML =
+      "📷 Cámara activa";
+
+  }
+  catch(err){
+
+    console.error(err);
+
+    status.innerHTML =
+      "❌ Error: " + err;
+  }
+}
+function handleScan(codigo){
+
+  const now = Date.now();
+
+  if(
+    isScanning ||
+    (now - lastScanTime)
+    < COOLDOWN_TIME
+  ){
+    return;
+  }
+
+  isScanning = true;
+
+  lastScanTime = now;
+
+  playScanSound();
+
+  status.innerHTML =
+  `Código: ${codigo}`;
+
+  // CONSULTA PRECIO
+
+  if(currentMode === "consultaprecio"){
+
+    result.innerHTML =
+    "Consultando precio...";
+
+    $.ajax({
+
+      url:URL_API,
+
+      method:"POST",
+
+      contentType:
+      "text/plain; charset=utf-8",
+
+      data:JSON.stringify({
+
+        op:"consultaprecio",
+
+        codigo:codigo
+      }),
+
+success:function(res){
+
+  if(!res.success){
+    result.innerHTML = `${res.message}`;
+    showErrorSound();
+    return;
+  }
+
+  const stock = res.stock ?? 0;
+
+  result.innerHTML = `
+
+    <h2>${res.producto}</h2>
+
+    <div class="precio-box">
+      S/ ${res.precio}
+    </div>
+
+    <div style="
+      margin-top:10px;
+      font-size:1.3rem;
+      font-weight:700;
+      color:${stock == 0 ? 'red' : 'lime'};
+    ">
+      📦 Stock: ${stock}
+    </div>
+
+    ${stock == 0 ? `
+      <div style="color:red;font-weight:700;margin-top:10px;">
+        🚨 SIN STOCK
+      </div>
+    ` : ""}
+
+  `;
+
+  if(stock == 0){
+    showErrorSound();
+  }
+
+  addToLog(`CONSULTA - ${codigo}`);
+},
+
+      complete:function(){
+
+        setTimeout(() => {
+
+          isScanning = false;
+
+        },1000);
+      }
+    });
+
+    return;
+  }
+
+  // AGREGAR PRODUCTO
+
+  if(currentMode === "agregar"){
+
+    codigoNuevoProducto = codigo;
+
+    codigoEscaneado.innerHTML =
+    codigo;
+
+    formProducto.style.display =
+    "block";
+
+    result.innerHTML = `
+      ✅ Código escaneado
+      <br>
+      Completa el formulario
+    `;
+
+    setTimeout(() => {
+
+      isScanning = false;
+
+    },1000);
+
+    return;
+  }
+
+  // VENTA Y RECARGA
+
+  result.innerHTML =
+  "Procesando...";
+
+  $.ajax({
+
+    url:URL_API,
+
+    method:"POST",
+
+    contentType:
+    "text/plain; charset=utf-8",
+
+    data:JSON.stringify({
+
+      op:
+      currentMode === "venta"
+      ? "registraventa"
+      : "recarga",
+
+      codigo:codigo
+    }),
+
+success:function(res){
+
+  const stock = res.stock ?? 1;
+
+  const isError = !res.success || stock == 0;
+
+  result.innerHTML = `
+
+    <strong style="color:${isError ? 'red' : 'lime'}">
+
+      ${res.success ? 'Éxito' : 'Error'}
+
+    </strong>
+
+    <br><br>
+
+    ${res.message}
+
+    ${stock == 0 ? `<br><b style="color:red">🚨 SIN STOCK</b>` : ""}
+
+  `;
+
+  if(isError){
+    showErrorSound();
+  }
+
+  addToLog(
+    `${currentMode} - ${codigo}`
+  );
+},
+
+    complete:function(){
+
+      setTimeout(() => {
+
+        isScanning = false;
+
+      },1000);
+    }
+  });
+}
+
+function guardarProducto(){
+
+  const producto =
+  document.getElementById(
+    "nombreProducto"
+  ).value.trim();
+
+  const stock =
+  document.getElementById(
+    "stockProducto"
+  ).value.trim();
+
+  const precio =
+  document.getElementById(
+    "precioProducto"
+  ).value.trim();
+
+  if(!producto || !stock || !precio){
+
+    alert(
+      "Completa todos los campos"
+    );
+
+    return;
+  }
+
+  result.innerHTML =
+  "Guardando producto...";
+
+  $.ajax({
+
+    url:URL_API,
+
+    method:"POST",
+
+    contentType:
+    "text/plain; charset=utf-8",
+
+    data:JSON.stringify({
+
+      op:"agregarproducto",
+
+      codigo:codigoNuevoProducto,
+
+      producto:producto,
+
+      stock:stock,
+
+      precio:precio
+    }),
+
+    success:function(res){
+
+      result.innerHTML = `
+
+        <strong>
+
+          ${res.success
+          ? '✅ Producto agregado'
+          : '❌ Error'}
+
+        </strong>
+
+        <br><br>
+
+        ${res.message}
+
+      `;
+
+      if(res.success){
+
+        formProducto.style.display =
+        "none";
+
+        document.getElementById(
+        "nombreProducto"
+        ).value = "";
+
+        document.getElementById(
+        "stockProducto"
+        ).value = "";
+
+        document.getElementById(
+        "precioProducto"
+        ).value = "";
+      }
+
+      addToLog(
+        `NUEVO PRODUCTO
+        - ${producto}`
+      );
+    }
+  });
+}
+
+function addToLog(texto){
+
+  const hora =
+  new Date().toLocaleTimeString();
+
+  logDiv.innerHTML =
+
+  `<div class="log-item">
+
+    <small>${hora}</small>
+
+    ${texto}
+
+  </div>`
+
+  + logDiv.innerHTML;
+}
+
+window.onload = () => {
+
+  startScanner();
+};
+
+</script>
+
+</body>
+</html>
