@@ -720,6 +720,91 @@ function setMedia(name, img1, img2, img3, video){
 }
 // Ejemplo — descomenta y edita, o hazlo desde el panel de admin:
 // setMedia('Guitarra Acústica Yamaha C40', 'fotos/guitarra-1.jpg', 'fotos/guitarra-2.jpg', 'fotos/guitarra-3.jpg', 'fotos/guitarra-demo.mp4');
+  // --- Stock ---
+setStock('Guitarra Acústica Yamaha C40', 10);
+setStock('Guitarra Electroacústica Fender CD-60SCE', 10);
+setStock('Guitarra Eléctrica Stratocaster Style', 0);
+setStock('Guitarra Clásica Estudiante 3/4', 10);
+setStock('Violín 4/4 Estudiante con Estuche', 10);
+setStock('Violín 1/2 para Niños con Arco', 4);
+setStock('Ukelele Soprano Hawaiano', 10);
+setStock('Ukelele Concert Caoba', 2);
+setStock('Charango Boliviano Madera Cedro', 10);
+setStock('Charango Turístico Decorado', 10);
+setStock('Teclado Yamaha PSR-E373 61 Teclas', 10);
+setStock('Piano Digital 88 Teclas Semi-contrapesadas', 10);
+setStock('Teclado Infantil 37 Teclas', 10);
+setStock('Órgano Casio CT-S200', 10);
+setStock('Tambor Redoblante Escolar 14"', 10);
+setStock('Bombo Legüero 22"', 10);
+setStock('Bombo Andino Artesanal', 10);
+setStock('Tarola Profesional Acero 14x5.5', 3);
+setStock('Cajón Peruano Flamenco', 0);
+setStock('Cajón Peruano Clásico Enchapado', 10);
+setStock('Metalófono Soprano 25 Notas', 10);
+setStock('Flauta Traversa Estudiante Niquelada', 10);
+setStock('Flauta Dulce Soprano Yamaha', 10);
+setStock('Melódica 32 Teclas con Estuche', 10);
+setStock('Quena Andina en Madera', 10);
+setStock('Zampoña Doble Hilera 13/6', 10);
+setStock('Micrófono Dinámico Vocal SM58 Style', 10);
+setStock('Micrófono Condensador USB Streaming', 10);
+setStock('Interfaz de Audio USB 2 Canales', 10);
+setStock('Interfaz de Audio 4 Canales MIDI', 10);
+setStock('Bombito Escolar con Palillo', 10);
+setStock('Flauta Dulce Escolar Soprano', 10);
+setStock('Melódica Escolar 32 Teclas', 10);
+setStock('Lira Musical Escolar Metálica', 10);
+setStock('Xilófono Escolar 8 Notas', 10);
+setStock('Set de Cuerdas para Guitarra Acústica', 10);
+setStock('Correa de Guitarra Ajustable', 10);
+setStock('Caña para Saxofón / Clarinete (x3)', 10);
+setStock('Baquetas de Madera Par', 10);
+setStock('Parante para Guitarra Universal', 10);
+setStock('Atril Metálico para Partituras', 10);
+
+// --- Precios ---
+setPrice('Guitarra Acústica Yamaha C40', 1, 2);
+setPrice('Guitarra Electroacústica Fender CD-60SCE', 1190);
+setPrice('Guitarra Eléctrica Stratocaster Style', 899);
+setPrice('Guitarra Clásica Estudiante 3/4', 329);
+setPrice('Violín 4/4 Estudiante con Estuche', 389, 459);
+setPrice('Violín 1/2 para Niños con Arco', 349);
+setPrice('Ukelele Soprano Hawaiano', 129);
+setPrice('Ukelele Concert Caoba', 179, 219);
+setPrice('Charango Boliviano Madera Cedro', 259);
+setPrice('Charango Turístico Decorado', 149);
+setPrice('Teclado Yamaha PSR-E373 61 Teclas', 1299, 1499);
+setPrice('Piano Digital 88 Teclas Semi-contrapesadas', 2199);
+setPrice('Teclado Infantil 37 Teclas', 199);
+setPrice('Órgano Casio CT-S200', 799);
+setPrice('Tambor Redoblante Escolar 14"', 219);
+setPrice('Bombo Legüero 22"', 389);
+setPrice('Bombo Andino Artesanal', 259);
+setPrice('Tarola Profesional Acero 14x5.5', 349, 399);
+setPrice('Cajón Peruano Flamenco', 299);
+setPrice('Cajón Peruano Clásico Enchapado', 249);
+setPrice('Metalófono Soprano 25 Notas', 159);
+setPrice('Flauta Traversa Estudiante Niquelada', 459);
+setPrice('Flauta Dulce Soprano Yamaha', 39);
+setPrice('Melódica 32 Teclas con Estuche', 129);
+setPrice('Quena Andina en Madera', 79);
+setPrice('Zampoña Doble Hilera 13/6', 89);
+setPrice('Micrófono Dinámico Vocal SM58 Style', 249, 299);
+setPrice('Micrófono Condensador USB Streaming', 199);
+setPrice('Interfaz de Audio USB 2 Canales', 399);
+setPrice('Interfaz de Audio 4 Canales MIDI', 649);
+setPrice('Bombito Escolar con Palillo', 89);
+setPrice('Flauta Dulce Escolar Soprano', 25);
+setPrice('Melódica Escolar 32 Teclas', 99);
+setPrice('Lira Musical Escolar Metálica', 119);
+setPrice('Xilófono Escolar 8 Notas', 69);
+setPrice('Set de Cuerdas para Guitarra Acústica', 35);
+setPrice('Correa de Guitarra Ajustable', 29);
+setPrice('Caña para Saxofón / Clarinete (x3)', 45);
+setPrice('Baquetas de Madera Par', 25);
+setPrice('Parante para Guitarra Universal', 49);
+setPrice('Atril Metálico para Partituras', 59);
 
 function getImages(id){ return (MEDIA[id] && MEDIA[id].images) || []; }
 function getVideo(id){ return (MEDIA[id] && MEDIA[id].video) || null; }
