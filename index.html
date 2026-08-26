@@ -641,76 +641,39 @@ const CATEGORIES = [
    solo pide los datos al abrir la tienda.
    ====================================================================== */
 
-/* ⚠️ Pega aquí la URL de tu Web App de Google Apps Script (ver productos-backend.gs) */
-const PRODUCTS_API_URL = 'https://script.google.com/macros/s/AKfycbzhLV2VKfsztEc0UoxheyfSkCXfLI-s648zvfBv68esyE7kzU3tt3L-K40lSQ4lRX1o/exec';
+/* ⚠️ Pega aquí la URL de tu Worker de Cloudflare (ver productos-worker.js) */
+const PRODUCTS_API_URL = 'PEGA_AQUI_TU_URL_DE_WORKER';
 
-/* ⚠️ Pega aquí el link de tu Google Sheet, para el atajo del panel de admin */
-const PRODUCTS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1v9gBb7H1f8eATqXK8LjcAlyh7isfFtLp6OME4ThD_gI/edit?usp=sharing';
+/* ⚠️ La misma clave secreta (ADMIN_SECRET) que pusiste en tu Worker —
+   la necesita el panel de admin para poder guardar cambios. */
+const PRODUCTS_ADMIN_SECRET = 'PEGA_AQUI_TU_CLAVE_SECRETA';
 
 let PRODUCTS = [];
 let PRICE_MAX = 3000; // valor por defecto mientras cargan los productos reales
 
-/* Ícono decorativo por defecto según la categoría (no depende de la hoja) */
+/* Ícono decorativo por defecto según la categoría */
 const ICON_BY_CAT = {
   cuerda:'string', teclados:'keyboard', percusion:'drum', viento:'wind',
   audio:'mic', colegio:'school', accesorios:'accessory'
 };
 function iconFor(p){ return ICON_BY_CAT[p.cat] || 'accessory'; }
 
-/* Cache corto en sessionStorage: si alguien recarga la página o vuelve a
-   entrar en los próximos minutos, no hace falta esperar de nuevo a
-   Google Sheets — se usa lo que ya se cargó. Los cambios que hagas en la
-   hoja igual se ven, solo que pueden tardar hasta este tiempo en
-   reflejarse si alguien ya tenía la página cargada reciente. */
-const PRODUCTS_CACHE_KEY = 'chipao_products_cache_v1';
-const PRODUCTS_CACHE_MS = 5 * 60 * 1000; // 5 minutos
-
-function readProductsCache(){
-  try{
-    const raw = sessionStorage.getItem(PRODUCTS_CACHE_KEY);
-    if(!raw) return null;
-    const parsed = JSON.parse(raw);
-    if(!parsed.savedAt || Date.now() - parsed.savedAt > PRODUCTS_CACHE_MS) return null;
-    return parsed.products;
-  }catch(err){ return null; }
-}
-function writeProductsCache(products){
-  try{
-    sessionStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), products }));
-  }catch(err){ /* si falla (modo privado estricto, etc.) simplemente no cacheamos */ }
-}
-
-async function fetchProducts(forceRefresh){
+async function fetchProducts(){
   if(!PRODUCTS_API_URL || PRODUCTS_API_URL.startsWith('PEGA_AQUI')){
     document.getElementById('app').innerHTML = `
       <div class="empty-state" style="padding-top:120px;">
         ${iconSvg('accessory')}
-        <p>Falta configurar PRODUCTS_API_URL en el código.<br>Revisa las instrucciones para conectar tu Google Sheet.</p>
+        <p>Falta configurar PRODUCTS_API_URL en el código.<br>Revisa las instrucciones para conectar tu base de datos.</p>
       </div>`;
     return;
   }
-
-  if(!forceRefresh){
-    const cached = readProductsCache();
-    if(cached && cached.length){
-      PRODUCTS = cached;
-      PRICE_MAX = Math.max(...PRODUCTS.map(p=>p.price));
-      state.priceMax = PRICE_MAX;
-      render();
-      checkPaymentReturnStatus();
-      checkAdminUrlTrigger();
-      return; // ya se ve la tienda al instante; no hace falta esperar a Google
-    }
-  }
-
   try{
-    const res = await fetch(PRODUCTS_API_URL);
+    const res = await fetch(`${PRODUCTS_API_URL}/products`);
     const data = await res.json();
     if(data.error) throw new Error(data.error);
     PRODUCTS = data.products || [];
     PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
     state.priceMax = PRICE_MAX;
-    writeProductsCache(PRODUCTS);
     render();
     checkPaymentReturnStatus();
     checkAdminUrlTrigger();
@@ -719,7 +682,7 @@ async function fetchProducts(forceRefresh){
       <div class="empty-state" style="padding-top:120px;">
         ${iconSvg('accessory')}
         <p>No se pudieron cargar los productos.<br>Revisa tu conexión o intenta de nuevo en un momento.</p>
-        <button class="btn-outline" style="margin-top:14px;" onclick="fetchProducts(true)">Reintentar</button>
+        <button class="btn-outline" style="margin-top:14px;" onclick="fetchProducts()">Reintentar</button>
       </div>`;
   }
 }
@@ -1474,21 +1437,107 @@ function checkAdminPassword(e){
 function renderAdminPanel(){
   document.getElementById('modalBody').innerHTML = `
     <h3 class="h-serif">Panel de productos</h3>
-    <div class="admin-warn">Tus productos ahora viven en Google Sheets. Para cambiar precios, ofertas, stock, fotos o video, edita directamente la hoja — se refleja solo en tu tienda, sin tocar código.</div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <a class="btn-gold" style="width:100%;" href="${PRODUCTS_SHEET_URL}" target="_blank" rel="noopener">Abrir mi hoja de Google Sheets</a>
-      <button class="btn-outline" style="width:100%;" onclick="adminRefresh()">🔄 Recargar productos ahora</button>
+    <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
+    <div class="admin-list">
+      ${PRODUCTS.map(p=>{
+        const [i1='',i2='',i3=''] = p.images || [];
+        return `
+        <div class="admin-row ${p.stock<=0?'zero':''}" data-row="${p.id}">
+          <div class="admin-row-top">
+            <div class="aname"><b>${p.name}</b><small>${p.cat} · ${p.sub}</small></div>
+            <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">🖼️ Fotos y video</button>
+          </div>
+          <div class="admin-fields">
+            <label>Precio<input type="number" min="0" step="1" value="${p.price}" id="price-${p.id}"></label>
+            <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
+            <label>Etiqueta<input type="text" placeholder="—" value="${p.badge ?? ''}" id="badge-${p.id}" style="width:110px;"></label>
+            <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
+          </div>
+          <div class="media-editor" id="media-editor-${p.id}">
+            <div class="media-field">
+              <label>Foto 1 (URL)</label>
+              <div class="media-input-row">
+                <input type="text" placeholder="https://..." value="${i1}" id="img1-${p.id}">
+                <img class="media-preview" src="${i1}" onerror="this.style.display='none'" style="${i1?'':'display:none'}">
+              </div>
+            </div>
+            <div class="media-field">
+              <label>Foto 2 (URL)</label>
+              <div class="media-input-row">
+                <input type="text" placeholder="https://..." value="${i2}" id="img2-${p.id}">
+                <img class="media-preview" src="${i2}" onerror="this.style.display='none'" style="${i2?'':'display:none'}">
+              </div>
+            </div>
+            <div class="media-field">
+              <label>Foto 3 (URL)</label>
+              <div class="media-input-row">
+                <input type="text" placeholder="https://..." value="${i3}" id="img3-${p.id}">
+                <img class="media-preview" src="${i3}" onerror="this.style.display='none'" style="${i3?'':'display:none'}">
+              </div>
+            </div>
+            <div class="media-field">
+              <label>Video (URL de YouTube o link directo .mp4)</label>
+              <input type="text" placeholder="https://..." value="${p.video||''}" id="vid-${p.id}" style="width:100%;">
+            </div>
+          </div>
+          <button class="btn-gold admin-save-btn" style="width:100%;margin-top:10px;" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="admin-actions">
       <button class="btn-outline" style="width:100%;" onclick="closeModal()">Listo</button>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-top:16px;line-height:1.6;">${PRODUCTS.length} producto${PRODUCTS.length!==1?'s':''} cargado${PRODUCTS.length!==1?'s':''} actualmente. Si acabas de editar la hoja y no ves el cambio en tu tienda, usa "Recargar productos ahora".</p>
   `;
 }
 
-async function adminRefresh(){
-  showToast('Recargando productos...');
-  await fetchProducts(true);
-  showToast('Productos actualizados');
-  closeModal();
+function toggleMediaEditor(id){
+  document.getElementById(`media-editor-${id}`)?.classList.toggle('open');
+}
+
+async function saveProduct(id, btnEl){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+
+  const price = Math.max(0, parseFloat(document.getElementById(`price-${id}`).value) || 0);
+  const oldVal = document.getElementById(`old-${id}`).value;
+  const old = oldVal === '' ? null : Math.max(0, parseFloat(oldVal) || 0);
+  const badgeVal = document.getElementById(`badge-${id}`).value.trim();
+  const badge = badgeVal === '' ? null : badgeVal;
+  const stock = Math.max(0, parseInt(document.getElementById(`stock-${id}`).value) || 0);
+  const img1 = document.getElementById(`img1-${id}`).value.trim();
+  const img2 = document.getElementById(`img2-${id}`).value.trim();
+  const img3 = document.getElementById(`img3-${id}`).value.trim();
+  const video = document.getElementById(`vid-${id}`).value.trim();
+
+  const original = btnEl.textContent;
+  btnEl.textContent = 'Guardando...';
+  btnEl.disabled = true;
+
+  try{
+    const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': PRODUCTS_ADMIN_SECRET },
+      body: JSON.stringify({ price, old, badge, stock, image1: img1||null, image2: img2||null, image3: img3||null, video: video||null })
+    });
+    const data = await res.json();
+    if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
+
+    // refleja el cambio al instante, sin recargar toda la tienda
+    p.price = price; p.old = old; p.badge = badge; p.stock = stock;
+    p.images = [img1, img2, img3].filter(Boolean); p.video = video || null;
+    PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
+    if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
+
+    document.querySelector(`.admin-row[data-row="${id}"]`)?.classList.toggle('zero', stock<=0);
+    if(state.view==='shop') render();
+    btnEl.textContent = '✓ Guardado';
+    showToast('Producto actualizado');
+  }catch(err){
+    btnEl.textContent = 'Error, reintentar';
+    showToast('No se pudo guardar. Revisa tu clave de administrador.');
+  }finally{
+    setTimeout(()=>{ btnEl.textContent = original; btnEl.disabled = false; }, 1400);
+  }
 }
 
 
