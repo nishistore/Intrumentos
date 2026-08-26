@@ -657,7 +657,30 @@ const ICON_BY_CAT = {
 };
 function iconFor(p){ return ICON_BY_CAT[p.cat] || 'accessory'; }
 
-async function fetchProducts(){
+/* Cache corto en sessionStorage: si alguien recarga la página o vuelve a
+   entrar en los próximos minutos, no hace falta esperar de nuevo a
+   Google Sheets — se usa lo que ya se cargó. Los cambios que hagas en la
+   hoja igual se ven, solo que pueden tardar hasta este tiempo en
+   reflejarse si alguien ya tenía la página cargada reciente. */
+const PRODUCTS_CACHE_KEY = 'chipao_products_cache_v1';
+const PRODUCTS_CACHE_MS = 5 * 60 * 1000; // 5 minutos
+
+function readProductsCache(){
+  try{
+    const raw = sessionStorage.getItem(PRODUCTS_CACHE_KEY);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(!parsed.savedAt || Date.now() - parsed.savedAt > PRODUCTS_CACHE_MS) return null;
+    return parsed.products;
+  }catch(err){ return null; }
+}
+function writeProductsCache(products){
+  try{
+    sessionStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), products }));
+  }catch(err){ /* si falla (modo privado estricto, etc.) simplemente no cacheamos */ }
+}
+
+async function fetchProducts(forceRefresh){
   if(!PRODUCTS_API_URL || PRODUCTS_API_URL.startsWith('PEGA_AQUI')){
     document.getElementById('app').innerHTML = `
       <div class="empty-state" style="padding-top:120px;">
@@ -666,6 +689,20 @@ async function fetchProducts(){
       </div>`;
     return;
   }
+
+  if(!forceRefresh){
+    const cached = readProductsCache();
+    if(cached && cached.length){
+      PRODUCTS = cached;
+      PRICE_MAX = Math.max(...PRODUCTS.map(p=>p.price));
+      state.priceMax = PRICE_MAX;
+      render();
+      checkPaymentReturnStatus();
+      checkAdminUrlTrigger();
+      return; // ya se ve la tienda al instante; no hace falta esperar a Google
+    }
+  }
+
   try{
     const res = await fetch(PRODUCTS_API_URL);
     const data = await res.json();
@@ -673,6 +710,7 @@ async function fetchProducts(){
     PRODUCTS = data.products || [];
     PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
     state.priceMax = PRICE_MAX;
+    writeProductsCache(PRODUCTS);
     render();
     checkPaymentReturnStatus();
     checkAdminUrlTrigger();
@@ -681,7 +719,7 @@ async function fetchProducts(){
       <div class="empty-state" style="padding-top:120px;">
         ${iconSvg('accessory')}
         <p>No se pudieron cargar los productos.<br>Revisa tu conexión o intenta de nuevo en un momento.</p>
-        <button class="btn-outline" style="margin-top:14px;" onclick="fetchProducts()">Reintentar</button>
+        <button class="btn-outline" style="margin-top:14px;" onclick="fetchProducts(true)">Reintentar</button>
       </div>`;
   }
 }
@@ -1448,7 +1486,7 @@ function renderAdminPanel(){
 
 async function adminRefresh(){
   showToast('Recargando productos...');
-  await fetchProducts();
+  await fetchProducts(true);
   showToast('Productos actualizados');
   closeModal();
 }
