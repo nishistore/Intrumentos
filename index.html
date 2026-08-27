@@ -644,9 +644,8 @@ const CATEGORIES = [
 /* ⚠️ Pega aquí la URL de tu Worker de Cloudflare (ver productos-worker.js) */
 const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
 
-/* ⚠️ La misma clave secreta (ADMIN_SECRET) que pusiste en tu Worker —
-   la necesita el panel de admin para poder guardar cambios. */
-const PRODUCTS_ADMIN_SECRET = 'chipao-admin-3650203';
+/* La clave de administrador ya no se guarda aquí — ver sessionAdminSecret,
+   más abajo, cerca del panel de administración. */
 
 let PRODUCTS = [];
 let PRICE_MAX = 3000; // valor por defecto mientras cargan los productos reales
@@ -1392,45 +1391,72 @@ function closeModal(){ document.getElementById('modalOverlay').classList.remove(
 
 /* ======================================================================
    ADMIN PANEL (stock y precios) — protección básica solo para uso casual.
-   Al ser una página estática, el código fuente es visible para cualquiera
-   que sepa buscarlo, así que no la uses para datos realmente sensibles.
-   Cámbiala editando ADMIN_PASSWORD abajo.
+   Al ser una página estática, cualquiera que revise el código fuente
+   podía ver la contraseña antes — ahora ya no: la contraseña se revisa
+   en tu Worker (del lado del servidor), nunca queda escrita aquí.
+   La cambias directo en Cloudflare → tu Worker → Settings → Variables
+   and Secrets → ADMIN_SECRET (la misma clave que ya usas para guardar
+   cambios de productos).
 
    ACCESO: no hay ningún botón visible en la página. Entras escribiendo
    una URL secreta — cambia ADMIN_URL_KEY por una palabra que solo tú
    conozcas, y guarda esta dirección en tus favoritos:
      https://tu-sitio.com/?panel=TU_PALABRA_SECRETA
    ====================================================================== */
-const ADMIN_PASSWORD = 'chipao2026';
 const ADMIN_URL_KEY = 'chipaosecreto2026'; // ⚠️ cámbiala por tu propia palabra secreta
+
+/* Clave real del panel: vive solo en memoria mientras tienes la pestaña
+   abierta, nunca se guarda en el archivo ni en el navegador. Se pierde
+   al recargar la página (a propósito). */
+let sessionAdminSecret = null;
 
 function checkAdminUrlTrigger(){
   const params = new URLSearchParams(window.location.search);
   if(params.get('panel') === ADMIN_URL_KEY){
-    openAdminLogin();
+    if(sessionAdminSecret){ renderAdminPanel(); document.getElementById('modalOverlay').classList.add('show'); }
+    else{ openAdminLogin(); }
   }
 }
 
 function openAdminLogin(){
   document.getElementById('modalBody').innerHTML = `
     <h3 class="h-serif">Panel de stock</h3>
-    <div class="admin-warn">Esta es una protección básica, no una cuenta segura: cualquiera con acceso al código fuente podría ver la contraseña. No guardes aquí información sensible.</div>
-    <form class="admin-login" onsubmit="checkAdminPassword(event)">
+    <div class="admin-warn">Tu contraseña se revisa en el servidor — ya no queda escrita en este archivo.</div>
+    <form class="admin-login" id="adminLoginForm" onsubmit="checkAdminPassword(event)">
       <input type="password" id="adminPass" placeholder="Contraseña" autocomplete="off" required>
-      <button type="submit" class="btn-gold">Entrar</button>
+      <button type="submit" class="btn-gold" id="adminLoginBtn">Entrar</button>
     </form>
   `;
   document.getElementById('modalOverlay').classList.add('show');
   setTimeout(()=>document.getElementById('adminPass')?.focus(), 50);
 }
 
-function checkAdminPassword(e){
+async function checkAdminPassword(e){
   e.preventDefault();
   const val = document.getElementById('adminPass').value;
-  if(val === ADMIN_PASSWORD){
-    renderAdminPanel();
-  }else{
-    showToast('Contraseña incorrecta');
+  const btn = document.getElementById('adminLoginBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Verificando...';
+  btn.disabled = true;
+  try{
+    const res = await fetch(`${PRODUCTS_API_URL}/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: val })
+    });
+    const data = await res.json();
+    if(data.ok){
+      sessionAdminSecret = data.secret;
+      renderAdminPanel();
+    }else{
+      showToast('Contraseña incorrecta');
+      btn.textContent = original;
+      btn.disabled = false;
+    }
+  }catch(err){
+    showToast('No se pudo conectar. Intenta de nuevo.');
+    btn.textContent = original;
+    btn.disabled = false;
   }
 }
 
@@ -1516,7 +1542,7 @@ async function saveProduct(id, btnEl){
   try{
     const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': PRODUCTS_ADMIN_SECRET },
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
       body: JSON.stringify({ price, old, badge, stock, image1: img1||null, image2: img2||null, image3: img3||null, video: video||null })
     });
     const data = await res.json();
