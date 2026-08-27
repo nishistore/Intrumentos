@@ -21,7 +21,6 @@
   --navy-mid:#f6f7fa;
   --navy-card:#ffffff;
   --navy-line:#e2e5ec;
-  --navy-soft:#eef1f7;
   --gold:#d6a13c;
   --gold-light:#e8c374;
   --gold-dim:#b3822a;
@@ -39,7 +38,6 @@
   --chrome-muted:#848da3;
   --radius-lg:22px;
   --radius-md:14px;
-  --radius-sm:10px;
   --header-h:64px;
   --bar-h:38px;
 }
@@ -93,18 +91,13 @@ header.site{
   max-width:1280px;margin:0 auto;
 }
 .logo{
-  display:flex;align-items:center;gap:9px;
+  display:flex;align-items:center;
   white-space:nowrap;
   flex-shrink:0;
 }
-.logo-mark{width:34px;height:34px;flex-shrink:0;}
-.logo-word{
-  font-family:'Playfair Display',serif;
-  font-weight:800;font-size:20px;line-height:1.05;
-  color:var(--brown-heading);
-}
-.logo-word b{color:var(--gold-dim);font-weight:800;}
-.logo span{display:block;font-family:'Poppins',sans-serif;font-size:8px;letter-spacing:.24em;color:var(--chrome-muted);font-weight:700;margin-top:2px;}
+.logo-img{height:52px;width:auto;display:block;}
+.logo.logo-on-dark{background:#fff;border-radius:12px;padding:8px 12px;display:inline-flex;}
+.logo.logo-on-dark .logo-img{height:44px;}
 .icon-btn{
   width:40px;height:40px;border-radius:50%;
   border:1px solid var(--chrome-line);background:var(--chrome-bg2);
@@ -144,9 +137,6 @@ header.site{
 }
 .hide-mobile{display:none;}
 .hide-desktop{display:flex;}
-.header-link{display:flex;align-items:center;gap:7px;color:var(--brown-heading);font-size:13.5px;font-weight:600;flex-shrink:0;}
-.header-link svg{width:19px;height:19px;stroke:currentColor;}
-.header-link:hover{color:var(--gold-dim);}
 
 nav.catbar{
   border-top:1px solid var(--chrome-line);
@@ -570,11 +560,6 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
 .media-preview{width:34px;height:34px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--navy-line);}
 .admin-row .media-field input[id^="vid-"]{width:100%;}
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
-.code-box{
-  background:#03070f;border:1px solid var(--navy-line);border-radius:10px;
-  padding:12px 14px;font-family:monospace;font-size:11px;color:var(--brown-heading);
-  max-height:180px;overflow:auto;white-space:pre-wrap;margin-top:12px;display:none;
-}
 
 @media (min-width:640px){
   .cat-grid{grid-template-columns:repeat(3,1fr);}
@@ -669,11 +654,7 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <a href="#" class="logo" onclick="goHome();return false;">
-      <svg class="logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <path d="M50 12 A38 38 0 1 0 74.5 76.5" fill="none" stroke="var(--brown-heading)" stroke-width="11" stroke-linecap="round"/>
-        <path d="M67 15 L67 55 A13 13 0 1 1 58 43 L58 24 L74 33 L74 15 Z" fill="var(--gold)"/>
-      </svg>
-      <span class="logo-word">Chipao <b>Music</b><span>Instrumentos Musicales en Perú</span></span>
+      <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-chipao.png" alt="Chipao Music" class="logo-img">
     </a>
     <div class="search-wrap hide-mobile">
       <input id="searchInput" type="text" placeholder="Buscar instrumentos, marcas, accesorios..." onkeydown="if(event.key==='Enter')doSearch();">
@@ -682,11 +663,7 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
     <button class="icon-btn hide-desktop" aria-label="Buscar" onclick="toggleMobileSearch()" style="margin-left:auto;">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
     </button>
-    <a href="#" class="header-link hide-mobile" onclick="openPolicy('contacto');return false;">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Mi cuenta
-    </a>
-    <button class="icon-btn filled-gold" id="cartBtn" aria-label="Carrito" onclick="toggleCart(true)">
+    <button class="icon-btn filled-gold" aria-label="Carrito" onclick="toggleCart(true)">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
       <span class="cart-count" id="cartCount" style="display:none;">0</span>
     </button>
@@ -744,12 +721,8 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
 <footer class="site">
   <div class="footer-grid">
     <div class="footer-col footer-brand">
-      <div class="logo">
-        <svg class="logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50 12 A38 38 0 1 0 74.5 76.5" fill="none" stroke="var(--gold-light)" stroke-width="11" stroke-linecap="round"/>
-          <path d="M67 15 L67 55 A13 13 0 1 1 58 43 L58 24 L74 33 L74 15 Z" fill="var(--gold)"/>
-        </svg>
-        <span class="logo-word" style="color:var(--gold-light);font-size:22px;">Chipao <b style="color:var(--gold);">Music</b></span>
+      <div class="logo logo-on-dark">
+        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-chipao.png" alt="Chipao Music" class="logo-img">
       </div>
       <p>Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
     </div>
@@ -1843,7 +1816,7 @@ function renderAdminPanel(){
               <input type="text" placeholder="https://..." value="${p.video||''}" id="vid-${p.id}" style="width:100%;">
             </div>
           </div>
-          <button class="btn-gold admin-save-btn" style="width:100%;margin-top:10px;" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
+          <button class="btn-gold" style="width:100%;margin-top:10px;" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
         </div>`;
       }).join('')}
     </div>
