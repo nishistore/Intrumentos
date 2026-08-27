@@ -276,50 +276,56 @@ nav.catbar::-webkit-scrollbar{display:none;}
 }
 .btn-outline:hover{background:var(--gold);color:#1c2540;}
 
-/* ---------------- hero (dos columnas, imagen a sangre a la derecha) ---------------- */
+/* ---------------- hero (todo en una sola imagen, texto encima) ---------------- */
 .hero{
-  background:var(--navy-deep);
-  padding:20px 0 0;
+  position:relative;overflow:hidden;
+  min-height:340px;
+}
+.hero-bg{position:absolute;inset:0;z-index:0;opacity:1;transition:opacity .38s ease;}
+.hero-bg.fading{opacity:0;}
+.hero-bg img,.hero-bg svg{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-scrim{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg, rgba(247,243,234,.94) 0%, rgba(247,243,234,.8) 34%, rgba(247,243,234,.2) 62%, rgba(247,243,234,0) 80%);
 }
 .hero-inner{
-  display:flex;align-items:center;gap:14px;
+  position:relative;z-index:2;
   max-width:1280px;margin:0 auto;
-  padding-left:20px;
+  padding:36px 20px;
 }
-.hero-copy{flex:1 1 52%;min-width:0;text-align:left;padding:10px 0 20px;}
+.hero-copy{max-width:480px;text-align:left;}
+.hero-copy-content{transition:opacity .38s ease;opacity:1;}
+.hero-copy-content.fading{opacity:0;}
 .hero .kicker{font-size:11px;letter-spacing:.25em;color:var(--brown-heading);font-weight:600;text-transform:uppercase;opacity:.85;}
 .hero h1{font-size:28px;line-height:1.15;margin:10px 0 12px;
   color:var(--brown-heading);
 }
 .hero h1 .accent{
-  display:block;
+  display:inline;
   background:linear-gradient(180deg,var(--gold-light),var(--gold-dim));
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.hero p{color:var(--ink);max-width:38ch;margin:0 0 20px;font-size:13px;line-height:1.55;}
+.hero p{color:var(--ink);max-width:44ch;margin:0 0 22px;font-size:13.5px;line-height:1.6;}
 .hero-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
 .hero-actions .btn-gold, .hero-actions .btn-outline{width:100%;max-width:260px;}
+.hero-badges{display:flex;gap:18px;margin-top:26px;flex-wrap:wrap;color:var(--ink);font-size:11.5px;font-weight:500;}
+.hero-badges div{display:flex;align-items:center;gap:7px;}
+.hero-badges svg{width:16px;height:16px;stroke:var(--gold-dim);}
 
-/* columna derecha: imagen a sangre en el borde */
-.hero-media{
-  position:relative;flex:0 0 44%;align-self:stretch;
-  overflow:hidden;border-radius:18px 0 0 18px;
-  background:linear-gradient(150deg,#f2ede2,#e9e1cf);
-  min-height:220px;
-}
-.hero-slide-content{position:absolute;inset:0;}
-.hero-media img,.hero-media svg{width:100%;height:100%;object-fit:cover;display:block;}
 .hero-arrow{
   position:absolute;top:50%;transform:translateY(-50%);z-index:3;
-  width:32px;height:32px;border-radius:50%;
+  width:34px;height:34px;border-radius:50%;
   background:rgba(255,255,255,.88);border:1px solid var(--navy-line);
-  display:none;align-items:center;justify-content:center;color:var(--brown-heading);
+  display:flex;align-items:center;justify-content:center;color:var(--brown-heading);
   transition:background .2s ease;
 }
 .hero-arrow:hover{background:#fff;}
-.hero-arrow.prev{left:10px;}
-.hero-arrow.next{right:10px;}
+.hero-arrow.prev{left:14px;}
+.hero-arrow.next{right:14px;}
 .hero-arrow svg{width:15px;height:15px;stroke:currentColor;}
+.hero-dots{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:6px;z-index:3;}
+.hero-dots span{width:6px;height:6px;border-radius:50%;background:rgba(22,34,74,.28);transition:.2s ease;}
+.hero-dots span.active{background:var(--brown-heading);width:16px;border-radius:4px;}
 
 /* franja de confianza (navy, 3 columnas) */
 .trust-bar{background:var(--navy-bar);padding:18px 0;}
@@ -572,12 +578,10 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
 
 @media (min-width:640px){
   .cat-grid{grid-template-columns:repeat(3,1fr);}
-  .hero-inner{padding-left:32px;gap:32px;}
-  .hero h1{font-size:36px;}
-  .hero p{font-size:14.5px;max-width:44ch;}
+  .hero h1{font-size:38px;}
+  .hero p{font-size:14.5px;max-width:48ch;}
   .hero-actions{flex-direction:row;}
   .hero-actions .btn-gold, .hero-actions .btn-outline{width:auto;}
-  .hero-arrow{display:flex;}
   .trust-bar-inner{gap:20px;padding:0 20px;}
   .trust-item{flex-direction:row;text-align:left;}
   .trust-icon{width:38px;height:38px;}
@@ -590,12 +594,11 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
   .topbar.hide-mobile{display:block;}
   .hide-desktop{display:none;}
   .header-top{padding:0 32px;}
-  .hero{padding-top:0;}
-  .hero-inner{padding-left:32px;min-height:460px;}
-  .hero-media{border-radius:0;}
-  .hero h1{font-size:50px;}
+  .hero{min-height:520px;}
+  .hero-inner{padding:0 32px;min-height:520px;display:flex;align-items:center;}
+  .hero h1{font-size:52px;}
   .hero p{max-width:46ch;}
-  .hero-arrow{width:40px;height:40px;}
+  .hero-arrow{width:42px;height:42px;}
   .hero-arrow.prev{left:24px;}
   .hero-arrow.next{right:24px;}
   .cat-grid{grid-template-columns:repeat(4,1fr);}
@@ -802,17 +805,37 @@ const CATEGORIES = [
 /* ⚠️ Pega aquí la URL de tu Worker de Cloudflare (ver productos-worker.js) */
 const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
 
-/* Fotos del banner principal (portada de la tienda). Deja el arreglo vacío
-   para mostrar la ilustración de bienvenida, o agrega objetos con la URL
-   de tus fotos subidas a tu bucket R2 (chipao-fotos) — formato apaisado,
-   por ejemplo 1600x700px, con espacio libre a la izquierda para el texto.
-   Si agregas 2 o más, las flechas del banner las van rotando. Ejemplo:
+/* Slides del banner principal (portada de la tienda). Cada slide puede
+   traer su propia foto Y su propio texto (título, párrafo, botones) —
+   si un slide no trae algún campo, se usa el texto por defecto de
+   DEFAULT_SLIDE, más abajo. Deja el arreglo vacío para mostrar un único
+   slide con la ilustración de bienvenida. Si agregas 2 o más, las flechas
+   y los puntitos del banner los van rotando (texto e imagen cambian
+   juntos, con un fundido suave). Ejemplo:
    const HERO_SLIDES = [
-     { image: 'https://pub-xxxx.r2.dev/banner-1.jpg' },
-     { image: 'https://pub-xxxx.r2.dev/banner-2.jpg' }
+     { image: 'https://pub-xxxx.r2.dev/banner-1.jpg' }, // usa el texto por defecto
+     {
+       image: 'https://pub-xxxx.r2.dev/banner-2.jpg',
+       kicker: 'Temporada escolar',
+       title: 'Todo listo',
+       accent: 'para el colegio',
+       text: 'Kits completos de flauta, melódica, bombo y más al mejor precio.',
+       ctaPrimaryLabel: 'Ver kits escolares', ctaPrimaryCat: 'colegio',
+       ctaSecondaryLabel: 'Ver catálogo completo', ctaSecondaryCat: null
+     }
    ]; */
 const HERO_SLIDES = [];
 let heroSlideIndex = 0;
+
+/* Texto que se usa cuando un slide no trae sus propios campos */
+const DEFAULT_SLIDE = {
+  kicker: 'Instrumentos Musicales en Perú',
+  title: 'Tu música',
+  accent: 'empieza aquí',
+  text: 'Guitarras, teclados, percusión, viento, audio y todo lo necesario para el colegio. Calidad para principiantes y profesionales, con envíos a todo el país.',
+  ctaPrimaryLabel: 'Ver catálogo completo', ctaPrimaryCat: null,
+  ctaSecondaryLabel: 'Kits para colegio', ctaSecondaryCat: 'colegio'
+};
 
 /* La clave de administrador ya no se guarda aquí — ver sessionAdminSecret,
    más abajo, cerca del panel de administración. */
@@ -983,22 +1006,17 @@ function toggleMobileSearch(){
 function renderHome(){
   return `
   <section class="hero">
+    <div class="hero-bg" id="heroBg">${renderHeroSlide()}</div>
+    <div class="hero-scrim"></div>
     <div class="hero-inner">
       <div class="hero-copy">
-        <div class="kicker">Instrumentos Musicales en Perú</div>
-        <h1 class="h-serif">Tu música<span class="accent">empieza aquí</span></h1>
-        <p>Guitarras, teclados, percusión, viento, audio y todo lo necesario para el colegio. Calidad para principiantes y profesionales, con envíos a todo el país.</p>
-        <div class="hero-actions">
-          <button class="btn-gold" onclick="goShop(null)">Ver catálogo completo</button>
-          <button class="btn-outline" onclick="goShop('colegio')">Kits para colegio</button>
-        </div>
-      </div>
-      <div class="hero-media">
-        <div class="hero-slide-content" id="heroBg">${renderHeroSlide()}</div>
-        <button class="hero-arrow prev" aria-label="Anterior" onclick="changeHeroSlide(-1)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-        <button class="hero-arrow next" aria-label="Siguiente" onclick="changeHeroSlide(1)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        <div class="hero-copy-content" id="heroCopy">${heroCopyHTML()}</div>
       </div>
     </div>
+    ${HERO_SLIDES.length > 1 ? `
+    <button class="hero-arrow prev" aria-label="Anterior" onclick="changeHeroSlide(-1)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button class="hero-arrow next" aria-label="Siguiente" onclick="changeHeroSlide(1)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    <div class="hero-dots" id="heroDots">${HERO_SLIDES.map((_,i)=>`<span class="${i===heroSlideIndex?'active':''}"></span>`).join('')}</div>` : ''}
   </section>
 
   <section class="trust-bar">
@@ -1038,6 +1056,32 @@ function renderHome(){
   </div>`;
 }
 
+/* Combina el slide actual con DEFAULT_SLIDE (lo que el slide no defina, se
+   completa con el texto por defecto) */
+function getSlideData(){
+  return Object.assign({}, DEFAULT_SLIDE, HERO_SLIDES[heroSlideIndex] || {});
+}
+
+/* HTML del texto del hero (título, párrafo, botones, badges) para el slide actual */
+function heroCopyHTML(){
+  const s = getSlideData();
+  const primaryCat = s.ctaPrimaryCat ? `'${s.ctaPrimaryCat}'` : 'null';
+  const secondaryCat = s.ctaSecondaryCat ? `'${s.ctaSecondaryCat}'` : 'null';
+  return `
+    <div class="kicker">${s.kicker}</div>
+    <h1 class="h-serif">${s.title} <span class="accent">${s.accent}</span></h1>
+    <p>${s.text}</p>
+    <div class="hero-actions">
+      <button class="btn-gold" onclick="goShop(${primaryCat})">${s.ctaPrimaryLabel}</button>
+      <button class="btn-outline" onclick="goShop(${secondaryCat})">${s.ctaSecondaryLabel}</button>
+    </div>
+    <div class="hero-badges">
+      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Envíos a todo el Perú</div>
+      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Cuotas sin intereses</div>
+      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Garantía en todos los productos</div>
+    </div>`;
+}
+
 /* Devuelve el fondo del slide actual: tu foto real (si la agregaste a
    HERO_SLIDES) o la ilustración de bienvenida como respaldo. */
 function renderHeroSlide(){
@@ -1047,12 +1091,27 @@ function renderHeroSlide(){
     : heroIllustration();
 }
 
-/* Mueve el carrusel del banner (si hay 2+ fotos en HERO_SLIDES) */
+/* Mueve el carrusel del banner (si hay 2+ slides en HERO_SLIDES), con un
+   fundido suave (crossfade) del texto y la imagen a la vez. */
 function changeHeroSlide(dir){
   if(HERO_SLIDES.length < 2) return;
-  heroSlideIndex = (heroSlideIndex + dir + HERO_SLIDES.length) % HERO_SLIDES.length;
   const bg = document.getElementById('heroBg');
-  if(bg) bg.innerHTML = renderHeroSlide();
+  const copy = document.getElementById('heroCopy');
+  if(!bg || !copy) return;
+  bg.classList.add('fading');
+  copy.classList.add('fading');
+
+  setTimeout(()=>{
+    heroSlideIndex = (heroSlideIndex + dir + HERO_SLIDES.length) % HERO_SLIDES.length;
+    bg.innerHTML = renderHeroSlide();
+    copy.innerHTML = heroCopyHTML();
+    const dots = document.getElementById('heroDots');
+    if(dots) dots.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active', i===heroSlideIndex));
+    // reflow para que la transición de opacidad vuelva a dispararse
+    void bg.offsetWidth;
+    bg.classList.remove('fading');
+    copy.classList.remove('fading');
+  }, 260);
 }
 
 /* Ilustración de portada de ancho completo (se usa mientras HERO_SLIDES
