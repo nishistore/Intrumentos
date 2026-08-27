@@ -439,6 +439,14 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 .pd-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
 .pd-price{font-size:22px;font-weight:800;color:var(--brown-heading);}
 .pd-oldprice{font-size:14px;color:var(--muted);text-decoration:line-through;}
+.pd-share{
+  display:inline-flex;align-items:center;gap:6px;
+  background:none;border:1px solid var(--navy-line);border-radius:50px;
+  padding:6px 13px;font-size:11.5px;font-weight:600;color:var(--brown-heading);
+  margin-bottom:14px;transition:.2s ease;
+}
+.pd-share:hover{border-color:var(--gold);color:var(--gold-dim);}
+.pd-share svg{width:14px;height:14px;stroke:currentColor;}
 .pd-stock-ok{font-size:12.5px;color:var(--ok);font-weight:600;margin-bottom:16px;}
 .pd-stock-low{font-size:12.5px;color:#a05a1a;font-weight:600;margin-bottom:16px;}
 .pd-stock-out{font-size:12.5px;color:var(--err);font-weight:600;margin-bottom:16px;}
@@ -842,6 +850,7 @@ async function fetchProducts(){
     render();
     checkPaymentReturnStatus();
     checkAdminUrlTrigger();
+    checkProductUrlTrigger();
   }catch(err){
     document.getElementById('app').innerHTML = `
       <div class="empty-state" style="padding-top:120px;">
@@ -1295,6 +1304,42 @@ function openProductDetail(id){
   pdState = { productId: id, activeIndex: 0, qty: 1 };
   renderProductDetail();
   document.getElementById('modalOverlay').classList.add('show');
+  setUrlParam('producto', id);
+}
+
+/* Copia el link directo del producto para mandarlo a alguien más */
+function shareProduct(id){
+  setUrlParam('producto', id);
+  const url = window.location.href;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url)
+      .then(()=>showToast('Enlace copiado — pégalo donde quieras enviarlo'))
+      .catch(()=>showToast(url));
+  }else{
+    showToast(url);
+  }
+}
+
+/* Agrega/quita un parámetro en la URL sin recargar la página, así el
+   producto abierto se puede copiar y mandar a alguien más. */
+function setUrlParam(key, value){
+  const url = new URL(window.location.href);
+  if(url.searchParams.get(key) === String(value)) return; // ya está, no dupliques el historial
+  url.searchParams.set(key, value);
+  history.pushState({[key]: value}, '', url);
+}
+function clearUrlParam(key){
+  const url = new URL(window.location.href);
+  if(!url.searchParams.has(key)) return;
+  url.searchParams.delete(key);
+  history.pushState({}, '', url);
+}
+
+/* Si alguien abre un link con ?producto=ID, muestra ese producto directo */
+function checkProductUrlTrigger(){
+  const params = new URLSearchParams(window.location.search);
+  const id = Number(params.get('producto'));
+  if(id && PRODUCTS.some(p=>p.id===id)) openProductDetail(id);
 }
 
 function renderProductDetail(){
@@ -1347,6 +1392,10 @@ function renderProductDetail(){
       <span class="pd-price">${fmt(p.price)}</span>
       ${p.old?`<span class="pd-oldprice">${fmt(p.old)}</span>`:''}
     </div>
+    <button class="pd-share" onclick="shareProduct(${p.id})">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      Copiar enlace para compartir
+    </button>
     ${stockHtml}
     ${outOfStock ? '' : `
       <div class="pd-qty-row">
@@ -1645,6 +1694,19 @@ function toggleMenu(show){
 }
 document.getElementById('menuBtn').addEventListener('click', ()=>toggleMenu(true));
 
+/* Sincroniza el modal de producto con el botón "atrás"/"adelante" del navegador */
+window.addEventListener('popstate', ()=>{
+  const params = new URLSearchParams(window.location.search);
+  const id = Number(params.get('producto'));
+  if(id && PRODUCTS.some(p=>p.id===id)){
+    pdState = { productId: id, activeIndex: 0, qty: 1 };
+    renderProductDetail();
+    document.getElementById('modalOverlay').classList.add('show');
+  }else{
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+});
+
 /* ======================================================================
    TOAST
    ====================================================================== */
@@ -1697,7 +1759,10 @@ function openPolicy(key){
   document.getElementById('modalBody').innerHTML = `<h3 class="h-serif">${p.title}</h3>${p.body}`;
   document.getElementById('modalOverlay').classList.add('show');
 }
-function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
+  clearUrlParam('producto');
+}
 
 /* ======================================================================
    ADMIN PANEL (stock y precios) — protección básica solo para uso casual.
