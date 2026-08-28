@@ -1578,7 +1578,7 @@ function renderCartDrawer(){
             <label class="pay-option checked"><input type="radio" name="metodoPago" value="mp" checked onchange="markPayOption(this)">💳 Tarjeta / Mercado Pago (pago en línea)</label>
             <label class="pay-option"><input type="radio" name="metodoPago" value="Yape / Plin" onchange="markPayOption(this)">Yape / Plin</label>
             <label class="pay-option"><input type="radio" name="metodoPago" value="Transferencia bancaria" onchange="markPayOption(this)">Transferencia bancaria</label>
-            <label class="pay-option"><input type="radio" name="metodoPago" value="Pago contraentrega" onchange="markPayOption(this)">Pago contraentrega</label>
+            <label class="pay-option"><input type="radio" name="metodoPago" value="Recojo en tienda" onchange="markPayOption(this)">Recojo en tienda</label>
           </div>
         </div>
         <button type="submit" class="btn-gold" id="checkoutSubmitBtn" style="width:100%;">Pagar con Mercado Pago</button>
@@ -1803,7 +1803,7 @@ const POLICIES = {
     <p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>`},
   pagos:{title:'Medios de pago', body:`
     <p>Aceptamos los siguientes medios de pago:</p>
-    <ul><li>Tarjetas de crédito y débito Visa, Mastercard y American Express.</li><li>Yape, Plin y transferencia bancaria.</li><li>Pago contraentrega en Lima Metropolitana (según disponibilidad).</li><li>Cuotas sin intereses con tarjetas seleccionadas en compras mayores a S/ 300.</li></ul>
+    <ul><li>Tarjetas de crédito y débito Visa, Mastercard y American Express.</li><li>Yape, Plin y transferencia bancaria.</li><li>Recojo en tienda, pagando ahí mismo (según disponibilidad).</li><li>Cuotas sin intereses con tarjetas seleccionadas en compras mayores a S/ 300.</li></ul>
     <p>Todas las transacciones con tarjeta son procesadas mediante pasarelas de pago seguras y encriptadas.</p>`},
   garantia:{title:'Garantía de productos', body:`
     <p>Todos nuestros instrumentos cuentan con garantía contra defectos de fábrica:</p>
