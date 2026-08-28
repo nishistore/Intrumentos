@@ -553,7 +553,13 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
 }
 .admin-row:last-child{border-bottom:none;}
 .admin-row .aname{flex:1;min-width:140px;}
-.admin-row .aname b{display:block;font-size:12.8px;font-weight:600;}
+.admin-row .aname-input{
+  display:block;width:100%;border:none;background:none;padding:0 0 2px;
+  font-size:12.8px;font-weight:600;color:var(--cream);font-family:inherit;
+  border-bottom:1px dashed transparent;
+}
+.admin-row .aname-input:hover{border-bottom-color:var(--navy-line);}
+.admin-row .aname-input:focus{outline:none;border-bottom:1px solid var(--gold);}
 .admin-row .aname small{color:var(--muted);font-size:11px;}
 .admin-fields{display:flex;gap:8px;flex-wrap:wrap;}
 .admin-fields label{display:flex;flex-direction:column;gap:3px;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
@@ -1914,7 +1920,10 @@ function renderAdminPanel(){
         return `
         <div class="admin-row ${p.stock<=0?'zero':''}" data-row="${p.id}">
           <div class="admin-row-top">
-            <div class="aname"><b>${p.name}</b><small>${p.cat} · ${p.sub}</small></div>
+            <div class="aname">
+              <input type="text" value="${p.name}" id="name-${p.id}" class="aname-input">
+              <small>${p.cat} · ${p.sub}</small>
+            </div>
             <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">🖼️ Fotos y video</button>
           </div>
           <div class="admin-fields">
@@ -1968,6 +1977,8 @@ async function saveProduct(id, btnEl){
   const p = PRODUCTS.find(x=>x.id===id);
   if(!p) return;
 
+  const name = document.getElementById(`name-${id}`).value.trim();
+  if(!name){ showToast('El nombre no puede quedar vacío'); return; }
   const price = Math.max(0, parseFloat(document.getElementById(`price-${id}`).value) || 0);
   const oldVal = document.getElementById(`old-${id}`).value;
   const old = oldVal === '' ? null : Math.max(0, parseFloat(oldVal) || 0);
@@ -1987,13 +1998,13 @@ async function saveProduct(id, btnEl){
     const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
-      body: JSON.stringify({ price, old, badge, stock, image1: img1||null, image2: img2||null, image3: img3||null, video: video||null })
+      body: JSON.stringify({ name, price, old, badge, stock, image1: img1||null, image2: img2||null, image3: img3||null, video: video||null })
     });
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
 
     // refleja el cambio al instante, sin recargar toda la tienda
-    p.price = price; p.old = old; p.badge = badge; p.stock = stock;
+    p.name = name; p.price = price; p.old = old; p.badge = badge; p.stock = stock;
     p.images = [img1, img2, img3].filter(Boolean); p.video = video || null;
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
