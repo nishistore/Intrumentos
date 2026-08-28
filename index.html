@@ -206,8 +206,19 @@ nav.catbar::-webkit-scrollbar{display:none;}
 .qty-ctrl span{font-size:13px;min-width:16px;text-align:center;}
 .remove-btn{color:var(--err);font-size:11.5px;font-weight:600;margin-top:6px;background:none;border:none;}
 .cart-footer{padding:18px 20px 22px;border-top:1px solid var(--navy-line);}
-.cart-subtotal{display:flex;justify-content:space-between;font-size:15px;font-weight:700;margin-bottom:14px;}
+.cart-subtotal-block{margin-bottom:14px;}
+.cart-subtotal-block .row{display:flex;justify-content:space-between;font-size:13px;color:var(--ink);padding:3px 0;}
+.cart-subtotal-block .row.total{border-top:1px solid var(--navy-line);margin-top:6px;padding-top:8px;font-weight:700;color:var(--brown-heading);font-size:15px;}
 .cart-empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:13.5px;}
+
+/* barra de progreso "te falta S/X para envío gratis" */
+.ship-bar-wrap{margin:14px 16px 4px;padding:12px 14px;background:var(--navy-mid);border:1px solid var(--navy-line);border-radius:12px;}
+.ship-bar-track{height:6px;border-radius:4px;background:var(--navy-line);overflow:hidden;margin-bottom:8px;}
+.ship-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:4px;transition:width .3s ease;}
+.ship-bar-msg{font-size:11.5px;color:var(--ink);text-align:center;}
+.ship-bar-msg b{color:var(--brown-heading);}
+.ship-bar-wrap.done{background:rgba(46,125,79,.09);border-color:rgba(46,125,79,.3);}
+.ship-bar-wrap.done .ship-bar-msg{color:var(--ok);font-weight:700;}
 
 /* checkout form (inside cart drawer) */
 .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12.5px;background:none;border:none;padding:14px 16px 0;}
@@ -1472,6 +1483,33 @@ function cartSubtotal(){
   },0);
 }
 
+/* Envío: gratis desde FREE_SHIPPING_THRESHOLD, si no, se cobra SHIPPING_FEE */
+function shippingCost(subtotal){
+  if(subtotal<=0) return 0;
+  return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+}
+function cartTotal(){
+  const subtotal = cartSubtotal();
+  return subtotal + shippingCost(subtotal);
+}
+
+/* Barra de progreso "te faltan S/X para envío gratis" */
+function freeShippingBarHTML(subtotal){
+  if(subtotal<=0) return '';
+  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const pct = Math.min(100, (subtotal/FREE_SHIPPING_THRESHOLD)*100);
+  if(remaining<=0){
+    return `<div class="ship-bar-wrap done">
+      <div class="ship-bar-track"><div class="ship-bar-fill" style="width:100%"></div></div>
+      <div class="ship-bar-msg">🎉 ¡Tu pedido tiene envío gratis!</div>
+    </div>`;
+  }
+  return `<div class="ship-bar-wrap">
+    <div class="ship-bar-track"><div class="ship-bar-fill" style="width:${pct}%"></div></div>
+    <div class="ship-bar-msg">Te falta <b>${fmt(remaining)}</b> para envío gratis</div>
+  </div>`;
+}
+
 function renderCartDrawer(){
   const wrap = document.getElementById('cartItemsWrap');
   const footer = document.getElementById('cartFooter');
@@ -1499,14 +1537,18 @@ function renderCartDrawer(){
   if(state.checkoutOpen){
     head.textContent = 'Finalizar pedido';
     const subtotal = cartSubtotal();
+    const ship = shippingCost(subtotal);
     wrap.innerHTML = `
       <button class="back-link" onclick="backToCart()">${iconSvg('accessory','style="width:13px;height:13px;stroke:var(--muted)"')} Volver al carrito</button>
+      ${freeShippingBarHTML(subtotal)}
       <div class="order-summary-mini">
         ${state.cart.map(c=>{
           const p = PRODUCTS.find(x=>x.id===c.id);
           return `<div class="row"><span>${c.qty}× ${p.name}</span><span>${fmt(p.price*c.qty)}</span></div>`;
         }).join('')}
-        <div class="row total"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
+        <div class="row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
+        <div class="row"><span>Envío</span><span>${ship>0?fmt(ship):'Gratis'}</span></div>
+        <div class="row total"><span>Total</span><span>${fmt(cartTotal())}</span></div>
       </div>
       <form id="checkoutForm" class="checkout-form" onsubmit="submitOrder(event)">
         <div class="cfield">
@@ -1540,7 +1582,8 @@ function renderCartDrawer(){
   // default: cart items view
   head.textContent = 'Tu carrito';
   const subtotal = cartSubtotal();
-  wrap.innerHTML = state.cart.map(c=>{
+  const ship = shippingCost(subtotal);
+  wrap.innerHTML = freeShippingBarHTML(subtotal) + state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
     return `
     <div class="cart-item">
@@ -1558,7 +1601,11 @@ function renderCartDrawer(){
     </div>`;
   }).join('');
   footer.innerHTML = `
-    <div class="cart-subtotal"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
+    <div class="cart-subtotal-block">
+      <div class="row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
+      <div class="row"><span>Envío</span><span>${ship>0?fmt(ship):'Gratis'}</span></div>
+      <div class="row total"><span>Total</span><span>${fmt(cartTotal())}</span></div>
+    </div>
     <button class="btn-gold" style="width:100%;margin-bottom:10px;" onclick="goToCheckout()">Ir a pagar</button>
     <button class="btn-outline" style="width:100%;" onclick="toggleCart(false)">Seguir comprando</button>
   `;
@@ -1583,6 +1630,10 @@ function backToCart(){
 /* ⚠️ Reemplaza con tu número real de WhatsApp Business (código de país + número, sin +, espacios ni guiones) */
 const STORE_WHATSAPP = '51917100948';
 
+/* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
+const FREE_SHIPPING_THRESHOLD = 80;
+const SHIPPING_FEE = 15;
+
 /* ⚠️ Pega aquí la URL de tu Web App de Google Apps Script (ver mercadopago-backend.gs) */
 const MP_API_URL = 'https://script.google.com/macros/s/AKfycbxyrzUjXsG2wiE-gA2oWsQ1cBWEBNLK1Ffmav9TrbcLCw9jufGrb7ESqLxz-GzxRu-_/exec';
 
@@ -1600,6 +1651,7 @@ async function submitOrder(e){
   }
 
   const subtotal = cartSubtotal();
+  const ship = shippingCost(subtotal);
   const lineas = state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
     return `• ${c.qty}x ${p.name} — ${fmt(p.price*c.qty)}`;
@@ -1611,6 +1663,8 @@ async function submitOrder(e){
 ${lineas}
 
 Subtotal: ${fmt(subtotal)}
+Envío: ${ship>0?fmt(ship):'Gratis'}
+Total: ${fmt(cartTotal())}
 
 Cliente: ${nombre}
 Teléfono: ${telefono}
@@ -1641,6 +1695,10 @@ async function payWithMercadoPago(comprador){
     const p = PRODUCTS.find(x=>x.id===c.id);
     return { title: p.name, quantity: c.qty, unit_price: p.price };
   });
+  const ship = shippingCost(cartSubtotal());
+  if(ship>0){
+    items.push({ title: 'Costo de envío', quantity: 1, unit_price: ship });
+  }
 
   try{
     const res = await fetch(MP_API_URL, {
