@@ -916,6 +916,14 @@ const state = {
 
 const fmt = n => 'S/ ' + n.toLocaleString('es-PE',{minimumFractionDigits:0});
 
+/* Escapa texto antes de insertarlo como HTML — evita que alguien meta
+   código (XSS) escribiendo algo raro en, por ejemplo, el buscador. */
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 /* ======================================================================
    NAV BUILD (catbar, drawer, footer, bottom mobile nav)
    ====================================================================== */
@@ -1237,7 +1245,7 @@ function renderFiltersPanel(){
 function renderShop(){
   const list = getFilteredProducts();
   const catObj = CATEGORIES.find(c=>c.key===state.activeCat);
-  const title = state.search ? `Resultados para "${state.search}"` : (state.offersOnly ? 'Ofertas' : (catObj ? catObj.label : 'Todos los productos'));
+  const title = state.search ? `Resultados para "${escapeHtml(state.search)}"` : (state.offersOnly ? 'Ofertas' : (catObj ? catObj.label : 'Todos los productos'));
   return `
   <div class="wrap">
     <div class="section-title" style="margin-top:26px;">
