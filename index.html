@@ -433,7 +433,8 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 
 /* product detail (quick view) */
 .pd-gallery{position:relative;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:var(--navy-mid);margin-bottom:12px;}
-.pd-gallery img, .pd-gallery video, .pd-gallery iframe{width:100%;height:100%;object-fit:cover;border:none;display:block;}
+.pd-gallery img, .pd-gallery video{width:100%;height:100%;object-fit:contain;border:none;display:block;}
+.pd-gallery iframe{width:100%;height:100%;object-fit:cover;border:none;display:block;}
 .pd-gallery .pd-icon{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
 .pd-gallery .pd-icon svg{width:44%;height:44%;stroke:var(--gold);}
 .pd-thumbs{display:flex;gap:8px;margin-bottom:18px;}
