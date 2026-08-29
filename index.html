@@ -367,6 +367,22 @@ nav.catbar::-webkit-scrollbar{display:none;}
 .cat-card .cat-card-text{display:flex;flex-direction:column;gap:2px;}
 .cat-card b{font-size:13.5px;color:var(--brown-heading);line-height:1.25;}
 .cat-card small{color:var(--muted);font-size:11px;}
+@media (max-width:639px){
+  .cat-grid{
+    display:flex;gap:16px;overflow-x:auto;padding:2px 2px 12px;
+    scrollbar-width:none;-ms-overflow-style:none;
+  }
+  .cat-grid::-webkit-scrollbar{display:none;}
+  .cat-card{
+    flex:0 0 auto;flex-direction:column;justify-content:flex-start;text-align:center;
+    width:72px;gap:6px;padding:0;border:none;background:none;
+  }
+  .cat-card:hover{transform:none;box-shadow:none;}
+  .cat-card svg{width:22px;height:22px;padding:12px;background:var(--navy-mid);border-radius:50%;box-sizing:content-box;}
+  .cat-card .cat-card-text{align-items:center;}
+  .cat-card b{font-size:11px;font-weight:600;white-space:normal;line-height:1.2;}
+  .cat-card small{display:none;}
+}
 
 /* ---------------- shop layout ---------------- */
 .shop-layout{display:flex;gap:26px;align-items:flex-start;padding-bottom:60px;}
