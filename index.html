@@ -535,6 +535,29 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
 }
 .footer-col button.link:hover, .footer-col a:hover{color:var(--gold-light);}
 .footer-brand p{color:#aeb6cf;font-size:12.8px;line-height:1.7;margin-top:10px;max-width:36ch;}
+
+/* bloque "dónde estamos" — dirección + botón + mapa incrustado */
+.store-location{margin-top:6px;}
+.store-address{display:flex;align-items:flex-start;gap:7px;font-size:12.8px;line-height:1.5;margin:0 0 4px;color:var(--ink);}
+.store-address svg{margin-top:2px;stroke:var(--gold-dim);}
+.store-hours{font-size:11.5px;color:var(--muted);margin:0 0 10px;padding-left:22px;}
+.store-maps-btn{
+  display:inline-flex;align-items:center;gap:5px;max-width:100%;
+  background:none;border:1px solid var(--navy-line);border-radius:50px;
+  padding:6px 12px;font-size:11.5px;font-weight:600;color:var(--brown-heading);
+  margin-bottom:12px;transition:.2s ease;white-space:nowrap;
+}
+.store-maps-btn span{overflow:hidden;text-overflow:ellipsis;}
+.store-maps-btn:hover{border-color:var(--gold);color:var(--gold-dim);}
+.store-map-embed{width:100%;border-radius:10px;overflow:hidden;border:1px solid var(--navy-line);}
+.store-map-embed iframe{width:100%;height:100%;border:0;display:block;}
+
+/* variante para fondo navy oscuro (footer) */
+footer .store-address, footer .store-hours{color:#c7cede;}
+footer .store-address svg{stroke:var(--gold-light);}
+footer .store-maps-btn{border-color:rgba(255,255,255,.22);color:#e9ecf5;}
+footer .store-maps-btn:hover{border-color:var(--gold-light);color:var(--gold-light);}
+footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15) contrast(1.05);}
 .footer-bottom{
   border-top:1px solid rgba(255,255,255,.12);padding:18px 20px;
   text-align:center;color:#aeb6cf;font-size:11.5px;
@@ -613,7 +636,7 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
   .hero-arrow.prev{left:24px;}
   .hero-arrow.next{right:24px;}
   .cat-grid{grid-template-columns:repeat(4,1fr);}
-  .footer-grid{grid-template-columns:1.4fr 1fr 1fr 1fr;}
+  .footer-grid{grid-template-columns:1.1fr .75fr 1.3fr .75fr .75fr;}
 }
 @media (max-width:899px){
   .hide-desktop{display:flex;}
@@ -757,6 +780,10 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
       <div id="footerCats"></div>
     </div>
     <div class="footer-col">
+      <h4>Visítanos</h4>
+      <div id="footerLocation"></div>
+    </div>
+    <div class="footer-col">
       <h4>Ayuda</h4>
       <button class="link" onclick="openPolicy('envios')">Política de envíos</button>
       <button class="link" onclick="openPolicy('cambios')">Cambios y devoluciones</button>
@@ -891,6 +918,7 @@ function toEmbedUrl(url){
    ICONS (family-level line art, consistent brand style)
    ====================================================================== */
 const ICONS = {
+  pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/>',
   string:'<path d="M15 4l5 5M15 4c-3 0-9 6-9 9a4 4 0 1 0 4 4c3 0 9-6 9-9M6 18l-3 3"/><circle cx="9" cy="15" r="0.6" fill="currentColor"/>',
   keyboard:'<rect x="3" y="7" width="18" height="10" rx="1.5"/><path d="M7 7v6M11 7v6M15 7v6M19 7v6"/>',
   drum:'<ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M4 7v9a8 3 0 0 0 16 0V7"/><path d="M4 12a8 3 0 0 0 16 0"/>',
@@ -905,6 +933,25 @@ function iconSvg(type, extra){
   return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" '+(extra||'')+'>'+(ICONS[type]||ICONS.accessory)+'</svg>';
 }
 const chevron='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+/* Bloque de "dónde estamos": dirección + botón a Maps + mapa incrustado.
+   Se usa tanto en el footer como en la página de Contáctanos.
+   No necesita API key de Google — el iframe usa el modo de embed público. */
+function storeLocationHTML(mapHeight){
+  const mapQuery = encodeURIComponent('Instrumentos Chipao, ' + STORE_ADDRESS);
+  return `
+    <div class="store-location">
+      <p class="store-address">
+        ${iconSvg('pin','style="width:15px;height:15px;flex-shrink:0"')}
+        <span>${STORE_ADDRESS}</span>
+      </p>
+      <p class="store-hours">${STORE_HOURS}</p>
+      <a href="${STORE_MAPS_LINK}" target="_blank" rel="noopener" class="store-maps-btn"><span>Ver en Google Maps</span></a>
+      <div class="store-map-embed" style="height:${mapHeight}px;">
+        <iframe src="https://www.google.com/maps?q=${mapQuery}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+    </div>`;
+}
 
 /* ======================================================================
    STATE (in-memory only — no localStorage/sessionStorage per platform rules)
@@ -1647,6 +1694,11 @@ function backToCart(){
 /* ⚠️ Reemplaza con tu número real de WhatsApp Business (código de país + número, sin +, espacios ni guiones) */
 const STORE_WHATSAPP = '51917100948';
 
+/* Dirección de tu tienda física (para el mapa y el botón "Ver en Google Maps") */
+const STORE_ADDRESS = 'Av. Los Héroes 382, San Juan de Miraflores 15801, Perú';
+const STORE_MAPS_LINK = 'https://maps.app.goo.gl/y722ggq4K2s6Q5pK9';
+const STORE_HOURS = 'Lunes a domingo, 9:30 a.m. – 9:00 p.m.';
+
 /* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
 const FREE_SHIPPING_THRESHOLD = 80;
 const SHIPPING_FEE = 15;
@@ -1768,6 +1820,7 @@ function toggleMenu(show){
   document.getElementById('menuOverlay').classList.toggle('show', show);
 }
 document.getElementById('menuBtn').addEventListener('click', ()=>toggleMenu(true));
+document.getElementById('footerLocation').innerHTML = storeLocationHTML(100);
 
 /* Sincroniza el modal de producto con el botón "atrás"/"adelante" del navegador */
 window.addEventListener('popstate', ()=>{
@@ -1827,7 +1880,9 @@ const POLICIES = {
     <p>Puedes solicitar la actualización o eliminación de tus datos escribiéndonos a nuestro correo de contacto.</p>`},
   contacto:{title:'Contáctanos', body:`
     <p>Estamos para ayudarte con cualquier consulta sobre nuestros productos o tu pedido.</p>
-    <ul><li>WhatsApp: +51 900 000 000</li><li>Correo: contacto@chipao.com</li><li>Horario de atención: Lunes a sábado, 9:00 a.m. – 7:00 p.m.</li></ul>`}
+    <ul><li>WhatsApp: +51 917 100 948</li><li>Correo: contacto@chipao.com</li><li>Horario de atención: ${STORE_HOURS}</li></ul>
+    <h4 style="margin:18px 0 8px;font-size:13px;color:var(--brown-heading);">Nuestra tienda</h4>
+    ${storeLocationHTML(220)}`}
 };
 function openPolicy(key){
   const p = POLICIES[key];
