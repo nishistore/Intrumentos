@@ -948,7 +948,25 @@ const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
      }
    ]; */
 const HERO_SLIDES = [
-  { image: 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/hero-instrumentos-horizontal.jpg' }
+  { image: 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/hero-instrumentos-horizontal.jpg' },
+  {
+    illustration: 'escolar',
+    kicker: 'Temporada escolar',
+    title: 'Todo listo',
+    accent: 'para el colegio',
+    text: 'Kits completos de flauta, melódica, bombo y más al mejor precio.',
+    ctaPrimaryLabel: 'Ver kits escolares', ctaPrimaryCat: 'colegio',
+    ctaSecondaryLabel: 'Ver catálogo completo', ctaSecondaryCat: null
+  },
+  {
+    illustration: 'percusion',
+    kicker: 'Ofertas de la semana',
+    title: 'Ritmo al mejor',
+    accent: 'precio',
+    text: 'Cajones, bombos y tarolas con descuento. Aprovecha antes de que se agoten.',
+    ctaPrimaryLabel: 'Ver percusión', ctaPrimaryCat: 'percusion',
+    ctaSecondaryLabel: 'Ver catálogo completo', ctaSecondaryCat: null
+  }
 ];
 let heroSlideIndex = 0;
 
@@ -1331,9 +1349,10 @@ function heroCopyHTML(){
    HERO_SLIDES) o la ilustración de bienvenida como respaldo. */
 function renderHeroSlide(){
   const slide = HERO_SLIDES[heroSlideIndex];
-  return slide && slide.image
-    ? `<img src="${slide.image}" alt="Instrumentos musicales Chipao Music" loading="eager">`
-    : heroIllustration();
+  if(slide && slide.image) return `<img src="${slide.image}" alt="Instrumentos musicales Chipao Music" loading="eager">`;
+  if(slide && slide.illustration === 'escolar') return heroIllustrationEscolar();
+  if(slide && slide.illustration === 'percusion') return heroIllustrationPercusion();
+  return heroIllustration();
 }
 
 /* Mueve el carrusel del banner (si hay 2+ slides en HERO_SLIDES), con un
@@ -1387,6 +1406,68 @@ function heroIllustration(){
     <g transform="translate(1420,60)" stroke="#16224a" stroke-width="7" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".7">
       <path d="M60 0c0 70 -70 70 -70 160s70 100 70 160"/>
       <ellipse cx="60" cy="230" rx="46" ry="30"/>
+    </g>
+    <text x="1180" y="670" text-anchor="middle" font-family="Poppins, sans-serif" font-size="16" fill="#8a8272" letter-spacing="1">Reemplaza esta ilustración con tu foto en HERO_SLIDES</text>
+  </svg>`;
+}
+
+/* Ilustración temática: temporada escolar (flauta dulce + melódica) */
+function heroIllustrationEscolar(){
+  return `
+  <svg viewBox="0 0 1600 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
+    <defs>
+      <linearGradient id="heroGradEscolar" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#f7f3ea"/>
+        <stop offset="52%" stop-color="#f2ecdd"/>
+        <stop offset="100%" stop-color="#e6dcc2"/>
+      </linearGradient>
+    </defs>
+    <rect width="1600" height="700" fill="url(#heroGradEscolar)"/>
+    <ellipse cx="1180" cy="640" rx="420" ry="26" fill="#16224a" opacity=".08"/>
+    <g transform="translate(1030,90)" stroke="#16224a" stroke-width="9" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".85">
+      <rect x="0" y="0" width="46" height="420" rx="10" fill="#16224a" opacity=".06"/>
+      <circle cx="23" cy="110" r="7" fill="#16224a" stroke="none"/>
+      <circle cx="23" cy="160" r="7" fill="#16224a" stroke="none"/>
+      <circle cx="23" cy="210" r="7" fill="#16224a" stroke="none"/>
+      <circle cx="23" cy="260" r="7" fill="#16224a" stroke="none"/>
+      <path d="M0 420 q23 36 46 0"/>
+    </g>
+    <g transform="translate(1150,340)" stroke="#d6a13c" stroke-width="8" fill="none" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="0" y="0" width="330" height="110" rx="14" fill="#d6a13c" opacity=".14"/>
+      ${Array.from({length:12}).map((_,i)=>`<line x1="${16+i*26}" y1="0" x2="${16+i*26}" y2="110" stroke-width="4"/>`).join('')}
+    </g>
+    <g transform="translate(1400,110)" stroke="#16224a" stroke-width="7" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".6">
+      <path d="M0 0c40 60 40 120 0 180"/>
+      <circle cx="6" cy="0" r="8" fill="#16224a" stroke="none"/>
+    </g>
+    <text x="1180" y="670" text-anchor="middle" font-family="Poppins, sans-serif" font-size="16" fill="#8a8272" letter-spacing="1">Reemplaza esta ilustración con tu foto en HERO_SLIDES</text>
+  </svg>`;
+}
+
+/* Ilustración temática: percusión / ofertas (cajón peruano) */
+function heroIllustrationPercusion(){
+  return `
+  <svg viewBox="0 0 1600 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
+    <defs>
+      <linearGradient id="heroGradPercusion" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#f7f3ea"/>
+        <stop offset="52%" stop-color="#f2ecdd"/>
+        <stop offset="100%" stop-color="#e6dcc2"/>
+      </linearGradient>
+    </defs>
+    <rect width="1600" height="700" fill="url(#heroGradPercusion)"/>
+    <ellipse cx="1180" cy="640" rx="420" ry="26" fill="#16224a" opacity=".08"/>
+    <g transform="translate(1030,180)" stroke="#16224a" stroke-width="9" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".85">
+      <rect x="0" y="0" width="230" height="300" rx="18" fill="#16224a" opacity=".07"/>
+      <circle cx="115" cy="115" r="46"/>
+    </g>
+    <g transform="translate(1330,140)" stroke="#d6a13c" stroke-width="7" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".8">
+      <path d="M0 70q45-70 100 0"/>
+      <path d="M25 110q60-95 135 0" opacity=".55"/>
+    </g>
+    <g transform="translate(1150,500)" stroke="#16224a" stroke-width="8" stroke-linecap="round" opacity=".7">
+      <path d="M0 20L140 -20"/>
+      <path d="M0 -10L140 30"/>
     </g>
     <text x="1180" y="670" text-anchor="middle" font-family="Poppins, sans-serif" font-size="16" fill="#8a8272" letter-spacing="1">Reemplaza esta ilustración con tu foto en HERO_SLIDES</text>
   </svg>`;
