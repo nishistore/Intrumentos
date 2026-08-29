@@ -182,20 +182,20 @@ nav.catbar::-webkit-scrollbar{display:none;}
   max-width:1280px;margin:0 auto;
   white-space:nowrap;justify-content:center;
 }
-.catbar-inner button{
-  background:transparent;border:none;
+.catbar-inner a{
+  background:transparent;border:none;cursor:pointer;
   color:var(--brown-heading);font-size:13.5px;font-weight:600;
   padding:2px 0;position:relative;
   transition:.2s ease;
 }
-.catbar-inner button::after{
+.catbar-inner a::after{
   content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;
   background:var(--gold);transform:scaleX(0);transition:transform .2s ease;
 }
-.catbar-inner button:hover{color:var(--gold-dim);}
-.catbar-inner button:hover::after{transform:scaleX(1);}
-.catbar-inner button.active{color:var(--gold-dim);}
-.catbar-inner button.active::after{transform:scaleX(1);}
+.catbar-inner a:hover{color:var(--gold-dim);}
+.catbar-inner a:hover::after{transform:scaleX(1);}
+.catbar-inner a.active{color:var(--gold-dim);}
+.catbar-inner a.active::after{transform:scaleX(1);}
 
 /* ---------------- mobile drawer (menu) ---------------- */
 .overlay{
@@ -529,7 +529,7 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 .stock-warning{font-size:11.5px;color:#a05a1a;font-weight:600;}
 .product-info{padding:13px 14px 15px;display:flex;flex-direction:column;gap:6px;flex:1;}
 .product-cat{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
-.product-name{font-size:13.5px;font-weight:600;line-height:1.35;min-height:36px;}
+.product-name{display:block;font-size:13.5px;font-weight:600;line-height:1.35;min-height:36px;}
 .product-price-row{display:flex;align-items:baseline;gap:8px;margin-top:2px;}
 .product-price{font-size:16.5px;font-weight:800;color:var(--brown-heading);}
 .product-oldprice{font-size:12px;color:var(--muted);text-decoration:line-through;}
@@ -1049,20 +1049,102 @@ function escapeHtml(str){
 }
 
 /* ======================================================================
+   ENRUTAMIENTO CON URLS REALES (SEO)
+   Cada categoría y producto tiene su propia URL (/categoria/x,
+   /producto/id-nombre) en vez de vivir todo bajo "/". Así Google puede
+   indexar "guitarras" y "teclados" como páginas distintas.
+   ====================================================================== */
+const DEFAULT_META_DESCRIPTION = 'Chipao Music - Tienda de instrumentos musicales en Perú. Guitarras, teclados, percusión, viento, audio y accesorios. Envíos a todo el país y múltiples formas de pago.';
+const SITE_TITLE = 'Chipao Music | Instrumentos Musicales en Perú';
+
+function slugify(str){
+  return String(str).toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+
+/* Cambia la URL de la barra de direcciones sin recargar la página.
+   push=true agrega una entrada nueva al historial (clic normal);
+   push=false la reemplaza (carga inicial o navegación atrás/adelante). */
+function navigateTo(path, push){
+  if(push === false){ history.replaceState({}, '', path); return; }
+  if(window.location.pathname === path) return;
+  history.pushState({}, '', path);
+}
+
+/* Actualiza <title>, meta description, og:* y canonical para la vista actual */
+function setPageMeta(title, description){
+  document.title = title;
+  const descTag = document.querySelector('meta[name="description"]');
+  if(descTag) descTag.setAttribute('content', description);
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if(ogTitle) ogTitle.setAttribute('content', title);
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if(ogDesc) ogDesc.setAttribute('content', description);
+  const canon = document.querySelector('link[rel="canonical"]');
+  if(canon) canon.setAttribute('href', window.location.origin + window.location.pathname);
+}
+
+/* Reconstruye la URL/meta de la página que queda "debajo" de un modal
+   de producto cerrado (según el estado actual: inicio, categoría u ofertas) */
+function currentViewPath(){
+  if(state.view!=='shop') return '/';
+  if(state.offersOnly) return '/ofertas';
+  if(state.activeCat){
+    const c = CATEGORIES.find(x=>x.key===state.activeCat);
+    if(c) return `/categoria/${c.key}`;
+  }
+  return '/tienda';
+}
+function applyCurrentViewMeta(){
+  if(state.view!=='shop'){ setPageMeta(SITE_TITLE, DEFAULT_META_DESCRIPTION); return; }
+  if(state.offersOnly){ setPageMeta('Ofertas | Chipao Music', 'Instrumentos musicales en oferta en Perú: descuentos en guitarras, teclados, percusión y más.'); return; }
+  if(state.activeCat){
+    const c = CATEGORIES.find(x=>x.key===state.activeCat);
+    if(c){ setPageMeta(`${c.label} | Chipao Music`, `Compra ${c.label.toLowerCase()} en Perú: ${c.subs.map(s=>s.label).join(', ')}. Envíos a todo el país.`); return; }
+  }
+  setPageMeta('Catálogo | Chipao Music', DEFAULT_META_DESCRIPTION);
+}
+
+/* Lee la URL actual y muestra la categoría/producto/oferta que le
+   corresponde. Se usa al cargar la página y al usar atrás/adelante. */
+function routeFromPath(push){
+  const path = window.location.pathname;
+  const productMatch = path.match(/^\/producto\/(\d+)/);
+  if(productMatch){
+    const id = Number(productMatch[1]);
+    if(PRODUCTS.some(p=>p.id===id)){
+      openProductDetail(id, push);
+      return true;
+    }
+  }
+  document.getElementById('modalOverlay').classList.remove('show');
+  const catMatch = path.match(/^\/categoria\/([a-z]+)$/);
+  if(catMatch && CATEGORIES.some(c=>c.key===catMatch[1])){
+    goShop(catMatch[1], null, push);
+    return true;
+  }
+  if(path === '/ofertas'){ goOffers(push); return true; }
+  if(path === '/tienda'){ goShop(null, null, push); return true; }
+  if(path === '/'){ goHome(push); return true; }
+  return false;
+}
+
+/* ======================================================================
    NAV BUILD (catbar, drawer, footer, bottom mobile nav)
    ====================================================================== */
 function buildNavLists(){
   document.getElementById('catbarInner').innerHTML = CATEGORIES.map(c=>
-    `<button class="${state.view==='shop'&&state.activeCat===c.key?'active':''}" onclick="goShop('${c.key}')">${c.label}</button>`
-  ).join('') + `<button class="${state.view==='shop'&&!state.activeCat?'active':''}" onclick="goShop(null)">Todos</button>`;
+    `<a href="/categoria/${c.key}" class="${state.view==='shop'&&state.activeCat===c.key?'active':''}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
+  ).join('') + `<a href="/tienda" class="${state.view==='shop'&&!state.activeCat?'active':''}" onclick="goShop(null);return false;">Todos</a>`;
 
   document.getElementById('drawerCats').innerHTML = CATEGORIES.map(c=>
-    `<a class="cat-link" href="#" onclick="toggleMenu(false);goShop('${c.key}');return false;">${c.label}</a>` +
-    c.subs.map(s=>`<a class="sub-link" href="#" onclick="toggleMenu(false);goShop('${c.key}','${s.key}');return false;">${s.label}</a>`).join('')
+    `<a class="cat-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}');return false;">${c.label}</a>` +
+    c.subs.map(s=>`<a class="sub-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}','${s.key}');return false;">${s.label}</a>`).join('')
   ).join('');
 
   document.getElementById('footerCats').innerHTML = CATEGORIES.map(c=>
-    `<button class="link" onclick="goShop('${c.key}')">${c.label}</button>`
+    `<a class="link" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
   ).join('');
 
   buildBottomNav();
@@ -1092,27 +1174,34 @@ function buildBottomNav(){
 /* ======================================================================
    ROUTING
    ====================================================================== */
-function goHome(){
+function goHome(push){
   state.view='home';
+  navigateTo('/', push);
+  setPageMeta(SITE_TITLE, DEFAULT_META_DESCRIPTION);
   render();
-  window.scrollTo({top:0,behavior:'smooth'});
+  if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
 }
-function goShop(catKey, subKey){
+function goShop(catKey, subKey, push){
   state.view='shop';
   state.activeCat = catKey || null;
   state.activeSubs = new Set(subKey?[subKey]:[]);
   state.offersOnly = false;
   state.priceMin=0; state.priceMax=PRICE_MAX; state.search='';
+  const catObj = catKey ? CATEGORIES.find(c=>c.key===catKey) : null;
+  navigateTo(catObj ? `/categoria/${catObj.key}` : '/tienda', push);
+  applyCurrentViewMeta();
   render();
-  window.scrollTo({top:0,behavior:'smooth'});
+  if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
 }
-function goOffers(){
+function goOffers(push){
   state.view='shop';
   state.activeCat=null; state.activeSubs=new Set();
   state.offersOnly=true;
   state.priceMin=0; state.priceMax=PRICE_MAX; state.search='';
+  navigateTo('/ofertas', push);
+  applyCurrentViewMeta();
   render();
-  window.scrollTo({top:0,behavior:'smooth'});
+  if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
 }
 function doSearch(mobile){
   const val = document.getElementById(mobile?'searchInputMobile':'searchInput').value.trim();
@@ -1165,13 +1254,13 @@ function renderHome(){
     <div class="section-title"><h2 class="h-serif">Busca por categoría</h2><span>${CATEGORIES.length} categorías</span></div>
     <div class="cat-grid">
       ${CATEGORIES.map(c=>`
-        <button class="cat-card" onclick="goShop('${c.key}')">
+        <a class="cat-card" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
           ${iconSvg(c.icon)}
           <span class="cat-card-text">
             <b>${c.label}</b>
             <small>${c.subs.length} línea${c.subs.length>1?'s':''}</small>
           </span>
-        </button>`).join('')}
+        </a>`).join('')}
     </div>
 
     <div class="section-title"><h2 class="h-serif">Destacados</h2><span>Selección de la casa</span></div>
@@ -1283,17 +1372,18 @@ function productCard(p){
   const lowStock = stock > 0 && stock <= 3;
   const images = p.images || [];
   const hasVideo = !!p.video;
+  const productHref = `/producto/${p.id}-${slugify(p.name)}`;
   return `
   <div class="product-card">
-    <div class="product-photo" onclick="openProductDetail(${p.id})" style="cursor:pointer;">
+    <a class="product-photo" href="${productHref}" onclick="openProductDetail(${p.id});return false;" style="cursor:pointer;">
       ${outOfStock ? `<span class="badge out">Agotado</span>` : (p.badge?`<span class="badge">${p.badge}</span>`:'')}
       ${(!outOfStock && p.old)?`<span class="badge discount">-${Math.round((1-p.price/p.old)*100)}%</span>`:''}
       ${images[0] ? `<img src="${images[0]}" alt="${p.name}" class="product-photo-img" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
       ${hasVideo ? `<span class="video-badge">▶ Video</span>` : ''}
-    </div>
+    </a>
     <div class="product-info">
       <div class="product-cat">${subLabel}</div>
-      <div class="product-name" onclick="openProductDetail(${p.id})" style="cursor:pointer;">${p.name}</div>
+      <a class="product-name" href="${productHref}" onclick="openProductDetail(${p.id});return false;" style="cursor:pointer;">${p.name}</a>
       <div class="product-price-row">
         <span class="product-price">${fmt(p.price)}</span>
         ${p.old?`<span class="product-oldprice">${fmt(p.old)}</span>`:''}
@@ -1441,18 +1531,21 @@ function toggleFiltersPanel(show){
    ====================================================================== */
 let pdState = { productId: null, activeIndex: 0, qty: 1 };
 
-function openProductDetail(id){
+function openProductDetail(id, push){
   const p = PRODUCTS.find(x=>x.id===id);
   if(!p) return;
   pdState = { productId: id, activeIndex: 0, qty: 1 };
   renderProductDetail();
   document.getElementById('modalOverlay').classList.add('show');
-  setUrlParam('producto', id);
+  navigateTo(`/producto/${id}-${slugify(p.name)}`, push);
+  const priceLine = `S/ ${p.price}${p.old ? ` (antes S/ ${p.old})` : ''}`;
+  setPageMeta(`${p.name} | Chipao Music`, `${p.name} en Perú — ${priceLine}. Envíos a todo el país, tienda física en San Juan de Miraflores.`);
 }
 
 /* Copia el link directo del producto para mandarlo a alguien más */
 function shareProduct(id){
-  setUrlParam('producto', id);
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(p) navigateTo(`/producto/${id}-${slugify(p.name)}`);
   const url = window.location.href;
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(url)
@@ -1480,9 +1573,15 @@ function clearUrlParam(key){
 
 /* Si alguien abre un link con ?producto=ID, muestra ese producto directo */
 function checkProductUrlTrigger(){
+  // Links viejos con ?producto=ID (de antes de tener URLs reales):
+  // se abren igual y la URL se actualiza sola al formato nuevo.
   const params = new URLSearchParams(window.location.search);
-  const id = Number(params.get('producto'));
-  if(id && PRODUCTS.some(p=>p.id===id)) openProductDetail(id);
+  const legacyId = Number(params.get('producto'));
+  if(legacyId && PRODUCTS.some(p=>p.id===legacyId)){
+    openProductDetail(legacyId, false);
+    return;
+  }
+  routeFromPath(false);
 }
 
 function renderProductDetail(){
@@ -1890,17 +1989,10 @@ function toggleMenu(show){
 document.getElementById('menuBtn').addEventListener('click', ()=>toggleMenu(true));
 document.getElementById('footerLocation').innerHTML = storeLocationHTML(100);
 
-/* Sincroniza el modal de producto con el botón "atrás"/"adelante" del navegador */
+/* Sincroniza la página (categoría/producto/ofertas/inicio) con el botón
+   "atrás"/"adelante" del navegador */
 window.addEventListener('popstate', ()=>{
-  const params = new URLSearchParams(window.location.search);
-  const id = Number(params.get('producto'));
-  if(id && PRODUCTS.some(p=>p.id===id)){
-    pdState = { productId: id, activeIndex: 0, qty: 1 };
-    renderProductDetail();
-    document.getElementById('modalOverlay').classList.add('show');
-  }else{
-    document.getElementById('modalOverlay').classList.remove('show');
-  }
+  routeFromPath(false);
 });
 
 /* ======================================================================
@@ -1958,8 +2050,13 @@ function openPolicy(key){
   document.getElementById('modalOverlay').classList.add('show');
 }
 function closeModal(){
+  const wasProduct = !!pdState.productId;
   document.getElementById('modalOverlay').classList.remove('show');
-  clearUrlParam('producto');
+  if(wasProduct){
+    pdState = { productId: null, activeIndex: 0, qty: 1 };
+    navigateTo(currentViewPath());
+    applyCurrentViewMeta();
+  }
 }
 
 /* ======================================================================
