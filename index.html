@@ -2109,6 +2109,24 @@ function toggleMenu(show){
   document.getElementById('menuOverlay').classList.toggle('show', show);
 }
 document.getElementById('menuBtn').addEventListener('click', ()=>toggleMenu(true));
+
+/* Desliza con el dedo para cambiar de slide en el hero (celular) */
+let heroTouchStartX = null, heroTouchStartY = null;
+document.addEventListener('touchstart', (e)=>{
+  if(!e.target.closest('.hero')) return;
+  heroTouchStartX = e.touches[0].clientX;
+  heroTouchStartY = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', (e)=>{
+  if(heroTouchStartX === null) return;
+  const touch = e.changedTouches[0];
+  const dx = touch.clientX - heroTouchStartX;
+  const dy = touch.clientY - heroTouchStartY;
+  heroTouchStartX = null; heroTouchStartY = null;
+  if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5){
+    changeHeroSlide(dx < 0 ? 1 : -1);
+  }
+}, {passive:true});
 document.getElementById('footerLocation').innerHTML = storeLocationHTML(100);
 
 /* Sincroniza la página (categoría/producto/ofertas/inicio) con el botón
