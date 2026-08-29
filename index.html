@@ -851,7 +851,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span id="toastMsg"></span></div>
 
 <!-- ============ WHATSAPP FLOTANTE ============ -->
-<a class="whatsapp-float" href="https://wa.me/51917100948?text=Hola%2C%20quiero%20hablar%20con%20un%20asesor" target="_blank" rel="noopener" aria-label="Chatea con un asesor por WhatsApp">
+<a class="whatsapp-float" href="https://wa.me/51917100948?text=Hola%2C%20quiero%20hablar%20con%20un%20asesor" target="_blank" rel="noopener" aria-label="Chatea con un asesor por WhatsApp" onclick="trackAdsConversion('whatsapp')">
   <svg viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.79.47 3.53 1.36 5.07L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.24 0 4.35.87 5.93 2.45a8.23 8.23 0 0 1 2.42 5.79c0 4.55-3.7 8.25-8.35 8.25a8.3 8.3 0 0 1-4.24-1.16l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.27-4.42c0-4.55 3.7-8.2 8.3-8.2zm-3.61 4.6c-.16 0-.42.06-.64.31-.22.25-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.16 1.7 2.72 4.19 3.71 2.06.83 2.48.66 2.93.62.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.45-.71-1.68-.79-.22-.08-.39-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42h-.47z"/></svg>
 </a>
 
@@ -1791,6 +1791,7 @@ function addToCart(id, btnEl){
   if(existing) existing.qty++; else state.cart.push({id, qty:1});
   updateCartCount();
   showToast('Producto agregado al carrito');
+  trackAdsConversion('addToCart');
   if(btnEl){
     btnEl.classList.add('added');
     const original = btnEl.innerHTML;
@@ -1995,6 +1996,51 @@ const SHIPPING_FEE = 15;
 /* ⚠️ Pega aquí la URL de tu Web App de Google Apps Script (ver mercadopago-backend.gs) */
 const MP_API_URL = 'https://script.google.com/macros/s/AKfycbxyrzUjXsG2wiE-gA2oWsQ1cBWEBNLK1Ffmav9TrbcLCw9jufGrb7ESqLxz-GzxRu-_/exec';
 
+/* ======================================================================
+   SEGUIMIENTO DE CONVERSIONES — GOOGLE ADS
+   Cuando crees tu cuenta de Google Ads y actives el seguimiento de
+   conversiones (Herramientas > Conversiones > Nueva > Sitio web), Google
+   te da un "ID de conversión" (empieza con AW-) y una "etiqueta" por
+   cada acción que quieras medir (ej. una para WhatsApp, otra para
+   "agregar al carrito", otra para compra). Pega esos valores abajo —
+   mientras digan "PEGA_AQUI", el seguimiento queda apagado y no se
+   carga ningún script de Google, así que no rompe nada dejarlo así.
+   ====================================================================== */
+const GOOGLE_ADS_CONVERSION_ID = 'AW-PEGA_AQUI_TU_ID'; // ej. 'AW-123456789'
+const GOOGLE_ADS_LABELS = {
+  whatsapp:   'PEGA_AQUI_ETIQUETA_WHATSAPP',   // clic en el botón flotante de WhatsApp
+  addToCart:  'PEGA_AQUI_ETIQUETA_CARRITO',    // clic en "Agregar al carrito"
+  purchase:   'PEGA_AQUI_ETIQUETA_COMPRA'      // pedido confirmado (WhatsApp o Mercado Pago)
+};
+
+function googleAdsConfigured(){
+  return GOOGLE_ADS_CONVERSION_ID && !GOOGLE_ADS_CONVERSION_ID.includes('PEGA_AQUI');
+}
+
+/* Carga el script de Google (gtag.js) solo si ya pegaste tu ID real */
+function loadGoogleAdsTracking(){
+  if(!googleAdsConfigured()) return;
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_CONVERSION_ID}`;
+  document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function(){ dataLayer.push(arguments); };
+  gtag('js', new Date());
+  gtag('config', GOOGLE_ADS_CONVERSION_ID);
+}
+
+/* Avisa a Google Ads que ocurrió una conversión (whatsapp/addToCart/purchase).
+   No hace nada si aún no configuraste tus etiquetas arriba. */
+function trackAdsConversion(labelKey, value){
+  if(!googleAdsConfigured() || typeof gtag !== 'function') return;
+  const label = GOOGLE_ADS_LABELS[labelKey];
+  if(!label || label.includes('PEGA_AQUI')) return;
+  const params = { send_to: `${GOOGLE_ADS_CONVERSION_ID}/${label}` };
+  if(value){ params.value = value; params.currency = 'PEN'; }
+  gtag('event', 'conversion', params);
+}
+
 async function submitOrder(e){
   e.preventDefault();
   const nombre = document.getElementById('coNombre').value.trim();
@@ -2031,6 +2077,7 @@ Método de pago: ${metodoPago}`;
 
   const url = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
   window.open(url, '_blank', 'noopener');
+  trackAdsConversion('purchase', cartTotal());
 
   state.orderPlaced = true;
   state.checkoutOpen = false;
@@ -2083,6 +2130,7 @@ function checkPaymentReturnStatus(){
   const status = params.get('status');
   if(!status) return;
   if(status === 'approved'){
+    trackAdsConversion('purchase', cartTotal());
     state.cart = []; updateCartCount();
     showToast('✅ Pago aprobado. ¡Gracias por tu compra!');
   }else if(status === 'pending'){
@@ -2395,6 +2443,7 @@ document.getElementById('app').innerHTML = `
     <p>Cargando productos...</p>
   </div>`;
 fetchProducts();
+loadGoogleAdsTracking();
 </script>
 </body>
 </html>
