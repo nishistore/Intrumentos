@@ -41,6 +41,11 @@
     "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
     "opens": "09:30",
     "closes": "21:00"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.5",
+    "reviewCount": "76"
   }
 }
 </script>
@@ -331,6 +336,11 @@ nav.catbar::-webkit-scrollbar{display:none;}
 .hero-copy-content{transition:opacity .38s ease;opacity:1;}
 .hero-copy-content.fading{opacity:0;}
 .hero .kicker{font-size:11px;letter-spacing:.25em;color:var(--brown-heading);font-weight:600;text-transform:uppercase;opacity:.85;}
+.rating-badge{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;}
+.rating-badge svg{width:16px;height:16px;flex-shrink:0;}
+.rating-badge b{color:var(--brown-heading);font-weight:800;}
+.rating-badge span{color:var(--muted);}
+.rating-badge:hover span{color:var(--gold-dim);text-decoration:underline;}
 .hero h1{font-size:28px;line-height:1.15;margin:10px 0 12px;
   color:var(--brown-heading);
 }
@@ -1283,6 +1293,7 @@ function heroCopyHTML(){
   const secondaryCat = s.ctaSecondaryCat ? `'${s.ctaSecondaryCat}'` : 'null';
   return `
     <div class="kicker">${s.kicker}</div>
+    ${ratingBadgeHTML()}
     <h1 class="h-serif">${s.title} <span class="accent">${s.accent}</span></h1>
     <p>${s.text}</p>
     <div class="hero-actions">
@@ -1865,6 +1876,16 @@ const STORE_WHATSAPP = '51917100948';
 const STORE_ADDRESS = 'Av. Los Héroes 382, San Juan de Miraflores 15801, Perú';
 const STORE_MAPS_LINK = 'https://maps.app.goo.gl/y722ggq4K2s6Q5pK9';
 const STORE_HOURS = 'Lunes a domingo, 9:30 a.m. – 9:00 p.m.';
+
+/* Calificación real en Google — actualízala cuando cambie tu promedio/reseñas */
+const STORE_RATING = 4.5;
+const STORE_REVIEW_COUNT = 76;
+const ratingStarSvg = '<svg viewBox="0 0 24 24" fill="#d6a13c"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>';
+function ratingBadgeHTML(){
+  return `<a class="rating-badge" href="${STORE_MAPS_LINK}" target="_blank" rel="noopener">
+    ${ratingStarSvg}<b>${STORE_RATING}</b><span>· ${STORE_REVIEW_COUNT} reseñas en Google</span>
+  </a>`;
+}
 
 /* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
 const FREE_SHIPPING_THRESHOLD = 80;
