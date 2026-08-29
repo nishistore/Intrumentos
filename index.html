@@ -47,7 +47,12 @@
     "@type": "AggregateRating",
     "ratingValue": "4.5",
     "reviewCount": "76"
-  }
+  },
+  "sameAs": [
+    "https://www.facebook.com/instrumentoschipao",
+    "https://www.instagram.com/instrumentos_chipao",
+    "https://www.tiktok.com/@instrumentosmusicale"
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -596,6 +601,15 @@ footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);marg
 }
 .footer-col button.link:hover, .footer-col a:hover{color:var(--gold-light);}
 .footer-brand p{color:#aeb6cf;font-size:12.8px;line-height:1.7;margin-top:10px;max-width:36ch;}
+.footer-social{display:flex;gap:10px;margin-top:16px;}
+.footer-social a{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s ease;
+}
+.footer-social a:hover{background:rgba(255,255,255,.18);}
+.footer-social svg{width:16px;height:16px;flex-shrink:0;}
 
 /* bloque "dónde estamos" — dirección + botón + mapa incrustado */
 .store-location{margin-top:6px;}
@@ -852,6 +866,11 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
         <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-chipao.png" alt="Chipao Music" class="logo-img">
       </div>
       <p>Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/instrumentoschipao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M13.5 21v-7.8h2.6l.4-3h-3v-1.9c0-.87.24-1.46 1.5-1.46h1.6V4.14C15.94 4.06 15.08 4 14.06 4c-2.13 0-3.6 1.3-3.6 3.68v2.05H7.9v3h2.56V21h3.04z"/></svg></a>
+        <a href="https://www.instagram.com/instrumentos_chipao" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#e9ecf5" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1" fill="#e9ecf5" stroke="none"/></svg></a>
+        <a href="https://www.tiktok.com/@instrumentosmusicale" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M16.5 2c.4 2.2 2 3.9 4.2 4.2v3.1c-1.5 0-2.9-.5-4.2-1.3v6.8a6.3 6.3 0 1 1-6.3-6.3c.3 0 .6 0 .9.1v3.2a3.1 3.1 0 1 0 2.2 3v-12.8h3.2z"/></svg></a>
+      </div>
     </div>
     <div class="footer-col">
       <h4>Categorías</h4>
