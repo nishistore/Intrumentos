@@ -1357,11 +1357,25 @@ function renderHeroSlide(){
 
 /* Mueve el carrusel del banner (si hay 2+ slides en HERO_SLIDES), con un
    fundido suave (crossfade) del texto y la imagen a la vez. */
+/* Avance automático del carrusel del hero cada 10s. Se reinicia cada vez
+   que hay un cambio de slide (automático o manual) para que no se sienta
+   como que "salta" justo después de que el usuario lo cambió a mano. */
+let heroAutoplayTimer = null;
+function startHeroAutoplay(){
+  stopHeroAutoplay();
+  if(HERO_SLIDES.length < 2) return;
+  heroAutoplayTimer = setInterval(()=>changeHeroSlide(1), 10000);
+}
+function stopHeroAutoplay(){
+  if(heroAutoplayTimer){ clearInterval(heroAutoplayTimer); heroAutoplayTimer = null; }
+}
+
 function changeHeroSlide(dir){
   if(HERO_SLIDES.length < 2) return;
   const bg = document.getElementById('heroBg');
   const copy = document.getElementById('heroCopy');
   if(!bg || !copy) return;
+  startHeroAutoplay();
   bg.classList.add('fading');
   copy.classList.add('fading');
 
@@ -2436,6 +2450,7 @@ async function saveProduct(id, btnEl){
 function render(){
   document.getElementById('app').innerHTML = state.view==='home' ? renderHome() : renderShop();
   buildNavLists();
+  if(state.view==='home') startHeroAutoplay(); else stopHeroAutoplay();
 }
 document.getElementById('app').innerHTML = `
   <div class="empty-state" style="padding-top:140px;">
