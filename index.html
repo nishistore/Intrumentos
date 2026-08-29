@@ -933,6 +933,7 @@ function iconSvg(type, extra){
   return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" '+(extra||'')+'>'+(ICONS[type]||ICONS.accessory)+'</svg>';
 }
 const chevron='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+const peruFlagSvg='<svg viewBox="0 0 3 2" style="display:inline-block;vertical-align:middle;width:17px;height:11.3px;min-width:17px;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.12);flex-shrink:0;stroke:none" stroke="none"><rect width="3" height="2" fill="#fff" stroke="none"/><rect width="1" height="2" fill="#D91023" stroke="none"/><rect x="2" width="1" height="2" fill="#D91023" stroke="none"/></svg>';
 
 /* Bloque de "dónde estamos": dirección + botón a Maps + mapa incrustado.
    Se usa tanto en el footer como en la página de Contáctanos.
@@ -1080,7 +1081,7 @@ function renderHome(){
     <div class="trust-bar-inner">
       <div class="trust-item">
         <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
-        <div><b>Envíos a todo el Perú</b><span>Entregas rápidas y seguras.</span></div>
+        <div><b>Envíos a todo el Perú ${peruFlagSvg}</b><span>Entregas rápidas y seguras.</span></div>
       </div>
       <div class="trust-item">
         <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
@@ -1133,7 +1134,7 @@ function heroCopyHTML(){
       <button class="btn-outline" onclick="goShop(${secondaryCat})">${s.ctaSecondaryLabel}</button>
     </div>
     <div class="hero-badges">
-      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Envíos a todo el Perú</div>
+      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Envíos a todo el Perú ${peruFlagSvg}</div>
       <div>${iconSvg('accessory','style="width:16px;height:16px"')}Cuotas sin intereses</div>
       <div>${iconSvg('accessory','style="width:16px;height:16px"')}Garantía en todos los productos</div>
     </div>`;
