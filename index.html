@@ -1990,7 +1990,7 @@ function ratingBadgeHTML(){
 }
 
 /* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
-const FREE_SHIPPING_THRESHOLD = 80;
+const FREE_SHIPPING_THRESHOLD = 100;
 const SHIPPING_FEE = 15;
 
 /* ⚠️ Pega aquí la URL de tu Web App de Google Apps Script (ver mercadopago-backend.gs) */
@@ -2202,7 +2202,7 @@ const POLICIES = {
   envios:{title:'Política de envíos', body:`
     <p>Realizamos envíos a todo el país a través de couriers aliados. El tiempo estimado de entrega es de 2 a 5 días hábiles en ciudades principales y de 5 a 8 días hábiles en provincias.</p>
     <h4>Costos de envío</h4>
-    <ul><li>Envío gratuito en compras mayores a S/ 300.</li><li>Costo fijo de S/ 15 a S/ 25 según destino para compras menores.</li><li>Recojo en tienda disponible sin costo adicional.</li></ul>
+    <ul><li>Envío gratuito en compras mayores a S/ 100.</li><li>Costo fijo de S/ 15 según destino para compras menores.</li><li>Recojo en tienda disponible sin costo adicional.</li></ul>
     <h4>Seguimiento</h4>
     <p>Una vez despachado tu pedido recibirás un código de seguimiento por correo electrónico o WhatsApp.</p>`},
   cambios:{title:'Cambios y devoluciones', body:`
