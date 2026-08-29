@@ -472,8 +472,9 @@ input[type=range]{width:100%;accent-color:var(--gold);}
   padding:4px 9px;border-radius:50px;letter-spacing:.02em;
 }
 .badge.discount{
-  background:none;color:var(--brown-heading);padding:2px 2px;
-  font-size:13px;font-weight:800;
+  top:0;right:0;left:auto;
+  background:var(--err);color:#fff;padding:6px 14px 6px 10px;
+  font-size:12px;font-weight:800;border-radius:0 0 0 10px;
 }
 .badge.out{background:#6b5f4f;color:#f5ede0;}
 .stock-warning{font-size:11.5px;color:#a05a1a;font-weight:600;}
@@ -1220,7 +1221,7 @@ function productCard(p){
   <div class="product-card">
     <div class="product-photo" onclick="openProductDetail(${p.id})" style="cursor:pointer;">
       ${outOfStock ? `<span class="badge out">Agotado</span>` : (p.badge?`<span class="badge">${p.badge}</span>`:'')}
-      ${(!outOfStock && p.old)?`<span class="badge discount" style="${p.badge?'top:38px;':''}">-${Math.round((1-p.price/p.old)*100)}%</span>`:''}
+      ${(!outOfStock && p.old)?`<span class="badge discount">-${Math.round((1-p.price/p.old)*100)}%</span>`:''}
       ${images[0] ? `<img src="${images[0]}" alt="${p.name}" class="product-photo-img" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
       ${hasVideo ? `<span class="video-badge">▶ Video</span>` : ''}
     </div>
