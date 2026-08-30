@@ -397,7 +397,7 @@ nav.catbar::-webkit-scrollbar{display:none;}
 /* ---------------- section wrap ---------------- */
 .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
 .section-title{display:flex;align-items:baseline;justify-content:space-between;margin:52px 0 22px;}
-.section-title h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--brown-heading);}
+.section-title h2,.section-title h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--brown-heading);}
 .section-title span{color:var(--muted);font-size:13px;}
 .cat-intro{color:var(--ink);font-size:13.5px;line-height:1.6;max-width:72ch;margin:-8px 0 24px;}
 
@@ -1618,7 +1618,7 @@ function renderShop(){
   return `
   <div class="wrap">
     <div class="section-title" style="margin-top:26px;">
-      <h2 class="h-serif">${title}</h2>
+      <h1 class="h-serif">${title}</h1>
     </div>
     <div class="shop-layout">
       ${renderFiltersPanel()}
@@ -1789,7 +1789,7 @@ function renderProductDetail(){
     <div class="pd-gallery">${mainHtml}</div>
     ${thumbsHtml}
     <div class="pd-cat">${subLabel}</div>
-    <div class="pd-name">${p.name}</div>
+    <h1 class="pd-name">${p.name}</h1>
     <div class="pd-price-row">
       <span class="pd-price">${fmt(p.price)}</span>
       ${p.old?`<span class="pd-oldprice">${fmt(p.old)}</span>`:''}
