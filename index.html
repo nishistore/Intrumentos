@@ -1707,6 +1707,11 @@ function checkProductUrlTrigger(){
     openProductDetail(legacyId, false);
     return;
   }
+  // No pisar el enlace secreto del panel de administración: routeFromPath
+  // cierra cualquier modal abierto y reescribe la URL sin query string,
+  // lo que borraba el ?panel=... justo después de que checkAdminUrlTrigger
+  // abriera el login.
+  if(params.get('panel') === ADMIN_URL_KEY) return;
   routeFromPath(false);
 }
 
