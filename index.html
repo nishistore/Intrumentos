@@ -515,6 +515,9 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 .pd-name{font-family:'Playfair Display',serif;font-size:21px;color:var(--brown-heading);margin-bottom:10px;padding-right:26px;}
 .pd-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
 .pd-price{font-size:22px;font-weight:800;color:var(--brown-heading);}
+.pd-description{margin-top:22px;padding-top:18px;border-top:1px solid var(--navy-line);}
+.pd-description h4{font-size:13px;color:var(--brown-heading);margin:0 0 8px;}
+.pd-description p{font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-line;}
 .pd-oldprice{font-size:14px;color:var(--muted);text-decoration:line-through;}
 .pd-share{
   display:inline-flex;align-items:center;gap:6px;
@@ -682,6 +685,11 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   border-radius:8px;color:var(--cream);font-family:inherit;font-size:11.5px;text-align:left;
 }
 .media-preview{width:34px;height:34px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--navy-line);}
+.admin-row textarea{
+  width:100%;padding:8px 10px;background:var(--navy-mid);border:1px solid var(--navy-line);
+  border-radius:8px;color:var(--cream);font-family:inherit;font-size:11.5px;text-align:left;resize:vertical;
+}
+.admin-row textarea:focus{outline:none;border-color:var(--gold);}
 .admin-row .media-field input[id^="vid-"]{width:100%;}
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
@@ -1780,6 +1788,11 @@ function renderProductDetail(){
       </div>
       <button class="btn-gold" style="width:100%;" onclick="addFromDetail(${p.id})">Agregar al carrito</button>
     `}
+    ${p.description ? `
+      <div class="pd-description">
+        <h4>Descripción</h4>
+        <p>${escapeHtml(p.description)}</p>
+      </div>` : ''}
   `;
 }
 
@@ -2351,6 +2364,7 @@ function renderAdminPanel(){
               <input type="text" value="${p.name}" id="name-${p.id}" class="aname-input">
               <small>${p.cat} · ${p.sub}</small>
             </div>
+            <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">📝 Descripción</button>
             <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">🖼️ Fotos y video</button>
           </div>
           <div class="admin-fields">
@@ -2358,6 +2372,12 @@ function renderAdminPanel(){
             <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
             <label>Etiqueta<input type="text" placeholder="—" value="${p.badge ?? ''}" id="badge-${p.id}" style="width:110px;"></label>
             <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
+          </div>
+          <div class="media-editor" id="desc-editor-${p.id}">
+            <div class="media-field">
+              <label>Descripción</label>
+              <textarea placeholder="Descripción del producto..." id="desc-${p.id}" rows="6">${escapeHtml(p.description||'')}</textarea>
+            </div>
           </div>
           <div class="media-editor" id="media-editor-${p.id}">
             <div class="media-field">
@@ -2399,6 +2419,9 @@ function renderAdminPanel(){
 function toggleMediaEditor(id){
   document.getElementById(`media-editor-${id}`)?.classList.toggle('open');
 }
+function toggleDescEditor(id){
+  document.getElementById(`desc-editor-${id}`)?.classList.toggle('open');
+}
 
 async function saveProduct(id, btnEl){
   const p = PRODUCTS.find(x=>x.id===id);
@@ -2412,6 +2435,8 @@ async function saveProduct(id, btnEl){
   const badgeVal = document.getElementById(`badge-${id}`).value.trim();
   const badge = badgeVal === '' ? null : badgeVal;
   const stock = Math.max(0, parseInt(document.getElementById(`stock-${id}`).value) || 0);
+  const descVal = document.getElementById(`desc-${id}`).value.trim();
+  const description = descVal === '' ? null : descVal;
   const img1 = document.getElementById(`img1-${id}`).value.trim();
   const img2 = document.getElementById(`img2-${id}`).value.trim();
   const img3 = document.getElementById(`img3-${id}`).value.trim();
@@ -2425,13 +2450,13 @@ async function saveProduct(id, btnEl){
     const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
-      body: JSON.stringify({ name, price, old, badge, stock, image1: img1||null, image2: img2||null, image3: img3||null, video: video||null })
+      body: JSON.stringify({ name, price, old, badge, stock, description, image1: img1||null, image2: img2||null, image3: img3||null, video: video||null })
     });
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
 
     // refleja el cambio al instante, sin recargar toda la tienda
-    p.name = name; p.price = price; p.old = old; p.badge = badge; p.stock = stock;
+    p.name = name; p.price = price; p.old = old; p.badge = badge; p.stock = stock; p.description = description;
     p.images = [img1, img2, img3].filter(Boolean); p.video = video || null;
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
