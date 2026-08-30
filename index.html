@@ -1939,6 +1939,10 @@ function renderCartDrawer(){
           <input id="coTelefono" type="tel" inputmode="numeric" placeholder="Ej. 987654321" pattern="[0-9]{7,9}" maxlength="9" required>
         </div>
         <div class="cfield">
+          <label for="coCorreo">Correo electrónico</label>
+          <input id="coCorreo" type="email" placeholder="Ej. maria@correo.com" required>
+        </div>
+        <div class="cfield">
           <label for="coDireccion">Dirección de entrega</label>
           <textarea id="coDireccion" placeholder="Calle, número, distrito, referencia" required></textarea>
         </div>
@@ -2080,12 +2084,13 @@ async function submitOrder(e){
   e.preventDefault();
   const nombre = document.getElementById('coNombre').value.trim();
   const telefono = document.getElementById('coTelefono').value.trim();
+  const correo = document.getElementById('coCorreo').value.trim();
   const direccion = document.getElementById('coDireccion').value.trim();
   const metodoPago = document.querySelector('input[name="metodoPago"]:checked').value;
-  if(!nombre || !telefono || !direccion){ return; }
+  if(!nombre || !telefono || !correo || !direccion){ return; }
 
   if(metodoPago === 'mp'){
-    await payWithMercadoPago({nombre, telefono, direccion});
+    await payWithMercadoPago({nombre, telefono, correo, direccion});
     return;
   }
 
@@ -2107,6 +2112,7 @@ Total: ${fmt(cartTotal())}
 
 Cliente: ${nombre}
 Teléfono: ${telefono}
+Correo: ${correo}
 Dirección: ${direccion}
 Método de pago: ${metodoPago}`;
 
