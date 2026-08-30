@@ -34,6 +34,7 @@
     "@type": "PostalAddress",
     "streetAddress": "Av. Los Héroes 382",
     "addressLocality": "San Juan de Miraflores",
+    "addressRegion": "Lima",
     "postalCode": "15801",
     "addressCountry": "PE"
   },
@@ -398,6 +399,7 @@ nav.catbar::-webkit-scrollbar{display:none;}
 .section-title{display:flex;align-items:baseline;justify-content:space-between;margin:52px 0 22px;}
 .section-title h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--brown-heading);}
 .section-title span{color:var(--muted);font-size:13px;}
+.cat-intro{color:var(--ink);font-size:13.5px;line-height:1.6;max-width:72ch;margin:-8px 0 24px;}
 
 /* category grid on home */
 .cat-grid{
@@ -1273,6 +1275,21 @@ function toggleMobileSearch(){
   el.style.display = el.style.display==='none' ? 'block' : 'none';
 }
 
+/* Nombres reales de productos en stock (uno por categoría cuando se
+   puede, priorizando los que tienen badge) para mostrar en texto en la
+   página de inicio — mejor que solo nombres de categorías genéricas, y
+   siempre queda al día porque sale del catálogo real. */
+function popularProductsText(){
+  const inStock = p => (p.stock||0) > 0;
+  const picks = CATEGORIES
+    .map(c => PRODUCTS.find(p=>p.cat===c.key && p.badge && inStock(p)) || PRODUCTS.find(p=>p.cat===c.key && inStock(p)))
+    .filter(Boolean);
+  const names = picks.slice(0,6).map(p=>p.name);
+  if(!names.length) return '';
+  if(names.length===1) return names[0];
+  return names.slice(0,-1).join(', ') + ' y ' + names[names.length-1];
+}
+
 /* ======================================================================
    RENDER: HOME
    ====================================================================== */
@@ -1311,6 +1328,7 @@ function renderHome(){
 
   <div class="wrap">
     <div class="section-title"><h2 class="h-serif">Busca por categoría</h2><span>${CATEGORIES.length} categorías</span></div>
+    ${PRODUCTS.length ? `<p class="cat-intro">Algunos de los instrumentos que tenemos en stock: ${popularProductsText()}.</p>` : ''}
     <div class="cat-grid">
       ${CATEGORIES.map(c=>`
         <a class="cat-card" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
@@ -2014,7 +2032,7 @@ function backToCart(){
 const STORE_WHATSAPP = '51917100948';
 
 /* Dirección de tu tienda física (para el mapa y el botón "Ver en Google Maps") */
-const STORE_ADDRESS = 'Av. Los Héroes 382, San Juan de Miraflores 15801, Perú';
+const STORE_ADDRESS = 'Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú';
 const STORE_MAPS_LINK = 'https://maps.app.goo.gl/y722ggq4K2s6Q5pK9';
 const STORE_HOURS = 'Lunes a domingo, 9:30 a.m. – 9:00 p.m.';
 
