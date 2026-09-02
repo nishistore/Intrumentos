@@ -281,11 +281,18 @@ nav.catbar::-webkit-scrollbar{display:none;}
 .checkout-form input::placeholder, .checkout-form textarea::placeholder{color:var(--muted);}
 .checkout-form input:focus, .checkout-form select:focus, .checkout-form textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(214,161,60,.15);}
 .checkout-form textarea{resize:vertical;min-height:64px;font-family:inherit;}
+.pay-discount-banner{background:rgba(46,125,79,.08);border:1px solid rgba(46,125,79,.3);color:var(--ok);border-radius:10px;padding:10px 13px;font-size:12.3px;line-height:1.4;margin-bottom:9px;}
 .pay-options{display:flex;flex-direction:column;gap:8px;}
 .pay-option{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--navy-line);border-radius:10px;font-size:13px;cursor:pointer;transition:.2s ease;}
 .pay-option:hover{border-color:var(--gold-dim);}
-.pay-option input{width:auto;accent-color:var(--gold);}
+.pay-option input{width:auto;accent-color:var(--gold);flex-shrink:0;}
 .pay-option.checked{border-color:var(--gold);background:rgba(214,161,60,.06);}
+.pay-option-text{display:flex;flex-direction:column;align-items:flex-start;gap:3px;flex:1;min-width:0;}
+.pay-option-badge{display:inline-block;margin-left:6px;background:rgba(46,125,79,.12);color:var(--ok);font-size:10.3px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.pay-option-price{display:flex;flex-direction:column;align-items:flex-end;gap:1px;white-space:nowrap;flex-shrink:0;}
+.pay-price-old{font-size:11px;color:var(--muted);text-decoration:line-through;}
+.pay-price-new{font-size:13.5px;font-weight:700;color:var(--ok);}
+.pay-price-plain{font-size:12.5px;color:var(--muted);}
 .order-success{text-align:center;padding:50px 24px;}
 .order-success svg{width:52px;height:52px;stroke:var(--ok);margin:0 auto 16px;}
 .order-success h4{font-family:'Playfair Display',serif;color:var(--brown-heading);font-size:19px;margin-bottom:8px;}
@@ -1933,8 +1940,9 @@ function renderCartDrawer(){
 
   if(state.checkoutOpen){
     head.textContent = 'Finalizar pedido';
-    const subtotal = cartSubtotal();
-    const ship = shippingCost(subtotal);
+    const { subtotal, ship, total: mpTotal } = computeOrderTotals('mp');
+    const altTotal = computeOrderTotals('Transferencia bancaria').total;
+    const altDiscount = altPaymentDiscount(subtotal, 'Transferencia bancaria');
     wrap.innerHTML = `
       <button class="back-link" onclick="backToCart()">${iconSvg('accessory','style="width:13px;height:13px;stroke:var(--muted)"')} Volver al carrito</button>
       ${freeShippingBarHTML(subtotal)}
@@ -1944,8 +1952,9 @@ function renderCartDrawer(){
           return `<div class="row"><span>${c.qty}× ${p.name}</span><span>${fmt(p.price*c.qty)}</span></div>`;
         }).join('')}
         <div class="row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
+        <div class="row" id="rowDiscount" style="display:none;color:var(--ok);"><span>Descuento (5%)</span><span id="valDiscount">-${fmt(altDiscount)}</span></div>
         <div class="row"><span>Envío</span><span>${ship>0?fmt(ship):'Gratis'}</span></div>
-        <div class="row total"><span>Total</span><span>${fmt(cartTotal())}</span></div>
+        <div class="row total"><span>Total</span><span id="valTotal">${fmt(mpTotal)}</span></div>
       </div>
       <form id="checkoutForm" class="checkout-form" onsubmit="submitOrder(event)">
         <div class="cfield">
@@ -1966,11 +1975,24 @@ function renderCartDrawer(){
         </div>
         <div class="cfield">
           <label>Método de pago</label>
+          <div class="pay-discount-banner">💰 Paga con <b>Yape / Plin</b>, <b>transferencia bancaria</b> o <b>recojo en tienda</b> y ahorra <b>5%</b> (${fmt(altDiscount)} en este pedido)</div>
           <div class="pay-options" id="payOptions">
-            <label class="pay-option checked"><input type="radio" name="metodoPago" value="mp" checked onchange="markPayOption(this)">💳 Tarjeta / Mercado Pago (pago en línea)</label>
-            <label class="pay-option"><input type="radio" name="metodoPago" value="Yape / Plin" onchange="markPayOption(this)">Yape / Plin</label>
-            <label class="pay-option"><input type="radio" name="metodoPago" value="Transferencia bancaria" onchange="markPayOption(this)">Transferencia bancaria</label>
-            <label class="pay-option"><input type="radio" name="metodoPago" value="Recojo en tienda" onchange="markPayOption(this)">Recojo en tienda</label>
+            <label class="pay-option checked"><input type="radio" name="metodoPago" value="mp" checked onchange="markPayOption(this)">
+              <span class="pay-option-text">💳 Tarjeta / Mercado Pago (pago en línea)</span>
+              <span class="pay-option-price"><span class="pay-price-plain">${fmt(mpTotal)}</span></span>
+            </label>
+            <label class="pay-option"><input type="radio" name="metodoPago" value="Yape / Plin" onchange="markPayOption(this)">
+              <span class="pay-option-text">Yape / Plin<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
+              <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
+            </label>
+            <label class="pay-option"><input type="radio" name="metodoPago" value="Transferencia bancaria" onchange="markPayOption(this)">
+              <span class="pay-option-text">Transferencia bancaria<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
+              <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
+            </label>
+            <label class="pay-option"><input type="radio" name="metodoPago" value="Recojo en tienda" onchange="markPayOption(this)">
+              <span class="pay-option-text">Recojo en tienda<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
+              <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
+            </label>
           </div>
         </div>
         <button type="submit" class="btn-gold" id="checkoutSubmitBtn" style="width:100%;">Pagar con Mercado Pago</button>
@@ -2017,6 +2039,16 @@ function markPayOption(input){
   input.closest('.pay-option').classList.add('checked');
   const btn = document.getElementById('checkoutSubmitBtn');
   if(btn) btn.textContent = input.value === 'mp' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp';
+
+  const { discount, total } = computeOrderTotals(input.value);
+  const rowDiscount = document.getElementById('rowDiscount');
+  const valDiscount = document.getElementById('valDiscount');
+  const valTotal = document.getElementById('valTotal');
+  if(rowDiscount && valDiscount && valTotal){
+    rowDiscount.style.display = discount>0 ? '' : 'none';
+    valDiscount.textContent = '-' + fmt(discount);
+    valTotal.textContent = fmt(total);
+  }
 }
 
 function goToCheckout(){
@@ -2049,6 +2081,23 @@ function ratingBadgeHTML(){
 /* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
 const FREE_SHIPPING_THRESHOLD = 100;
 const SHIPPING_FEE = 15;
+
+/* Descuento por pagar con transferencia bancaria o recojo en tienda (evita comisión de pasarela) */
+const ALT_PAYMENT_DISCOUNT_RATE = 0.05;
+const ALT_PAYMENT_DISCOUNT_METHODS = ['Yape / Plin', 'Transferencia bancaria', 'Recojo en tienda'];
+
+function isAltPaymentDiscountMethod(metodo){
+  return ALT_PAYMENT_DISCOUNT_METHODS.includes(metodo);
+}
+function altPaymentDiscount(subtotal, metodo){
+  return isAltPaymentDiscountMethod(metodo) ? Math.round(subtotal * ALT_PAYMENT_DISCOUNT_RATE) : 0;
+}
+function computeOrderTotals(metodo){
+  const subtotal = cartSubtotal();
+  const ship = shippingCost(subtotal);
+  const discount = altPaymentDiscount(subtotal, metodo);
+  return { subtotal, ship, discount, total: subtotal - discount + ship };
+}
 
 /* ⚠️ Pega aquí la URL de tu Web App de Google Apps Script (ver mercadopago-backend.gs) */
 const MP_API_URL = 'https://script.google.com/macros/s/AKfycbxyrzUjXsG2wiE-gA2oWsQ1cBWEBNLK1Ffmav9TrbcLCw9jufGrb7ESqLxz-GzxRu-_/exec';
@@ -2112,8 +2161,7 @@ async function submitOrder(e){
     return;
   }
 
-  const subtotal = cartSubtotal();
-  const ship = shippingCost(subtotal);
+  const { subtotal, ship, discount, total } = computeOrderTotals(metodoPago);
   const lineas = state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
     return `• ${c.qty}x ${p.name} — ${fmt(p.price*c.qty)}`;
@@ -2125,8 +2173,8 @@ async function submitOrder(e){
 ${lineas}
 
 Subtotal: ${fmt(subtotal)}
-Envío: ${ship>0?fmt(ship):'Gratis'}
-Total: ${fmt(cartTotal())}
+${discount>0 ? `Descuento por ${metodoPago} (5%): -${fmt(discount)}\n` : ''}Envío: ${ship>0?fmt(ship):'Gratis'}
+Total: ${fmt(total)}
 
 Cliente: ${nombre}
 Teléfono: ${telefono}
@@ -2136,7 +2184,7 @@ Método de pago: ${metodoPago}`;
 
   const url = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
   window.open(url, '_blank', 'noopener');
-  trackAdsConversion('purchase', cartTotal());
+  trackAdsConversion('purchase', total);
 
   state.orderPlaced = true;
   state.checkoutOpen = false;
