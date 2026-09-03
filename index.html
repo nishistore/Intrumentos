@@ -843,7 +843,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 <div class="drawer" id="menuDrawer">
   <div class="drawer-head">
     <b class="h-serif" style="color:var(--gold-light);font-size:18px;">Categorías</b>
-    <button class="icon-btn" onclick="toggleMenu(false)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button class="icon-btn" onclick="toggleMenu(false)" aria-label="Cerrar menú"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <div id="drawerCats"></div>
 </div>
@@ -853,7 +853,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 <div class="cart-drawer" id="cartDrawer">
   <div class="drawer-head">
     <b class="h-serif" style="color:var(--gold-light);font-size:18px;">Tu carrito</b>
-    <button class="icon-btn" onclick="toggleCart(false)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button class="icon-btn" onclick="toggleCart(false)" aria-label="Cerrar carrito"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <div class="cart-items" id="cartItemsWrap"></div>
   <div class="cart-footer" id="cartFooter"></div>
@@ -862,7 +862,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 <!-- ============ POLICY / INFO MODAL ============ -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal();">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button class="modal-close" onclick="closeModal()" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div id="modalBody"></div>
   </div>
 </div>
@@ -1291,7 +1291,7 @@ function popularProductsText(){
   const picks = CATEGORIES
     .map(c => PRODUCTS.find(p=>p.cat===c.key && p.badge && inStock(p)) || PRODUCTS.find(p=>p.cat===c.key && inStock(p)))
     .filter(Boolean);
-  const names = picks.slice(0,6).map(p=>p.name);
+  const names = picks.slice(0,6).map(p=>escapeHtml(p.name));
   if(!names.length) return '';
   if(names.length===1) return names[0];
   return names.slice(0,-1).join(', ') + ' y ' + names[names.length-1];
@@ -1548,14 +1548,14 @@ function productCard(p){
   return `
   <div class="product-card">
     <a class="product-photo" href="${productHref}" onclick="openProductDetail(${p.id});return false;" style="cursor:pointer;">
-      ${outOfStock ? `<span class="badge out">Agotado</span>` : (p.badge?`<span class="badge">${p.badge}</span>`:'')}
+      ${outOfStock ? `<span class="badge out">Agotado</span>` : (p.badge?`<span class="badge">${escapeHtml(p.badge)}</span>`:'')}
       ${(!outOfStock && p.old)?`<span class="badge discount">-${Math.round((1-p.price/p.old)*100)}%</span>`:''}
-      ${images[0] ? `<img src="${images[0]}" alt="${p.name}" class="product-photo-img" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
+      ${images[0] ? `<img src="${images[0]}" alt="${escapeHtml(p.name)}" class="product-photo-img" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
       ${hasVideo ? `<span class="video-badge">▶ Video</span>` : ''}
     </a>
     <div class="product-info">
       <div class="product-cat">${subLabel}</div>
-      <a class="product-name" href="${productHref}" onclick="openProductDetail(${p.id});return false;" style="cursor:pointer;">${p.name}</a>
+      <a class="product-name" href="${productHref}" onclick="openProductDetail(${p.id});return false;" style="cursor:pointer;">${escapeHtml(p.name)}</a>
       <div class="product-price-row">
         <span class="product-price">${fmt(p.price)}</span>
         ${p.old?`<span class="product-oldprice">${fmt(p.old)}</span>`:''}
@@ -1780,7 +1780,7 @@ function renderProductDetail(){
   if(!active){
     mainHtml = `<div class="pd-icon">${iconSvg(iconFor(p))}</div>`;
   }else if(active.type === 'image'){
-    mainHtml = `<img src="${active.url}" alt="${p.name}" decoding="async">`;
+    mainHtml = `<img src="${active.url}" alt="${escapeHtml(p.name)}" decoding="async">`;
   }else{
     const embed = toEmbedUrl(active.url);
     mainHtml = embed
@@ -1792,7 +1792,7 @@ function renderProductDetail(){
     <div class="pd-thumbs">
       ${slides.map((s,i)=>`
         <div class="pd-thumb ${i===pdState.activeIndex?'active':''} ${s.type==='video'?'video-thumb':''}" onclick="setActiveSlide(${i})">
-          ${s.type==='image' ? `<img src="${s.url}">` : '▶'}
+          ${s.type==='image' ? `<img src="${s.url}" alt="${escapeHtml(p.name)}">` : '▶'}
         </div>`).join('')}
     </div>` : '';
 
@@ -1806,7 +1806,7 @@ function renderProductDetail(){
     <div class="pd-gallery">${mainHtml}</div>
     ${thumbsHtml}
     <div class="pd-cat">${subLabel}</div>
-    <h1 class="pd-name">${p.name}</h1>
+    <h1 class="pd-name">${escapeHtml(p.name)}</h1>
     <div class="pd-price-row">
       <span class="pd-price">${fmt(p.price)}</span>
       ${p.old?`<span class="pd-oldprice">${fmt(p.old)}</span>`:''}
@@ -1959,7 +1959,7 @@ function renderCartDrawer(){
       <div class="order-summary-mini">
         ${state.cart.map(c=>{
           const p = PRODUCTS.find(x=>x.id===c.id);
-          return `<div class="row"><span>${c.qty}× ${p.name}</span><span>${fmt(p.price*c.qty)}</span></div>`;
+          return `<div class="row"><span>${c.qty}× ${escapeHtml(p.name)}</span><span>${fmt(p.price*c.qty)}</span></div>`;
         }).join('')}
         <div class="row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
         <div class="row" id="rowDiscount" style="display:none;color:var(--ok);"><span>Descuento (5%)</span><span id="valDiscount">-${fmt(altDiscount)}</span></div>
@@ -2022,7 +2022,7 @@ function renderCartDrawer(){
     <div class="cart-item">
       <div class="thumb">${iconSvg(iconFor(p))}</div>
       <div class="info">
-        <div class="name">${p.name}</div>
+        <div class="name">${escapeHtml(p.name)}</div>
         <div class="price">${fmt(p.price)}</div>
         <div class="qty-ctrl">
           <button onclick="changeQty(${p.id},-1)">−</button>
@@ -2275,6 +2275,14 @@ function toggleMenu(show){
 }
 document.getElementById('menuBtn').addEventListener('click', ()=>toggleMenu(true));
 
+/* Cierra el drawer/modal abierto con la tecla Escape (accesibilidad de teclado) */
+document.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Escape') return;
+  if(document.getElementById('modalOverlay').classList.contains('show')) closeModal();
+  else if(document.getElementById('cartDrawer').classList.contains('show')) toggleCart(false);
+  else if(document.getElementById('menuDrawer').classList.contains('show')) toggleMenu(false);
+});
+
 /* Desliza con el dedo para cambiar de slide en el hero (celular) */
 let heroTouchStartX = null, heroTouchStartY = null;
 document.addEventListener('touchstart', (e)=>{
@@ -2446,7 +2454,7 @@ function renderAdminPanel(){
         <div class="admin-row ${p.stock<=0?'zero':''}" data-row="${p.id}">
           <div class="admin-row-top">
             <div class="aname">
-              <input type="text" value="${p.name}" id="name-${p.id}" class="aname-input">
+              <input type="text" value="${escapeHtml(p.name)}" id="name-${p.id}" class="aname-input">
               <small>${p.cat} · ${p.sub}</small>
             </div>
             <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">📝 Descripción</button>
@@ -2455,7 +2463,7 @@ function renderAdminPanel(){
           <div class="admin-fields">
             <label>Precio<input type="number" min="0" step="1" value="${p.price}" id="price-${p.id}"></label>
             <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
-            <label>Etiqueta<input type="text" placeholder="—" value="${p.badge ?? ''}" id="badge-${p.id}" style="width:110px;"></label>
+            <label>Etiqueta<input type="text" placeholder="—" value="${escapeHtml(p.badge ?? '')}" id="badge-${p.id}" style="width:110px;"></label>
             <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
             <label style="flex-direction:row;align-items:center;gap:5px;">
               <input type="checkbox" id="featured-${p.id}" ${p.featured?'checked':''} style="width:16px;height:16px;padding:0;background:none;border:none;border-radius:0;">
