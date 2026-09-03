@@ -1297,6 +1297,16 @@ function popularProductsText(){
   return names.slice(0,-1).join(', ') + ' y ' + names[names.length-1];
 }
 
+/* Productos para la sección "Destacados" de la home. Prioriza los que
+   el dueño marcó manualmente como Destacado desde el panel; si todavía
+   no marcó ninguno, usa el criterio anterior (badge, o los primeros del
+   catálogo) para que la sección nunca quede vacía. */
+function featuredPicks(){
+  const manual = PRODUCTS.filter(p=>p.featured);
+  if(manual.length) return manual;
+  return PRODUCTS.filter(p=>p.badge).length ? PRODUCTS.filter(p=>p.badge) : PRODUCTS;
+}
+
 /* ======================================================================
    RENDER: HOME
    ====================================================================== */
@@ -1349,7 +1359,7 @@ function renderHome(){
 
     <div class="section-title"><h2 class="h-serif">Destacados</h2><span>Selección de la casa</span></div>
     <div class="product-grid" style="margin-bottom:60px;">
-      ${(PRODUCTS.filter(p=>p.badge).length ? PRODUCTS.filter(p=>p.badge) : PRODUCTS).slice(0,6).map(productCard).join('')}
+      ${featuredPicks().slice(0,6).map(productCard).join('')}
     </div>
   </div>`;
 }
@@ -2447,6 +2457,10 @@ function renderAdminPanel(){
             <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
             <label>Etiqueta<input type="text" placeholder="—" value="${p.badge ?? ''}" id="badge-${p.id}" style="width:110px;"></label>
             <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
+            <label style="flex-direction:row;align-items:center;gap:5px;">
+              <input type="checkbox" id="featured-${p.id}" ${p.featured?'checked':''} style="width:16px;height:16px;padding:0;background:none;border:none;border-radius:0;">
+              Destacado
+            </label>
           </div>
           <div class="media-editor" id="desc-editor-${p.id}">
             <div class="media-field">
@@ -2517,6 +2531,7 @@ async function saveProduct(id, btnEl){
   const badgeVal = document.getElementById(`badge-${id}`).value.trim();
   const badge = badgeVal === '' ? null : badgeVal;
   const stock = Math.max(0, parseInt(document.getElementById(`stock-${id}`).value) || 0);
+  const featured = document.getElementById(`featured-${id}`).checked;
   const descVal = document.getElementById(`desc-${id}`).value.trim();
   const description = descVal === '' ? null : descVal;
   const img1 = document.getElementById(`img1-${id}`).value.trim();
@@ -2533,13 +2548,13 @@ async function saveProduct(id, btnEl){
     const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
-      body: JSON.stringify({ name, price, old, badge, stock, description, image1: img1||null, image2: img2||null, image3: img3||null, image4: img4||null, video: video||null })
+      body: JSON.stringify({ name, price, old, badge, stock, featured, description, image1: img1||null, image2: img2||null, image3: img3||null, image4: img4||null, video: video||null })
     });
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
 
     // refleja el cambio al instante, sin recargar toda la tienda
-    p.name = name; p.price = price; p.old = old; p.badge = badge; p.stock = stock; p.description = description;
+    p.name = name; p.price = price; p.old = old; p.badge = badge; p.stock = stock; p.featured = featured; p.description = description;
     p.images = [img1, img2, img3, img4].filter(Boolean); p.video = video || null;
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
