@@ -570,6 +570,9 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 .product-price-row{display:flex;align-items:baseline;gap:8px;margin-top:2px;}
 .product-price{font-size:16.5px;font-weight:800;color:var(--brown-heading);}
 .product-oldprice{font-size:12px;color:var(--muted);text-decoration:line-through;}
+.color-dots{display:flex;align-items:center;gap:5px;margin-top:1px;flex-wrap:wrap;}
+.color-dot{width:13px;height:13px;border-radius:50%;border:1px solid var(--navy-line);box-shadow:0 0 0 1px rgba(0,0,0,.03) inset;flex-shrink:0;}
+.color-dot-more{font-size:10px;color:var(--muted);font-weight:600;}
 .add-btn{
   margin-top:8px;width:100%;padding:11px;border:1px solid var(--gold);border-radius:50px;
   background:var(--gold);color:#1c2540;font-size:12.8px;font-weight:700;
@@ -1607,6 +1610,7 @@ function productCard(p){
   const lowStock = stock > 0 && stock <= 3;
   const images = p.images || [];
   const hasVideo = !!p.video;
+  const colors = productColors(p);
   const productHref = `/producto/${p.id}-${slugify(p.name)}`;
   return `
   <div class="product-card">
@@ -1619,6 +1623,7 @@ function productCard(p){
     <div class="product-info">
       <div class="product-cat">${subLabel}</div>
       <a class="product-name" href="${productHref}" onclick="openProductDetail(${p.id});return false;" style="cursor:pointer;">${escapeHtml(p.name)}</a>
+      ${colors.length>1 ? `<div class="color-dots" aria-label="Colores disponibles: ${colors.join(', ')}">${colors.slice(0,5).map(c=>`<span class="color-dot" style="background:${COLOR_HEX[c]||'#ccc'}" title="${escapeHtml(c)}"></span>`).join('')}${colors.length>5?`<span class="color-dot-more">+${colors.length-5}</span>`:''}</div>` : ''}
       <div class="product-price-row">
         <span class="product-price">${fmt(p.price)}</span>
         ${p.old?`<span class="product-oldprice">${fmt(p.old)}</span>`:''}
@@ -1848,6 +1853,29 @@ function colorFromImageUrl(url){
     if(base.includes(key)) return COLOR_WORDS[key];
   }
   return null;
+}
+
+/* Color aproximado para pintar cada punto de color en la tarjeta del catálogo. */
+const COLOR_HEX = {
+  'Rojo':'#c0392b', 'Rosado':'#f48fb1', 'Rosa':'#f6c6d9', 'Vino':'#6d1b2f', 'Granate':'#7a1f2b',
+  'Azul':'#1e5fbf', 'Celeste':'#6ec6ff', 'Turquesa':'#1abc9c',
+  'Amarillo':'#f4c430', 'Dorado':'#c9a227',
+  'Verde':'#2e7d32',
+  'Morado':'#7b3fa0', 'Lila':'#b39ddb', 'Violeta':'#8e44ad', 'Púrpura':'#8e2de2',
+  'Naranja':'#e8791d', 'Madera':'#a1662f',
+  'Negro':'#1a1a1a', 'Blanco':'#ffffff', 'Gris':'#9e9e9e', 'Plateado':'#c0c0c0',
+  'Caoba':'#6b3423', 'Natural':'#d9b48f', 'Marrón':'#6d4c30', 'Café':'#4b3221', 'Marrón Entero':'#5a3a22'
+};
+
+/* Colores únicos de un producto (para los puntos de color en su tarjeta). */
+function productColors(p){
+  const seen = new Set();
+  const colors = [];
+  for(const url of (p.images||[])){
+    const label = colorFromImageUrl(url);
+    if(label && !seen.has(label)){ seen.add(label); colors.push(label); }
+  }
+  return colors;
 }
 
 function renderProductDetail(){
