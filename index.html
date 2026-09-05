@@ -140,9 +140,9 @@ header.site{
   white-space:nowrap;
   flex-shrink:0;
 }
-.logo-img{height:52px;width:auto;display:block;}
+.logo-mark{display:block;height:44px;width:auto;}
 .logo.logo-on-dark{background:#fff;border-radius:12px;padding:8px 12px;display:inline-flex;}
-.logo.logo-on-dark .logo-img{height:44px;}
+.logo.logo-on-dark .logo-mark{height:36px;}
 .icon-btn{
   width:40px;height:40px;border-radius:50%;
   border:1px solid var(--chrome-line);background:var(--chrome-bg2);
@@ -525,6 +525,14 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 .pd-name{font-family:'Playfair Display',serif;font-size:21px;color:var(--brown-heading);margin-bottom:10px;padding-right:26px;}
 .pd-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
 .pd-price{font-size:22px;font-weight:800;color:var(--brown-heading);}
+.pd-colors{margin-bottom:14px;}
+.pd-colors-label{font-size:12px;color:var(--muted);margin-right:8px;}
+.pd-color-chip{
+  display:inline-flex;align-items:center;padding:6px 12px;margin:3px 4px 3px 0;
+  border:1.5px solid var(--navy-line);border-radius:20px;background:#fff;
+  font-size:12.5px;color:var(--ink);cursor:pointer;
+}
+.pd-color-chip.active{border-color:var(--gold);color:var(--brown-heading);background:var(--gold-tint,#fdf3e0);font-weight:600;}
 .pd-description{margin-top:22px;padding-top:18px;border-top:1px solid var(--navy-line);}
 .pd-description h4{font-size:13px;color:var(--brown-heading);margin:0 0 8px;}
 .pd-description p{font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-line;}
@@ -810,7 +818,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <a href="#" class="logo" onclick="goHome();return false;">
-      <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-chipao.png" alt="Chipao Music" class="logo-img">
+      <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo.png" alt="Chipao Music" class="logo-mark">
     </a>
     <div class="search-wrap hide-mobile">
       <input id="searchInput" type="text" placeholder="Buscar instrumentos, marcas, accesorios..." onkeydown="if(event.key==='Enter')doSearch();">
@@ -831,7 +839,16 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
     </div>
   </div>
   <nav class="catbar hide-mobile">
-    <div class="catbar-inner" id="catbarInner"></div>
+    <div class="catbar-inner" id="catbarInner">
+      <a href="/categoria/cuerda">Instrumentos de Cuerda</a>
+      <a href="/categoria/teclados">Teclados</a>
+      <a href="/categoria/percusion">Percusión</a>
+      <a href="/categoria/viento">Viento</a>
+      <a href="/categoria/audio">Micrófono y Audio</a>
+      <a href="/categoria/colegio">Para Colegio</a>
+      <a href="/categoria/accesorios">Accesorios</a>
+      <a href="/tienda">Todos</a>
+    </div>
   </nav>
 </header>
 
@@ -845,7 +862,15 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
     <b class="h-serif" style="color:var(--gold-light);font-size:18px;">Categorías</b>
     <button class="icon-btn" onclick="toggleMenu(false)" aria-label="Cerrar menú"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
-  <div id="drawerCats"></div>
+  <div id="drawerCats">
+    <a class="cat-link" href="/categoria/cuerda">Instrumentos de Cuerda</a>
+    <a class="cat-link" href="/categoria/teclados">Teclados</a>
+    <a class="cat-link" href="/categoria/percusion">Percusión</a>
+    <a class="cat-link" href="/categoria/viento">Viento</a>
+    <a class="cat-link" href="/categoria/audio">Micrófono y Audio</a>
+    <a class="cat-link" href="/categoria/colegio">Para Colegio</a>
+    <a class="cat-link" href="/categoria/accesorios">Accesorios</a>
+  </div>
 </div>
 
 <!-- ============ CART DRAWER ============ -->
@@ -876,14 +901,27 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 </a>
 
 <!-- ============ APP ROOT ============ -->
-<main id="app"></main>
+<main id="app"><h1>Chipao Music &mdash; Instrumentos Musicales en Perú</h1>
+<p>Tienda de instrumentos musicales en Perú: guitarras, teclados, percusión, viento, audio y accesorios. Envíos a todo el país y múltiples formas de pago.</p>
+<nav aria-label="Categorías de productos"><ul>
+<li><a href="/categoria/cuerda">Instrumentos de Cuerda</a></li>
+<li><a href="/categoria/teclados">Teclados</a></li>
+<li><a href="/categoria/percusion">Percusión</a></li>
+<li><a href="/categoria/viento">Viento</a></li>
+<li><a href="/categoria/audio">Micrófono y Audio</a></li>
+<li><a href="/categoria/colegio">Para Colegio</a></li>
+<li><a href="/categoria/accesorios">Accesorios</a></li>
+<li><a href="/tienda">Ver toda la tienda</a></li>
+<li><a href="/ofertas">Ofertas</a></li>
+</ul></nav>
+</main>
 
 <!-- ============ FOOTER ============ -->
 <footer class="site">
   <div class="footer-grid">
     <div class="footer-col footer-brand">
       <div class="logo logo-on-dark">
-        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-chipao.png" alt="Chipao Music" class="logo-img">
+        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo.png" alt="Chipao Music" class="logo-mark">
       </div>
       <p>Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
       <div class="footer-social">
@@ -894,7 +932,15 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
     </div>
     <div class="footer-col">
       <h4>Categorías</h4>
-      <div id="footerCats"></div>
+      <div id="footerCats">
+        <a class="link" href="/categoria/cuerda">Instrumentos de Cuerda</a>
+        <a class="link" href="/categoria/teclados">Teclados</a>
+        <a class="link" href="/categoria/percusion">Percusión</a>
+        <a class="link" href="/categoria/viento">Viento</a>
+        <a class="link" href="/categoria/audio">Micrófono y Audio</a>
+        <a class="link" href="/categoria/colegio">Para Colegio</a>
+        <a class="link" href="/categoria/accesorios">Accesorios</a>
+      </div>
     </div>
     <div class="footer-col">
       <h4>Visítanos</h4>
@@ -925,7 +971,7 @@ const CATEGORIES = [
   {key:'cuerda', label:'Instrumentos de Cuerda', icon:'string',
     subs:[{key:'guitarras',label:'Guitarras'},{key:'violines',label:'Violines'},{key:'ukeleles',label:'Ukeleles'},{key:'charangos',label:'Charangos'}]},
   {key:'teclados', label:'Teclados', icon:'keyboard',
-    subs:[{key:'teclados',label:'Teclados'}]},
+    subs:[]},
   {key:'percusion', label:'Percusión', icon:'drum',
     subs:[{key:'tambores',label:'Tambores'},{key:'bombos',label:'Bombos'},{key:'tarolas',label:'Tarolas'},{key:'cajones',label:'Cajones'},{key:'metalofono',label:'Metalófono'}]},
   {key:'viento', label:'Viento', icon:'wind',
@@ -933,9 +979,19 @@ const CATEGORIES = [
   {key:'audio', label:'Micrófono y Audio', icon:'mic',
     subs:[{key:'microfonos',label:'Micrófonos'},{key:'interfaces',label:'Interfaces'}]},
   {key:'colegio', label:'Para Colegio', icon:'school',
-    subs:[{key:'bombito',label:'Bombito'},{key:'flautaColegio',label:'Flauta'},{key:'melodicaColegio',label:'Melódica'},{key:'lira',label:'Lira'},{key:'xilofono',label:'Xilófono'}]},
+    subs:[]},
   {key:'accesorios', label:'Accesorios', icon:'accessory',
-    subs:[{key:'accGuitarra',label:'Guitarra'},{key:'accViento',label:'Viento'},{key:'accPercusion',label:'Percusión'},{key:'parantes',label:'Parantes'}]},
+    subs:[
+      {key:'accCapotrastes',label:'Capotrastes'},
+      {key:'accCuerdas',label:'Cuerdas'},
+      {key:'accCorreas',label:'Correas'},
+      {key:'accPuas',label:'Púas'},
+      {key:'accAfinadores',label:'Afinadores'},
+      {key:'accFundas',label:'Fundas y estuches'},
+      {key:'accAtriles',label:'Atriles y parantes'},
+      {key:'accBaquetas',label:'Baquetas y parches'},
+      {key:'accCanas',label:'Cañas y boquillas'},
+    ]},
 ];
 
 /* ======================================================================
@@ -1005,6 +1061,7 @@ const DEFAULT_SLIDE = {
 
 let PRODUCTS = [];
 let PRICE_MAX = 3000; // valor por defecto mientras cargan los productos reales
+const MAX_PRODUCT_IMAGES = 7;
 
 /* Ícono decorativo por defecto según la categoría */
 const ICON_BY_CAT = {
@@ -1169,7 +1226,13 @@ function applyCurrentViewMeta(){
   if(state.offersOnly){ setPageMeta('Ofertas | Chipao Music', 'Instrumentos musicales en oferta en Perú: descuentos en guitarras, teclados, percusión y más.'); return; }
   if(state.activeCat){
     const c = CATEGORIES.find(x=>x.key===state.activeCat);
-    if(c){ setPageMeta(`${c.label} | Chipao Music`, `Compra ${c.label.toLowerCase()} en Perú: ${c.subs.map(s=>s.label).join(', ')}. Envíos a todo el país.`); return; }
+    if(c){
+      const subsList = c.subs.map(s=>s.label).join(', ');
+      const desc = subsList
+        ? `Compra ${c.label.toLowerCase()} en Perú: ${subsList}. Envíos a todo el país.`
+        : `Compra ${c.label.toLowerCase()} en Perú. Envíos a todo el país.`;
+      setPageMeta(`${c.label} | Chipao Music`, desc); return;
+    }
   }
   setPageMeta('Catálogo | Chipao Music', DEFAULT_META_DESCRIPTION);
 }
@@ -1538,7 +1601,7 @@ function heroIllustrationPercusion(){
    ====================================================================== */
 function productCard(p){
   const catObj = CATEGORIES.find(c=>c.key===p.cat);
-  const subLabel = catObj ? (catObj.subs.find(s=>s.key===p.sub)||{}).label : '';
+  const subLabel = catObj ? ((catObj.subs.find(s=>s.key===p.sub)||{}).label || catObj.label) : '';
   const stock = p.stock || 0;
   const outOfStock = stock <= 0;
   const lowStock = stock > 0 && stock <= 3;
@@ -1596,20 +1659,21 @@ function renderFiltersPanel(){
       <div class="filter-group">
         ${CATEGORIES.map(c=>`
           <div class="cat-accordion ${state.activeCat===c.key?'open':''}" data-cat="${c.key}">
-            <div class="cat-head" onclick="accordionToggle('${c.key}')">
+            <div class="cat-head" ${c.subs.length?`onclick="accordionToggle('${c.key}')"`:''}>
               <label class="chk" style="padding:0;" onclick="event.stopPropagation()">
                 <input type="checkbox" ${state.activeCat===c.key?'checked':''} onchange="setCat('${c.key}', this.checked)">
                 ${c.label}
               </label>
-              ${chevron}
+              ${c.subs.length?chevron:''}
             </div>
+            ${c.subs.length?`
             <div class="subs">
               ${c.subs.map(s=>`
                 <label class="chk">
                   <input type="checkbox" ${state.activeSubs.has(s.key)?'checked':''} onchange="toggleSub('${c.key}','${s.key}', this.checked)">
                   ${s.label}
                 </label>`).join('')}
-            </div>
+            </div>` : ''}
           </div>`).join('')}
       </div>
       <div class="filter-group">
@@ -1761,11 +1825,36 @@ function checkProductUrlTrigger(){
   routeFromPath(false);
 }
 
+/* Detecta el color de una foto por su nombre de archivo (ej. ".../xilofono-25-notas-azul.jpg" -> "Azul"),
+   para mostrar selectores de color en la ficha de producto sin necesitar un campo nuevo en la base de datos. */
+const COLOR_WORDS = {
+  'marron-entero':'Marrón Entero',
+  azul:'Azul', celeste:'Celeste', turquesa:'Turquesa',
+  amarillo:'Amarillo', dorado:'Dorado',
+  rojo:'Rojo', rosado:'Rosado', rosa:'Rosa', vino:'Vino', granate:'Granate',
+  verde:'Verde',
+  morado:'Morado', lila:'Lila', violeta:'Violeta', purpura:'Púrpura',
+  naranja:'Naranja', madera:'Madera',
+  negro:'Negro', blanco:'Blanco', gris:'Gris', plateado:'Plateado',
+  caoba:'Caoba', natural:'Natural', marron:'Marrón', cafe:'Café'
+};
+/* Ordena las claves más largas primero, para que "marron-entero" no quede
+   eclipsada por la coincidencia genérica de "marron". */
+const COLOR_KEYS_BY_SPECIFICITY = Object.keys(COLOR_WORDS).sort((a,b)=>b.length-a.length);
+function colorFromImageUrl(url){
+  if(!url) return null;
+  const base = (url.split('/').pop()||'').split('.')[0].toLowerCase();
+  for(const key of COLOR_KEYS_BY_SPECIFICITY){
+    if(base.includes(key)) return COLOR_WORDS[key];
+  }
+  return null;
+}
+
 function renderProductDetail(){
   const p = PRODUCTS.find(x=>x.id===pdState.productId);
   if(!p) return;
   const catObj = CATEGORIES.find(c=>c.key===p.cat);
-  const subLabel = catObj ? (catObj.subs.find(s=>s.key===p.sub)||{}).label : '';
+  const subLabel = catObj ? ((catObj.subs.find(s=>s.key===p.sub)||{}).label || catObj.label) : '';
   const images = p.images || [];
   const video = p.video;
   const stock = p.stock || 0;
@@ -1802,6 +1891,19 @@ function renderProductDetail(){
       ? `<div class="pd-stock-low">¡Solo quedan ${stock} unidades!</div>`
       : `<div class="pd-stock-ok">✓ Disponible</div>`;
 
+  const imageColorLabels = images.map(colorFromImageUrl);
+  const hasColors = imageColorLabels.filter(Boolean).length >= 2;
+  const activeColor = imageColorLabels[pdState.activeIndex];
+  const colorsHtml = hasColors ? `
+    <div class="pd-colors">
+      <span class="pd-colors-label">Color${activeColor?`: ${escapeHtml(activeColor)}`:''}</span><br>
+      ${images.map((url,i)=>{
+        const label = imageColorLabels[i];
+        if(!label) return '';
+        return `<button type="button" class="pd-color-chip ${i===pdState.activeIndex?'active':''}" onclick="setActiveSlide(${i})">${escapeHtml(label)}</button>`;
+      }).join('')}
+    </div>` : '';
+
   document.getElementById('modalBody').innerHTML = `
     <div class="pd-gallery">${mainHtml}</div>
     ${thumbsHtml}
@@ -1811,6 +1913,7 @@ function renderProductDetail(){
       <span class="pd-price">${fmt(p.price)}</span>
       ${p.old?`<span class="pd-oldprice">${fmt(p.old)}</span>`:''}
     </div>
+    ${colorsHtml}
     <button class="pd-share" onclick="shareProduct(${p.id})">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
       Copiar enlace para compartir
@@ -2443,76 +2546,164 @@ async function checkAdminPassword(e){
   }
 }
 
+function subOptionsHtml(catKey, selectedSub){
+  const catObj = CATEGORIES.find(c=>c.key===catKey);
+  const subs = catObj ? catObj.subs : [];
+  if(subs.length){
+    return subs.map(s=>`<option value="${s.key}" ${selectedSub===s.key?'selected':''}>${s.label}</option>`).join('');
+  }
+  // Categorías sin subcategoría (ej. Teclados) usan su propia clave como "sub",
+  // igual que los productos existentes — así el <select> nunca queda vacío.
+  return catObj ? `<option value="${catObj.key}" selected>${catObj.label}</option>` : '';
+}
+
+function adminImageFieldsHtml(idFn, values){
+  values = values || [];
+  let html = '';
+  for(let n=1; n<=MAX_PRODUCT_IMAGES; n++){
+    const v = values[n-1] || '';
+    html += `
+            <div class="media-field">
+              <label>Foto ${n} (URL)</label>
+              <div class="media-input-row">
+                <input type="text" placeholder="https://..." value="${escapeHtml(v)}" id="${idFn(n)}">
+                <img class="media-preview" src="${v}" onerror="this.style.display='none'" style="${v?'':'display:none'}">
+              </div>
+            </div>`;
+  }
+  return html;
+}
+
+function toggleNewProductForm(){
+  const el = document.getElementById('new-product-form');
+  if(!el) return;
+  const show = el.style.display === 'none';
+  el.style.display = show ? '' : 'none';
+  if(show) document.getElementById('name-new')?.focus();
+}
+
+function renderNewProductForm(){
+  const firstCat = CATEGORIES[0];
+  return `
+    <div class="admin-row" id="new-product-form" style="display:none;">
+      <div class="admin-row-top">
+        <div class="aname">
+          <input type="text" placeholder="Nombre del producto nuevo" id="name-new" class="aname-input">
+        </div>
+      </div>
+      <div class="admin-fields">
+        <label>Categoría
+          <select id="cat-new" onchange="onAdminCatChange('new')">
+            ${CATEGORIES.map(c=>`<option value="${c.key}">${c.label}</option>`).join('')}
+          </select>
+        </label>
+        <label>Subcategoría
+          <select id="sub-new">
+            ${subOptionsHtml(firstCat.key, '')}
+          </select>
+        </label>
+        <label>Precio<input type="number" min="0" step="1" value="0" id="price-new"></label>
+        <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" id="old-new"></label>
+        <label>Etiqueta<input type="text" placeholder="—" id="badge-new" style="width:110px;"></label>
+        <label>Stock<input type="number" min="0" value="0" id="stock-new"></label>
+        <label style="flex-direction:row;align-items:center;gap:5px;">
+          <input type="checkbox" id="featured-new" style="width:16px;height:16px;padding:0;background:none;border:none;border-radius:0;">
+          Destacado
+        </label>
+      </div>
+      <div class="media-editor open">
+        <div class="media-field">
+          <label>Descripción</label>
+          <textarea placeholder="Descripción del producto..." id="desc-new" rows="4"></textarea>
+        </div>
+        ${adminImageFieldsHtml(n=>`img${n}-new`)}
+        <div class="media-field">
+          <label>Video (URL de YouTube o link directo .mp4)</label>
+          <input type="text" placeholder="https://..." id="vid-new" style="width:100%;">
+        </div>
+      </div>
+      <button class="btn-gold" style="width:100%;margin-top:10px;" onclick="createProduct(this)">Crear producto</button>
+    </div>`;
+}
+
+let adminSearchQuery = '';
+
+function adminRowHtml(p){
+  return `
+    <div class="admin-row ${p.stock<=0?'zero':''}" data-row="${p.id}">
+      <div class="admin-row-top">
+        <div class="aname">
+          <input type="text" value="${escapeHtml(p.name)}" id="name-${p.id}" class="aname-input">
+        </div>
+        <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">📝 Descripción</button>
+        <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">🖼️ Fotos y video</button>
+        <button type="button" class="media-toggle" style="color:#c0392b;" onclick="deleteProduct(${p.id}, this)">🗑️ Eliminar</button>
+      </div>
+      <div class="admin-fields">
+        <label>Categoría
+          <select id="cat-${p.id}" onchange="onAdminCatChange(${p.id})">
+            ${CATEGORIES.map(c=>`<option value="${c.key}" ${p.cat===c.key?'selected':''}>${c.label}</option>`).join('')}
+          </select>
+        </label>
+        <label>Subcategoría
+          <select id="sub-${p.id}">
+            ${subOptionsHtml(p.cat, p.sub)}
+          </select>
+        </label>
+        <label>Precio<input type="number" min="0" step="1" value="${p.price}" id="price-${p.id}"></label>
+        <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
+        <label>Etiqueta<input type="text" placeholder="—" value="${escapeHtml(p.badge ?? '')}" id="badge-${p.id}" style="width:110px;"></label>
+        <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
+        <label style="flex-direction:row;align-items:center;gap:5px;">
+          <input type="checkbox" id="featured-${p.id}" ${p.featured?'checked':''} style="width:16px;height:16px;padding:0;background:none;border:none;border-radius:0;">
+          Destacado
+        </label>
+      </div>
+      <div class="media-editor" id="desc-editor-${p.id}">
+        <div class="media-field">
+          <label>Descripción</label>
+          <textarea placeholder="Descripción del producto..." id="desc-${p.id}" rows="6">${escapeHtml(p.description||'')}</textarea>
+        </div>
+      </div>
+      <div class="media-editor" id="media-editor-${p.id}">
+        ${adminImageFieldsHtml(n=>`img${n}-${p.id}`, p.images)}
+        <div class="media-field">
+          <label>Video (URL de YouTube o link directo .mp4)</label>
+          <input type="text" placeholder="https://..." value="${p.video||''}" id="vid-${p.id}" style="width:100%;">
+        </div>
+      </div>
+      <button class="btn-gold" style="width:100%;margin-top:10px;" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
+    </div>`;
+}
+
+function filteredAdminProducts(){
+  const q = adminSearchQuery.trim().toLowerCase();
+  if(!q) return PRODUCTS;
+  return PRODUCTS.filter(p=>p.name.toLowerCase().includes(q));
+}
+
+function renderAdminListHtml(){
+  const list = filteredAdminProducts();
+  if(!list.length) return `<p style="text-align:center;color:var(--muted);padding:20px 0;">Ningún producto coincide con "${escapeHtml(adminSearchQuery)}".</p>`;
+  return list.map(adminRowHtml).join('');
+}
+
+function onAdminSearchInput(val){
+  adminSearchQuery = val;
+  document.getElementById('admin-list').innerHTML = renderAdminListHtml();
+}
+
 function renderAdminPanel(){
   document.getElementById('modalBody').innerHTML = `
     <h3 class="h-serif">Panel de productos</h3>
     <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
-    <div class="admin-list">
-      ${PRODUCTS.map(p=>{
-        const [i1='',i2='',i3='',i4=''] = p.images || [];
-        return `
-        <div class="admin-row ${p.stock<=0?'zero':''}" data-row="${p.id}">
-          <div class="admin-row-top">
-            <div class="aname">
-              <input type="text" value="${escapeHtml(p.name)}" id="name-${p.id}" class="aname-input">
-              <small>${p.cat} · ${p.sub}</small>
-            </div>
-            <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">📝 Descripción</button>
-            <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">🖼️ Fotos y video</button>
-          </div>
-          <div class="admin-fields">
-            <label>Precio<input type="number" min="0" step="1" value="${p.price}" id="price-${p.id}"></label>
-            <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
-            <label>Etiqueta<input type="text" placeholder="—" value="${escapeHtml(p.badge ?? '')}" id="badge-${p.id}" style="width:110px;"></label>
-            <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
-            <label style="flex-direction:row;align-items:center;gap:5px;">
-              <input type="checkbox" id="featured-${p.id}" ${p.featured?'checked':''} style="width:16px;height:16px;padding:0;background:none;border:none;border-radius:0;">
-              Destacado
-            </label>
-          </div>
-          <div class="media-editor" id="desc-editor-${p.id}">
-            <div class="media-field">
-              <label>Descripción</label>
-              <textarea placeholder="Descripción del producto..." id="desc-${p.id}" rows="6">${escapeHtml(p.description||'')}</textarea>
-            </div>
-          </div>
-          <div class="media-editor" id="media-editor-${p.id}">
-            <div class="media-field">
-              <label>Foto 1 (URL)</label>
-              <div class="media-input-row">
-                <input type="text" placeholder="https://..." value="${i1}" id="img1-${p.id}">
-                <img class="media-preview" src="${i1}" onerror="this.style.display='none'" style="${i1?'':'display:none'}">
-              </div>
-            </div>
-            <div class="media-field">
-              <label>Foto 2 (URL)</label>
-              <div class="media-input-row">
-                <input type="text" placeholder="https://..." value="${i2}" id="img2-${p.id}">
-                <img class="media-preview" src="${i2}" onerror="this.style.display='none'" style="${i2?'':'display:none'}">
-              </div>
-            </div>
-            <div class="media-field">
-              <label>Foto 3 (URL)</label>
-              <div class="media-input-row">
-                <input type="text" placeholder="https://..." value="${i3}" id="img3-${p.id}">
-                <img class="media-preview" src="${i3}" onerror="this.style.display='none'" style="${i3?'':'display:none'}">
-              </div>
-            </div>
-            <div class="media-field">
-              <label>Foto 4 (URL)</label>
-              <div class="media-input-row">
-                <input type="text" placeholder="https://..." value="${i4}" id="img4-${p.id}">
-                <img class="media-preview" src="${i4}" onerror="this.style.display='none'" style="${i4?'':'display:none'}">
-              </div>
-            </div>
-            <div class="media-field">
-              <label>Video (URL de YouTube o link directo .mp4)</label>
-              <input type="text" placeholder="https://..." value="${p.video||''}" id="vid-${p.id}" style="width:100%;">
-            </div>
-          </div>
-          <button class="btn-gold" style="width:100%;margin-top:10px;" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
-        </div>`;
-      }).join('')}
+    <div class="admin-actions" style="margin-bottom:14px;">
+      <button class="btn-outline" style="width:100%;" onclick="toggleNewProductForm()">➕ Agregar producto nuevo</button>
+    </div>
+    ${renderNewProductForm()}
+    <input type="text" id="admin-search" class="aname-input" style="margin-bottom:12px;" placeholder="🔍 Buscar producto por nombre..." value="${escapeHtml(adminSearchQuery)}" oninput="onAdminSearchInput(this.value)">
+    <div class="admin-list" id="admin-list">
+      ${renderAdminListHtml()}
     </div>
     <div class="admin-actions">
       <button class="btn-outline" style="width:100%;" onclick="closeModal()">Listo</button>
@@ -2520,6 +2711,10 @@ function renderAdminPanel(){
   `;
 }
 
+function onAdminCatChange(id){
+  const catKey = document.getElementById(`cat-${id}`).value;
+  document.getElementById(`sub-${id}`).innerHTML = subOptionsHtml(catKey, '');
+}
 function toggleMediaEditor(id){
   document.getElementById(`media-editor-${id}`)?.classList.toggle('open');
 }
@@ -2533,6 +2728,8 @@ async function saveProduct(id, btnEl){
 
   const name = document.getElementById(`name-${id}`).value.trim();
   if(!name){ showToast('El nombre no puede quedar vacío'); return; }
+  const cat = document.getElementById(`cat-${id}`).value;
+  const sub = document.getElementById(`sub-${id}`).value;
   const price = Math.max(0, parseFloat(document.getElementById(`price-${id}`).value) || 0);
   const oldVal = document.getElementById(`old-${id}`).value;
   const old = oldVal === '' ? null : Math.max(0, parseFloat(oldVal) || 0);
@@ -2542,10 +2739,7 @@ async function saveProduct(id, btnEl){
   const featured = document.getElementById(`featured-${id}`).checked;
   const descVal = document.getElementById(`desc-${id}`).value.trim();
   const description = descVal === '' ? null : descVal;
-  const img1 = document.getElementById(`img1-${id}`).value.trim();
-  const img2 = document.getElementById(`img2-${id}`).value.trim();
-  const img3 = document.getElementById(`img3-${id}`).value.trim();
-  const img4 = document.getElementById(`img4-${id}`).value.trim();
+  const imgs = readImageFields(n=>`img${n}-${id}`);
   const video = document.getElementById(`vid-${id}`).value.trim();
 
   const original = btnEl.textContent;
@@ -2556,14 +2750,14 @@ async function saveProduct(id, btnEl){
     const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
-      body: JSON.stringify({ name, price, old, badge, stock, featured, description, image1: img1||null, image2: img2||null, image3: img3||null, image4: img4||null, video: video||null })
+      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, description, video: video||null, ...imagesToBody(imgs) })
     });
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
 
     // refleja el cambio al instante, sin recargar toda la tienda
-    p.name = name; p.price = price; p.old = old; p.badge = badge; p.stock = stock; p.featured = featured; p.description = description;
-    p.images = [img1, img2, img3, img4].filter(Boolean); p.video = video || null;
+    p.name = name; p.cat = cat; p.sub = sub; p.price = price; p.old = old; p.badge = badge; p.stock = stock; p.featured = featured; p.description = description;
+    p.images = imgs.filter(Boolean); p.video = video || null;
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
 
@@ -2575,6 +2769,93 @@ async function saveProduct(id, btnEl){
     btnEl.textContent = 'Error, reintentar';
     showToast('No se pudo guardar. Revisa tu clave de administrador.');
   }finally{
+    setTimeout(()=>{ btnEl.textContent = original; btnEl.disabled = false; }, 1400);
+  }
+}
+
+function readImageFields(idFn){
+  const imgs = [];
+  for(let n=1; n<=MAX_PRODUCT_IMAGES; n++){
+    imgs.push(document.getElementById(idFn(n)).value.trim());
+  }
+  return imgs;
+}
+function imagesToBody(imgs){
+  const body = {};
+  imgs.forEach((v,i)=>{ body[`image${i+1}`] = v || null; });
+  return body;
+}
+
+async function createProduct(btnEl){
+  const name = document.getElementById('name-new').value.trim();
+  if(!name){ showToast('El nombre no puede quedar vacío'); return; }
+  const cat = document.getElementById('cat-new').value;
+  const sub = document.getElementById('sub-new').value;
+  if(!sub){ showToast('Elige una subcategoría'); return; }
+  const price = Math.max(0, parseFloat(document.getElementById('price-new').value) || 0);
+  const oldVal = document.getElementById('old-new').value;
+  const old = oldVal === '' ? null : Math.max(0, parseFloat(oldVal) || 0);
+  const badgeVal = document.getElementById('badge-new').value.trim();
+  const badge = badgeVal === '' ? null : badgeVal;
+  const stock = Math.max(0, parseInt(document.getElementById('stock-new').value) || 0);
+  const featured = document.getElementById('featured-new').checked;
+  const descVal = document.getElementById('desc-new').value.trim();
+  const description = descVal === '' ? null : descVal;
+  const imgs = readImageFields(n=>`img${n}-new`);
+  const video = document.getElementById('vid-new').value.trim();
+
+  const original = btnEl.textContent;
+  btnEl.textContent = 'Creando...';
+  btnEl.disabled = true;
+
+  try{
+    const res = await fetch(`${PRODUCTS_API_URL}/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
+      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, description, video: video||null, ...imagesToBody(imgs) })
+    });
+    const data = await res.json();
+    if(!res.ok || data.error) throw new Error(data.error || 'Error al crear');
+
+    PRODUCTS.push({ id: data.id, name, cat, sub, price, old, badge, stock, featured, description, images: imgs.filter(Boolean), video: video||null });
+    PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
+    if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
+    if(state.view==='shop') render();
+    showToast('Producto creado');
+    renderAdminPanel();
+  }catch(err){
+    btnEl.textContent = 'Error, reintentar';
+    showToast('No se pudo crear. Revisa tu clave de administrador.');
+    setTimeout(()=>{ btnEl.textContent = original; btnEl.disabled = false; }, 1400);
+  }
+}
+
+async function deleteProduct(id, btnEl){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  if(!confirm(`¿Eliminar "${p.name}"? Esta acción no se puede deshacer.`)) return;
+
+  const original = btnEl.textContent;
+  btnEl.textContent = 'Eliminando...';
+  btnEl.disabled = true;
+
+  try{
+    const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Secret': sessionAdminSecret }
+    });
+    const data = await res.json();
+    if(!res.ok || data.error) throw new Error(data.error || 'Error al eliminar');
+
+    PRODUCTS = PRODUCTS.filter(x=>x.id!==id);
+    PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(x=>x.price)) : 3000;
+    if(state.priceMax > PRICE_MAX) state.priceMax = PRICE_MAX;
+    if(state.view==='shop') render();
+    showToast('Producto eliminado');
+    renderAdminPanel();
+  }catch(err){
+    btnEl.textContent = 'Error, reintentar';
+    showToast('No se pudo eliminar. Revisa tu clave de administrador.');
     setTimeout(()=>{ btnEl.textContent = original; btnEl.disabled = false; }, 1400);
   }
 }
