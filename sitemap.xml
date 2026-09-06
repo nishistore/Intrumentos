@@ -2,846 +2,1009 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://chipaomusic.com/</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/tienda</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/ofertas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/categoria/cuerda</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/categoria/teclados</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/categoria/percusion</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/categoria/viento</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/categoria/audio</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/categoria/colegio</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/categoria/accesorios</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/1-guitarra-acustica-jumbo-vozzex</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/2-guitarra-acustica-vozzex</loc>
+    <loc>https://chipaomusic.com/producto/2-guitarra-acustica-vozzex-colores-disponibles</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/3-guitarra-electrica-stratocaster-vozzex</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/4-guitarra-acustica-menphis</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/9-charango-boliviano-madera-cedro</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/10-charango-turistico-decorado</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/11-teclado-yamaha-psr-e373-61-teclas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/12-piano-digital-88-teclas-semi-contrapesadas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/13-teclado-infantil-37-teclas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/14-organo-casio-ct-s200</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/15-tambor-redoblante-escolar-14</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/16-bombo-leguero-22</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/17-bombo-andino-artesanal</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/18-tarola-profesional-acero-14x5-5</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/19-cajon-peruano-flamenco</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/20-cajon-peruano-clasico-enchapado</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/21-metalofono-soprano-25-notas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/22-flauta-traversa-estudiante-niquelada</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/23-flauta-dulce-soprano-yamaha</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/24-melodica-32-teclas-con-estuche</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/25-quena-andina-en-madera</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/26-zampona-doble-hilera-13-6</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/27-microfono-dinamico-vocal-sm58-style</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/28-microfono-condensador-usb-streaming</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/29-interfaz-de-audio-usb-2-canales</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/30-interfaz-de-audio-4-canales-midi</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/31-bombito-escolar-con-palillo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/32-flauta-dulce-escolar-soprano</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/33-melodica-escolar-32-teclas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/34-lira-musical-escolar-metalica</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/35-xilofono-escolar-8-notas</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/36-cuerdas-ernie-ball-regular-slinky</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/37-slinky-top-heavy-bottom</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/38-cana-para-saxofon-clarinete-x3</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/39-baquetas-de-madera-par</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/40-parante-para-guitarra-universal</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/41-atril-metalico-para-partituras</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/42-guitarra-acustica-menphis-mate</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/43-guitarra-acustica-fever</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/44-ukelele-soprano-vozzex</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/45-ukelele-concierto-vozzex</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/46-ukelele-concierto-vozzex</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/47-violin-4-4-fever</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/48-violin-4-4-fever-de-ebano</loc>
+    <loc>https://chipaomusic.com/producto/48-violin-4-4-sun-sound-brillo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/49-violin-4-4-sun-sound</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/50-d-addario-electrica-008-exl130</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/51-d-addario-electrica-009-exl120</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/52-d-addario-electrica-010-exl110</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/53-d-addario-electrica-011</loc>
+    <loc>https://chipaomusic.com/producto/49-violin-4-4-sun-sound-mate</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/54-bombo-maxtone-26-grande</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/55-bombo-folclorico-pequeno-de-chivo</loc>
+    <loc>https://chipaomusic.com/producto/55-bombo-andino-artesanal-pequeno-de-chivo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/56-bombo-folclorico-grande-de-chivo</loc>
+    <loc>https://chipaomusic.com/producto/56-bombo-andino-artesanal-grande-de-chivo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/57-tarolita-de-nino</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/58-teclado-6464b</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/59-teclado-vozzex-vku-335</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/60-teclado-economico-xts-6420</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/61-bajo-electrico-memphis</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/62-guitarra-freeman</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/63-violin-4-4-con-estuche-y-arco</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/64-metronomo-y-afinador-musedo-mt-40w-metro-tuner</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/65-guitarra-electrica-california-sjs100-negra-tipo-superstrat</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/66-ukulele-concert-memphis-uk-24m3-diseno-tribal-blanco-negro</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/67-tarola-caja-de-madera-con-parche-de-cuero-de-vaca-y-cuerdas-percusion-folclorica</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/68-ukulele-soprano-vozzex-expresate-color-vino-caoba</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/69-ukulele-soprano-vozzex-expresate-color-celeste</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/70-ukulele-soprano-vozzex-expresate-color-rojo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/71-ukulele-soprano-vozzex-expresate-bicolor-natural-rojo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/72-tarola-redoblante-de-marcha-laser-percussion-instruments-blanco</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/73-guitarra-electroacustica-cutaway-color-natural-con-incrustacion-de-colibri</loc>
+    <loc>https://chipaomusic.com/producto/73-guitarra-acustica-cutaway-smigger-colores-disponibles</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/74-guitarra-electroacustica-cutaway-color-vino-caoba-con-incrustacion-de-colibri</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/75-cuerdas-ernie-ball-ernesto-palla-black-silver-nylon-2406-concert-quality-para-guitarra-clasica</loc>
+    <loc>https://chipaomusic.com/producto/77-cejilla-capo-alice-pc-diseno-cocodrilo-para-guitarra</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/76-cuerdas-ernie-ball-not-even-slinky-2626-12-56-para-guitarra-electrica</loc>
+    <loc>https://chipaomusic.com/producto/78-cejilla-capo-wingo-acustica-y-clasica</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/77-cejilla-capo-alice-a007g-pc-diseno-cocodrilo-para-guitarra</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/78-cejilla-capo-wingo-jx-06-universal-dorada-guitarra-acustica-y-clasica</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/79-cejilla-capo-romeo-r007a-bk-negra-para-guitarra</loc>
+    <loc>https://chipaomusic.com/producto/79-cejilla-capo-romeo-guitarra-colores-disponibles</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/80-cejilla-capo-romeo-r007a-wh-blanca-para-guitarra</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/81-cejilla-capo-plateada-con-negro-para-guitarra</loc>
+    <loc>https://chipaomusic.com/producto/81-cejilla-capo-marca-guitar-capo-para-guitarra-colores</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/82-cejilla-capo-roja-con-negro-para-guitarra</loc>
+    <loc>https://chipaomusic.com/producto/82-juego-de-cuerdas-romeo-de-bronze-para-guitarra</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/83-cejilla-capo-azul-con-negro-para-guitarra</loc>
+    <loc>https://chipaomusic.com/producto/83-juego-de-cuerdas-romeo-nylon-para-guitarra</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/84-afinador-cromatico-korg-ca-2</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/85-organo-electronico-digital-54-teclas-xts-8420-color-rosa</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/86-cuerdas-ernie-ball-earthwood-80-20-bronze-extra-light-2006-10-50-para-guitarra-acustica</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/87-cuerdas-d-addario-classic-nylon-ej27n-normal-tension-para-guitarra-clasica</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/88-cuerdas-d-addario-ez900-85-15-bronze-extra-light-10-50-para-guitarra-acustica</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/89-cuerdas-d-addario-ez890-85-15-bronze-super-light-9-45-para-guitarra-acustica</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/90-ukulele-soprano-memphis-uk-21mk-003-diseno-conejo-caoba</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/91-ukulele-concert-guc-10b-color-natural-con-roseta-tipo-mandala</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/92-xilofono-fever-instruments-3-8-fvxi-rd-rojo-con-baquetas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/93-ukulele-concert-memphis-uk-24m7-diseno-floral-rojo-azul</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/94-ukulele-concert-memphis-uk-24m28-diseno-mandala-naranja-negro</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/95-ukulele-soprano-memphis-uk-21mm-color-caoba-liso</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/96-ukulele-concert-memphis-gus-15c-color-rosewood-con-ribete</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/97-ukulele-concert-cutaway-memphis-guc-11bk-color-oscuro</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/98-tarola-de-marcha-fever-instruments-10-torres-fvsd-1413-rw-vino-14-x5-5</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/99-ukulele-soprano-memphis-uk-21m29-color-caoba-con-mandala-grabada</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/100-ukulele-concert-memphis-guc-17c-color-natural-tapa-spruce</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/101-ukulele-soprano-memphis-diseno-bandera-reino-unido-union-jack</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/102-ukulele-concert-memphis-uk-21m22nt-bonka-ukulele-diseno-hoja-colibri-natural</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/103-cuerdas-d-addario-xt-nickel-plated-steel-10-52-para-guitarra-electrica</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/104-set-de-resinas-rosin-para-violin-viola-cello-varias-marcas-romeo-fever-leto-paramount-d-addario</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/105-bajo-electrico-california-eb-5c-nt-5-cuerdas-color-natural</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/106-ukulele-concert-memphis-uk-24m20-color-oscuro-sunburst</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/107-ukulele-concert-memphis-guc-19-natural-grabado-sol-olas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/108-guitarra-electrica-california-stratocaster-sst10-3st-sunburst</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/109-ukulele-memphis-uk-21mm-eq-con-ecualizador-color-caoba</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/110-ukulele-concert-cutaway-memphis-guc-38-color-oscuro</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/111-ukulele-concert-memphis-uk-24m1-diseno-montanas-desierto</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/112-guitarra-electrica-stratocaster-st-es-bkb-negra</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/113-set-de-resinas-rosin-para-violin-viola-cello-varias-marcas-vittorio-fever-alice-d-addario-clean-rosin-paramount-romeo-leto</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/114-ukulele-concert-memphis-guc-12bk-color-negro</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/115-ukulele-concert-memphis-guc-12rd-color-rojo-naranja</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/116-tarola-de-marcha-fever-instruments-14-torres-fvsd-1413-pl-plateada-14-x5-5</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/117-ukulele-concert-memphis-guc-17-naranja-natural-con-roseta-floral</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/118-ukulele-concert-pina-pineapple-memphis-uk-24pa-eq-con-ecualizador-natural</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/119-ukulele-concert-memphis-uk-24m31-diseno-sirena-manos</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/120-ukulele-concert-memphis-guc-36-madera-exotica-bocote-con-ribete-de-nacar</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/121-boquilla-para-trompeta-dorada-mouth-of-trumpet</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/122-ukulele-concert-memphis-uk-24m22nat-diseno-hoja-natural</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/123-ukulele-concert-memphis-uk-24m12-diseno-volcan-ola</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/124-ukulele-concert-cutaway-memphis-guc-11rd-color-rojo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/125-bajo-electrico-california-eb-5c-wrs-5-cuerdas-sunburst-vino</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/126-guitarra-electrica-a-g37-tbk-azul-transparente-flameada</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/127-melodicas-fever-instruments-de-37-teclas-variedad-de-colores</loc>
+    <loc>https://chipaomusic.com/producto/127-melodica-california-37-teclas-colores-disponibles</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/128-ukulele-concert-memphis-uk-24m22-bonka-ukulele-diseno-hoja</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/129-ukulele-concert-memphis-guc-06-madera-cebra-zebrawood-natural</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/130-ukulele-concert-memphis-guc-23w-diseno-mandala-tipo-henna</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/131-cuerdas-d-addario-xs-nickel-plated-steel-9-46-para-guitarra-electrica</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/132-ukulele-soprano-gus-10b-color-natural-con-roseta-sol</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/133-ukulele-concert-memphis-guc-17rd-color-rojo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/134-xilofonos-cromaticos-fever-instruments-rosa-azul-rojo-amarillo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/135-boquilla-suzuki-mouthpiece-para-saxofon</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/136-guitarra-electrica-california-spk10-bk-negra</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/137-bajo-electrico-memphis-eb224v-wrd-color-vino</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/138-guitarra-clasica-freeman-color-rosa-negro-frente-y-dorso</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/139-guitarra-clasica-freeman-color-azul-morado-frente-y-dorso</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/140-melodica-california-32-teclas-color-celeste</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/141-melodica-california-32-teclas-color-naranja</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/142-melodica-california-32-teclas-color-rosa</loc>
+    <loc>https://chipaomusic.com/producto/140-melodica-california-32-teclas-colores-disponibles</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/143-guitarra-clasica-freeman-color-rojo-negro-frente-y-dorso</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/144-melodica-california-32-teclas-color-negro</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/145-guitarra-clasica-freeman-color-negro-frente-y-dorso</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/146-guitarra-clasica-freeman-color-rojo-sunburst-frente-y-dorso</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/147-melodica-california-32-teclas-color-amarillo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/148-bajo-electrico-memphis-eb224-nat-color-natural</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/149-guitarra-clasica-freeman-color-naranja-sunburst-frente-y-dorso</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/150-melodica-california-32-teclas-color-rojo</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/151-guitarra-clasica-freeman-color-azul-frente-y-dorso</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/152-guitarra-clasica-freeman-color-blanco-negro-frente-y-dorso</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/153-melodica-california-32-teclas-color-verde</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/154-bajo-electrico-memphis-eb224v-sbs-sunburst</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/155-bajo-electrico-memphis-eb224-bk-color-negro</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/156-bajo-electrico-memphis-eb224v-bk-color-negro</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/157-bajo-electrico-memphis-eb224-sbs-sunburst</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/158-guitarra-clasica-freeman-color-natural-negro-frente-y-dorso</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/159-melodica-california-32-teclas-color-morado-lila</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://chipaomusic.com/producto/160-melodica-california-32-teclas-color-azul</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/161-bajo-electrico-memphis-eb224v-cream-color-crema-perlado</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://chipaomusic.com/producto/162-bajo-electrico-memphis-eb224-wrd-color-vino</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chipaomusic.com/producto/163-limpiador-y-lubricante-para-cuerdas-d-addario-xlr8-string-lubricant-cleaner</loc>
+    <loc>https://chipaomusic.com/producto/164-xilofono-metalofono-de-25-teclas</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/165-nickel-wound-d-addario-exl130-8-38</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/166-nickel-wound-d-addario-exl120-9-42</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/167-nickel-wound-d-addario-exl110-10-46</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/168-nickel-wound-d-addario-exl115-11-49</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/169-super-slinky-ernie-ball-09-42</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/170-regular-slinky-ernie-ball-10-46</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/171-power-slinky-ernie-ball-11-48</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/172-not-even-slinky-ernie-ball-12-56</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/173-d-addario-xt-electric-09-42</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/174-d-addario-xt-electric-10-52</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/175-d-addario-xt-electric-11-49</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/176-d-addario-xs-electric-09-46</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/177-d-addario-acustica-bronze-09-45</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/178-d-addario-acustica-bronze-10-50</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/179-d-addario-acustica-bronze-11-52</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/180-d-addario-acustica-bronze-12-54</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/181-d-addario-xs-acustica-11-52</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/182-d-addario-pro-arte-hard-tension-ej46</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/183-nickel-wound-electrica-d-addario-09-46-exl125</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/184-ernie-ball-cuerdas-negras-acustica</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/185-cuerdas-ernie-ball-acustica-metal-extra-light-10-50</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/186-d-addario-nylon-ej27n-tension-normal</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/187-d-addario-classic-nylon-hard-tension</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/188-skinny-top-heavy-bottom-10-52</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/189-claves-de-15-cm</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/190-claves-de-20-cm</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/191-kazoo-color-aluminio</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/192-juego-de-puas-dunlop-tortex</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/193-kazoo-de-plastico-resistente</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://chipaomusic.com/producto/194-juego-de-pines-para-cuerdas</loc>
+    <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
