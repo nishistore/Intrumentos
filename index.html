@@ -985,16 +985,28 @@ const CATEGORIES = [
     subs:[]},
   {key:'accesorios', label:'Accesorios', icon:'accessory',
     subs:[
+      {key:'accCuerdasAcustica',label:'Cuerdas (Acústica/Clásica)'},
+      {key:'accCuerdasElectrica',label:'Cuerdas (Eléctrica)'},
       {key:'accCapotrastes',label:'Capotrastes'},
-      {key:'accCuerdas',label:'Cuerdas'},
-      {key:'accCorreas',label:'Correas'},
-      {key:'accPuas',label:'Púas'},
-      {key:'accAfinadores',label:'Afinadores'},
-      {key:'accFundas',label:'Fundas y estuches'},
+      {key:'accPuas',label:'Púas y pines'},
+      {key:'accAfinadores',label:'Afinadores y metrónomos'},
       {key:'accAtriles',label:'Atriles y parantes'},
       {key:'accBaquetas',label:'Baquetas y parches'},
       {key:'accCanas',label:'Cañas y boquillas'},
     ]},
+];
+
+/* La barra lateral de la tienda agrupa Accesorios por INSTRUMENTO en vez de por tipo
+   (así el cliente encuentra más rápido los accesorios de lo que toca). "matches" lista
+   las subcategorías reales (las de arriba, las que usa el panel de administrador) que
+   caen bajo ese grupo — por eso un capo o una púa puede aparecer tanto en "Guitarra
+   Acústica" como en "Guitarra Eléctrica" sin duplicar el producto. */
+const ACCESORIOS_FILTER_GROUPS = [
+  {key:'accGrpGuitarraAcustica', label:'Guitarra Acústica y Clásica', matches:['accCuerdasAcustica','accCapotrastes','accPuas']},
+  {key:'accGrpGuitarraElectrica', label:'Guitarra Eléctrica', matches:['accCuerdasElectrica','accCapotrastes','accPuas']},
+  {key:'accGrpPercusion', label:'Percusión', matches:['accBaquetas']},
+  {key:'accGrpViento', label:'Viento', matches:['accCanas']},
+  {key:'accGrpGenerales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles']},
 ];
 
 /* ======================================================================
@@ -1272,10 +1284,11 @@ function buildNavLists(){
     `<a href="/categoria/${c.key}" class="${state.view==='shop'&&state.activeCat===c.key?'active':''}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
   ).join('') + `<a href="/tienda" class="${state.view==='shop'&&!state.activeCat?'active':''}" onclick="goShop(null);return false;">Todos</a>`;
 
-  document.getElementById('drawerCats').innerHTML = CATEGORIES.map(c=>
-    `<a class="cat-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}');return false;">${c.label}</a>` +
-    c.subs.map(s=>`<a class="sub-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}','${s.key}');return false;">${s.label}</a>`).join('')
-  ).join('');
+  document.getElementById('drawerCats').innerHTML = CATEGORIES.map(c=>{
+    const subsToShow = c.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : c.subs;
+    return `<a class="cat-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}');return false;">${c.label}</a>` +
+    subsToShow.map(s=>`<a class="sub-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}','${s.key}');return false;">${s.label}</a>`).join('');
+  }).join('');
 
   document.getElementById('footerCats').innerHTML = CATEGORIES.map(c=>
     `<a class="link" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
@@ -1642,10 +1655,23 @@ function productCard(p){
 /* ======================================================================
    RENDER: SHOP (filters + grid)
    ====================================================================== */
+/* Un producto de accesorios cae bajo un grupo por instrumento si su sub real
+   (el que edita el panel de administrador) aparece en la lista 'matches' del
+   grupo — así un mismo capo puede listarse en Guitarra Acústica y Eléctrica
+   sin necesidad de que el producto tenga dos subcategorías. */
+function subMatchesActiveFilter(sub){
+  for(const activeKey of state.activeSubs){
+    if(activeKey === sub) return true;
+    const grp = ACCESORIOS_FILTER_GROUPS.find(g=>g.key===activeKey);
+    if(grp && grp.matches.includes(sub)) return true;
+  }
+  return false;
+}
+
 function getFilteredProducts(){
   return PRODUCTS.filter(p=>{
     if(state.activeCat && p.cat!==state.activeCat) return false;
-    if(state.activeSubs.size && !state.activeSubs.has(p.sub)) return false;
+    if(state.activeSubs.size && !subMatchesActiveFilter(p.sub)) return false;
     if(state.offersOnly && !(p.old && p.old > p.price)) return false;
     if(p.price < state.priceMin || p.price > state.priceMax) return false;
     if(state.search && !p.name.toLowerCase().includes(state.search.toLowerCase())) return false;
@@ -1662,24 +1688,27 @@ function renderFiltersPanel(){
     <div class="filters" id="filtersPanel">
       <h3>Filtrar por categoría</h3>
       <div class="filter-group">
-        ${CATEGORIES.map(c=>`
+        ${CATEGORIES.map(c=>{
+          const subsToShow = c.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : c.subs;
+          return `
           <div class="cat-accordion ${state.activeCat===c.key?'open':''}" data-cat="${c.key}">
-            <div class="cat-head" ${c.subs.length?`onclick="accordionToggle('${c.key}')"`:''}>
+            <div class="cat-head" ${subsToShow.length?`onclick="accordionToggle('${c.key}')"`:''}>
               <label class="chk" style="padding:0;" onclick="event.stopPropagation()">
                 <input type="checkbox" ${state.activeCat===c.key?'checked':''} onchange="setCat('${c.key}', this.checked)">
                 ${c.label}
               </label>
-              ${c.subs.length?chevron:''}
+              ${subsToShow.length?chevron:''}
             </div>
-            ${c.subs.length?`
+            ${subsToShow.length?`
             <div class="subs">
-              ${c.subs.map(s=>`
+              ${subsToShow.map(s=>`
                 <label class="chk">
                   <input type="checkbox" ${state.activeSubs.has(s.key)?'checked':''} onchange="toggleSub('${c.key}','${s.key}', this.checked)">
                   ${s.label}
                 </label>`).join('')}
             </div>` : ''}
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>
       <div class="filter-group">
         <h3>Rango de precios</h3>
