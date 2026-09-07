@@ -2,16 +2,20 @@
    Worker de SEO para chipaomusic.com
 
    El sitio es una sola página (index.html) que Cloudflare devuelve para
-   TODAS las rutas. Sin este Worker, Google recibe el mismo <head> para la
-   home, el catálogo, cada categoría y cada producto: el mismo <title>, la
-   misma descripción y, lo más grave, un <link rel="canonical"> apuntando
-   siempre a la home, que le dice a Google "esta página es una copia".
+   TODAS las rutas. Sin este Worker, Google recibe exactamente el mismo HTML
+   para la home, el catálogo, cada categoría y cada producto: mismo <title>,
+   misma descripción, mismo canonical apuntando a la home y — dentro de
+   <main id="app"> — el mismo texto de portada repetido 158 veces.
 
-   Este Worker intercepta el HTML antes de enviarlo y reescribe el <head>
-   según la URL pedida, con los mismos textos que setPageMeta() pone del
-   lado del cliente en index.html. Así Google ve los datos correctos sin
-   depender de que ejecute el JavaScript, y las vistas previas de WhatsApp,
-   Facebook y X funcionan por categoría y por producto.
+   Este Worker hace tres cosas antes de enviar el HTML:
+
+     1. Reescribe el <head> según la URL (título, descripción, og:*, canonical
+        y JSON-LD), con los mismos textos que setPageMeta() usa en el cliente.
+     2. Rellena <main id="app"> con el contenido real de esa ruta, para que
+        Google no tenga que ejecutar JavaScript ni esperar a la API. El JS del
+        sitio lo reemplaza al cargar, así que para las personas no cambia nada.
+     3. Genera /sitemap.xml al vuelo desde la API, para que no haya que
+        regenerarlo a mano cada vez que se agrega un producto.
    ====================================================================== */
 
 const SITE_ORIGIN = 'https://chipaomusic.com';
@@ -22,7 +26,8 @@ const SITE_TITLE = 'Instrumentos Musicales en Lima | Chipao Music';
 const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Guitarras, teclados, percusión, viento y accesorios. Envíos a todo el Perú y recojo en tienda.';
 
 /* Copia de las categorías de index.html. Si agregas una categoría allá,
-   agrégala también aquí para que su página tenga título propio. */
+   agrégala también aquí para que su página tenga título propio. Los
+   productos NO se duplican: se piden a la API en cada visita. */
 const CATEGORIES = [
   { key: 'cuerda', label: 'Instrumentos de Cuerda', subs: ['Guitarras', 'Violines', 'Ukeleles', 'Charangos'] },
   { key: 'teclados', label: 'Teclados', subs: [] },
@@ -33,6 +38,11 @@ const CATEGORIES = [
   { key: 'accesorios', label: 'Accesorios', subs: ['Cuerdas (Acústica/Clásica)', 'Cuerdas (Eléctrica)', 'Capotrastes', 'Púas y pines', 'Afinadores y metrónomos', 'Atriles y parantes', 'Baquetas y parches', 'Cañas y boquillas'] },
 ];
 
+/* La secuencia "<", escrita sin barra invertida literal. Sirve para
+   escapar los "<" que pudiera traer la descripción de un producto y que
+   cerrarían antes de tiempo la etiqueta <script> del JSON-LD. */
+const LT_ESCAPE = String.fromCharCode(92) + 'u003c';
+
 /* Mismo slug que usa el sitio para armar /producto/<id>-<slug>.
    El rango ̀-ͯ son las tildes que NFD separa de su letra. */
 function slugify(str) {
@@ -41,9 +51,23 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function productPath(p) {
+  return '/producto/' + p.id + '-' + slugify(p.name);
+}
+
+function isOffer(p) {
+  return Boolean(p.old && p.old > p.price);
+}
+
 /* Pide el catálogo a la API. Se cachea en el borde 5 minutos para no
    golpear la API en cada visita. Si falla devolvemos lista vacía: la página
-   se sirve igual, solo pierde el <head> específico del producto. */
+   se sirve igual, solo sin el contenido específico de esa ruta. */
 async function fetchProducts() {
   try {
     const res = await fetch(PRODUCTS_API_URL + '/products', {
@@ -57,6 +81,8 @@ async function fetchProducts() {
   }
 }
 
+/* ======================== METADATOS DEL <head> ======================== */
+
 function breadcrumbSchema(trail) {
   return {
     '@type': 'BreadcrumbList',
@@ -66,8 +92,36 @@ function breadcrumbSchema(trail) {
   };
 }
 
+function withContext(schema) {
+  return Object.assign({ '@context': 'https://schema.org' }, schema);
+}
+
 function homeMeta() {
   return { title: SITE_TITLE, description: DEFAULT_META_DESCRIPTION, path: '/' };
+}
+
+function shopMeta() {
+  return {
+    title: 'Catálogo de Instrumentos Musicales | Chipao Music',
+    description: DEFAULT_META_DESCRIPTION,
+    path: '/tienda',
+    schema: withContext(breadcrumbSchema([
+      { name: 'Inicio', path: '/' },
+      { name: 'Catálogo', path: '/tienda' },
+    ])),
+  };
+}
+
+function offersMeta() {
+  return {
+    title: 'Ofertas en Instrumentos Musicales | Chipao Music',
+    description: 'Instrumentos musicales en oferta en Lima y todo el Perú: descuentos en guitarras, teclados, percusión y accesorios. Tienda en San Juan de Miraflores.',
+    path: '/ofertas',
+    schema: withContext(breadcrumbSchema([
+      { name: 'Inicio', path: '/' },
+      { name: 'Ofertas', path: '/ofertas' },
+    ])),
+  };
 }
 
 function categoryMeta(cat) {
@@ -80,7 +134,7 @@ function categoryMeta(cat) {
     title: `${cat.label} en Lima | Chipao Music`,
     description,
     path,
-    schema: Object.assign({ '@context': 'https://schema.org' }, breadcrumbSchema([
+    schema: withContext(breadcrumbSchema([
       { name: 'Inicio', path: '/' },
       { name: cat.label, path },
     ])),
@@ -88,7 +142,7 @@ function categoryMeta(cat) {
 }
 
 function productMeta(p) {
-  const path = `/producto/${p.id}-${slugify(p.name)}`;
+  const path = productPath(p);
   const cat = CATEGORIES.find(c => c.key === p.cat);
   const priceLine = `S/ ${p.price}${p.old ? ` (antes S/ ${p.old})` : ''}`;
   const trail = [{ name: 'Inicio', path: '/' }];
@@ -127,53 +181,135 @@ function productMeta(p) {
   };
 }
 
-/* Traduce la ruta pedida al <head> que le corresponde.
-   Devuelve null cuando la ruta no existe, para marcarla noindex. */
-async function metaForPath(pathname) {
-  if (pathname === '/') return homeMeta();
-
-  if (pathname === '/tienda') {
-    return {
-      title: 'Catálogo de Instrumentos Musicales | Chipao Music',
-      description: DEFAULT_META_DESCRIPTION,
-      path: '/tienda',
-      schema: Object.assign({ '@context': 'https://schema.org' }, breadcrumbSchema([
-        { name: 'Inicio', path: '/' },
-        { name: 'Catálogo', path: '/tienda' },
-      ])),
-    };
-  }
-
-  if (pathname === '/ofertas') {
-    return {
-      title: 'Ofertas en Instrumentos Musicales | Chipao Music',
-      description: 'Instrumentos musicales en oferta en Lima y todo el Perú: descuentos en guitarras, teclados, percusión y accesorios. Tienda en San Juan de Miraflores.',
-      path: '/ofertas',
-      schema: Object.assign({ '@context': 'https://schema.org' }, breadcrumbSchema([
-        { name: 'Inicio', path: '/' },
-        { name: 'Ofertas', path: '/ofertas' },
-      ])),
-    };
-  }
+/* Reconoce la ruta pedida. Devuelve null si no existe ninguna página ahí,
+   para marcarla noindex en vez de dejar que Google la tome por una copia
+   de la home. `products` puede venir vacío si la API no respondió. */
+function routeFor(pathname, products) {
+  if (pathname === '/') return { meta: homeMeta() };
+  if (pathname === '/tienda') return { meta: shopMeta() };
+  if (pathname === '/ofertas') return { meta: offersMeta() };
 
   const catMatch = pathname.match(/^\/categoria\/([a-z]+)$/);
   if (catMatch) {
     const cat = CATEGORIES.find(c => c.key === catMatch[1]);
-    return cat ? categoryMeta(cat) : null;
+    return cat ? { meta: categoryMeta(cat), cat } : null;
   }
 
   const productMatch = pathname.match(/^\/producto\/(\d+)/);
   if (productMatch) {
-    const products = await fetchProducts();
     const p = products.find(x => String(x.id) === productMatch[1]);
-    if (p) return productMeta(p);
-    /* Si la API no respondió no sabemos si el producto existe: dejamos el
+    if (p) return { meta: productMeta(p), product: p };
+    /* Sin datos de la API no sabemos si el producto existe: dejamos el
        <head> por defecto en vez de marcar noindex por error. */
-    return products.length ? null : homeMeta();
+    return products.length ? null : { meta: homeMeta() };
   }
 
   return null;
 }
+
+/* ==================== CONTENIDO DE <main id="app"> ====================
+
+   Esto es lo que ve Google (y cualquiera con JavaScript desactivado) antes
+   de que arranque la app. El JS lo reemplaza en cuanto carga, así que es
+   HTML simple a propósito: sin clases ni estilos, igual que el bloque de
+   portada que ya venía escrito a mano en index.html.
+   ==================================================================== */
+
+function priceText(p) {
+  return isOffer(p) ? `S/ ${p.price} (antes S/ ${p.old})` : `S/ ${p.price}`;
+}
+
+function productListHtml(products) {
+  const items = products.map(p =>
+    `<li><a href="${productPath(p)}">${escapeHtml(p.name)}</a> — ${escapeHtml(priceText(p))}</li>`
+  ).join('');
+  return `<ul>${items}</ul>`;
+}
+
+function listBody(heading, intro, products, vacio) {
+  const lista = products.length
+    ? `<p>${products.length} ${products.length === 1 ? 'producto' : 'productos'}.</p>${productListHtml(products)}`
+    : `<p>${vacio}</p>`;
+  return `<h1>${escapeHtml(heading)}</h1><p>${escapeHtml(intro)}</p>${lista}`;
+}
+
+function productBody(p) {
+  const cat = CATEGORIES.find(c => c.key === p.cat);
+  const partes = [];
+
+  const migas = cat
+    ? `<a href="/">Inicio</a> &rsaquo; <a href="/categoria/${cat.key}">${escapeHtml(cat.label)}</a>`
+    : '<a href="/">Inicio</a>';
+  partes.push(`<nav aria-label="Ruta">${migas}</nav>`);
+
+  partes.push(`<h1>${escapeHtml(p.name)}</h1>`);
+  partes.push(`<p>${escapeHtml(priceText(p))}</p>`);
+  partes.push(`<p>${(p.stock || 0) > 0 ? 'Disponible en tienda y con envío a todo el Perú.' : 'Temporalmente agotado.'}</p>`);
+
+  if (p.images && p.images[0]) {
+    partes.push(`<img src="${escapeHtml(p.images[0])}" alt="${escapeHtml(p.name)}" style="max-width:100%;height:auto;">`);
+  }
+
+  if (p.description) {
+    for (const parrafo of String(p.description).split(/\n+/)) {
+      if (parrafo.trim()) partes.push(`<p>${escapeHtml(parrafo.trim())}</p>`);
+    }
+  }
+
+  if (cat) {
+    partes.push(`<p><a href="/categoria/${cat.key}">Ver más ${escapeHtml(cat.label.toLowerCase())}</a></p>`);
+  }
+  partes.push('<p><a href="/tienda">Ver todo el catálogo</a></p>');
+
+  return partes.join('');
+}
+
+/* Devuelve el HTML del cuerpo, o null para dejar el que ya trae index.html
+   (es el caso de la home, cuyo bloque escrito a mano ya es correcto). */
+function bodyFor(route, products) {
+  if (!route) return null;
+
+  if (route.product) return productBody(route.product);
+
+  if (route.cat) {
+    const suyos = products.filter(p => p.cat === route.cat.key);
+    return listBody(
+      `${route.cat.label} en Lima`,
+      route.meta.description,
+      suyos,
+      'Estamos actualizando esta categoría. Escríbenos por WhatsApp y te decimos qué tenemos disponible.'
+    );
+  }
+
+  if (route.meta.path === '/tienda') {
+    return listBody('Catálogo de instrumentos musicales', DEFAULT_META_DESCRIPTION, products,
+      'Estamos actualizando el catálogo.');
+  }
+
+  if (route.meta.path === '/ofertas') {
+    return listBody('Ofertas', route.meta.description, products.filter(isOffer),
+      'Ahora mismo no hay ofertas activas. Vuelve pronto.');
+  }
+
+  return null;
+}
+
+/* ============================= SITEMAP =============================
+
+   Se genera desde la API en cada petición, así que un producto nuevo
+   aparece solo, sin tener que regenerar ningún archivo a mano.
+   ================================================================= */
+
+function sitemapXml(products) {
+  const rutas = ['/', '/tienda', '/ofertas'];
+  for (const c of CATEGORIES) rutas.push(`/categoria/${c.key}`);
+  for (const p of products) rutas.push(productPath(p));
+
+  const urls = rutas.map(r => `  <url><loc>${escapeHtml(SITE_ORIGIN + r)}</loc></url>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+}
+
+/* ========================= REESCRITURA DEL HTML ====================== */
 
 class SetAttr {
   constructor(attr, value) { this.attr = attr; this.value = value; }
@@ -183,6 +319,11 @@ class SetAttr {
 class SetText {
   constructor(value) { this.value = value; }
   element(el) { el.setInnerContent(this.value); }
+}
+
+class SetHtml {
+  constructor(html) { this.html = html; }
+  element(el) { el.setInnerContent(this.html, { html: true }); }
 }
 
 /* Inyecta el JSON-LD y, en rutas inexistentes, el noindex. El id "pageSchema"
@@ -195,19 +336,19 @@ class HeadExtras {
       el.append('<meta name="robots" content="noindex,follow">', { html: true });
     }
     if (this.schema) {
-      const json = JSON.stringify(this.schema).replace(/</g, '\\u003c');
+      const json = JSON.stringify(this.schema).replace(/</g, LT_ESCAPE);
       el.append('<script type="application/ld+json" id="pageSchema">' + json + '</scr' + 'ipt>', { html: true });
     }
   }
 }
 
-function rewriteHead(response, meta, pathname) {
-  const noindex = !meta;
-  const m = meta || homeMeta();
+function rewrite(response, route, body, pathname) {
+  const noindex = !route;
+  const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
   const image = m.image || DEFAULT_OG_IMAGE;
 
-  return new HTMLRewriter()
+  const rewriter = new HTMLRewriter()
     .on('title', new SetText(m.title))
     .on('meta[name="description"]', new SetAttr('content', m.description))
     .on('meta[property="og:title"]', new SetAttr('content', m.title))
@@ -219,22 +360,51 @@ function rewriteHead(response, meta, pathname) {
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex))
-    .transform(response);
+    .on('head', new HeadExtras(m.schema, noindex));
+
+  if (body) rewriter.on('main#app', new SetHtml(body));
+
+  return rewriter.transform(response);
+}
+
+/* Rutas cuyo contenido depende del catálogo. La home no lo necesita: su
+   bloque de portada ya está escrito en index.html. */
+function necesitaProductos(pathname) {
+  return pathname === '/tienda'
+    || pathname === '/ofertas'
+    || pathname.startsWith('/categoria/')
+    || pathname.startsWith('/producto/');
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === '/sitemap.xml') {
+      const products = await fetchProducts();
+      /* Sin catálogo preferimos que Google reintente más tarde antes que
+         darle una lista incompleta que le haga olvidar productos. */
+      if (!products.length) {
+        return new Response('Catálogo no disponible, reintenta más tarde.', { status: 503 });
+      }
+      return new Response(sitemapXml(products), {
+        headers: {
+          'content-type': 'application/xml; charset=utf-8',
+          'cache-control': 'public, max-age=3600',
+        },
+      });
+    }
+
     const response = await env.ASSETS.fetch(request);
 
-    /* Solo tocamos el HTML del SPA. Imágenes, sitemap.xml, robots.txt y la
-       página del sorteo (/testeo) salen tal cual. */
+    /* Solo tocamos el HTML del SPA. Imágenes, robots.txt y la página del
+       sorteo (/testeo) salen tal cual. */
     const type = response.headers.get('content-type') || '';
     if (!type.includes('text/html')) return response;
     if (url.pathname.startsWith('/testeo')) return response;
 
-    const meta = await metaForPath(url.pathname);
-    return rewriteHead(response, meta, url.pathname);
+    const products = necesitaProductos(url.pathname) ? await fetchProducts() : [];
+    const route = routeFor(url.pathname, products);
+    return rewrite(response, route, bodyFor(route, products), url.pathname);
   },
 };
