@@ -4,3 +4,6 @@
 **/.wrangler
 **/.claude
 src
+# Config del proyecto: no tiene por qué servirse como archivo público
+wrangler.jsonc
+.gitignore
