@@ -1,8 +1,13 @@
 {
   "name": "intrumentos",
+  "main": "./src/index.js",
   "compatibility_date": "2026-08-29",
   "assets": {
     "directory": "./",
+    "binding": "ASSETS",
+    // El Worker corre primero para poder reescribir el <head> del HTML
+    // según la URL (ver src/index.js). Lo que no es HTML lo devuelve tal cual.
+    "run_worker_first": true,
     "not_found_handling": "single-page-application"
   }
 }
