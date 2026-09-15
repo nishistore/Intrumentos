@@ -188,9 +188,9 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
 body{
-  font-family:'Poppins',sans-serif;
-  background:var(--navy-deep);
-  color:var(--cream);
+  font-family:var(--app-sans);
+  background:var(--app-paper);
+  color:var(--app-ink);
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
@@ -1127,9 +1127,322 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 .app-shell{
   max-width:var(--app-max);
   margin:0 auto;
-  padding:0 var(--app-gutter);
   font-family:var(--app-sans);
   color:var(--app-ink);
+  padding-bottom:28px;
+}
+/* El shell no lleva padding lateral: cada bloque pone el suyo, porque las
+   cabeceras y los carruseles tienen que llegar de borde a borde. */
+.app-shell > *{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
+.app-shell > .carrusel{padding-left:0;padding-right:0;}
+
+/* ---------------- cabecera de pantalla ----------------
+   Sticky arriba del todo. El handoff usa padding-top:62px para dejar libre
+   la status bar del iPhone del prototipo; en web eso es env(safe-area-inset-top),
+   que vale 0 en un navegador normal y la altura real de la muesca en un
+   teléfono con pantalla completa. */
+.app-head{
+  position:sticky;top:0;z-index:40;
+  background:var(--app-surface);
+  border-bottom:1px solid var(--app-line);
+  padding-top:max(14px, env(safe-area-inset-top));
+  padding-bottom:14px;
+  margin-bottom:4px;
+}
+.app-head-fila{display:flex;align-items:center;gap:10px;}
+.app-head-logo{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;}
+.app-head-texto{flex:1;min-width:0;}
+.app-head-nombre{
+  font:600 15px/1.2 var(--app-sans);color:var(--app-ink);
+  margin:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.app-head-sub{
+  font:400 11.5px/1.3 var(--app-sans);color:var(--app-muted-2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.btn-volver{
+  width:34px;height:34px;flex:none;
+  border:none;border-radius:50%;background:var(--app-sunken);
+  font:600 17px/1 var(--app-sans);color:var(--app-ink);
+  display:flex;align-items:center;justify-content:center;
+  padding-bottom:2px;
+  touch-action:manipulation;
+}
+.btn-volver:active{opacity:.88;}
+
+.pill-asesor{
+  flex:none;display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 12px;border-radius:var(--app-r-pill);
+  background:var(--app-green);
+  font:600 12px/1 var(--app-sans);color:#fff;
+  text-decoration:none;touch-action:manipulation;
+}
+.pill-asesor:active{opacity:.88;}
+.punto-vivo{width:8px;height:8px;border-radius:50%;background:var(--app-green-mint);}
+
+.buscador-falso{
+  margin-top:14px;
+  display:flex;align-items:center;gap:10px;
+  height:46px;padding:0 14px;
+  border-radius:var(--app-r-input);
+  background:var(--app-sunken);border:1px solid var(--app-line);
+  font:400 14px/1 var(--app-sans);color:var(--app-muted-3);
+  text-decoration:none;touch-action:manipulation;
+}
+.buscador-falso:active{opacity:.88;}
+.buscador-falso svg{width:16px;height:16px;flex:none;stroke:var(--app-faint);stroke-width:2;}
+
+/* ---------------- portada ---------------- */
+.hero-app{padding-top:20px;padding-bottom:2px;}
+.hero-app h1{
+  font:400 30px/1.08 var(--app-serif);letter-spacing:-.01em;color:var(--app-ink);
+}
+.hero-app p{
+  margin-top:8px;
+  font:400 13px/1.5 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
+}
+
+/* Carrusel horizontal. scroll-snap para que las tarjetas queden alineadas al
+   soltar, y la barra de scroll oculta porque en el teléfono no se usa. */
+.carrusel{
+  display:flex;gap:12px;
+  overflow-x:auto;
+  padding:16px var(--app-gutter) 6px;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.carrusel::-webkit-scrollbar{display:none;}
+.carrusel > *{scroll-snap-align:start;}
+
+.cat-tile-app{
+  flex:none;width:112px;text-decoration:none;
+  touch-action:manipulation;
+}
+.cat-tile-app:active{opacity:.88;}
+.cat-tile-color{
+  height:76px;border-radius:var(--app-r-tile);
+  display:flex;align-items:flex-end;padding:9px;
+}
+.cat-tile-color svg{width:26px;height:26px;stroke:#fff;opacity:.55;stroke-width:1.5;}
+/* Dos líneas fijas: "Instrumentos de Cuerda" ocupa dos y el resto una, y sin
+   alto fijo el subtítulo de cada tile quedaba a distinta altura. */
+.cat-tile-nombre{
+  display:block;margin-top:7px;height:30px;overflow:hidden;
+  font:600 12.5px/1.2 var(--app-sans);color:var(--app-ink);
+}
+.cat-tile-sub{
+  display:block;margin-top:2px;
+  font:400 10.5px/1.25 var(--app-sans);color:var(--app-muted-3);
+}
+
+.seccion-head{
+  margin-top:22px;
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+}
+.seccion-head h2,.seccion-titulo{
+  font:400 22px/1.1 var(--app-serif);color:var(--app-ink);
+}
+.seccion-titulo{margin-top:24px;}
+.seccion-head a{
+  flex:none;font:600 12px/1 var(--app-sans);color:var(--app-terracotta);
+  text-decoration:none;touch-action:manipulation;
+}
+.carrusel-item{flex:none;width:166px;}
+
+/* ---------------- tarjeta de producto ---------------- */
+.pcard{
+  display:block;
+  background:var(--app-surface);
+  border:1px solid var(--app-line);
+  border-radius:var(--app-r-card);
+  padding:10px;
+  text-decoration:none;
+  touch-action:manipulation;
+}
+.pcard:active{opacity:.88;}
+.pcard-foto{
+  position:relative;
+  border-radius:var(--app-r-img);
+  background:var(--app-stripe);
+  overflow:hidden;
+}
+.pcard-foto img{width:100%;height:100%;object-fit:contain;background:#fff;}
+.pcard-sinfoto{
+  display:flex;align-items:center;justify-content:center;height:100%;
+}
+.pcard-sinfoto svg{width:34px;height:34px;stroke:var(--app-faint);}
+.pcard-off{
+  position:absolute;top:8px;right:8px;
+  padding:3px 7px;border-radius:6px;
+  background:var(--app-terracotta);
+  font:700 10px/1 var(--app-sans);color:#fff;
+}
+/* Alto fijo de dos líneas: si no, las tarjetas de una fila quedan
+   desalineadas según lo largo que sea cada nombre. */
+.pcard-nombre{
+  margin-top:9px;height:32px;overflow:hidden;
+  font:500 12.5px/1.3 var(--app-sans);color:var(--app-ink);
+}
+.pcard-precios{margin-top:4px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
+.pcard-precio{font:700 15px/1 var(--app-sans);color:var(--app-ink);}
+.pcard-antes{font:400 11px/1 var(--app-sans);color:var(--app-faint);text-decoration:line-through;}
+.pcard-stock{margin-top:6px;font:500 10.5px/1 var(--app-sans);color:var(--app-green);}
+.pcard-stock.agotado{color:var(--app-faint);}
+
+.grid-app{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--app-grid-gap);
+  padding-top:12px;
+}
+
+/* ---------------- banda "para colegio" ---------------- */
+.banda-colegio{
+  margin-top:22px;
+  display:flex;align-items:center;gap:14px;
+  padding-top:16px;padding-bottom:16px;
+  border-radius:var(--app-r-card);
+  background:var(--app-green);
+  text-decoration:none;touch-action:manipulation;
+}
+.banda-colegio:active{opacity:.88;}
+.banda-texto{flex:1;min-width:0;}
+.banda-eyebrow{
+  display:block;
+  font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--app-green-mint);
+}
+.banda-titulo{
+  display:block;margin-top:7px;
+  font:400 20px/1.15 var(--app-serif);color:#fff;
+}
+.banda-copy{
+  display:block;margin-top:6px;
+  font:400 12px/1.45 var(--app-sans);color:rgba(255,255,255,.78);text-wrap:pretty;
+}
+.banda-chevron{
+  flex:none;width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.16);
+  display:flex;align-items:center;justify-content:center;
+  font:600 16px/1 var(--app-sans);color:#fff;padding-bottom:2px;
+}
+
+/* ---------------- tarjeta "visítanos" ---------------- */
+.tarjeta-visitanos{
+  margin-top:24px;
+  padding-top:16px;padding-bottom:16px;
+  border-radius:var(--app-r-card);
+  background:var(--app-surface);border:1px solid var(--app-line);
+}
+.eyebrow-terracota{
+  font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--app-terracotta);
+}
+.visitanos-dir{margin-top:9px;font:500 14px/1.4 var(--app-sans);color:var(--app-ink);}
+.visitanos-horario{margin-top:5px;font:400 12.5px/1.45 var(--app-sans);color:var(--app-muted);}
+.visitanos-botones{margin-top:12px;display:flex;gap:9px;}
+
+.btn-app{
+  flex:1;min-height:44px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:0 12px;border-radius:var(--app-r-img);
+  border:1px solid transparent;
+  font:600 12.5px/1.2 var(--app-sans);
+  text-decoration:none;touch-action:manipulation;
+}
+.btn-app:active{opacity:.88;}
+.btn-app.oscuro{background:var(--app-ink);color:#fff;}
+.btn-app.contorno{background:transparent;border-color:var(--app-line-strong);color:var(--app-ink);}
+.btn-app.verde{background:var(--app-green);color:#fff;}
+
+/* ---------------- chips de filtro ---------------- */
+.chips-fila{
+  margin-top:12px;
+  display:flex;gap:8px;
+  overflow-x:auto;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  /* Se sale del padding de la cabecera para poder desplazarse de borde a
+     borde, y lo recupera por dentro: así el primer chip queda alineado con
+     el título y el último no se corta pegado al borde. */
+  margin-left:calc(var(--app-gutter) * -1);
+  margin-right:calc(var(--app-gutter) * -1);
+  padding:0 var(--app-gutter);
+}
+.chips-fila::-webkit-scrollbar{display:none;}
+.chip{
+  flex:none;height:32px;padding:0 13px;
+  border-radius:var(--app-r-pill);
+  border:1px solid var(--app-line-strong);
+  background:var(--app-surface);
+  font:600 12px/1 var(--app-sans);color:var(--app-ink-70);
+  white-space:nowrap;
+  touch-action:manipulation;
+}
+.chip:active{opacity:.88;}
+.chip.activo{
+  border-color:var(--app-terracotta);
+  background:var(--app-terracotta-soft);
+  color:var(--app-terracotta);
+}
+.chip.limpiar{border-style:dashed;color:var(--app-muted);}
+
+/* ---------------- estados vacíos ---------------- */
+.catalogo-en-camino{
+  margin-top:40px;
+  padding:22px;
+  border-radius:var(--app-r-card);
+  background:var(--app-surface);
+  border:1px dashed rgba(23,20,15,.18);
+  text-align:center;
+}
+.cec-titulo{font:400 20px/1.2 var(--app-serif);color:var(--app-ink);}
+.catalogo-en-camino p{
+  margin-top:8px;
+  font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
+}
+.catalogo-en-camino .btn-app{margin:14px auto 0;max-width:230px;}
+.sin-resultados{
+  padding-top:44px;padding-bottom:24px;text-align:center;
+}
+.sin-resultados p{font:400 13.5px/1.5 var(--app-sans);color:var(--app-muted);}
+.sin-resultados .btn-app{margin:14px auto 0;max-width:200px;}
+
+/* ---------------- lo que el rediseño deja atrás ----------------
+   Cada pantalla del handoff trae su propia cabecera, y la barra inferior se
+   encarga de buscar y del carrito, así que la cabecera global sobra: repetía
+   logo, buscador y carrito encima de cada pantalla. El menú lateral de
+   categorías lo reemplaza el carrusel de la portada, y el botón flotante de
+   WhatsApp lo reemplaza el pill "Asesor", que está en todas las cabeceras y
+   no tapa la esquina de la pantalla.
+
+   Queda oculto en vez de borrado: el marcado se retira en la fase de
+   limpieza, junto con el CSS y el JS que dejen de usarse. */
+header.site,
+#menuDrawer, #menuOverlay,
+.whatsapp-float{display:none;}
+
+/* ---------------- pie ----------------
+   El handoff no diseña pie de página. Se conserva porque es donde viven las
+   políticas (envíos, cambios, garantía) y los enlaces internos a cada
+   categoría, que valen para el buscador de Google. Repintado con la paleta
+   nueva para que no cante debajo del rediseño. */
+footer.site{
+  background:var(--app-surface);
+  border-top:1px solid var(--app-line);
+  color:var(--app-muted);
+  font-family:var(--app-sans);
+}
+footer.site .footer-grid{max-width:var(--app-max);margin:0 auto;padding:26px var(--app-gutter);}
+footer.site h4{font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--app-terracotta);}
+footer.site p,footer.site .link{font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);}
+footer.site .link{background:none;border:none;padding:0;text-align:left;display:block;}
+footer.site .logo-mark{height:40px;}
+footer.site .footer-social a svg{stroke:var(--app-muted);fill:var(--app-muted);}
+footer.site .footer-bottom{
+  border-top:1px solid var(--app-line);
+  padding:14px var(--app-gutter);text-align:center;
+  font:400 11px/1.4 var(--app-sans);color:var(--app-muted-3);
 }
 
 /* ---------------- /buscar ---------------- */
@@ -1569,7 +1882,14 @@ const state = {
   view:'home',
   activeCat:null,
   activeSubs:new Set(),
+  /* Dos banderas parecidas pero distintas, y conviene no mezclarlas:
+     offersOnly es la RUTA /ofertas (currentViewPath la lee para saber en qué
+     URL estamos), y soloOfertas es el CHIP "En oferta" dentro de cualquier
+     categoría. Si el chip escribiera en offersOnly, ponerlo dentro de
+     Percusión mandaría la barra de direcciones a /ofertas. */
   offersOnly:false,
+  soloOfertas:false, // chip "En oferta"
+  soloStock:false,   // chip "Recojo hoy": solo lo que hay ahora en tienda
   priceMin:0,
   priceMax:PRICE_MAX,
   sort:'relevancia',
@@ -1860,11 +2180,24 @@ function goHome(push){
   if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
 }
 function goShop(catKey, subKey, push){
+  /* Los chips se quedan puestos mientras no cambies de categoría: si vuelves
+     atrás a Percusión, sigue filtrada como la dejaste. Al cambiar de
+     categoría se limpian, porque un "Hasta S/ 200" heredado de Accesorios
+     esconde media sección sin que se entienda por qué. */
+  const mismaCat = state.view==='shop' && !state.offersOnly && state.activeCat === (catKey || null);
   state.view='shop';
   state.activeCat = catKey || null;
-  state.activeSubs = new Set(subKey?[subKey]:[]);
+  if(subKey){
+    state.activeSubs = new Set([subKey]);
+  }else if(!mismaCat){
+    state.activeSubs = new Set();
+    state.soloOfertas = false;
+    state.soloStock = false;
+    state.sort = 'relevancia';
+    state.priceMin=0; state.priceMax=PRICE_MAX;
+  }
   state.offersOnly = false;
-  state.priceMin=0; state.priceMax=PRICE_MAX; state.search='';
+  state.search='';
   const catObj = catKey ? CATEGORIES.find(c=>c.key===catKey) : null;
   navigateTo(catObj ? `/categoria/${catObj.key}` : '/tienda', push);
   applyCurrentViewMeta();
@@ -1875,6 +2208,7 @@ function goOffers(push){
   state.view='shop';
   state.activeCat=null; state.activeSubs=new Set();
   state.offersOnly=true;
+  state.soloOfertas=false; state.soloStock=false; state.sort='relevancia';
   state.priceMin=0; state.priceMax=PRICE_MAX; state.search='';
   navigateTo('/ofertas', push);
   applyCurrentViewMeta();
@@ -2016,14 +2350,15 @@ function resultadosBusquedaHtml(){
   if(!q) return '';
   const res = buscarProductos(q);
   if(!res.length){
-    return `<div class="empty-state">
+    return `<div class="sin-resultados">
       <p>Nada con “${escapeHtml(q)}”.</p>
-      <a class="btn-outline" style="display:inline-flex;margin-top:12px;" target="_blank" rel="noopener"
-         href="https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent('Hola, busco ' + q + '. ¿Lo tienen?')}">Preguntar por WhatsApp</a>
+      <a class="btn-app verde" target="_blank" rel="noopener"
+         href="${waHref('Hola, busco ' + q + '. ¿Lo tienen?')}"
+         onclick="trackAdsConversion('whatsapp')">Preguntar por WhatsApp</a>
     </div>`;
   }
   return `<p class="search-count">${res.length} ${res.length===1?'resultado':'resultados'}</p>
-    <div class="product-grid">${res.map(productCard).join('')}</div>`;
+    <div class="grid-app">${res.map(p=>appProductCard(p, 118)).join('')}</div>`;
 }
 
 function onBuscarInput(val){
@@ -2133,61 +2468,181 @@ function featuredPicks(){
 /* ======================================================================
    RENDER: HOME
    ====================================================================== */
-function renderHome(){
+/* ======================================================================
+   PORTADA Y CATÁLOGO DEL REDISEÑO MÓVIL
+
+   Todo lo que se ve aquí sale del catálogo real (la API de D1): no hay ni un
+   producto, precio ni conteo escrito a mano.
+   ====================================================================== */
+
+function enOferta(p){ return Boolean(p.old && p.old > p.price); }
+function pctDescuento(p){ return Math.round((1 - p.price/p.old) * 100); }
+
+function productosDeCategoria(catKey){
+  return PRODUCTS.filter(p => productInCat(p, catKey));
+}
+
+/* Las ofertas se ordenan por cuánto se ahorra, no por precio: la portada
+   enseña primero el descuento más grande, que es lo que hace parar el dedo. */
+function ofertasDeLaSemana(limite){
+  return PRODUCTS.filter(p => enOferta(p) && (p.stock||0) > 0)
+    .sort((a,b) => pctDescuento(b) - pctDescuento(a))
+    .slice(0, limite);
+}
+
+/* La base no guarda fecha de alta, pero el id es autoincremental: el más alto
+   es el último producto que se cargó. Es el mejor "recién llegado" que
+   podemos dar sin inventarnos una fecha.
+
+   Se dejan fuera los accesorios. No es un capricho: las últimas altas del
+   catálogo son resinas, aceite de diapasón y adaptadores, así que la portada
+   abría "Recién llegados" con seis repuestos. Los accesorios se compran
+   cuando ya sabes qué instrumento tienes; tienen su propia categoría y salen
+   igual en el buscador y en las ofertas. */
+function recienLlegados(limite){
+  return PRODUCTS.filter(p => (p.stock||0) > 0 && p.cat !== 'accesorios')
+    .slice().sort((a,b) => b.id - a.id)
+    .slice(0, limite);
+}
+
+/* La tienda abre todos los días de 9:30 a 21:00. Decirlo en tiempo real evita
+   el "abierto hasta las 9:00 p.m." a las dos de la mañana. Se calcula sobre
+   la hora de Lima (UTC-5, sin horario de verano) para que no dependa de cómo
+   tenga configurado el reloj el teléfono de quien mira. */
+function estadoTienda(){
+  const ahora = new Date();
+  const lima = new Date(ahora.getTime() + (ahora.getTimezoneOffset() - 300) * 60000);
+  const minutos = lima.getHours()*60 + lima.getMinutes();
+  return (minutos >= 570 && minutos < 1260) ? 'abierto hasta 9:00 p.m.' : 'abrimos 9:30 a.m.';
+}
+
+function waHref(texto){
+  return `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(texto)}`;
+}
+
+/* Cabecera del asesor: el mismo pill verde en la portada y en el catálogo,
+   para que WhatsApp esté siempre a un toque sin necesidad del botón flotante
+   que antes tapaba el contenido. */
+function pillAsesorHtml(){
+  return `<a class="pill-asesor" target="_blank" rel="noopener"
+    href="${waHref('Hola, quiero hablar con un asesor.')}"
+    onclick="trackAdsConversion('whatsapp')">
+    <span class="punto-vivo"></span>Asesor</a>`;
+}
+
+/* --------------------------- tarjeta de producto ---------------------------
+   Una sola tarjeta para las tres listas (ofertas, recién llegados y el grid
+   del catálogo); lo único que cambia entre ellas es el alto de la foto, que
+   el handoff fija en 124, 116 y 118px. */
+function appProductCard(p, altoFoto){
+  const href = `/producto/${p.id}-${slugify(p.name)}`;
+  const foto = (p.images || [])[0];
+  const stock = p.stock || 0;
   return `
-  <section class="hero">
-    <div class="hero-bg" id="heroBg">${renderHeroSlide()}</div>
-    <div class="hero-scrim"></div>
-    <div class="hero-inner">
-      <div class="hero-copy">
-        <div class="hero-copy-content" id="heroCopy">${heroCopyHTML()}</div>
-      </div>
-      <div class="hero-copy-content" id="heroProduct">${heroProductHTML()}</div>
+  <a class="pcard" href="${href}" onclick="openProductDetail(${p.id});return false;">
+    <div class="pcard-foto" style="height:${altoFoto}px">
+      ${foto
+        ? `<img src="${foto}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+        : `<span class="pcard-sinfoto">${iconSvg(iconFor(p))}</span>`}
+      ${enOferta(p) ? `<span class="pcard-off">-${pctDescuento(p)}%</span>` : ''}
     </div>
-    ${HERO_SLIDES.length > 1 ? `
-    <button class="hero-arrow prev" aria-label="Anterior" onclick="changeHeroSlide(-1)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <button class="hero-arrow next" aria-label="Siguiente" onclick="changeHeroSlide(1)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
-    <div class="hero-dots" id="heroDots">${HERO_SLIDES.map((_,i)=>`<span class="${i===heroSlideIndex?'active':''}"></span>`).join('')}</div>` : ''}
-  </section>
+    <div class="pcard-nombre">${escapeHtml(p.name)}</div>
+    <div class="pcard-precios">
+      <span class="pcard-precio">${fmt(p.price)}</span>
+      ${enOferta(p) ? `<span class="pcard-antes">${fmt(p.old)}</span>` : ''}
+    </div>
+    <div class="pcard-stock${stock>0?'':' agotado'}">${stock>0 ? 'En tienda' : 'Agotado'}</div>
+  </a>`;
+}
 
-  <!-- En celular esta franja se convierte en una cinta crema de una sola línea
-       (ver .trust-bar en los estilos): por eso cada garantía trae una versión
-       corta del texto, la única que cabe a lo ancho de un teléfono. -->
-  <section class="trust-bar">
-    <div class="trust-bar-inner">
-      <div class="trust-item">
-        <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
-        <div><b>Envíos a todo el Perú ${peruFlagSvg}</b><b class="trust-corto">Envíos a todo el Perú</b><span>Entregas a domicilio o recojo en tienda.</span></div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
-        <div><b>Múltiples formas de pago</b><b class="trust-corto">Yape o tarjeta</b><span>Tarjeta, Yape o Plin.</span></div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
-        <div><b>Garantía en todos los productos</b><b class="trust-corto">Garantía</b><span>Compra con confianza.</span></div>
-      </div>
-    </div>
-  </section>
+/* ------------------------------ portada ------------------------------ */
 
-  <div class="wrap">
-    <div class="cat-grid">
-      ${CATEGORIES.map(categoryTileHTML).join('')}
-    </div>
+/* Tile del carrusel de categorías. El handoff los dibuja como un bloque de
+   color con una etiqueta monoespaciada que dice "foto: guitarras" — es un
+   hueco para una foto de categoría que la tienda no tiene. En vez de
+   inventarla, el bloque conserva su color (que sí es un token del diseño) y
+   lleva el icono de la categoría del propio proyecto. */
+function tileCategoriaHtml(c){
+  const suyos = productosDeCategoria(c.key);
+  const desde = suyos.length ? Math.min(...suyos.map(p=>p.price)) : 0;
+  const sub = suyos.length
+    ? `${suyos.length} producto${suyos.length!==1?'s':''} · desde ${fmt(desde)}`
+    : 'Consúltanos';
+  return `
+  <a class="cat-tile-app" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
+    <span class="cat-tile-color" style="background:var(--app-cat-${c.key})">
+      ${iconSvg(c.icon || iconFor({cat:c.key}))}
+    </span>
+    <span class="cat-tile-nombre">${escapeHtml(c.label)}</span>
+    <span class="cat-tile-sub">${escapeHtml(sub)}</span>
+  </a>`;
+}
 
-    <div class="section-head">
-      <div>
-        <div class="kicker-sec">Selección de la casa</div>
-        <h2 class="h-serif">Lo que recomendamos</h2>
-        <span class="rule"></span>
+function renderHome(){
+  const ofertas = ofertasDeLaSemana(8);
+  const nuevos = recienLlegados(6);
+  return `
+  <div class="app-shell">
+
+    <header class="app-head">
+      <div class="app-head-fila">
+        <img class="app-head-logo" src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" width="36" height="36">
+        <div class="app-head-texto">
+          <div class="app-head-nombre">Chipao Music</div>
+          <div class="app-head-sub">San Juan de Miraflores · ${estadoTienda()}</div>
+        </div>
+        ${pillAsesorHtml()}
       </div>
-      <a class="section-link" href="/tienda" onclick="goShop(null);return false;">Ver todo el catálogo &rsaquo;</a>
+      <a class="buscador-falso" href="/buscar" onclick="goSearch();return false;">
+        ${iconSvg('search')}
+        <span>Busca “ukelele”, “cajón”, “teclado”…</span>
+      </a>
+    </header>
+
+    <section class="hero-app">
+      <h1>Instrumentos para<br>todos los niveles</h1>
+      <p>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día.</p>
+    </section>
+
+    <nav class="carrusel" aria-label="Categorías">
+      ${CATEGORIES.map(tileCategoriaHtml).join('')}
+    </nav>
+
+    ${ofertas.length ? `
+    <div class="seccion-head">
+      <h2>Ofertas de la semana</h2>
+      <a href="/ofertas" onclick="goOffers();return false;">Ver todas</a>
     </div>
-    <div class="product-grid" style="margin-bottom:34px;">
-      ${featuredPicks().slice(0,6).map(productCard).join('')}
+    <div class="carrusel">
+      ${ofertas.map(p => `<div class="carrusel-item">${appProductCard(p, 124)}</div>`).join('')}
+    </div>` : ''}
+
+    <a class="banda-colegio" href="/categoria/colegio" onclick="goShop('colegio');return false;">
+      <span class="banda-texto">
+        <span class="banda-eyebrow">Para colegio</span>
+        <span class="banda-titulo">Armamos el kit de tu lista escolar</span>
+        <span class="banda-copy">Mándanos la lista y te cotizamos flauta, xilófono y pandereta en un solo pedido.</span>
+      </span>
+      <span class="banda-chevron">›</span>
+    </a>
+
+    <h2 class="seccion-titulo">Recién llegados</h2>
+    <div class="grid-app">
+      ${nuevos.map(p => appProductCard(p, 116)).join('')}
     </div>
 
-    ${popularProductsChips()}
+    <section class="tarjeta-visitanos">
+      <div class="eyebrow-terracota">Visítanos</div>
+      <div class="visitanos-dir">${escapeHtml(STORE_ADDRESS.replace(', Lima 15801, Perú',''))}</div>
+      <div class="visitanos-horario">${escapeHtml(STORE_HOURS)} · Prueba el instrumento antes de comprarlo.</div>
+      <div class="visitanos-botones">
+        <a class="btn-app oscuro" target="_blank" rel="noopener"
+           href="${waHref('Hola, quiero consultar por un instrumento.')}"
+           onclick="trackAdsConversion('whatsapp')">Escribir por WhatsApp</a>
+        <a class="btn-app contorno" target="_blank" rel="noopener" href="${STORE_MAPS_LINK}">Cómo llegar</a>
+      </div>
+    </section>
+
   </div>`;
 }
 
@@ -2463,7 +2918,8 @@ function getFilteredProducts(){
   return PRODUCTS.filter(p=>{
     if(state.activeCat && !productInCat(p, state.activeCat)) return false;
     if(state.activeSubs.size && !subMatchesActiveFilter(p.sub)) return false;
-    if(state.offersOnly && !(p.old && p.old > p.price)) return false;
+    if((state.offersOnly || state.soloOfertas) && !enOferta(p)) return false;
+    if(state.soloStock && (p.stock||0) <= 0) return false;
     if(p.price < state.priceMin || p.price > state.priceMax) return false;
     if(state.search && !p.name.toLowerCase().includes(state.search.toLowerCase())) return false;
     return true;
@@ -2474,120 +2930,143 @@ function getFilteredProducts(){
   });
 }
 
-function renderFiltersPanel(){
-  return `
-    <div class="filters" id="filtersPanel">
-      <h3>Filtrar por categoría</h3>
-      <div class="filter-group">
-        ${CATEGORIES.map(c=>{
-          const subsToShow = c.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : c.subs;
-          return `
-          <div class="cat-accordion ${state.activeCat===c.key?'open':''}" data-cat="${c.key}">
-            <div class="cat-head" ${subsToShow.length?`onclick="accordionToggle('${c.key}')"`:''}>
-              <label class="chk" style="padding:0;" onclick="event.stopPropagation()">
-                <input type="checkbox" ${state.activeCat===c.key?'checked':''} onchange="setCat('${c.key}', this.checked)">
-                ${c.label}
-              </label>
-              ${subsToShow.length?chevron:''}
-            </div>
-            ${subsToShow.length?`
-            <div class="subs">
-              ${subsToShow.map(s=>`
-                <label class="chk">
-                  <input type="checkbox" ${state.activeSubs.has(s.key)?'checked':''} onchange="toggleSub('${c.key}','${s.key}', this.checked)">
-                  ${s.label}
-                </label>`).join('')}
-            </div>` : ''}
-          </div>`;
-        }).join('')}
-      </div>
-      <div class="filter-group">
-        <h3>Rango de precios</h3>
-        <div class="price-inputs">
-          <input type="number" min="0" max="${PRICE_MAX}" value="${state.priceMin}" onchange="setPriceMin(this.value)" placeholder="Mín">
-          <span style="color:var(--muted)">—</span>
-          <input type="number" min="0" max="${PRICE_MAX}" value="${state.priceMax}" onchange="setPriceMax(this.value)" placeholder="Máx">
-        </div>
-        <input type="range" min="0" max="${PRICE_MAX}" value="${state.priceMax}" oninput="setPriceMax(this.value)">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;">
-          <span>S/ 0</span><span>S/ ${PRICE_MAX}</span>
-        </div>
-      </div>
-      <button class="clear-filters" onclick="clearFilters()">Limpiar filtros</button>
-    </div>`;
+/* Vuelve a la pantalla anterior. Si no hay historial (alguien abrió el enlace
+   de una categoría directamente) el botón lleva a la portada, que es lo que
+   espera quien lo pulsa: no quedarse encerrado. */
+function volverAtras(){
+  if(window.history.length > 1) history.back();
+  else goHome();
+}
+
+const LIMITE_CHIP_PRECIO = 200;
+
+function chipHtml(texto, activo, accion){
+  return `<button type="button" class="chip${activo?' activo':''}"
+    aria-pressed="${activo?'true':'false'}" onclick="${accion}">${escapeHtml(texto)}</button>`;
+}
+
+/* Los chips del handoff, más uno por subcategoría cuando la categoría las
+   tiene. Sin esos últimos, Accesorios sería una lista de 47 productos sin
+   forma de acotarla: el panel lateral que hacía ese trabajo ya no existe.
+   Todos se combinan entre sí y se quedan puestos al volver atrás. */
+function chipsFiltroHtml(){
+  const chips = [
+    chipHtml('Ordenar: menor precio', state.sort==='price-asc', 'toggleOrdenPrecio()'),
+    /* En /ofertas el chip sobra: ahí todo tiene descuento. */
+    ...(state.offersOnly ? [] : [chipHtml('En oferta', state.soloOfertas, 'toggleSoloOfertas()')]),
+    chipHtml('Recojo hoy', state.soloStock, 'toggleSoloStock()'),
+    chipHtml(`Hasta ${fmt(LIMITE_CHIP_PRECIO)}`, state.priceMax <= LIMITE_CHIP_PRECIO, 'toggleTope()'),
+  ];
+  const cat = CATEGORIES.find(c=>c.key===state.activeCat);
+  if(cat){
+    const subs = cat.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs;
+    for(const s of subs){
+      chips.push(chipHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`));
+    }
+  }
+  const algunoPuesto = state.sort==='price-asc' || state.soloOfertas || state.soloStock
+    || state.priceMax <= LIMITE_CHIP_PRECIO || state.activeSubs.size;
+  if(algunoPuesto) chips.push(`<button type="button" class="chip limpiar" onclick="clearFilters()">Limpiar</button>`);
+  return `<div class="chips-fila">${chips.join('')}</div>`;
 }
 
 function renderShop(){
   const list = getFilteredProducts();
-  const catObj = CATEGORIES.find(c=>c.key===state.activeCat);
-  /* Si la categoría no tiene ni un producto, el vacío no viene de los filtros:
-     avisamos que la estamos actualizando (mismo texto que sirve el Worker). */
-  const catVacia = Boolean(state.activeCat) && !PRODUCTS.some(p=>productInCat(p, state.activeCat));
-  const title = state.search ? `Resultados para "${escapeHtml(state.search)}"` : (state.offersOnly ? 'Ofertas' : (catObj ? catObj.label : 'Todos los productos'));
+  const cat = CATEGORIES.find(c=>c.key===state.activeCat);
+
+  let titulo, subtitulo;
+  if(state.search){
+    titulo = `“${state.search}”`;
+    subtitulo = 'Resultados de tu búsqueda';
+  }else if(state.offersOnly && !cat){
+    titulo = 'Ofertas';
+    subtitulo = 'Instrumentos con descuento';
+  }else if(cat){
+    titulo = cat.label;
+    subtitulo = cat.subs.length ? cat.subs.map(s=>s.label).join(', ') : cat.desc;
+  }else{
+    titulo = 'Todo el catálogo';
+    subtitulo = 'Cuerda, teclados, percusión, viento, audio y accesorios';
+  }
+
+  /* Un vacío por filtros no es lo mismo que una categoría sin catálogo
+     cargado: el primero se arregla quitando un chip, el segundo solo
+     escribiendo a la tienda. */
+  const sinCatalogo = Boolean(state.activeCat) && !productosDeCategoria(state.activeCat).length;
+
+  let cuerpo;
+  if(sinCatalogo){
+    cuerpo = `
+      <div class="catalogo-en-camino">
+        <div class="cec-titulo">Catálogo en camino</div>
+        <p>Tenemos stock de ${escapeHtml(titulo.toLowerCase())} en tienda, pero aún no está cargado aquí. Escríbenos y te mandamos fotos y precios al instante.</p>
+        <a class="btn-app verde" target="_blank" rel="noopener"
+           href="${waHref('Hola, quiero consultar por ' + titulo.toLowerCase() + '.')}"
+           onclick="trackAdsConversion('whatsapp')">Consultar por WhatsApp</a>
+      </div>`;
+  }else if(!list.length){
+    cuerpo = `
+      <div class="sin-resultados">
+        <p>Ningún producto cumple con esos filtros.</p>
+        <button type="button" class="btn-app contorno" onclick="clearFilters()">Limpiar filtros</button>
+      </div>`;
+  }else{
+    cuerpo = `<div class="grid-app">${list.map(p=>appProductCard(p, 118)).join('')}</div>`;
+  }
+
   return `
-  <div class="wrap">
-    <div class="section-title" style="margin-top:26px;">
-      <h1 class="h-serif">${title}</h1>
-    </div>
-    <div class="shop-layout">
-      ${renderFiltersPanel()}
-      <div class="shop-main">
-        <div class="shop-toolbar">
-          <button class="filters-btn" onclick="toggleFiltersPanel(true)">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-            Filtros
-          </button>
-          <span class="count">${list.length} producto${list.length!==1?'s':''}</span>
-          <select onchange="setSort(this.value)">
-            <option value="relevancia" ${state.sort==='relevancia'?'selected':''}>Relevancia</option>
-            <option value="price-asc" ${state.sort==='price-asc'?'selected':''}>Precio: menor a mayor</option>
-            <option value="price-desc" ${state.sort==='price-desc'?'selected':''}>Precio: mayor a menor</option>
-          </select>
+  <div class="app-shell">
+    <header class="app-head cat">
+      <div class="app-head-fila">
+        <button type="button" class="btn-volver" onclick="volverAtras()" aria-label="Volver">‹</button>
+        <div class="app-head-texto">
+          <h1 class="app-head-nombre">${escapeHtml(titulo)}</h1>
+          <div class="app-head-sub">${list.length} producto${list.length!==1?'s':''}${subtitulo?' · '+escapeHtml(subtitulo):''}</div>
         </div>
-        ${list.length ? `<div class="product-grid">${list.map(productCard).join('')}</div>` : `
-          <div class="empty-state">
-            ${iconSvg('accessory')}
-            ${catVacia
-              ? `<p>Estamos actualizando esta categoría, disculpa las molestias.</p>
-                 <button class="btn-outline" style="margin-top:14px;" onclick="goShop(null)">Ver todo el catálogo</button>`
-              : `<p>No encontramos productos con esos filtros.</p>
-                 <button class="btn-outline" style="margin-top:14px;" onclick="clearFilters()">Limpiar filtros</button>`}
-          </div>`}
+        ${pillAsesorHtml()}
       </div>
-    </div>
-  </div>
-  <div class="overlay" id="filtersOverlay" onclick="toggleFiltersPanel(false)"></div>
-  `;
+      ${sinCatalogo ? '' : chipsFiltroHtml()}
+    </header>
+    ${cuerpo}
+  </div>`;
 }
 
 /* ======================================================================
    FILTER ACTIONS
    ====================================================================== */
-function accordionToggle(catKey){
-  const el = document.querySelector(`.cat-accordion[data-cat="${catKey}"]`);
-  el.classList.toggle('open');
-}
-function setCat(catKey, checked){
-  state.activeCat = checked ? catKey : null;
-  if(!checked) state.activeSubs = new Set();
+/* Cada chip se pone y se quita. Ninguno recarga la página ni toca la URL: la
+   categoría sigue siendo la misma, solo cambia lo que se enseña de ella.
+   Después de repintar se sube al principio de la lista, porque si no el
+   filtro parece no haber hecho nada cuando estabas a medio scroll. */
+function trasFiltrar(){
   render();
+  window.scrollTo({top:0, behavior:'smooth'});
 }
-function toggleSub(catKey, subKey, checked){
-  state.activeCat = catKey;
-  if(checked) state.activeSubs.add(subKey); else state.activeSubs.delete(subKey);
-  render();
+function toggleOrdenPrecio(){
+  state.sort = state.sort==='price-asc' ? 'relevancia' : 'price-asc';
+  trasFiltrar();
 }
-function setPriceMin(v){ state.priceMin = Math.max(0, Number(v)||0); render(); }
-function setPriceMax(v){ state.priceMax = Math.min(PRICE_MAX, Number(v)||PRICE_MAX); render(); }
-function setSort(v){ state.sort=v; render(); }
+function toggleSoloOfertas(){ state.soloOfertas = !state.soloOfertas; trasFiltrar(); }
+function toggleSoloStock(){ state.soloStock = !state.soloStock; trasFiltrar(); }
+function toggleTope(){
+  state.priceMax = state.priceMax <= LIMITE_CHIP_PRECIO ? PRICE_MAX : LIMITE_CHIP_PRECIO;
+  trasFiltrar();
+}
+function toggleChipSub(subKey){
+  if(state.activeSubs.has(subKey)) state.activeSubs.delete(subKey);
+  else state.activeSubs.add(subKey);
+  trasFiltrar();
+}
+/* Limpia los filtros pero NO la categoría: quien pulsa "Limpiar" dentro de
+   Percusión quiere ver toda la percusión, no todo el catálogo. */
 function clearFilters(){
-  state.activeCat=null; state.activeSubs=new Set(); state.offersOnly=false;
-  state.priceMin=0; state.priceMax=PRICE_MAX; state.search='';
-  render();
-}
-function toggleFiltersPanel(show){
-  document.getElementById('filtersPanel')?.classList.toggle('show', show);
-  document.getElementById('filtersOverlay')?.classList.toggle('show', show);
+  state.activeSubs = new Set();
+  state.soloOfertas = false;
+  state.soloStock = false;
+  state.priceMin = 0;
+  state.priceMax = PRICE_MAX;
+  state.sort = 'relevancia';
+  trasFiltrar();
 }
 
 /* ======================================================================
@@ -3810,7 +4289,10 @@ function render(){
     : state.view==='search' ? renderSearch()
     : renderShop();
   buildNavLists();
-  if(state.view==='home') startHeroAutoplay(); else stopHeroAutoplay();
+  /* La portada del rediseño no lleva banner rotativo, así que ya no hay
+     temporizador que arrancar. El que había buscaba #heroBg, que ya no
+     existe. La maquinaria del banner se retira en la fase de limpieza. */
+  stopHeroAutoplay();
 }
 document.getElementById('app').innerHTML = `
   <div class="empty-state" style="padding-top:140px;">
