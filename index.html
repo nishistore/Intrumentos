@@ -1215,12 +1215,231 @@ footer.site .footer-bottom{
 .pedido-modo{font:600 12px/1.3 var(--app-sans);color:var(--app-ink);}
 .pedido-dir{margin-top:6px;font:400 11.5px/1.45 var(--app-sans);color:var(--app-muted-2);}
 .pedido-ok .btn-app{margin-top:12px;height:48px;font-size:13.5px;}
+/* Va ANTES del @media a propósito: las dos reglas tienen la misma
+   especificidad y gana la última escrita. Con el display:none aquí, el
+   display:block de dentro del @media manda en escritorio. */
+/* ---------------- barra superior ---------------- */
+.nav-esc{
+  display:none;                      /* solo escritorio */
+  position:sticky;top:0;z-index:60;
+  background:rgba(255,253,249,.96);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--app-line);
+}
+.nav-esc-inner{
+  max-width:var(--app-max);margin:0 auto;
+  display:flex;align-items:center;gap:26px;
+  padding:12px var(--app-gutter);
+}
+.nav-esc-marca{display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;}
+.nav-esc-marca img{width:38px;height:38px;border-radius:50%;object-fit:cover;}
+.nav-esc-marca b{display:block;font:600 14px/1.2 var(--app-sans);color:var(--app-ink);}
+.nav-esc-marca i{display:block;font:400 11px/1.3 var(--app-sans);font-style:normal;color:var(--app-muted-2);}
+.nav-esc-links{display:flex;align-items:center;gap:22px;flex:1;}
+.nav-esc-links a{
+  font:500 13.5px/1 var(--app-sans);color:var(--app-ink-70);
+  text-decoration:none;padding:6px 0;border-bottom:2px solid transparent;
+}
+.nav-esc-links a:hover{color:var(--app-ink);}
+.nav-esc-links a.activo{color:var(--app-terracotta);border-bottom-color:var(--app-terracotta);}
+.nav-esc-buscar{
+  display:flex;align-items:center;gap:8px;flex:none;
+  height:38px;padding:0 14px;
+  border-radius:var(--app-r-pill);
+  background:var(--app-sunken);border:1px solid var(--app-line);
+  font:400 13px/1 var(--app-sans);color:var(--app-muted-3);text-decoration:none;
+}
+.nav-esc-buscar svg{width:15px;height:15px;stroke:var(--app-faint);stroke-width:2;}
+.nav-esc-carrito{
+  position:relative;flex:none;
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--app-ink);text-decoration:none;
+}
+.nav-esc-carrito svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.7;}
+.nav-esc-carrito.activo{color:var(--app-terracotta);}
+.nav-esc-carrito .tab-badge{top:0;right:0;}
+
+/* ======================================================================
+   ESCRITORIO (≥900px)
+
+   Ni una pantalla nueva: el mismo marcado del teléfono, reordenado con grid.
+   Lo único que cambia de estructura —el hero de la portada y el mosaico de
+   categorías— se decide en el JS (ver esEscritorio()).
+   ====================================================================== */
+@media (min-width:900px){
+
+  :root{--app-max:1200px;--app-gutter:24px;}
+
+  /* la navegación sube: abajo estorba cuando hay ratón */
+  .bottom-nav{display:none;}
+  body{padding-bottom:0;}
+  .nav-esc{display:block;}
+
+  /* las cabeceras de pantalla dejan de ser pegajosas: ya lo es la de arriba */
+  .app-head{position:static;background:none;border-bottom:none;padding-top:28px;}
+  .app-head.cat .app-head-nombre{font:400 34px/1.1 var(--app-serif);}
+  .app-head.cat .app-head-sub{font-size:13px;}
+  /* el botón atrás es un gesto de teléfono; aquí está la barra superior */
+  .app-head.cat .btn-volver{display:none;}
+
+  /* ---------------- portada ---------------- */
+  .hero-editorial{
+    display:grid;grid-template-columns:minmax(0,1fr) 400px;
+    column-gap:56px;align-items:center;
+    padding-top:44px;padding-bottom:40px;
+  }
+  .hero-editorial.sin-destacado{grid-template-columns:minmax(0,1fr);}
+  .hero-eyebrow{
+    font:600 11px/1 var(--app-sans);letter-spacing:.09em;
+    text-transform:uppercase;color:var(--app-terracotta);
+  }
+  .hero-editorial h1{font-size:56px;line-height:1.04;margin-top:14px;}
+  .hero-editorial p{font-size:15px;line-height:1.6;max-width:46ch;margin-top:14px;}
+  .hero-ctas{display:flex;gap:12px;margin-top:26px;max-width:420px;}
+  .hero-ctas .btn-app{height:50px;font-size:13.5px;}
+
+  .hero-destacado{
+    display:block;text-decoration:none;
+    background:var(--app-surface);border:1px solid var(--app-line);
+    border-radius:18px;padding:20px;
+    touch-action:manipulation;
+  }
+  .hero-destacado:active{opacity:.88;}
+  .hero-dest-foto{
+    position:relative;display:flex;align-items:center;justify-content:center;
+    height:260px;margin-bottom:16px;
+    border-radius:var(--app-r-img);background:var(--app-stripe);overflow:hidden;
+  }
+  .hero-dest-foto img{width:100%;height:100%;object-fit:contain;background:#fff;}
+  .hero-dest-foto svg{width:60px;height:60px;stroke:var(--app-faint);}
+  .hero-dest-eyebrow{
+    display:block;font:600 10px/1 var(--app-sans);letter-spacing:.09em;
+    text-transform:uppercase;color:var(--app-terracotta);
+  }
+  .hero-dest-nombre{display:block;margin-top:8px;font:500 14px/1.35 var(--app-sans);color:var(--app-ink);}
+  .hero-dest-precio{display:block;margin-top:7px;font:700 24px/1 var(--app-sans);color:var(--app-ink);}
+  .hero-dest-precio s{font:400 14px/1 var(--app-sans);color:var(--app-faint);margin-left:8px;}
+
+  /* categorías en mosaico: la primera manda, viento cae en vertical */
+  nav.carrusel{
+    display:grid;overflow:visible;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-auto-rows:118px;gap:12px;
+    padding-top:4px;padding-bottom:0;
+  }
+  .cat-tile-app{width:auto;}
+  .cat-tile-app:nth-child(1){grid-column:span 2;grid-row:span 2;}
+  .cat-tile-app:nth-child(4){grid-row:span 2;}
+  .cat-tile-color{
+    height:100%;flex-direction:column;align-items:flex-start;justify-content:flex-end;
+    padding:14px;position:relative;overflow:hidden;
+  }
+  .cat-tile-color svg{position:absolute;top:14px;left:14px;opacity:.4;}
+  .cat-tile-app:nth-child(1) .cat-tile-color svg{width:42px;height:42px;}
+  .cat-tile-nombre{height:auto;margin-top:0;color:#fff;font-size:14px;}
+  .cat-tile-app:nth-child(1) .cat-tile-nombre{font-size:21px;}
+  .cat-tile-sub{margin-top:3px;color:rgba(255,255,255,.72);}
+
+  /* ofertas y recién llegados: cuatro por fila, sin desplazamiento lateral */
+  div.carrusel{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:16px;overflow:visible;padding-top:16px;
+  }
+  .carrusel-item{width:auto;}
+  .grid-app{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-top:16px;}
+  .pcard-foto{height:200px !important;}
+  .seccion-head{margin-top:44px;}
+  .seccion-head h2,.seccion-titulo{font-size:30px;}
+  .seccion-titulo{margin-top:44px;}
+
+  /* la banda de colegio, estirada a 1200px, pedía aire y jerarquía */
+  .banda-colegio{margin-top:44px;padding:36px 40px;gap:32px;}
+  .banda-titulo{font-size:32px;}
+  .banda-copy{font-size:14px;max-width:52ch;}
+  .banda-chevron{width:44px;height:44px;font-size:20px;}
+
+  .tarjeta-visitanos{
+    margin-top:44px;padding:28px 32px;
+    display:grid;grid-template-columns:minmax(0,1fr) 300px;
+    column-gap:40px;align-items:center;
+  }
+  .tarjeta-visitanos > *{grid-column:1;}
+  .visitanos-botones{grid-column:2;grid-row:1/span 4;margin-top:0;flex-direction:column;}
+
+  /* ---------------- categoría y buscador ---------------- */
+  .chips-fila{flex-wrap:wrap;overflow:visible;margin-left:0;margin-right:0;padding:0;}
+  .lista-res{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+
+  /* ---------------- ficha ---------------- */
+  .app-shell.ficha{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);
+    column-gap:48px;align-items:start;
+    padding-top:28px;
+  }
+  .app-shell.ficha > .ficha-galeria{
+    grid-row:1 / span 2;
+    height:auto;aspect-ratio:1;
+    border-radius:18px;border:1px solid var(--app-line);
+    margin-left:var(--app-gutter);
+    position:sticky;top:96px;
+  }
+  /* los flotantes sobran: hay barra arriba y el carrito está en ella */
+  .ficha-flotante{display:none;}
+  .ficha-cuerpo{grid-column:2;padding-top:0;padding-bottom:0;}
+  .ficha-nombre{font-size:34px;}
+  .app-shell.ficha > .ficha-barra{
+    grid-column:2;position:static;max-width:none;margin:0;
+    background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+    border-top:none;padding:20px var(--app-gutter) 0;
+  }
+
+  /* ---------------- carrito ---------------- */
+  .app-shell.con-barra{
+    display:grid;grid-template-columns:minmax(0,1fr) 360px;
+    column-gap:40px;align-items:start;
+    padding-bottom:40px;
+  }
+  .app-shell.con-barra > .app-head{grid-column:1 / -1;}
+  .app-shell.con-barra > .lineas,
+  .app-shell.con-barra > .bloque-titulo,
+  .app-shell.con-barra > .opciones,
+  .app-shell.con-barra > .carrito-vacio{grid-column:1;}
+  .app-shell.con-barra > .resumen{grid-column:2;grid-row:3 / span 3;margin-top:0;}
+  .app-shell.con-barra > .barra-fija{
+    grid-column:2;position:static;max-width:none;margin:0;
+    background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+    border-top:none;padding:12px var(--app-gutter) 0;
+  }
+
+  /* el pago se queda en una columna estrecha: los formularios se leen mejor */
+  .app-shell.con-barra:has(.datos){grid-template-columns:minmax(0,660px);justify-content:center;}
+  .app-shell.con-barra:has(.datos) > *{grid-column:1;}
+  .datos .barra-fija{position:static;max-width:none;margin:0;background:none;
+    backdrop-filter:none;-webkit-backdrop-filter:none;border-top:none;
+    padding:16px var(--app-gutter) 0;}
+
+  /* ---------------- confirmación ---------------- */
+  .pedido-ok{max-width:560px;margin:0 auto;padding-top:72px;}
+
+  /* ---------------- pie ---------------- */
+  footer.site .footer-grid{
+    max-width:var(--app-max);
+    grid-template-columns:1.4fr .8fr 1.2fr .8fr .8fr;
+    gap:32px;padding:40px var(--app-gutter);
+  }
+  footer.site .footer-bottom{padding:16px var(--app-gutter);}
+}
+
 </style>
 </head>
 <body>
 
 <!-- ============ BOTTOM MOBILE NAV ============ -->
 <nav class="bottom-nav" id="bottomNav"></nav>
+
+<!-- ============ BARRA SUPERIOR (ESCRITORIO) ============ -->
+<header class="nav-esc" id="navEscritorio"></header>
 
 <!-- ============ POLICY / INFO MODAL ============ -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal();">
@@ -2134,30 +2353,84 @@ function appProductCard(p, altoFoto){
    color con una etiqueta monoespaciada que dice "foto: guitarras" — es un
    hueco para una foto de categoría que la tienda no tiene. En vez de
    inventarla, el bloque conserva su color (que sí es un token del diseño) y
-   lleva el icono de la categoría del propio proyecto. */
+   lleva el icono de la categoría del propio proyecto.
+
+   En escritorio el texto se mete DENTRO del bloque, que ahí es grande y lo
+   admite; en el teléfono va debajo, como en el prototipo. */
 function tileCategoriaHtml(c){
   const suyos = productosDeCategoria(c.key);
-  const desde = suyos.length ? Math.min(...suyos.map(p=>p.price)) : 0;
-  const sub = suyos.length
+  /* Solo cuenta lo que se puede comprar: si no, un producto agotado con el
+     precio mal puesto arrastra el "desde" de toda la categoría. Accesorios
+     decía "desde S/ 0" por un juego de cuerdas cargado a cero. */
+  const vendibles = suyos.filter(p => (p.stock||0) > 0);
+  const desde = vendibles.length ? Math.min(...vendibles.map(p=>p.price)) : 0;
+  const sub = vendibles.length
     ? `${suyos.length} producto${suyos.length!==1?'s':''} · desde ${fmt(desde)}`
     : 'Consúltanos';
+  const icono = iconSvg(c.icon || iconFor({cat:c.key}));
+  const nombre = `<span class="cat-tile-nombre">${escapeHtml(c.label)}</span>`;
+  const subtitulo = `<span class="cat-tile-sub">${escapeHtml(sub)}</span>`;
+  const dentro = esEscritorio();
   return `
   <a class="cat-tile-app" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
     <span class="cat-tile-color" style="background:var(--app-cat-${c.key})">
-      ${iconSvg(c.icon || iconFor({cat:c.key}))}
+      ${icono}${dentro ? nombre + subtitulo : ''}
     </span>
-    <span class="cat-tile-nombre">${escapeHtml(c.label)}</span>
-    <span class="cat-tile-sub">${escapeHtml(sub)}</span>
+    ${dentro ? '' : nombre + subtitulo}
   </a>`;
 }
 
-function renderHome(){
-  const ofertas = ofertasDeLaSemana(8);
-  const nuevos = recienLlegados(6);
-  return `
-  <div class="app-shell">
+/* Hero de escritorio: título editorial a la izquierda y, a la derecha, el
+   producto con el descuento más grande del catálogo — que es el argumento
+   más fuerte que tenemos y además se actualiza solo. */
+function heroEscritorioHtml(){
+  const destacado = ofertasDeLaSemana(1)[0];
+  const texto = `
+    <div class="hero-texto">
+      <span class="hero-eyebrow">Instrumentos musicales en Lima</span>
+      <h1>Instrumentos para<br>todos los niveles</h1>
+      <p>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día.</p>
+      <div class="hero-ctas">
+        <a class="btn-app terracota" href="/tienda" onclick="goShop(null);return false;">Ver el catálogo</a>
+        <a class="btn-app contorno" href="/ofertas" onclick="goOffers();return false;">Ofertas de la semana</a>
+      </div>
+    </div>`;
 
-    <header class="app-head">
+  /* Sin ofertas activas no hay tarjeta que enseñar: el hero se queda con el
+     texto a todo lo ancho en vez de con un hueco. */
+  if(!destacado) return `<section class="hero-app hero-editorial sin-destacado">${texto}</section>`;
+
+  const foto = (destacado.images || [])[0];
+  return `
+  <section class="hero-app hero-editorial">
+    ${texto}
+    <a class="hero-destacado" href="/producto/${destacado.id}-${slugify(destacado.name)}"
+       onclick="openProductDetail(${destacado.id});return false;">
+      <span class="hero-dest-foto">
+        ${foto ? `<img src="${foto}" alt="${escapeHtml(destacado.name)}" decoding="async">` : iconSvg(iconFor(destacado))}
+        <span class="pcard-off">-${pctDescuento(destacado)}%</span>
+      </span>
+      <span class="hero-dest-eyebrow">La mayor rebaja de la semana</span>
+      <span class="hero-dest-nombre">${escapeHtml(destacado.name)}</span>
+      <span class="hero-dest-precio">${fmt(destacado.price)} <s>${fmt(destacado.old)}</s></span>
+    </a>
+  </section>`;
+}
+
+function heroMovilHtml(){
+  return `
+    <section class="hero-app">
+      <h1>Instrumentos para<br>todos los niveles</h1>
+      <p>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día.</p>
+    </section>`;
+}
+
+/* Cabecera de la portada. Solo en el teléfono: en escritorio su trabajo
+   —logo, estado de la tienda, asesor y buscador— lo hace la barra
+   superior, y repetirlo dejaría dos logos uno encima del otro. */
+function cabeceraPortadaHtml(){
+  return `
+    <header class="app-head home">
       <div class="app-head-fila">
         <img class="app-head-logo" src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" width="36" height="36">
         <div class="app-head-texto">
@@ -2170,12 +2443,18 @@ function renderHome(){
         ${iconSvg('search')}
         <span>Busca “ukelele”, “kalimba”, “violín”…</span>
       </a>
-    </header>
+    </header>`;
+}
 
-    <section class="hero-app">
-      <h1>Instrumentos para<br>todos los niveles</h1>
-      <p>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día.</p>
-    </section>
+function renderHome(){
+  const ofertas = ofertasDeLaSemana(8);
+  const nuevos = recienLlegados(6);
+  return `
+  <div class="app-shell">
+
+    ${esEscritorio() ? '' : cabeceraPortadaHtml()}
+
+    ${esEscritorio() ? heroEscritorioHtml() : heroMovilHtml()}
 
     <nav class="carrusel" aria-label="Categorías">
       ${CATEGORIES.map(tileCategoriaHtml).join('')}
@@ -3747,6 +4026,66 @@ async function deleteProduct(id, btnEl){
 /* ======================================================================
    MAIN RENDER
    ====================================================================== */
+/* ======================================================================
+   ESCRITORIO
+
+   El móvil manda: todo lo de abajo es la misma pantalla reordenada por CSS.
+   Solo dos bloques cambian de marcado y por eso se deciden aquí en vez de
+   con una @media — la portada, que en escritorio estrena un hero a dos
+   columnas con el producto más rebajado, y el mosaico de categorías, que
+   mete el texto dentro del bloque de color.
+   ====================================================================== */
+const ANCHO_ESCRITORIO = 900;
+function esEscritorio(){
+  return window.matchMedia('(min-width:' + ANCHO_ESCRITORIO + 'px)').matches;
+}
+
+/* Barra superior. En el teléfono la navegación va abajo (ver .bottom-nav);
+   de 900px para arriba pasa aquí, que es donde la busca quien usa un ratón,
+   y de paso recupera el logo y el buscador que en móvil viven dentro de la
+   portada. */
+function renderNavEscritorio(){
+  const el = document.getElementById('navEscritorio');
+  if(!el) return;
+  const enCarrito = state.cart.reduce((s,c)=>s+c.qty, 0);
+  const activo = v => state.view === v ? ' activo' : '';
+  el.innerHTML = `
+    <div class="nav-esc-inner">
+      <a class="nav-esc-marca" href="/" onclick="goHome();return false;">
+        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" width="38" height="38">
+        <span>
+          <b>Chipao Music</b>
+          <i>San Juan de Miraflores · ${estadoTienda()}</i>
+        </span>
+      </a>
+      <nav class="nav-esc-links">
+        <a class="${activo('home')}" href="/" onclick="goHome();return false;">Inicio</a>
+        <a class="${state.view==='shop'?'activo':''}" href="/tienda" onclick="goShop(null);return false;">Catálogo</a>
+        <a href="/ofertas" onclick="goOffers();return false;">Ofertas</a>
+        <a href="/categoria/colegio" onclick="goShop('colegio');return false;">Para colegio</a>
+      </nav>
+      <a class="nav-esc-buscar" href="/buscar" onclick="goSearch();return false;">
+        ${iconSvg('search')}<span>Buscar</span>
+      </a>
+      <a class="nav-esc-carrito${['carrito','checkout','pedido'].includes(state.view)?' activo':''}"
+         href="/carrito" onclick="goCart();return false;">
+        ${iconSvg('cart')}${enCarrito>0?`<span class="tab-badge">${enCarrito}</span>`:''}
+      </a>
+      ${pillAsesorHtml()}
+    </div>`;
+}
+
+/* Cruzar los 900px cambia el marcado de la portada, así que hay que volver a
+   pintar. Solo cuando se cruza de verdad: arrastrar el borde de la ventana
+   no debe repintar en cada píxel. */
+let eraEscritorio = null;
+window.addEventListener('resize', () => {
+  const ahora = esEscritorio();
+  if(ahora === eraEscritorio) return;
+  eraEscritorio = ahora;
+  render();
+});
+
 function render(){
   document.getElementById('app').innerHTML =
       state.view==='home'     ? renderHome()
@@ -3757,6 +4096,7 @@ function render(){
     : state.view==='pedido'   ? renderPedido()
     : renderShop();
   buildNavLists();
+  renderNavEscritorio();
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
