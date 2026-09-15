@@ -858,15 +858,24 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 .modal h4{font-size:13px;color:var(--brown-heading);margin:14px 0 6px;}
 
 /* toast */
+/* Flota por encima de la barra inferior (96px desde abajo, como el handoff)
+   para no tapar las etiquetas de las pestañas. */
 .toast{
-  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--navy-card);border:1px solid var(--gold);color:var(--cream);
-  padding:13px 22px;border-radius:50px;font-size:13px;font-weight:600;
-  z-index:80;opacity:0;pointer-events:none;transition:.3s ease;
-  display:flex;align-items:center;gap:8px;box-shadow:0 12px 30px rgba(0,0,0,.4);
+  position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(10px);
+  max-width:calc(100% - 36px);
+  background:var(--app-ink);color:#fff;
+  padding:11px 14px;border-radius:var(--app-r-btn);
+  font:400 12.5px/1.3 var(--app-sans);
+  z-index:80;opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;
+  display:flex;align-items:center;gap:9px;
 }
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast svg{width:16px;height:16px;stroke:var(--ok);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.toast .punto-vivo{flex:none;}
+.toast-accion{
+  flex:none;background:none;border:none;padding:2px 0 2px 6px;
+  font:600 12.5px/1 var(--app-sans);color:#F0B7A4;
+  touch-action:manipulation;
+}
 
 /* ---------------- footer ---------------- */
 footer.site{background:var(--navy-bar);border-top:1px solid var(--navy-bar);margin-top:40px;color:#e9ecf5;}
@@ -1408,6 +1417,173 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 .sin-resultados p{font:400 13.5px/1.5 var(--app-sans);color:var(--app-muted);}
 .sin-resultados .btn-app{margin:14px auto 0;max-width:200px;}
 
+/* ======================================================================
+   FICHA DE PRODUCTO
+   ====================================================================== */
+.app-shell.ficha{padding-bottom:0;}
+/* La galería y la barra fija van de borde a borde, sin el gutter que el
+   shell reparte al resto de bloques. */
+.app-shell.ficha > .ficha-galeria,
+.app-shell.ficha > .ficha-barra{padding-left:0;padding-right:0;}
+
+.ficha-galeria{
+  position:relative;
+  height:330px;
+  background:var(--app-stripe);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.ficha-galeria img,
+.ficha-galeria video,
+.ficha-galeria iframe{
+  width:100%;height:100%;border:0;
+  object-fit:contain;background:#fff;
+}
+.ficha-sinfoto{display:flex;align-items:center;justify-content:center;}
+.ficha-sinfoto svg{width:56px;height:56px;stroke:var(--app-faint);}
+
+/* Los dos flotantes se apartan de la muesca del teléfono igual que las
+   cabeceras: 58px en el prototipo del iPhone, aquí el safe area real. */
+.ficha-flotante{
+  position:absolute;top:calc(14px + env(safe-area-inset-top));
+  height:36px;min-width:36px;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  border:none;border-radius:var(--app-r-pill);
+  background:rgba(255,253,249,.92);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  color:var(--app-ink);text-decoration:none;
+  font:600 12px/1 var(--app-sans);
+  touch-action:manipulation;
+}
+.ficha-flotante:active{opacity:.88;}
+.ficha-flotante.volver{left:var(--app-gutter);width:36px;font-size:17px;padding-bottom:2px;}
+.ficha-flotante.carrito{right:var(--app-gutter);padding:0 13px;}
+.ficha-flotante.carrito svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;}
+.ficha-contador{
+  position:absolute;left:var(--app-gutter);bottom:14px;
+  font:500 10px/1 var(--app-mono);letter-spacing:.04em;color:var(--app-muted-3);
+  background:rgba(255,253,249,.82);padding:4px 7px;border-radius:5px;
+}
+
+.ficha-cuerpo{padding-top:18px;}
+.ficha-nombre{
+  margin-top:9px;
+  font:400 26px/1.14 var(--app-serif);color:var(--app-ink);
+  text-wrap:pretty;
+}
+.ficha-precios{margin-top:12px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.ficha-precio{font:700 28px/1 var(--app-sans);color:var(--app-ink);}
+.ficha-antes{font:400 14px/1 var(--app-sans);color:var(--app-faint);text-decoration:line-through;}
+.ficha-ahorras{
+  padding:4px 8px;border-radius:6px;
+  background:var(--app-terracotta-soft);
+  font:700 11px/1 var(--app-sans);color:var(--app-terracotta);
+}
+
+.ficha-chips{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
+.ficha-chip{
+  height:28px;padding:0 10px;border-radius:7px;
+  display:inline-flex;align-items:center;
+  font:600 11.5px/1 var(--app-sans);
+}
+.ficha-chip.verde{background:var(--app-green-soft);color:var(--app-green);}
+.ficha-chip.neutro{background:var(--app-sunken);color:var(--app-muted);}
+.ficha-chip.alerta{background:var(--app-terracotta-soft);color:var(--app-terracotta);}
+
+.ficha-color-label{
+  margin-top:22px;
+  font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
+}
+.ficha-color-label span{font-weight:400;color:var(--app-muted-2);}
+/* El gap de 12px deja sitio al anillo del seleccionado, que sobresale 4.5px
+   por cada lado: con los 10px del handoff los swatches se tocaban. */
+.ficha-swatches{margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;}
+.swatch{
+  width:42px;height:42px;flex:none;
+  border:none;border-radius:var(--app-r-img);
+  touch-action:manipulation;
+}
+.swatch.sel{box-shadow:var(--app-ring);}
+
+.ficha-desc{margin-top:22px;}
+.ficha-desc p{
+  font:400 13.5px/1.6 var(--app-sans);color:var(--app-ink-70);
+  text-wrap:pretty;
+}
+.ficha-desc p + p{margin-top:10px;}
+
+.ficha-specs{
+  margin-top:20px;
+  border-radius:var(--app-r-card);
+  background:var(--app-surface);border:1px solid var(--app-line);
+  overflow:hidden;
+}
+.spec-fila{
+  display:flex;justify-content:space-between;gap:16px;
+  padding:11px 14px;
+  border-bottom:1px solid rgba(23,20,15,.06);
+}
+.spec-fila:last-child{border-bottom:none;}
+.spec-k{font:400 12.5px/1.3 var(--app-sans);color:var(--app-muted-2);}
+.spec-v{font:600 12.5px/1.3 var(--app-sans);color:var(--app-ink);text-align:right;}
+
+.ficha-incluye{
+  margin-top:20px;padding:15px;
+  border-radius:var(--app-r-card);
+  background:var(--app-surface);border:1px solid var(--app-line);
+}
+.incluye-titulo{font:600 12.5px/1 var(--app-sans);color:var(--app-ink);margin-bottom:10px;}
+.incluye-item{
+  display:flex;align-items:center;gap:9px;
+  font:400 12.5px/1.35 var(--app-sans);color:var(--app-ink-70);
+}
+.incluye-item + .incluye-item{margin-top:8px;}
+.incluye-punto{width:5px;height:5px;flex:none;border-radius:50%;background:var(--app-terracotta);}
+
+.bloque-asesor{
+  margin-top:14px;
+  display:flex;align-items:center;gap:12px;
+  padding:14px 15px;
+  border-radius:var(--app-r-card);
+  background:var(--app-green-soft);
+  text-decoration:none;touch-action:manipulation;
+}
+.bloque-asesor:active{opacity:.88;}
+.asesor-icono{width:30px;height:30px;flex:none;border-radius:50%;background:var(--app-green);}
+.asesor-texto{flex:1;min-width:0;}
+.asesor-titulo{display:block;font:600 12.5px/1.25 var(--app-sans);color:var(--app-ink);}
+.asesor-sub{display:block;margin-top:3px;font:400 11.5px/1.35 var(--app-sans);color:#41604F;}
+.asesor-chevron{flex:none;font:600 15px/1 var(--app-sans);color:var(--app-green);}
+
+/* Barra fija de acción. Ocupa el sitio de la barra inferior, que en la ficha
+   se esconde. El padding de abajo suma la franja de gestos del teléfono. */
+.ficha-barra{
+  position:fixed;left:0;right:0;bottom:0;z-index:45;
+  max-width:var(--app-max);margin:0 auto;
+  display:flex;gap:10px;
+  padding:12px var(--app-gutter) calc(12px + max(18px, env(safe-area-inset-bottom)));
+  background:rgba(255,253,249,.96);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(23,20,15,.1);
+}
+.ficha-barra .btn-app{height:var(--app-cta-h);font-size:14px;}
+.btn-app.terracota{background:var(--app-terracotta);color:#fff;}
+.btn-app.terracota[disabled]{background:var(--app-sunken);color:var(--app-faint);}
+.btn-wa-cuadrado{
+  flex:none;width:var(--app-cta-h);height:var(--app-cta-h);
+  display:flex;align-items:center;justify-content:center;
+  border-radius:var(--app-r-btn);
+  background:var(--app-green);color:#fff;
+  touch-action:manipulation;
+}
+.btn-wa-cuadrado:active{opacity:.88;}
+.btn-wa-cuadrado svg{width:24px;height:24px;}
+/* Hueco para la barra fija, para que el bloque del asesor no quede debajo. */
+.ficha-cuerpo{padding-bottom:calc(var(--app-cta-h) + 44px + env(safe-area-inset-bottom));}
+
+.bottom-nav.oculta{display:none;}
+body.en-ficha footer.site{display:none;}
+
 /* ---------------- lo que el rediseño deja atrás ----------------
    Cada pantalla del handoff trae su propia cabecera, y la barra inferior se
    encarga de buscar y del carrito, así que la cabecera global sobra: repetía
@@ -1569,7 +1745,7 @@ footer.site .footer-bottom{
 </div>
 
 <!-- ============ TOAST ============ -->
-<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span id="toastMsg"></span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="punto-vivo"></span><span id="toastMsg"></span><button type="button" class="toast-accion" id="toastAccion" onclick="goCart()">Ver</button></div>
 
 <!-- ============ WHATSAPP FLOTANTE ============ -->
 <a class="whatsapp-float" href="https://wa.me/51921317384?text=Hola%2C%20quiero%20hablar%20con%20un%20asesor" target="_blank" rel="noopener" aria-label="Chatea con un asesor por WhatsApp" onclick="trackAdsConversion('whatsapp')">
@@ -1847,6 +2023,10 @@ const ICONS = {
   cart:'<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 11.3a1.8 1.8 0 0 0 1.8 1.4h8a1.8 1.8 0 0 0 1.8-1.4L21 7H6.2"/>',
   store:'<path d="M4 9.5V20h16V9.5"/><path d="M3 4h18l1.2 4.2a3 3 0 0 1-5.9.8 3 3 0 0 1-5.9 0 3 3 0 0 1-5.9-.8L3 4z"/><path d="M10 20v-5h4v5"/>'
 };
+
+/* El logo de WhatsApp es de relleno, no de trazo, así que no entra en ICONS
+   (que dibuja todo con stroke). Va aparte para el botón verde de la ficha. */
+const iconWhatsapp = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.2h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.06c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.3-1.63-.6-2.87-1.24-4.74-4.14-4.88-4.33-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.26-.28.57-.35.76-.35.19 0 .38 0 .54.01.17.01.4-.07.63.48.24.57.81 1.98.88 2.12.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.16-.3.36-.42.49-.14.14-.29.3-.13.58.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/></svg>';
 function iconSvg(type, extra){
   return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" '+(extra||'')+'>'+(ICONS[type]||ICONS.accessory)+'</svg>';
 }
@@ -3080,10 +3260,16 @@ let pdState = { productId: null, activeIndex: 0, qty: 1 };
 function openProductDetail(id, push){
   const p = PRODUCTS.find(x=>x.id===id);
   if(!p) return;
+  /* La ficha dejó de ser una ventana encima del catálogo y pasó a ser una
+     página con su propia URL. El modal se queda para las políticas y el
+     panel de administrador, así que si venía abierto hay que cerrarlo. */
+  document.getElementById('modalOverlay').classList.remove('show');
+  cerrarPanelCarrito(false);
   pdState = { productId: id, activeIndex: 0, qty: 1 };
-  renderProductDetail();
-  document.getElementById('modalOverlay').classList.add('show');
+  state.view = 'producto';
   navigateTo(`/producto/${id}-${slugify(p.name)}`, push);
+  render();
+  if(push !== false) window.scrollTo({top:0});
   const priceLine = `S/ ${p.price}${p.old ? ` (antes S/ ${p.old})` : ''}`;
   setPageMeta(
     `${p.name} | Chipao Music`,
@@ -3166,15 +3352,18 @@ function colorFromImageUrl(url){
 }
 
 /* Color aproximado para pintar cada punto de color en la tarjeta del catálogo. */
+/* Rojo, Natural, Negro y Azul usan los hexes del handoff: están calibrados
+   para la paleta de papel, donde los saturados de antes (#c0392b, #1e5fbf)
+   chillaban al lado del terracota. El resto se deja como estaba. */
 const COLOR_HEX = {
-  'Rojo':'#c0392b', 'Rosado':'#f48fb1', 'Rosa':'#f6c6d9', 'Vino':'#6d1b2f', 'Granate':'#7a1f2b',
-  'Azul':'#1e5fbf', 'Celeste':'#6ec6ff', 'Turquesa':'#1abc9c',
+  'Rojo':'#9E2B20', 'Rosado':'#f48fb1', 'Rosa':'#f6c6d9', 'Vino':'#6d1b2f', 'Granate':'#7a1f2b',
+  'Azul':'#2A4A7A', 'Celeste':'#6ec6ff', 'Turquesa':'#1abc9c',
   'Amarillo':'#f4c430', 'Dorado':'#c9a227',
   'Verde':'#2e7d32',
   'Morado':'#7b3fa0', 'Lila':'#b39ddb', 'Violeta':'#8e44ad', 'Púrpura':'#8e2de2',
   'Naranja':'#e8791d', 'Madera':'#a1662f',
-  'Negro':'#1a1a1a', 'Blanco':'#ffffff', 'Gris':'#9e9e9e', 'Plateado':'#c0c0c0',
-  'Caoba':'#6b3423', 'Natural':'#d9b48f', 'Marrón':'#6d4c30', 'Café':'#4b3221', 'Marrón Entero':'#5a3a22'
+  'Negro':'#24211E', 'Blanco':'#ffffff', 'Gris':'#9e9e9e', 'Plateado':'#c0c0c0',
+  'Caoba':'#6b3423', 'Natural':'#C89A5B', 'Marrón':'#6d4c30', 'Café':'#4b3221', 'Marrón Entero':'#5a3a22'
 };
 
 /* Colores únicos de un producto (para los puntos de color en su tarjeta). */
@@ -3188,94 +3377,196 @@ function productColors(p){
   return colors;
 }
 
-function renderProductDetail(){
-  const p = PRODUCTS.find(x=>x.id===pdState.productId);
-  if(!p) return;
-  const catObj = CATEGORIES.find(c=>c.key===p.cat);
-  const subLabel = catObj ? ((catObj.subs.find(s=>s.key===p.sub)||{}).label || catObj.label) : '';
-  const images = p.images || [];
-  const video = p.video;
-  const stock = p.stock || 0;
-  const outOfStock = stock <= 0;
-  const lowStock = stock > 0 && stock <= 3;
+/* ======================================================================
+   FICHA DE PRODUCTO
 
-  const slides = [...images.map(url=>({type:'image', url})), ...(video ? [{type:'video', url:video}] : [])];
-  if(pdState.activeIndex >= slides.length) pdState.activeIndex = 0;
-  const active = slides[pdState.activeIndex];
+   Página propia (/producto/<id>-<slug>), no una ventana encima del catálogo:
+   tiene su URL, su <head> y su botón atrás.
+   ====================================================================== */
 
-  let mainHtml;
-  if(!active){
-    mainHtml = `<div class="pd-icon">${iconSvg(iconFor(p))}</div>`;
-  }else if(active.type === 'image'){
-    mainHtml = `<img src="${active.url}" alt="${escapeHtml(p.name)}" decoding="async">`;
-  }else{
-    const embed = toEmbedUrl(active.url);
-    mainHtml = embed
-      ? `<iframe src="${embed}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
-      : `<video src="${active.url}" controls></video>`;
+/* --------- lo que se puede sacar de la descripción de la base ---------
+   La descripción es texto libre que se escribe desde el panel de
+   administrador. Cuando trae los encabezados "Características:" y
+   "Contenido:" —el formato con el que está cargada la guitarra— se
+   convierten en la tabla de especificaciones y en el bloque "Incluye" del
+   handoff. Si no los trae, esas secciones sencillamente no salen: es
+   preferible a rellenarlas con datos inventados.
+
+   Hoy solo un producto del catálogo usa ese formato. El intérprete queda
+   puesto para que cualquier ficha que se escriba así lo aproveche sin tocar
+   una línea de código. */
+function parseDescripcion(texto){
+  const vacio = { parrafos: [], specs: [], incluye: [] };
+  if(!texto) return vacio;
+
+  const parrafos = [], specs = [], incluye = [];
+  let seccion = 'cuerpo';
+
+  for(const cruda of String(texto).split('\n')){
+    const linea = cruda.trim();
+    if(!linea) continue;
+
+    if(/^caracter[ií]sticas\s*:?\s*$/i.test(linea)){ seccion = 'specs'; continue; }
+    if(/^(contenido|incluye)\s*:?\s*$/i.test(linea)){ seccion = 'incluye'; continue; }
+
+    if(seccion === 'specs'){
+      /* "* Cuerdas: Nylon" da clave y valor. "* Recomendado para Aprendizaje"
+         no tiene dos puntos: se guarda como fila sin valor. */
+      const item = linea.replace(/^[*\-•]\s*/, '');
+      const corte = item.indexOf(':');
+      if(corte > 0) specs.push({ k: item.slice(0, corte).trim(), v: item.slice(corte + 1).trim() });
+      else specs.push({ k: item, v: '' });
+      continue;
+    }
+
+    if(seccion === 'incluye'){
+      /* Puede venir como lista con viñetas o como una sola línea separada por
+         comas ("Guitarra, Funda, Plumillas, Llave de calibración."). */
+      const item = linea.replace(/^[*\-•]\s*/, '').replace(/\.$/, '');
+      if(/^[*\-•]/.test(linea)){
+        incluye.push(item);
+      }else{
+        for(const trozo of item.split(',')) if(trozo.trim()) incluye.push(trozo.trim());
+      }
+      continue;
+    }
+
+    parrafos.push(linea);
   }
-
-  const thumbsHtml = slides.length > 1 ? `
-    <div class="pd-thumbs">
-      ${slides.map((s,i)=>`
-        <div class="pd-thumb ${i===pdState.activeIndex?'active':''} ${s.type==='video'?'video-thumb':''}" onclick="setActiveSlide(${i})">
-          ${s.type==='image' ? `<img src="${s.url}" alt="${escapeHtml(p.name)}">` : '▶'}
-        </div>`).join('')}
-    </div>` : '';
-
-  const stockHtml = outOfStock
-    ? `<div class="pd-stock-out">Agotado</div>`
-    : lowStock
-      ? `<div class="pd-stock-low">¡Solo quedan ${stock} unidades!</div>`
-      : `<div class="pd-stock-ok">✓ Disponible</div>`;
-
-  const imageColorLabels = images.map(colorFromImageUrl);
-  const hasColors = imageColorLabels.filter(Boolean).length >= 2;
-  const activeColor = imageColorLabels[pdState.activeIndex];
-  const colorsHtml = hasColors ? `
-    <div class="pd-colors">
-      <span class="pd-colors-label">Color${activeColor?`: ${escapeHtml(activeColor)}`:''}</span><br>
-      ${images.map((url,i)=>{
-        const label = imageColorLabels[i];
-        if(!label) return '';
-        return `<button type="button" class="pd-color-chip ${i===pdState.activeIndex?'active':''}" onclick="setActiveSlide(${i})">${escapeHtml(label)}</button>`;
-      }).join('')}
-    </div>` : '';
-
-  document.getElementById('modalBody').innerHTML = `
-    <div class="pd-gallery">${mainHtml}</div>
-    ${thumbsHtml}
-    <div class="pd-cat">${subLabel}</div>
-    <h1 class="pd-name">${escapeHtml(p.name)}</h1>
-    <div class="pd-price-row">
-      <span class="pd-price">${fmt(p.price)}</span>
-      ${p.old?`<span class="pd-oldprice">${fmt(p.old)}</span>`:''}
-    </div>
-    ${colorsHtml}
-    <button class="pd-share" onclick="shareProduct(${p.id})">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
-      Copiar enlace para compartir
-    </button>
-    ${stockHtml}
-    ${outOfStock ? '' : `
-      <div class="pd-qty-row">
-        <div class="qty-ctrl">
-          <button onclick="pdChangeQty(-1)">−</button>
-          <span id="pdQtyLabel">${pdState.qty}</span>
-          <button onclick="pdChangeQty(1)">+</button>
-        </div>
-      </div>
-      <button class="btn-gold" style="width:100%;" onclick="addFromDetail(${p.id})">Agregar al carrito</button>
-    `}
-    ${p.description ? `
-      <div class="pd-description">
-        <h4>Descripción</h4>
-        <p>${escapeHtml(p.description)}</p>
-      </div>` : ''}
-  `;
+  return { parrafos, specs, incluye };
 }
 
-function setActiveSlide(i){ pdState.activeIndex = i; renderProductDetail(); }
+/* Cambiar de swatch es cambiar de foto: cada variante de color ES una de las
+   fotos del producto. */
+function setActiveSlide(i){
+  pdState.activeIndex = i;
+  render();
+}
+
+function renderProductDetail(){
+  const p = PRODUCTS.find(x => x.id === pdState.productId);
+  if(!p){
+    return `<div class="app-shell"><div class="sin-resultados">
+      <p>Este producto ya no está en el catálogo.</p>
+      <button type="button" class="btn-app contorno" onclick="goShop(null)">Ver el catálogo</button>
+    </div></div>`;
+  }
+
+  const cat = CATEGORIES.find(c => c.key === p.cat);
+  const images = p.images || [];
+  const slides = [...images.map(url => ({type:'image', url})), ...(p.video ? [{type:'video', url:p.video}] : [])];
+  if(pdState.activeIndex >= slides.length) pdState.activeIndex = 0;
+  const activo = slides[pdState.activeIndex];
+  const stock = p.stock || 0;
+  const { parrafos, specs, incluye } = parseDescripcion(p.description);
+
+  /* Las variantes no son un campo de la base: se deducen del nombre del
+     archivo de cada foto (ver colorFromImageUrl), así que cada swatch es a la
+     vez un color y la foto que le corresponde. */
+  const colores = images.map(colorFromImageUrl);
+  const hayColores = colores.filter(Boolean).length >= 2;
+  const colorActivo = colores[pdState.activeIndex];
+
+  let galeria;
+  if(!activo){
+    galeria = `<span class="ficha-sinfoto">${iconSvg(iconFor(p))}</span>`;
+  }else if(activo.type === 'image'){
+    galeria = `<img src="${activo.url}" alt="${escapeHtml(p.name)}${colorActivo ? ' — ' + escapeHtml(colorActivo) : ''}" decoding="async">`;
+  }else{
+    const embed = toEmbedUrl(activo.url);
+    galeria = embed
+      ? `<iframe src="${embed}" title="${escapeHtml(p.name)}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
+      : `<video src="${activo.url}" controls playsinline></video>`;
+  }
+
+  const enCarrito = state.cart.reduce((s,c) => s + c.qty, 0);
+  const ahorro = enOferta(p) ? p.old - p.price : 0;
+  const consulta = `Hola, me interesa ${p.name}${colorActivo ? ' (color ' + colorActivo + ')' : ''}. ¿Está disponible?`;
+
+  return `
+  <div class="app-shell ficha">
+
+    <div class="ficha-galeria">
+      ${galeria}
+      <button type="button" class="ficha-flotante volver" onclick="volverAtras()" aria-label="Volver">‹</button>
+      <a class="ficha-flotante carrito" href="/carrito" onclick="goCart();return false;" aria-label="Ver carrito">
+        ${iconSvg('cart')}<span>${enCarrito}</span>
+      </a>
+      ${slides.length > 1 ? `<span class="ficha-contador">${pdState.activeIndex + 1} de ${slides.length}</span>` : ''}
+    </div>
+
+    <div class="ficha-cuerpo">
+      <div class="eyebrow-terracota">${escapeHtml(cat ? cat.label : 'Instrumentos')}</div>
+      <h1 class="ficha-nombre">${escapeHtml(p.name)}</h1>
+
+      <div class="ficha-precios">
+        <span class="ficha-precio">${fmt(p.price)}</span>
+        ${enOferta(p) ? `
+          <span class="ficha-antes">${fmt(p.old)}</span>
+          <span class="ficha-ahorras">Ahorras ${fmt(ahorro)}</span>` : ''}
+      </div>
+
+      <div class="ficha-chips">
+        ${stock > 0
+          ? '<span class="ficha-chip verde">Stock en tienda</span>'
+          : '<span class="ficha-chip neutro">Bajo pedido</span>'}
+        <span class="ficha-chip neutro">Envío a todo el Perú</span>
+        ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
+      </div>
+
+      ${hayColores ? `
+      <div class="ficha-color-label">Color — <span>${escapeHtml(colorActivo || 'elige uno')}</span></div>
+      <div class="ficha-swatches">
+        ${images.map((url, i) => {
+          const label = colores[i];
+          if(!label) return '';
+          const sel = i === pdState.activeIndex;
+          return `<button type="button" class="swatch${sel ? ' sel' : ''}"
+            style="background:${COLOR_HEX[label] || '#ccc'}"
+            aria-label="${escapeHtml(label)}" aria-pressed="${sel ? 'true' : 'false'}"
+            onclick="setActiveSlide(${i})"></button>`;
+        }).join('')}
+      </div>` : ''}
+
+      ${parrafos.length ? `<div class="ficha-desc">${parrafos.map(t => `<p>${escapeHtml(t)}</p>`).join('')}</div>` : ''}
+
+      ${specs.length ? `
+      <div class="ficha-specs">
+        ${specs.map(s => `<div class="spec-fila">
+          <span class="spec-k">${escapeHtml(s.k)}</span>
+          ${s.v ? `<span class="spec-v">${escapeHtml(s.v)}</span>` : ''}
+        </div>`).join('')}
+      </div>` : ''}
+
+      ${incluye.length ? `
+      <div class="ficha-incluye">
+        <div class="incluye-titulo">Incluye</div>
+        ${incluye.map(i => `<div class="incluye-item"><span class="incluye-punto"></span>${escapeHtml(i)}</div>`).join('')}
+      </div>` : ''}
+
+      <a class="bloque-asesor" target="_blank" rel="noopener"
+         href="${waHref(consulta)}" onclick="trackAdsConversion('whatsapp')">
+        <span class="asesor-icono"></span>
+        <span class="asesor-texto">
+          <span class="asesor-titulo">¿Dudas con la talla o el nivel?</span>
+          <span class="asesor-sub">Te responde un asesor de la tienda en minutos.</span>
+        </span>
+        <span class="asesor-chevron">›</span>
+      </a>
+    </div>
+
+    <div class="ficha-barra">
+      ${stock > 0
+        ? `<button type="button" class="btn-app terracota" onclick="addFromDetail(${p.id})">Agregar al carrito</button>`
+        : '<button type="button" class="btn-app terracota" disabled>Agotado</button>'}
+      <a class="btn-wa-cuadrado" target="_blank" rel="noopener"
+         href="${waHref(consulta)}" onclick="trackAdsConversion('whatsapp')" aria-label="Consultar por WhatsApp">
+        ${iconWhatsapp}
+      </a>
+    </div>
+
+  </div>`;
+}
 
 function stockOf(id){ const p = PRODUCTS.find(x=>x.id===id); return p ? (p.stock||0) : 0; }
 
@@ -3288,9 +3579,11 @@ function pdChangeQty(delta){
   document.getElementById('pdQtyLabel').textContent = pdState.qty;
 }
 
+/* Agregar desde la ficha ya no cierra nada: la ficha es una página y se
+   queda donde está. El aviso lo da el toast, y el contador del pill que
+   flota sobre la galería sube al instante. */
 function addFromDetail(id){
   for(let i=0;i<pdState.qty;i++) addToCart(id);
-  closeModal();
 }
 
 function addToCart(id, btnEl){
@@ -3301,7 +3594,7 @@ function addToCart(id, btnEl){
   if(currentQty >= available){ showToast(`Solo hay ${available} unidad(es) disponibles`); return; }
   if(existing) existing.qty++; else state.cart.push({id, qty:1});
   updateCartCount();
-  showToast('Producto agregado al carrito');
+  showToast('Producto agregado al carrito', true);
   trackAdsConversion('addToCart');
   if(btnEl){
     btnEl.classList.add('added');
@@ -3358,9 +3651,12 @@ function updateCartCount(){
   const el = document.getElementById('cartCount');
   el.textContent = total;
   el.style.display = total>0 ? 'flex':'none';
-  /* El contador de la barra inferior tiene que decir lo mismo que el del
-     header, así que se repinta desde el mismo sitio. */
+  /* Los tres contadores del carrito dicen lo mismo, así que se actualizan
+     desde el mismo sitio: el de la barra inferior y el del pill que flota
+     sobre la galería de la ficha. */
   buildBottomNav();
+  const enFicha = document.querySelector('.ficha-flotante.carrito span');
+  if(enFicha) enFicha.textContent = total;
   /* Toda modificación del carrito pasa por aquí, así que este es el único
      punto donde hace falta guardarlo. */
   saveCart();
@@ -3834,12 +4130,16 @@ window.addEventListener('popstate', ()=>{
    TOAST
    ====================================================================== */
 let toastTimer;
-function showToast(msg){
+/* El segundo argumento enseña el enlace 'Ver' que lleva al carrito. Solo lo
+   usan los avisos de 'agregado': en un error de stock no hay nada que ver.
+   Los 2600 ms son los del handoff. */
+function showToast(msg, conEnlaceAlCarrito){
   const t = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastAccion').hidden = !conEnlaceAlCarrito;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
 }
 
 /* ======================================================================
@@ -4285,10 +4585,18 @@ async function deleteProduct(id, btnEl){
    ====================================================================== */
 function render(){
   document.getElementById('app').innerHTML =
-      state.view==='home'   ? renderHome()
-    : state.view==='search' ? renderSearch()
+      state.view==='home'     ? renderHome()
+    : state.view==='search'   ? renderSearch()
+    : state.view==='producto' ? renderProductDetail()
     : renderShop();
   buildNavLists();
+  /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
+     el botón de WhatsApp, y el carrito está en el pill que flota sobre la
+     galería. Dos barras apiladas dejarían el CTA a media pantalla. */
+  document.getElementById('bottomNav').classList.toggle('oculta', state.view==='producto');
+  /* Y tampoco el pie: la barra fija se le montaría encima. La ficha es una
+     pantalla de decisión, termina en el CTA. */
+  document.body.classList.toggle('en-ficha', state.view==='producto');
   /* La portada del rediseño no lleva banner rotativo, así que ya no hay
      temporizador que arrancar. El que había buscaba #heroBg, que ya no
      existe. La maquinaria del banner se retira en la fase de limpieza. */
