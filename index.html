@@ -1008,8 +1008,9 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   .filters.show{transform:translateX(0);}
   .filters-btn{display:flex;}
   .product-grid{grid-template-columns:repeat(2,1fr);}
-  body{padding-bottom:60px;}
-  .bottom-nav{display:grid;}
+  /* Hueco para la barra inferior: sus 78px más la franja de gestos, si la
+     hay. Sin esto el último producto de la lista queda tapado. */
+  body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 }
 /* Banner en celular: cabecera más baja, botones en una fila, sin flechas
    (en un teléfono se desliza, y encima tapaban el texto) y la tarjeta del
@@ -1054,22 +1055,49 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 @media (max-width:520px){
   .hero h1{font-size:26px;}
 }
-/* ---------------- bottom mobile nav bar ---------------- */
+/* ---------------- barra inferior del celular (rediseño) ----------------
+   Cuatro destinos, 78px de alto con 8px arriba, y el respiro de abajo lo
+   pone el propio teléfono: env(safe-area-inset-bottom) es la franja de la
+   barra de gestos del iPhone, que sin esto se comería las etiquetas. */
 .bottom-nav{
-  display:none;grid-template-columns:repeat(6,1fr);
+  display:none;grid-template-columns:repeat(4,1fr);
   position:fixed;left:0;right:0;bottom:0;z-index:50;
-  background:#fff;border-top:1px solid var(--chrome-line);
-  box-shadow:0 -4px 14px -8px rgba(22,34,74,.2);
-  padding:6px 2px 8px;
+  background:var(--app-surface);
+  border-top:1px solid rgba(23,20,15,.1);
+  padding:8px 2px max(8px, env(safe-area-inset-bottom));
 }
-.bottom-nav button{
-  background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;
-  color:var(--muted);font-size:9.5px;font-weight:600;padding:4px 0;
+.tab-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  color:var(--app-faint);
+  text-decoration:none;
+  min-height:44px;                /* objetivo táctil mínimo */
+  padding:4px 0;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
-.bottom-nav button svg{width:19px;height:19px;stroke:currentColor;}
-.bottom-nav button.active{color:var(--brown-heading);}
-.bottom-nav button.active svg{stroke:var(--gold-dim);}
-.bottom-nav button.offer.active svg,.bottom-nav button.offer svg{stroke:var(--gold-dim);}
+.tab-item:active{opacity:.88;}
+.tab-icon{position:relative;display:block;width:22px;height:22px;}
+.tab-item svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.7;}
+.tab-label{
+  font-family:var(--app-sans);
+  font-size:10px;font-weight:600;line-height:1;letter-spacing:.01em;
+}
+.tab-item.active{color:var(--app-terracotta);}
+/* Esta regla tiene que ir DESPUÉS del display:none de arriba: las dos tienen
+   la misma especificidad, y una @media no suma ninguna, así que gana la
+   última que se escribe. Cuando la de mostrar estaba antes, la barra quedaba
+   oculta en todos los anchos — nunca llegó a verse en el celular. */
+@media (max-width:899px){
+  .bottom-nav{display:grid;}
+}
+.tab-badge{
+  position:absolute;top:-5px;right:-7px;
+  min-width:16px;height:16px;padding:0 4px;
+  border-radius:var(--app-r-pill);
+  background:var(--app-terracotta);color:#fff;
+  font-family:var(--app-sans);font-size:9.5px;font-weight:700;line-height:16px;
+  text-align:center;
+}
 .whatsapp-float{
   position:fixed;bottom:22px;right:22px;z-index:55;
   width:56px;height:56px;border-radius:50%;background:#25D366;
@@ -1079,11 +1107,57 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 .whatsapp-float:hover{transform:scale(1.08);}
 .whatsapp-float svg{width:29px;height:29px;}
 @media (max-width:899px){
-  .whatsapp-float{bottom:76px;width:50px;height:50px;}
+  /* Por encima de la barra inferior, que ahora es más alta. */
+  .whatsapp-float{bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom) + 12px);width:50px;height:50px;}
   .whatsapp-float svg{width:26px;height:26px;}
 }
 @media (min-width:1180px){
   .cat-grid{grid-template-columns:repeat(4,1fr);}
+}
+
+/* ======================================================================
+   PANTALLAS DEL REDISEÑO MÓVIL
+
+   .app-shell es el contenedor de toda pantalla ya migrada: móvil primero,
+   y en escritorio el contenido se centra en una columna de 480px, como pide
+   el handoff. Se aplica pantalla por pantalla, no a <main> entero: mientras
+   dure la migración, aplicarlo a todo estrujaría en una columna las páginas
+   que todavía son las de antes. En la última fase sube a <main>.
+   ====================================================================== */
+.app-shell{
+  max-width:var(--app-max);
+  margin:0 auto;
+  padding:0 var(--app-gutter);
+  font-family:var(--app-sans);
+  color:var(--app-ink);
+}
+
+/* ---------------- /buscar ---------------- */
+.search-page-head{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 0 6px;
+}
+.search-page-input{
+  flex:1;min-width:0;height:46px;
+  padding:0 14px;
+  background:var(--app-sunken);
+  border:1px solid var(--app-line);
+  border-radius:var(--app-r-input);
+  font-family:var(--app-sans);font-size:14px;color:var(--app-ink);
+}
+.search-page-input::placeholder{color:var(--app-muted-3);}
+.search-page-input:focus{outline:none;border-color:var(--app-line-strong);}
+.search-page-close{
+  flex:none;background:none;border:none;padding:8px 2px;
+  font-family:var(--app-sans);font-size:13.5px;font-weight:500;
+  color:var(--app-terracotta);
+  touch-action:manipulation;
+}
+.search-page-close:active{opacity:.88;}
+.search-count{
+  margin:14px 0 10px;
+  font-family:var(--app-sans);font-size:11px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--app-muted-2);
 }
 </style>
 </head>
@@ -1452,7 +1526,13 @@ const ICONS = {
   school:'<path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z"/><path d="M6 10.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/>',
   accessory:'<path d="M12 3c4 0 6 4 6 7.5S14 21 12 21s-6-4.5-6-10.5S8 3 12 3z"/><circle cx="12" cy="9" r="1.4" fill="currentColor"/>',
   home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
-  tag:'<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="8" cy="8.5" r="1.3" fill="currentColor"/>'
+  tag:'<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="8" cy="8.5" r="1.3" fill="currentColor"/>',
+  /* Los tres de la barra inferior del rediseño. El handoff los deja como
+     cuadrados y círculos de relleno y pide usar el set del proyecto, así que
+     van dibujados con el mismo trazo de 1.6 que los demás. */
+  search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  cart:'<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 11.3a1.8 1.8 0 0 0 1.8 1.4h8a1.8 1.8 0 0 0 1.8-1.4L21 7H6.2"/>',
+  store:'<path d="M4 9.5V20h16V9.5"/><path d="M3 4h18l1.2 4.2a3 3 0 0 1-5.9.8 3 3 0 0 1-5.9 0 3 3 0 0 1-5.9-.8L3 4z"/><path d="M10 20v-5h4v5"/>'
 };
 function iconSvg(type, extra){
   return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" '+(extra||'')+'>'+(ICONS[type]||ICONS.accessory)+'</svg>';
@@ -1480,7 +1560,10 @@ function storeLocationHTML(mapHeight){
 }
 
 /* ======================================================================
-   STATE (in-memory only — no localStorage/sessionStorage per platform rules)
+   ESTADO
+
+   Vive en memoria y se pierde al recargar, salvo el carrito, que se guarda
+   en localStorage (ver CART_STORAGE_KEY) para que no se vacíe solo.
    ====================================================================== */
 const state = {
   view:'home',
@@ -1493,7 +1576,9 @@ const state = {
   search:'',
   cart:[], // {id, qty}
   checkoutOpen:false,
-  orderPlaced:false
+  orderPlaced:false,
+  orderId:null,      // número del último pedido enviado, para /pedido/<id>
+  searchQuery:''     // texto de la pantalla /buscar (independiente del filtro de la tienda)
 };
 
 const fmt = n => 'S/ ' + n.toLocaleString('es-PE',{minimumFractionDigits:0});
@@ -1669,6 +1754,21 @@ function routeFromPath(push){
     }
   }
   document.getElementById('modalOverlay').classList.remove('show');
+
+  /* Pantallas de sesión. Van antes que las demás para que, al volver atrás
+     desde una de ellas, se abra el panel en el estado correcto en vez de
+     caer en el catálogo. */
+  if(path === '/buscar'){ goSearch(push); return true; }
+  if(path === '/carrito'){ goCart(push); return true; }
+  if(path === '/checkout'){ goCheckout(push); return true; }
+  const pedidoMatch = path.match(/^\/pedido\/([A-Za-z0-9-]{1,24})$/);
+  if(pedidoMatch){ goPedido(pedidoMatch[1], push); return true; }
+
+  /* Cualquier otra ruta es una página normal del sitio: si el panel del
+     carrito venía abierto (por ejemplo al volver atrás desde /carrito), se
+     cierra sin volver a tocar la URL, que ya es la correcta. */
+  cerrarPanelCarrito(false);
+
   const catMatch = path.match(/^\/categoria\/([a-z]+)$/);
   if(catMatch && CATEGORIES.some(c=>c.key===catMatch[1])){
     goShop(catMatch[1], null, push);
@@ -1721,24 +1821,31 @@ function buildNavLists(){
   buildBottomNav();
 }
 
-/* Accesos cortos de la barra inferior en celular */
+/* Barra inferior del celular. El handoff la deja en cuatro destinos — las
+   tareas de una tienda en el teléfono: volver al principio, buscar, ver lo
+   que llevas y recorrer el catálogo. Antes eran seis atajos de categoría,
+   que ya viven en la portada y en el menú, y que dejaban la barra sin
+   ninguna forma de llegar al buscador ni al carrito. */
 const BOTTOM_NAV = [
-  {label:'Inicio', icon:'home', isHome:true},
-  {label:'Guitarras', icon:'string', cat:'cuerda'},
-  {label:'Teclados', icon:'keyboard', cat:'teclados'},
-  {label:'Escolares', icon:'school', cat:'colegio'},
-  {label:'Accesorios', icon:'accessory', cat:'accesorios'},
-  {label:'Ofertas', icon:'tag', isOffers:true},
+  {label:'Inicio',  icon:'home',   href:'/',        action:'goHome()',      activa:()=> state.view==='home' && !enRutaDeCarrito()},
+  {label:'Buscar',  icon:'search', href:'/buscar',  action:'goSearch()',    activa:()=> state.view==='search' && !enRutaDeCarrito()},
+  {label:'Carrito', icon:'cart',   href:'/carrito', action:'goCart()',      activa:()=> enRutaDeCarrito(), badge:true},
+  {label:'Tienda',  icon:'store',  href:'/tienda',  action:'goShop(null)',  activa:()=> state.view==='shop' && !enRutaDeCarrito()},
 ];
 function buildBottomNav(){
   const el = document.getElementById('bottomNav');
   if(!el) return;
+  const enCarrito = state.cart.reduce((s,c)=>s+c.qty,0);
+  /* Enlaces de verdad, no botones: así se pueden abrir en otra pestaña y el
+     rastreador ve a dónde llevan. El onclick evita la recarga. */
   el.innerHTML = BOTTOM_NAV.map(item=>{
-    const active = item.isHome ? state.view==='home'
-      : item.isOffers ? (state.view==='shop' && state.offersOnly)
-      : (state.view==='shop' && state.activeCat===item.cat && !state.offersOnly);
-    const action = item.isHome ? 'goHome()' : item.isOffers ? 'goOffers()' : `goShop('${item.cat}')`;
-    return `<button class="${active?'active':''}${item.isOffers?' offer':''}" onclick="${action}">${iconSvg(item.icon)}${item.label}</button>`;
+    const badge = (item.badge && enCarrito>0)
+      ? `<span class="tab-badge">${enCarrito}</span>` : '';
+    return `<a class="tab-item${item.activa()?' active':''}" href="${item.href}"
+      onclick="${item.action};return false;"${item.activa()?' aria-current="page"':''}>
+      <span class="tab-icon">${iconSvg(item.icon)}${badge}</span>
+      <span class="tab-label">${item.label}</span>
+    </a>`;
   }).join('');
 }
 
@@ -1783,6 +1890,161 @@ function doSearch(mobile){
 function toggleMobileSearch(){
   const el=document.getElementById('mobileSearchBar');
   el.style.display = el.style.display==='none' ? 'block' : 'none';
+}
+
+/* ======================================================================
+   PANTALLAS DEL REDISEÑO MÓVIL: /buscar, /carrito, /checkout, /pedido/<id>
+
+   Aquí solo se montan las rutas: cada una tiene su URL, responde al botón
+   atrás y se puede compartir. El diseño definitivo de cada pantalla llega
+   en su propia fase; mientras tanto el carrito sigue siendo el panel lateral
+   de siempre y estas rutas lo abren en el estado que toca, para que la web
+   nunca quede a medias durante la migración.
+
+   Ninguna de las cuatro se indexa: el Worker las marca noindex,follow y no
+   entran en el sitemap (ver RUTAS_DE_SESION en src/index.js).
+   ====================================================================== */
+
+const META_SESION = {
+  buscar:   ['Buscar instrumentos | Chipao Music', 'Busca guitarras, ukeleles, cajones, teclados y accesorios en el catálogo de Chipao Music.'],
+  carrito:  ['Tu carrito | Chipao Music', 'Revisa los instrumentos que agregaste antes de cerrar tu pedido.'],
+  checkout: ['Finalizar pedido | Chipao Music', 'Elige cómo recibes tu pedido y con qué medio de pago quieres cerrarlo.'],
+  pedido:   ['Pedido enviado | Chipao Music', 'Tu pedido llegó al WhatsApp de la tienda. Te escribimos para confirmar stock y coordinar la entrega.'],
+};
+function aplicarMetaSesion(clave){
+  const [titulo, desc] = META_SESION[clave];
+  setPageMeta(titulo, desc);
+  setBreadcrumbSchema(null);
+}
+
+/* ¿La URL de ahora es una de las pantallas del carrito? Sirve para saber si,
+   al cerrar el panel, hay que devolver la barra de direcciones a la página
+   que quedó detrás. */
+function enRutaDeCarrito(){
+  const p = window.location.pathname;
+  return p === '/carrito' || p === '/checkout' || p.startsWith('/pedido/');
+}
+
+function goSearch(push){
+  state.view = 'search';
+  cerrarPanelCarrito(false);
+  navigateTo('/buscar', push);
+  aplicarMetaSesion('buscar');
+  render();
+  /* El teclado debe salir solo: la pantalla existe para escribir. */
+  const input = document.getElementById('buscarInput');
+  if(input) input.focus();
+}
+
+/* Abre el panel del carrito sin tocar la URL (de eso se encargan las rutas). */
+function abrirPanelCarrito(){
+  document.getElementById('cartDrawer').classList.add('show');
+  document.getElementById('cartOverlay').classList.add('show');
+  renderCartDrawer();
+}
+/* Lo cierra. Con volverUrl=true la barra de direcciones regresa a la página
+   de debajo, para que no se quede diciendo /carrito con el panel cerrado. */
+function cerrarPanelCarrito(volverUrl){
+  document.getElementById('cartDrawer').classList.remove('show');
+  document.getElementById('cartOverlay').classList.remove('show');
+  if(volverUrl !== false && enRutaDeCarrito()){
+    navigateTo(currentViewPath(), true);
+    applyCurrentViewMeta();
+  }
+}
+
+function goCart(push){
+  state.checkoutOpen = false;
+  state.orderPlaced = false;
+  navigateTo('/carrito', push);
+  aplicarMetaSesion('carrito');
+  if(state.view === 'search') state.view = 'home';
+  render();
+  abrirPanelCarrito();
+}
+
+function goCheckout(push){
+  /* A pagar no se llega con el carrito vacío: sería un formulario sin nada
+     que cobrar. Se manda al carrito, que ya sabe mostrar su estado vacío. */
+  if(!state.cart.length){ goCart(push); return; }
+  state.checkoutOpen = true;
+  state.orderPlaced = false;
+  navigateTo('/checkout', push);
+  aplicarMetaSesion('checkout');
+  if(state.view === 'search') state.view = 'home';
+  render();
+  abrirPanelCarrito();
+}
+
+function goPedido(id, push){
+  state.orderId = id;
+  state.orderPlaced = true;
+  state.checkoutOpen = false;
+  navigateTo('/pedido/' + id, push);
+  aplicarMetaSesion('pedido');
+  if(state.view === 'search') state.view = 'home';
+  render();
+  abrirPanelCarrito();
+}
+
+/* Número de pedido que ve el cliente. No es un identificador de base de
+   datos: el pedido de verdad se arma en la conversación de WhatsApp, y este
+   código solo sirve para nombrarla de un lado y del otro. */
+function nuevoNumeroPedido(){
+  return 'CH-' + Math.floor(1000 + Math.random()*9000);
+}
+
+/* ---------------------------- /buscar ----------------------------
+   Filtro por nombre y por categoría, sin distinguir mayúsculas ni tildes,
+   igual que pide el handoff. La pantalla con su diseño definitivo (chips de
+   "lo más buscado", rangos por precio, filas de 62px) llega en su fase; esto
+   es la versión funcional mínima para que la ruta no sea un callejón. */
+function sinTildes(str){
+  return String(str).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+function buscarProductos(q){
+  const t = sinTildes(q).trim();
+  if(!t) return [];
+  return PRODUCTS.filter(p=>{
+    const cat = CATEGORIES.find(c=>c.key===p.cat);
+    return sinTildes(p.name).includes(t) || (cat && sinTildes(cat.label).includes(t));
+  });
+}
+
+function resultadosBusquedaHtml(){
+  const q = state.searchQuery.trim();
+  if(!q) return '';
+  const res = buscarProductos(q);
+  if(!res.length){
+    return `<div class="empty-state">
+      <p>Nada con “${escapeHtml(q)}”.</p>
+      <a class="btn-outline" style="display:inline-flex;margin-top:12px;" target="_blank" rel="noopener"
+         href="https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent('Hola, busco ' + q + '. ¿Lo tienen?')}">Preguntar por WhatsApp</a>
+    </div>`;
+  }
+  return `<p class="search-count">${res.length} ${res.length===1?'resultado':'resultados'}</p>
+    <div class="product-grid">${res.map(productCard).join('')}</div>`;
+}
+
+function onBuscarInput(val){
+  state.searchQuery = val;
+  /* Solo se repinta la lista: si se repintara la pantalla entera, el input
+     perdería el foco y el teclado se cerraría en cada tecla. */
+  const cont = document.getElementById('buscarResultados');
+  if(cont) cont.innerHTML = resultadosBusquedaHtml();
+}
+
+function renderSearch(){
+  return `
+  <div class="app-shell">
+    <div class="search-page-head">
+      <input id="buscarInput" class="search-page-input" type="search" autocomplete="off"
+             placeholder="Buscar instrumento o marca" value="${escapeHtml(state.searchQuery)}"
+             oninput="onBuscarInput(this.value)">
+      <button type="button" class="search-page-close" onclick="goHome()">Cerrar</button>
+    </div>
+    <div id="buscarResultados">${resultadosBusquedaHtml()}</div>
+  </div>`;
 }
 
 /* Productos reales en stock (uno por categoría cuando se puede, priorizando
@@ -2617,6 +2879,9 @@ function updateCartCount(){
   const el = document.getElementById('cartCount');
   el.textContent = total;
   el.style.display = total>0 ? 'flex':'none';
+  /* El contador de la barra inferior tiene que decir lo mismo que el del
+     header, así que se repinta desde el mismo sitio. */
+  buildBottomNav();
   /* Toda modificación del carrito pasa por aquí, así que este es el único
      punto donde hace falta guardarlo. */
   saveCart();
@@ -2797,10 +3062,14 @@ function markPayOption(input){
 
 function goToCheckout(){
   state.checkoutOpen = true;
+  navigateTo('/checkout', true);
+  aplicarMetaSesion('checkout');
   renderCartDrawer();
 }
 function backToCart(){
   state.checkoutOpen = false;
+  navigateTo('/carrito', true);
+  aplicarMetaSesion('carrito');
   renderCartDrawer();
 }
 
@@ -2936,10 +3205,13 @@ Método de pago: ${metodoPago}`;
   window.open(url, '_blank', 'noopener');
   trackAdsConversion('purchase', total);
 
+  state.orderId = nuevoNumeroPedido();
   state.orderPlaced = true;
   state.checkoutOpen = false;
   state.cart = [];
   updateCartCount();
+  navigateTo('/pedido/' + state.orderId, true);
+  aplicarMetaSesion('pedido');
   renderCartDrawer();
 }
 
@@ -3001,13 +3273,15 @@ function checkPaymentReturnStatus(){
 
 function finishOrder(){
   state.orderPlaced = false;
-  toggleCart(false);
+  state.orderId = null;
+  cerrarPanelCarrito(true);
 }
 
+/* El carrito pasó a tener URL propia, así que abrirlo y cerrarlo es navegar:
+   así el botón atrás del teléfono lo cierra, como espera cualquiera. */
 function toggleCart(show){
-  document.getElementById('cartDrawer').classList.toggle('show', show);
-  document.getElementById('cartOverlay').classList.toggle('show', show);
-  if(show){ state.checkoutOpen=false; state.orderPlaced=false; renderCartDrawer(); }
+  if(show) goCart();
+  else cerrarPanelCarrito(true);
 }
 /* Abre/cierra el acordeón de una categoría en el menú del celular. Solo queda
    una abierta a la vez: así el menú nunca crece más de lo que cabe en pantalla.
@@ -3531,7 +3805,10 @@ async function deleteProduct(id, btnEl){
    MAIN RENDER
    ====================================================================== */
 function render(){
-  document.getElementById('app').innerHTML = state.view==='home' ? renderHome() : renderShop();
+  document.getElementById('app').innerHTML =
+      state.view==='home'   ? renderHome()
+    : state.view==='search' ? renderSearch()
+    : renderShop();
   buildNavLists();
   if(state.view==='home') startHeroAutoplay(); else stopHeroAutoplay();
 }
