@@ -78,7 +78,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Una sola petición para las cuatro familias: Archivo e Instrument Serif son
+     las del rediseño móvil; Playfair y Poppins siguen vivas hasta que termine
+     la migración. Los nombres van en orden alfabético porque la API css2 lo
+     exige. -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif&family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy-deep:#ffffff;
@@ -106,6 +110,81 @@
   --logo-h:60px;   /* alto del logo en la cabecera */
   --bar-h:38px;
 }
+
+/* ======================================================================
+   TOKENS DEL REDISEÑO MÓVIL  (handoff "Chipao App")
+
+   Paleta de papel cálido y tinta, con terracota de acento y el verde de la
+   tienda. Conviven con los tokens navy/gold de arriba mientras dura la
+   migración pantalla por pantalla; los viejos se retiran en la última fase.
+
+   Van con prefijo --app- a propósito: las dos paletas tienen un "ink", un
+   "muted" y un "line" que NO son el mismo color, y sin prefijo el rediseño
+   repintaría de golpe partes del sitio que todavía no están migradas.
+   ====================================================================== */
+:root{
+  /* --- superficies --- */
+  --app-paper:#F7F3EC;            /* fondo de pantalla */
+  --app-surface:#FFFDF9;          /* tarjetas, headers, barras */
+  --app-sunken:#F2EDE4;           /* inputs, chips neutros, botones cuadrados */
+
+  /* --- texto --- */
+  --app-ink:#17140F;              /* texto principal, botón oscuro */
+  --app-ink-70:#453E35;           /* cuerpo de texto largo */
+  --app-muted:#6E655A;            /* texto secundario */
+  --app-muted-2:#7A7064;          /* metadatos */
+  --app-muted-3:#8A8074;          /* labels y placeholders de input */
+  --app-faint:#9A9083;            /* precios tachados, iconos inactivos */
+
+  /* --- bordes (el rediseño no lleva sombras, solo líneas de 1px) --- */
+  --app-line:rgba(23,20,15,.09);
+  --app-line-strong:rgba(23,20,15,.16);
+
+  /* --- acentos --- */
+  --app-terracotta:#B4472C;       /* CTA principal, descuentos, selección */
+  --app-terracotta-soft:#FBE6DF;  /* fondo del chip "Ahorras" */
+  --app-green:#1F5C4A;            /* asesor, confirmar pedido, banda de colegio */
+  --app-green-soft:#E8F0EA;       /* fondo del bloque stock / asesor */
+  --app-green-mint:#A8E6C4;       /* punto vivo, eyebrow sobre verde */
+
+  /* --- color por categoría (tiles del carrusel de la portada) --- */
+  --app-cat-cuerda:#B4472C;
+  --app-cat-teclados:#1F5C4A;
+  --app-cat-percusion:#8A5A1E;
+  --app-cat-viento:#3A4A7A;
+  --app-cat-audio:#4A3A5E;
+  --app-cat-colegio:#2F6B4F;
+  --app-cat-accesorios:#6B5B4A;
+
+  /* --- tipografía --- */
+  --app-serif:'Instrument Serif',Georgia,serif;   /* títulos editoriales */
+  --app-sans:'Archivo',system-ui,sans-serif;      /* toda la interfaz */
+  --app-mono:ui-monospace,Menlo,monospace;        /* etiquetas técnicas */
+
+  /* --- radios --- */
+  --app-r-card:14px;
+  --app-r-img:10px;    /* imagen dentro de una tarjeta */
+  --app-r-btn:12px;
+  --app-r-input:12px;
+  --app-r-tile:12px;
+  --app-r-step:8px;    /* stepper de cantidad */
+  --app-r-pill:999px;
+
+  /* --- medidas --- */
+  --app-gutter:18px;   /* margen lateral de pantalla */
+  --app-grid-gap:12px; /* separación del grid de productos */
+  --app-max:480px;     /* ancho máximo del contenido en escritorio */
+  --app-cta-h:52px;    /* alto del CTA principal */
+  --app-tabbar-h:78px;
+
+  /* Único "ring" del rediseño: el swatch de color seleccionado. */
+  --app-ring:0 0 0 3px #FFFDF9, 0 0 0 4.5px #17140F;
+
+  /* Rayado de los placeholders de foto. Como las fotos reales ya están en
+     R2, aquí sirve sobre todo para los skeletons de carga. */
+  --app-stripe:repeating-linear-gradient(135deg,#EDE6DA 0 8px,#E4DBCB 8px 16px);
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
 body{
