@@ -217,6 +217,48 @@ function notFoundMeta(pathname) {
   };
 }
 
+/* Pantallas de sesión del rediseño móvil: buscar, carrito, pago y la
+   confirmación del pedido. Tienen URL propia para que el botón atrás del
+   teléfono funcione y para poder compartir el enlace, pero no son contenido
+   que Google deba listar: lo que muestran depende de quién las abre y está
+   vacío para un rastreador.
+
+   Van con noindex,follow — que siga los enlaces que contienen, que no las
+   indexe — y NO entran en el sitemap (ver sitemapXml, que lleva su propia
+   lista fija). Aun así les damos título y descripción propios, porque es lo
+   que se ve en la pestaña del navegador y al compartir el enlace. */
+const RUTAS_DE_SESION = {
+  '/buscar': {
+    title: 'Buscar instrumentos | Chipao Music',
+    description: 'Busca guitarras, ukeleles, cajones, teclados y accesorios en el catálogo de Chipao Music.',
+  },
+  '/carrito': {
+    title: 'Tu carrito | Chipao Music',
+    description: 'Revisa los instrumentos que agregaste antes de cerrar tu pedido.',
+  },
+  '/checkout': {
+    title: 'Finalizar pedido | Chipao Music',
+    description: 'Elige cómo recibes tu pedido y con qué medio de pago quieres cerrarlo.',
+  },
+};
+
+/* Número de pedido tal como lo arma el sitio: CH- y cuatro dígitos. */
+const RUTA_PEDIDO = /^\/pedido\/[A-Za-z0-9-]{1,24}$/;
+
+function sesionMeta(pathname) {
+  if (RUTAS_DE_SESION[pathname]) {
+    return Object.assign({ path: pathname }, RUTAS_DE_SESION[pathname]);
+  }
+  if (RUTA_PEDIDO.test(pathname)) {
+    return {
+      title: 'Pedido enviado | Chipao Music',
+      description: 'Tu pedido llegó al WhatsApp de la tienda. Te escribimos para confirmar stock y coordinar la entrega.',
+      path: pathname,
+    };
+  }
+  return null;
+}
+
 /* Reconoce la ruta pedida. Devuelve null si no existe ninguna página ahí,
    para marcarla noindex en vez de dejar que Google la tome por una copia
    de la home. `products` puede venir vacío si la API no respondió. */
@@ -224,6 +266,9 @@ function routeFor(pathname, products) {
   if (pathname === '/') return { meta: homeMeta() };
   if (pathname === '/tienda') return { meta: shopMeta() };
   if (pathname === '/ofertas') return { meta: offersMeta() };
+
+  const sesion = sesionMeta(pathname);
+  if (sesion) return { meta: sesion, noIndex: true };
 
   const catMatch = pathname.match(/^\/categoria\/([a-z]+)$/);
   if (catMatch) {
