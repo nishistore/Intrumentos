@@ -1734,6 +1734,200 @@ footer.site .footer-bottom{
   font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
 }
 .buscar-vacio .btn-app{margin:14px auto 0;max-width:220px;}
+/* ======================================================================
+   CARRITO, PAGO Y CONFIRMACIÓN
+   ====================================================================== */
+
+/* Pantallas con barra fija abajo: hay que dejarle su hueco para que el
+   último bloque no quede debajo del botón. */
+.app-shell.con-barra{
+  padding-bottom:calc(var(--app-cta-h) + 52px + env(safe-area-inset-bottom));
+}
+.barra-fija{
+  position:fixed;left:0;right:0;bottom:0;z-index:45;
+  max-width:var(--app-max);margin:0 auto;
+  display:flex;gap:10px;
+  padding:12px var(--app-gutter) calc(12px + max(18px, env(safe-area-inset-bottom)));
+  background:rgba(255,253,249,.96);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(23,20,15,.1);
+}
+.barra-fija .btn-app{height:var(--app-cta-h);font-size:14px;gap:10px;}
+.btn-cifra{font-weight:700;color:rgba(255,255,255,.72);}
+
+.bloque-titulo{
+  margin-top:18px;
+  font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
+}
+
+/* ---------------- líneas del carrito ---------------- */
+.lineas{padding-top:14px;display:flex;flex-direction:column;gap:10px;}
+.linea{
+  display:flex;gap:12px;
+  padding:12px;
+  border-radius:var(--app-r-card);
+  background:var(--app-surface);border:1px solid var(--app-line);
+}
+.linea-thumb{
+  width:66px;height:66px;flex:none;
+  border-radius:9px;background:var(--app-stripe);
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+.linea-thumb img{width:100%;height:100%;object-fit:contain;background:#fff;}
+.linea-thumb svg{width:26px;height:26px;stroke:var(--app-faint);}
+.linea-texto{flex:1;min-width:0;}
+.linea-nombre{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  font:500 12.5px/1.35 var(--app-sans);color:var(--app-ink);
+}
+.linea-meta{
+  display:block;margin-top:3px;
+  font:400 11px/1.3 var(--app-sans);color:var(--app-muted-2);
+}
+.linea-pie{
+  margin-top:9px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.linea-total{font:700 14px/1 var(--app-sans);color:var(--app-ink);}
+
+.stepper{display:flex;align-items:center;gap:12px;}
+.stepper button{
+  width:30px;height:30px;
+  border:none;border-radius:var(--app-r-step);
+  background:var(--app-sunken);
+  font:600 15px/1 var(--app-sans);color:var(--app-ink);
+  display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation;
+}
+.stepper button:active{opacity:.88;}
+.stepper-n{
+  min-width:12px;text-align:center;
+  font:600 13px/1 var(--app-sans);color:var(--app-ink);
+}
+
+/* ---------------- radios de entrega y de pago ---------------- */
+.opciones{margin-top:10px;display:flex;flex-direction:column;gap:9px;}
+.opcion{
+  display:flex;align-items:center;gap:12px;
+  width:100%;padding:14px;
+  border-radius:var(--app-r-input);
+  background:var(--app-surface);
+  border:1.5px solid var(--app-line);
+  text-align:left;touch-action:manipulation;
+}
+.opcion:active{opacity:.88;}
+.opcion.sel{border-color:var(--app-terracotta);}
+.opcion-radio{
+  width:18px;height:18px;flex:none;
+  border-radius:50%;border:1.5px solid var(--app-line-strong);
+  display:flex;align-items:center;justify-content:center;
+}
+.opcion.sel .opcion-radio{border-color:var(--app-terracotta);}
+.opcion-punto{width:9px;height:9px;border-radius:50%;background:var(--app-terracotta);}
+.opcion-texto{flex:1;min-width:0;}
+.opcion-titulo{display:block;font:600 12.5px/1.25 var(--app-sans);color:var(--app-ink);}
+.opcion-nota{display:block;margin-top:3px;font:400 11.5px/1.35 var(--app-sans);color:var(--app-muted-2);}
+.opcion-coste{flex:none;font:600 12.5px/1 var(--app-sans);color:var(--app-ink);}
+
+/* ---------------- resumen de totales ---------------- */
+.resumen{
+  margin-top:18px;padding:15px;
+  border-radius:var(--app-r-card);
+  background:var(--app-surface);border:1px solid var(--app-line);
+}
+.resumen-fila{
+  display:flex;justify-content:space-between;gap:12px;
+  font:400 12.5px/1.6 var(--app-sans);color:var(--app-muted);
+}
+.resumen-fila > span:last-child{color:var(--app-ink);}
+.resumen-fila.descuento,
+.resumen-fila.descuento > span:last-child{color:var(--app-green);}
+.resumen-total{
+  margin-top:9px;padding-top:11px;
+  border-top:1px solid var(--app-line);
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  font:600 13px/1 var(--app-sans);color:var(--app-ink);
+}
+.resumen-cifra{font:700 22px/1 var(--app-sans);color:var(--app-ink);}
+
+/* ---------------- carrito vacío ---------------- */
+.carrito-vacio{margin-top:56px;text-align:center;}
+.vacio-cuadro{
+  display:block;width:56px;height:56px;margin:0 auto;
+  border-radius:var(--app-r-tile);
+  border:1.6px solid var(--app-line-strong);
+}
+.carrito-vacio .vacio-titulo{margin-top:16px;}
+.carrito-vacio p{
+  margin-top:8px;
+  font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);
+}
+.carrito-vacio .btn-app{margin:16px auto 0;max-width:200px;}
+
+/* ---------------- formulario de datos ---------------- */
+.datos{display:block;}
+.campo{display:block;margin-top:9px;}
+.campo > span{
+  display:block;margin-bottom:5px;
+  font:600 11px/1 var(--app-sans);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--app-muted-2);
+}
+.campo input,.campo textarea{
+  width:100%;
+  min-height:46px;padding:12px 13px;
+  border-radius:11px;
+  background:var(--app-surface);
+  border:1px solid rgba(23,20,15,.12);
+  /* 16px es el mínimo que evita que Safari en iPhone haga zoom al enfocar. */
+  font:400 16px/1.3 var(--app-sans);color:var(--app-ink);
+  resize:vertical;
+}
+.campo input::placeholder,.campo textarea::placeholder{color:var(--app-muted-3);font-size:14px;}
+.campo input:focus,.campo textarea:focus{outline:none;border-color:var(--app-terracotta);}
+.campo input:invalid:not(:placeholder-shown){border-color:var(--app-terracotta);}
+.campo-resumen{
+  margin-top:9px;
+  min-height:46px;padding:14px 13px;
+  border-radius:11px;
+  background:var(--app-sunken);
+  border:1px solid var(--app-line);
+  font:400 13px/1.3 var(--app-sans);color:var(--app-muted);
+}
+.nota-cierre{
+  margin-top:12px;
+  font:400 11.5px/1.5 var(--app-sans);color:var(--app-muted-3);
+  text-wrap:pretty;
+}
+
+/* ---------------- confirmación ---------------- */
+.pedido-ok{
+  padding-top:56px;padding-bottom:40px;
+  text-align:center;
+}
+.pedido-check{
+  display:flex;align-items:center;justify-content:center;
+  width:64px;height:64px;margin:0 auto;
+  border-radius:50%;background:var(--app-green);
+  font:600 26px/1 var(--app-sans);color:#fff;
+}
+.pedido-titulo{
+  margin-top:20px;
+  font:400 28px/1.15 var(--app-serif);color:var(--app-ink);
+}
+.pedido-copy{
+  margin-top:10px;
+  font:400 13px/1.55 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
+}
+.pedido-copy strong{color:var(--app-ink);}
+.pedido-tarjeta{
+  margin-top:22px;padding:15px;
+  border-radius:var(--app-r-card);
+  background:var(--app-surface);border:1px solid var(--app-line);
+  text-align:left;
+}
+.pedido-modo{font:600 12px/1.3 var(--app-sans);color:var(--app-ink);}
+.pedido-dir{margin-top:6px;font:400 11.5px/1.45 var(--app-sans);color:var(--app-muted-2);}
+.pedido-ok .btn-app{margin-top:12px;height:48px;font-size:13.5px;}
 </style>
 </head>
 <body>
@@ -1765,7 +1959,7 @@ footer.site .footer-bottom{
     <button class="icon-btn hide-desktop" aria-label="Buscar" onclick="toggleMobileSearch()" style="margin-left:auto;">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
     </button>
-    <button class="icon-btn filled-gold" aria-label="Carrito" onclick="toggleCart(true)">
+    <button class="icon-btn filled-gold" aria-label="Carrito" onclick="goCart()">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
       <span class="cart-count" id="cartCount" style="display:none;">0</span>
     </button>
@@ -1809,17 +2003,6 @@ footer.site .footer-bottom{
     <a class="cat-link" href="/categoria/colegio">Para Colegio</a>
     <a class="cat-link" href="/categoria/accesorios">Accesorios</a>
   </div>
-</div>
-
-<!-- ============ CART DRAWER ============ -->
-<div class="overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
-<div class="cart-drawer" id="cartDrawer">
-  <div class="drawer-head">
-    <b class="h-serif" style="color:var(--gold-light);font-size:18px;">Tu carrito</b>
-    <button class="icon-btn" onclick="toggleCart(false)" aria-label="Cerrar carrito"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-  </div>
-  <div class="cart-items" id="cartItemsWrap"></div>
-  <div class="cart-footer" id="cartFooter"></div>
 </div>
 
 <!-- ============ POLICY / INFO MODAL ============ -->
@@ -2068,6 +2251,7 @@ async function fetchProducts(){
     PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
     state.priceMax = PRICE_MAX;
     loadCart();
+    loadEntrega();
     render();
     checkPaymentReturnStatus();
     checkAdminUrlTrigger();
@@ -2160,10 +2344,15 @@ const state = {
   priceMax:PRICE_MAX,
   sort:'relevancia',
   search:'',
-  cart:[], // {id, qty}
-  checkoutOpen:false,
+  cart:[],           // {id, qty, color}
+  entrega:'envio',   // 'envio' | 'tienda' — se guarda en localStorage
+  /* Literal a propósito: MEDIOS_PAGO y PAGO_INICIAL se declaran más abajo
+     con const, y leerlos aquí reventaría con ReferenceError al cargar. */
+  pago:'yape',       // clave de MEDIOS_PAGO
+  datos:{nombre:'', telefono:'', correo:'', direccion:''},
   orderPlaced:false,
   orderId:null,      // número del último pedido enviado, para /pedido/<id>
+  pedidoEnviado:null,// {total, entrega} congelado al cerrar, para la confirmación
   searchQuery:'',    // texto de la pantalla /buscar (independiente del filtro de la tienda)
   searchRango:null   // rango de precio elegido en /buscar: 'bajo' | 'medio' | 'alto'
 };
@@ -2350,12 +2539,6 @@ function routeFromPath(push){
   if(path === '/checkout'){ goCheckout(push); return true; }
   const pedidoMatch = path.match(/^\/pedido\/([A-Za-z0-9-]{1,24})$/);
   if(pedidoMatch){ goPedido(pedidoMatch[1], push); return true; }
-
-  /* Cualquier otra ruta es una página normal del sitio: si el panel del
-     carrito venía abierto (por ejemplo al volver atrás desde /carrito), se
-     cierra sin volver a tocar la URL, que ya es la correcta. */
-  cerrarPanelCarrito(false);
-
   const catMatch = path.match(/^\/categoria\/([a-z]+)$/);
   if(catMatch && CATEGORIES.some(c=>c.key===catMatch[1])){
     goShop(catMatch[1], null, push);
@@ -2414,10 +2597,10 @@ function buildNavLists(){
    que ya viven en la portada y en el menú, y que dejaban la barra sin
    ninguna forma de llegar al buscador ni al carrito. */
 const BOTTOM_NAV = [
-  {label:'Inicio',  icon:'home',   href:'/',        action:'goHome()',      activa:()=> state.view==='home' && !enRutaDeCarrito()},
-  {label:'Buscar',  icon:'search', href:'/buscar',  action:'goSearch()',    activa:()=> state.view==='search' && !enRutaDeCarrito()},
-  {label:'Carrito', icon:'cart',   href:'/carrito', action:'goCart()',      activa:()=> enRutaDeCarrito(), badge:true},
-  {label:'Tienda',  icon:'store',  href:'/tienda',  action:'goShop(null)',  activa:()=> state.view==='shop' && !enRutaDeCarrito()},
+  {label:'Inicio',  icon:'home',   href:'/',        action:'goHome()',     activa:()=> state.view==='home'},
+  {label:'Buscar',  icon:'search', href:'/buscar',  action:'goSearch()',   activa:()=> state.view==='search'},
+  {label:'Carrito', icon:'cart',   href:'/carrito', action:'goCart()',     activa:()=> ['carrito','checkout','pedido'].includes(state.view), badge:true},
+  {label:'Tienda',  icon:'store',  href:'/tienda',  action:'goShop(null)', activa:()=> state.view==='shop'},
 ];
 function buildBottomNav(){
   const el = document.getElementById('bottomNav');
@@ -2518,17 +2701,8 @@ function aplicarMetaSesion(clave){
   setBreadcrumbSchema(null);
 }
 
-/* ¿La URL de ahora es una de las pantallas del carrito? Sirve para saber si,
-   al cerrar el panel, hay que devolver la barra de direcciones a la página
-   que quedó detrás. */
-function enRutaDeCarrito(){
-  const p = window.location.pathname;
-  return p === '/carrito' || p === '/checkout' || p.startsWith('/pedido/');
-}
-
 function goSearch(push){
   state.view = 'search';
-  cerrarPanelCarrito(false);
   navigateTo('/buscar', push);
   aplicarMetaSesion('buscar');
   render();
@@ -2538,54 +2712,35 @@ function goSearch(push){
 }
 
 /* Abre el panel del carrito sin tocar la URL (de eso se encargan las rutas). */
-function abrirPanelCarrito(){
-  document.getElementById('cartDrawer').classList.add('show');
-  document.getElementById('cartOverlay').classList.add('show');
-  renderCartDrawer();
-}
-/* Lo cierra. Con volverUrl=true la barra de direcciones regresa a la página
-   de debajo, para que no se quede diciendo /carrito con el panel cerrado. */
-function cerrarPanelCarrito(volverUrl){
-  document.getElementById('cartDrawer').classList.remove('show');
-  document.getElementById('cartOverlay').classList.remove('show');
-  if(volverUrl !== false && enRutaDeCarrito()){
-    navigateTo(currentViewPath(), true);
-    applyCurrentViewMeta();
-  }
-}
-
 function goCart(push){
-  state.checkoutOpen = false;
+  state.view = 'carrito';
   state.orderPlaced = false;
   navigateTo('/carrito', push);
   aplicarMetaSesion('carrito');
-  if(state.view === 'search') state.view = 'home';
   render();
-  abrirPanelCarrito();
+  if(push !== false) window.scrollTo({top:0});
 }
 
 function goCheckout(push){
   /* A pagar no se llega con el carrito vacío: sería un formulario sin nada
      que cobrar. Se manda al carrito, que ya sabe mostrar su estado vacío. */
   if(!state.cart.length){ goCart(push); return; }
-  state.checkoutOpen = true;
+  state.view = 'checkout';
   state.orderPlaced = false;
   navigateTo('/checkout', push);
   aplicarMetaSesion('checkout');
-  if(state.view === 'search') state.view = 'home';
   render();
-  abrirPanelCarrito();
+  if(push !== false) window.scrollTo({top:0});
 }
 
 function goPedido(id, push){
+  state.view = 'pedido';
   state.orderId = id;
   state.orderPlaced = true;
-  state.checkoutOpen = false;
   navigateTo('/pedido/' + id, push);
   aplicarMetaSesion('pedido');
-  if(state.view === 'search') state.view = 'home';
   render();
-  abrirPanelCarrito();
+  if(push !== false) window.scrollTo({top:0});
 }
 
 /* Número de pedido que ve el cliente. No es un identificador de base de
@@ -3479,7 +3634,6 @@ function openProductDetail(id, push){
      página con su propia URL. El modal se queda para las políticas y el
      panel de administrador, así que si venía abierto hay que cerrarlo. */
   document.getElementById('modalOverlay').classList.remove('show');
-  cerrarPanelCarrito(false);
   pdState = { productId: id, activeIndex: 0, qty: 1 };
   state.view = 'producto';
   navigateTo(`/producto/${id}-${slugify(p.name)}`, push);
@@ -3798,16 +3952,27 @@ function pdChangeQty(delta){
    queda donde está. El aviso lo da el toast, y el contador del pill que
    flota sobre la galería sube al instante. */
 function addFromDetail(id){
-  for(let i=0;i<pdState.qty;i++) addToCart(id);
+  const p = PRODUCTS.find(x=>x.id===id);
+  const color = p ? (p.images||[]).map(colorFromImageUrl)[pdState.activeIndex] : null;
+  for(let i=0;i<pdState.qty;i++) addToCart(id, null, color);
 }
 
-function addToCart(id, btnEl){
+/* Cada línea del carrito es un producto Y un color: la misma guitarra en rojo
+   y en natural son dos líneas, porque son dos cosas distintas para quien la
+   prepara en la tienda. Antes el color se elegía en la ficha y se perdía al
+   agregar, así que el pedido llegaba al WhatsApp sin decir cuál era. */
+function mismaLinea(c, id, color){
+  return c.id === id && (c.color || null) === (color || null);
+}
+function addToCart(id, btnEl, color){
   const available = stockOf(id);
   if(available <= 0){ showToast('Este producto está agotado'); return; }
-  const existing = state.cart.find(c=>c.id===id);
-  const currentQty = existing ? existing.qty : 0;
-  if(currentQty >= available){ showToast(`Solo hay ${available} unidad(es) disponibles`); return; }
-  if(existing) existing.qty++; else state.cart.push({id, qty:1});
+  const existing = state.cart.find(c=>mismaLinea(c, id, color));
+  /* El stock es del producto, no del color, así que se cuentan todas sus
+     líneas juntas para no pasarse. */
+  const yaEnCarrito = state.cart.filter(c=>c.id===id).reduce((s,c)=>s+c.qty, 0);
+  if(yaEnCarrito >= available){ showToast(`Solo hay ${available} unidad(es) disponibles`); return; }
+  if(existing) existing.qty++; else state.cart.push({ id, qty:1, color: color || null });
   updateCartCount();
   showToast('Producto agregado al carrito', true);
   trackAdsConversion('addToCart');
@@ -3818,20 +3983,22 @@ function addToCart(id, btnEl){
     setTimeout(()=>{btnEl.classList.remove('added'); btnEl.innerHTML = original;}, 1200);
   }
 }
-function changeQty(id, delta){
-  const item = state.cart.find(c=>c.id===id);
+function changeQty(id, color, delta){
+  const item = state.cart.find(c=>mismaLinea(c, id, color));
   if(!item) return;
   const available = stockOf(id);
-  if(delta > 0 && item.qty >= available){ showToast(`Solo hay ${available} unidad(es) disponibles`); return; }
+  const yaEnCarrito = state.cart.filter(c=>c.id===id).reduce((s,c)=>s+c.qty, 0);
+  if(delta > 0 && yaEnCarrito >= available){ showToast(`Solo hay ${available} unidad(es) disponibles`); return; }
   item.qty += delta;
-  if(item.qty<=0) state.cart = state.cart.filter(c=>c.id!==id);
+  /* Bajar de uno elimina la línea, como pide el handoff. */
+  if(item.qty <= 0) state.cart = state.cart.filter(c=>!mismaLinea(c, id, color));
   updateCartCount();
-  renderCartDrawer();
+  render();
 }
-function removeFromCart(id){
-  state.cart = state.cart.filter(c=>c.id!==id);
+function removeFromCart(id, color){
+  state.cart = state.cart.filter(c=>!mismaLinea(c, id, color));
   updateCartCount();
-  renderCartDrawer();
+  render();
 }
 /* El carrito vive en el navegador del cliente (localStorage), así que
    sobrevive a un F5, a cerrar la pestaña y a volver desde Mercado Pago o
@@ -3852,10 +4019,13 @@ function loadCart(){
   catch(err){ guardado = []; }
   if(!Array.isArray(guardado)) guardado = [];
 
+  /* El color viaja con la línea: sin él, dos variantes del mismo producto se
+     fundirían en una al recargar y la segunda quedaría inalcanzable, porque
+     changeQty busca por id + color. */
   state.cart = guardado
-    .map(c => ({ id: Number(c && c.id), qty: Math.floor(Number(c && c.qty)) }))
+    .map(c => ({ id: Number(c && c.id), qty: Math.floor(Number(c && c.qty)), color: (c && c.color) || null }))
     .filter(c => Number.isFinite(c.id) && c.qty > 0 && PRODUCTS.some(p => p.id === c.id))
-    .map(c => ({ id: c.id, qty: Math.min(c.qty, stockOf(c.id)) }))
+    .map(c => ({ id: c.id, qty: Math.min(c.qty, stockOf(c.id)), color: c.color }))
     .filter(c => c.qty > 0);
 
   updateCartCount();
@@ -3876,191 +4046,311 @@ function updateCartCount(){
      punto donde hace falta guardarlo. */
   saveCart();
 }
+const FREE_SHIPPING_THRESHOLD = 100;
+const SHIPPING_FEE = 15;
+
+/* ======================== MEDIOS DE PAGO ========================
+
+   Los cuatro del handoff. La cuarta opción del diseño es "Tarjeta de crédito
+   o débito — Visa, Mastercard, pago en tienda o link": ese "link" es Mercado
+   Pago, así que la tarjeta sigue cobrándose en línea como hasta ahora y el
+   resto cierra por WhatsApp.
+
+   El 5% es para los medios que no pasan por la pasarela, que es donde se va
+   la comisión. "Pago en tienda al recoger" existe solo si eligió recojo: en
+   el diseño recojo dejó de ser un medio de pago para ser una modalidad de
+   entrega, y sin esta fila quien paga en efectivo al recoger se quedaba sin
+   sitio donde decirlo.
+   ================================================================ */
+const ALT_PAYMENT_DISCOUNT_RATE = 0.05;
+
+const MEDIOS_PAGO = [
+  { key:'yape',     label:'Yape',                       nota:'Te enviamos el número por WhatsApp',                 descuento:true  },
+  { key:'plin',     label:'Plin',                       nota:'Confirmación inmediata',                             descuento:true  },
+  { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', descuento:false },
+  { key:'transfer', label:'Transferencia bancaria',      nota:'BCP o Interbank',                                    descuento:true  },
+  { key:'tienda',   label:'Pago en tienda al recoger',   nota:'Pagas en efectivo o por Yape cuando lo recojas',     descuento:true, soloRecojo:true },
+];
+
+/* Arranca en Yape: no cobra comisión de pasarela y el cliente ve de entrada
+   el precio con el 5% menos. */
+const PAGO_INICIAL = 'yape';
+
+function medioPago(key){
+  return MEDIOS_PAGO.find(m => m.key === key) || MEDIOS_PAGO[0];
+}
+/* Los medios que se pueden elegir ahora mismo: el de pago en tienda solo
+   aparece si va a recoger. */
+function mediosDisponibles(){
+  return MEDIOS_PAGO.filter(m => !m.soloRecojo || state.entrega === 'tienda');
+}
+
 function cartSubtotal(){
   return state.cart.reduce((s,c)=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
-    return s + p.price*c.qty;
+    return p ? s + p.price*c.qty : s;
   },0);
 }
 
-/* Envío: gratis desde FREE_SHIPPING_THRESHOLD, si no, se cobra SHIPPING_FEE */
-function shippingCost(subtotal){
-  if(subtotal<=0) return 0;
+/* Envío: recoger en tienda no cuesta nada; a domicilio es gratis desde
+   FREE_SHIPPING_THRESHOLD y si no cuesta SHIPPING_FEE. */
+function shippingCost(subtotal, entrega){
+  if(subtotal <= 0) return 0;
+  if((entrega || state.entrega) === 'tienda') return 0;
   return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 }
-function cartTotal(){
-  const subtotal = cartSubtotal();
-  return subtotal + shippingCost(subtotal);
+
+function altPaymentDiscount(subtotal, pagoKey){
+  return medioPago(pagoKey).descuento
+    ? Math.round(subtotal * ALT_PAYMENT_DISCOUNT_RATE)
+    : 0;
 }
 
-/* Barra de progreso "te faltan S/X para envío gratis" */
-function freeShippingBarHTML(subtotal){
-  if(subtotal<=0) return '';
-  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const pct = Math.min(100, (subtotal/FREE_SHIPPING_THRESHOLD)*100);
-  if(remaining<=0){
-    return `<div class="ship-bar-wrap done">
-      <div class="ship-bar-track"><div class="ship-bar-fill" style="width:100%"></div></div>
-      <div class="ship-bar-msg">🎉 ¡Tu pedido tiene envío gratis!</div>
-    </div>`;
-  }
-  return `<div class="ship-bar-wrap">
-    <div class="ship-bar-track"><div class="ship-bar-fill" style="width:${pct}%"></div></div>
-    <div class="ship-bar-msg">Te falta <b>${fmt(remaining)}</b> para envío gratis</div>
+function computeOrderTotals(pagoKey, entrega){
+  const subtotal = cartSubtotal();
+  const ship = shippingCost(subtotal, entrega);
+  const discount = altPaymentDiscount(subtotal, pagoKey || state.pago);
+  return { subtotal, ship, discount, total: subtotal - discount + ship };
+}
+
+function cartTotal(){
+  return computeOrderTotals().total;
+}
+
+/* Guarda la modalidad de entrega junto al carrito, para que quien vuelve
+   mañana no tenga que volver a elegirla. */
+const ENTREGA_STORAGE_KEY = 'chipao-entrega-v1';
+function saveEntrega(){
+  try{ localStorage.setItem(ENTREGA_STORAGE_KEY, state.entrega); }catch(err){}
+}
+function loadEntrega(){
+  try{
+    const v = localStorage.getItem(ENTREGA_STORAGE_KEY);
+    if(v === 'envio' || v === 'tienda') state.entrega = v;
+  }catch(err){}
+}
+
+function setEntrega(valor){
+  state.entrega = valor;
+  saveEntrega();
+  /* Si dejó de recoger, "pago en tienda" ya no existe: se vuelve al inicial
+     en vez de quedarse con un medio que no se puede elegir. */
+  if(valor !== 'tienda' && state.pago === 'tienda') state.pago = PAGO_INICIAL;
+  render();
+}
+function setPago(valor){
+  state.pago = valor;
+  render();
+}
+
+/* ======================================================================
+   CARRITO, PAGO Y CONFIRMACIÓN
+
+   Tres páginas con su propia URL (/carrito, /checkout, /pedido/<id>). Antes
+   eran tres estados de un mismo panel lateral.
+   ====================================================================== */
+
+/* Cabecera compartida por las tres. */
+function cabeceraPedido(titulo, alVolver){
+  return `
+    <header class="app-head cat">
+      <div class="app-head-fila">
+        <button type="button" class="btn-volver" onclick="${alVolver}" aria-label="Volver">‹</button>
+        <div class="app-head-texto"><h1 class="app-head-nombre">${escapeHtml(titulo)}</h1></div>
+      </div>
+    </header>`;
+}
+
+/* La nota del radio de envío hace de barra de "te falta para el envío
+   gratis": el handoff ya reserva esa línea para explicar el umbral, así que
+   el aviso va donde la persona está decidiendo, no en un cartel aparte. */
+function notaEnvio(subtotal){
+  if(subtotal <= 0) return `Gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)} · 1 a 4 días útiles`;
+  const falta = FREE_SHIPPING_THRESHOLD - subtotal;
+  return falta > 0
+    ? `Te faltan ${fmt(falta)} para el envío gratis · 1 a 4 días útiles`
+    : `Ya tienes envío gratis · 1 a 4 días útiles`;
+}
+
+function filaRadio(sel, titulo, nota, coste, accion){
+  return `
+  <button type="button" class="opcion${sel?' sel':''}" aria-pressed="${sel?'true':'false'}" onclick="${accion}">
+    <span class="opcion-radio">${sel?'<span class="opcion-punto"></span>':''}</span>
+    <span class="opcion-texto">
+      <span class="opcion-titulo">${escapeHtml(titulo)}</span>
+      ${nota?`<span class="opcion-nota">${escapeHtml(nota)}</span>`:''}
+    </span>
+    ${coste?`<span class="opcion-coste">${escapeHtml(coste)}</span>`:''}
+  </button>`;
+}
+
+function resumenTotalesHtml(etiquetaTotal){
+  const { subtotal, ship, discount, total } = computeOrderTotals();
+  const unidades = state.cart.reduce((s,c)=>s+c.qty, 0);
+  const medio = medioPago(state.pago);
+  return `
+  <div class="resumen">
+    <div class="resumen-fila"><span>${unidades} producto${unidades!==1?'s':''}</span><span>${fmt(subtotal)}</span></div>
+    ${discount > 0 ? `<div class="resumen-fila descuento"><span>Descuento por ${escapeHtml(medio.label)} (5%)</span><span>−${fmt(discount)}</span></div>` : ''}
+    <div class="resumen-fila">
+      <span>${state.entrega==='tienda' ? 'Recojo en tienda' : 'Envío'}</span>
+      <span>${ship > 0 ? fmt(ship) : 'Gratis'}</span>
+    </div>
+    <div class="resumen-total">
+      <span>${escapeHtml(etiquetaTotal)}</span>
+      <span class="resumen-cifra">${fmt(total)}</span>
+    </div>
   </div>`;
 }
 
-function renderCartDrawer(){
-  const wrap = document.getElementById('cartItemsWrap');
-  const footer = document.getElementById('cartFooter');
-  const head = document.querySelector('#cartDrawer .drawer-head b');
-
-  if(state.orderPlaced){
-    head.textContent = 'Pedido enviado';
-    wrap.innerHTML = `
-      <div class="order-success">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:52px;height:52px;margin:0 auto 16px;"><circle cx="12" cy="12" r="9.3"/><path d="M8 12.5l2.7 2.7L16.5 9"/></svg>
-        <h4>¡Gracias por tu pedido!</h4>
-        <p>Te contactaremos por WhatsApp para confirmar el pago y coordinar la entrega.</p>
-      </div>`;
-    footer.innerHTML = `<button class="btn-gold" style="width:100%;" onclick="finishOrder()">Seguir comprando</button>`;
-    return;
-  }
-
+/* ------------------------------ /carrito ------------------------------ */
+function renderCarrito(){
   if(!state.cart.length){
-    head.textContent = 'Tu carrito';
-    wrap.innerHTML = `<div class="cart-empty">${iconSvg('accessory')}<p style="margin-top:12px;">Tu carrito está vacío</p></div>`;
-    footer.innerHTML = `<button class="btn-outline" style="width:100%;" onclick="toggleCart(false)">Seguir comprando</button>`;
-    return;
-  }
-
-  if(state.checkoutOpen){
-    head.textContent = 'Finalizar pedido';
-    const { subtotal, ship, total: mpTotal } = computeOrderTotals('mp');
-    const altTotal = computeOrderTotals('Transferencia bancaria').total;
-    const altDiscount = altPaymentDiscount(subtotal, 'Transferencia bancaria');
-    /* Lo que se ve al abrir: resumen y botón cuadran con METODO_PAGO_INICIAL */
-    const inicial = computeOrderTotals(METODO_PAGO_INICIAL);
-    const sel = valor => METODO_PAGO_INICIAL === valor ? ' checked' : '';
-    wrap.innerHTML = `
-      <button class="back-link" onclick="backToCart()">${iconSvg('accessory','style="width:13px;height:13px;stroke:var(--muted)"')} Volver al carrito</button>
-      ${freeShippingBarHTML(subtotal)}
-      <div class="order-summary-mini">
-        ${state.cart.map(c=>{
-          const p = PRODUCTS.find(x=>x.id===c.id);
-          return `<div class="row"><span>${c.qty}× ${escapeHtml(p.name)}</span><span>${fmt(p.price*c.qty)}</span></div>`;
-        }).join('')}
-        <div class="row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
-        <div class="row" id="rowDiscount" style="display:${inicial.discount>0?'':'none'};color:var(--ok);"><span>Descuento (5%)</span><span id="valDiscount">-${fmt(inicial.discount)}</span></div>
-        <div class="row"><span>Envío</span><span>${ship>0?fmt(ship):'Gratis'}</span></div>
-        <div class="row total"><span>Total</span><span id="valTotal">${fmt(inicial.total)}</span></div>
-      </div>
-      <form id="checkoutForm" class="checkout-form" onsubmit="submitOrder(event)">
-        <div class="cfield">
-          <label for="coNombre">Nombre y apellido</label>
-          <input id="coNombre" type="text" placeholder="Ej. María Torres" required>
-        </div>
-        <div class="cfield">
-          <label for="coTelefono">Teléfono / WhatsApp</label>
-          <input id="coTelefono" type="tel" inputmode="numeric" placeholder="Ej. 987654321" pattern="[0-9]{7,9}" maxlength="9" required>
-        </div>
-        <div class="cfield">
-          <label for="coCorreo">Correo electrónico</label>
-          <input id="coCorreo" type="email" placeholder="Ej. maria@correo.com" required>
-        </div>
-        <div class="cfield">
-          <label for="coDireccion">Dirección de entrega</label>
-          <textarea id="coDireccion" placeholder="Calle, número, distrito, referencia" required></textarea>
-        </div>
-        <div class="cfield">
-          <label>Método de pago</label>
-          <div class="pay-discount-banner">💰 Paga con <b>Yape / Plin</b>, <b>transferencia bancaria</b> o <b>recojo en tienda</b> y ahorra <b>5%</b> (${fmt(altDiscount)} en este pedido)</div>
-          <div class="pay-options" id="payOptions">
-            <label class="pay-option${sel('mp')}"><input type="radio" name="metodoPago" value="mp"${sel('mp')} onchange="markPayOption(this)">
-              <span class="pay-option-text">💳 Tarjeta / Mercado Pago (pago en línea)</span>
-              <span class="pay-option-price"><span class="pay-price-plain">${fmt(mpTotal)}</span></span>
-            </label>
-            <label class="pay-option${sel('Yape / Plin')}"><input type="radio" name="metodoPago" value="Yape / Plin"${sel('Yape / Plin')} onchange="markPayOption(this)">
-              <span class="pay-option-text">Yape / Plin<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
-              <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
-            </label>
-            <label class="pay-option${sel('Transferencia bancaria')}"><input type="radio" name="metodoPago" value="Transferencia bancaria"${sel('Transferencia bancaria')} onchange="markPayOption(this)">
-              <span class="pay-option-text">Transferencia bancaria<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
-              <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
-            </label>
-            <label class="pay-option${sel('Recojo en tienda')}"><input type="radio" name="metodoPago" value="Recojo en tienda"${sel('Recojo en tienda')} onchange="markPayOption(this)">
-              <span class="pay-option-text">Recojo en tienda<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
-              <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
-            </label>
-          </div>
-        </div>
-        <button type="submit" class="btn-gold" id="checkoutSubmitBtn" style="width:100%;">${METODO_PAGO_INICIAL === 'mp' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp'}</button>
-      </form>
-    `;
-    footer.innerHTML = '';
-    return;
-  }
-
-  // default: cart items view
-  head.textContent = 'Tu carrito';
-  const subtotal = cartSubtotal();
-  const ship = shippingCost(subtotal);
-  wrap.innerHTML = freeShippingBarHTML(subtotal) + state.cart.map(c=>{
-    const p = PRODUCTS.find(x=>x.id===c.id);
     return `
-    <div class="cart-item">
-      <div class="thumb">${iconSvg(iconFor(p))}</div>
-      <div class="info">
-        <div class="name">${escapeHtml(p.name)}</div>
-        <div class="price">${fmt(p.price)}</div>
-        <div class="qty-ctrl">
-          <button onclick="changeQty(${p.id},-1)">−</button>
-          <span>${c.qty}</span>
-          <button onclick="changeQty(${p.id},1)">+</button>
-        </div>
-        <button class="remove-btn" onclick="removeFromCart(${p.id})">Eliminar</button>
+    <div class="app-shell">
+      ${cabeceraPedido('Tu carrito', 'goHome()')}
+      <div class="carrito-vacio">
+        <span class="vacio-cuadro"></span>
+        <div class="vacio-titulo">Aún no hay nada aquí</div>
+        <p>Empieza por las ofertas de la semana.</p>
+        <button type="button" class="btn-app oscuro" onclick="goHome()">Ver catálogo</button>
       </div>
     </div>`;
-  }).join('');
-  footer.innerHTML = `
-    <div class="cart-subtotal-block">
-      <div class="row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
-      <div class="row"><span>Envío</span><span>${ship>0?fmt(ship):'Gratis'}</span></div>
-      <div class="row total"><span>Total</span><span>${fmt(cartTotal())}</span></div>
-    </div>
-    <button class="btn-gold" style="width:100%;margin-bottom:10px;" onclick="goToCheckout()">Ir a pagar</button>
-    <button class="btn-outline" style="width:100%;" onclick="toggleCart(false)">Seguir comprando</button>
-  `;
-}
-
-function markPayOption(input){
-  document.querySelectorAll('.pay-option').forEach(el=>el.classList.remove('checked'));
-  input.closest('.pay-option').classList.add('checked');
-  const btn = document.getElementById('checkoutSubmitBtn');
-  if(btn) btn.textContent = input.value === 'mp' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp';
-
-  const { discount, total } = computeOrderTotals(input.value);
-  const rowDiscount = document.getElementById('rowDiscount');
-  const valDiscount = document.getElementById('valDiscount');
-  const valTotal = document.getElementById('valTotal');
-  if(rowDiscount && valDiscount && valTotal){
-    rowDiscount.style.display = discount>0 ? '' : 'none';
-    valDiscount.textContent = '-' + fmt(discount);
-    valTotal.textContent = fmt(total);
   }
+
+  const { subtotal, total } = computeOrderTotals();
+
+  const lineas = state.cart.map(c=>{
+    const p = PRODUCTS.find(x=>x.id===c.id);
+    if(!p) return '';
+    /* La miniatura tiene que ser la del color de ESTA línea: si no, dos
+       colores del mismo producto salen con la misma foto. */
+    const fotos = p.images || [];
+    const iColor = c.color ? fotos.findIndex(u => colorFromImageUrl(u) === c.color) : -1;
+    const foto = fotos[iColor >= 0 ? iColor : 0];
+    const meta = [c.color, (p.stock||0) > 0 ? 'Entrega inmediata' : 'Bajo pedido'].filter(Boolean).join(' · ');
+    const colorArg = c.color ? `'${String(c.color).replace(/'/g, "\\'")}'` : 'null';
+    return `
+    <div class="linea">
+      <span class="linea-thumb">
+        ${foto ? `<img src="${foto}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
+      </span>
+      <span class="linea-texto">
+        <span class="linea-nombre">${escapeHtml(p.name)}</span>
+        <span class="linea-meta">${escapeHtml(meta)}</span>
+        <span class="linea-pie">
+          <span class="linea-total">${fmt(p.price * c.qty)}</span>
+          <span class="stepper">
+            <button type="button" onclick="changeQty(${p.id}, ${colorArg}, -1)" aria-label="Quitar uno">−</button>
+            <span class="stepper-n">${c.qty}</span>
+            <button type="button" onclick="changeQty(${p.id}, ${colorArg}, 1)" aria-label="Agregar uno">+</button>
+          </span>
+        </span>
+      </span>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="app-shell con-barra">
+    ${cabeceraPedido('Tu carrito', 'goHome()')}
+    <div class="lineas">${lineas}</div>
+
+    <div class="bloque-titulo">¿Cómo lo recibes?</div>
+    <div class="opciones">
+      ${filaRadio(state.entrega==='envio', 'Envío a todo el Perú', notaEnvio(subtotal),
+         shippingCost(subtotal,'envio') > 0 ? fmt(shippingCost(subtotal,'envio')) : 'Gratis', "setEntrega('envio')")}
+      ${filaRadio(state.entrega==='tienda', 'Recojo en tienda',
+         'Av. Los Héroes 382 · listo en 2 horas', 'Gratis', "setEntrega('tienda')")}
+    </div>
+
+    ${resumenTotalesHtml('Total')}
+
+    <div class="barra-fija">
+      <button type="button" class="btn-app terracota" onclick="goCheckout()">
+        Continuar <span class="btn-cifra">${fmt(total)}</span>
+      </button>
+    </div>
+  </div>`;
 }
 
-function goToCheckout(){
-  state.checkoutOpen = true;
-  navigateTo('/checkout', true);
-  aplicarMetaSesion('checkout');
-  renderCartDrawer();
+/* ------------------------------ /checkout ------------------------------ */
+function renderCheckout(){
+  if(!state.cart.length) return renderCarrito();
+
+  const medio = medioPago(state.pago);
+  const entregaResumen = state.entrega==='tienda'
+    ? 'Recojo en tienda · Av. Los Héroes 382'
+    : 'Envío a domicilio · Lima y provincias';
+
+  return `
+  <div class="app-shell con-barra">
+    ${cabeceraPedido('Pago y confirmación', 'goCart()')}
+
+    <div class="bloque-titulo">Medio de pago</div>
+    <div class="opciones">
+      ${mediosDisponibles().map(m => filaRadio(
+          state.pago===m.key, m.label, m.nota,
+          m.descuento ? '−5%' : '', `setPago('${m.key}')`)).join('')}
+    </div>
+
+    <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)">
+      <div class="bloque-titulo">Tus datos</div>
+      <label class="campo">
+        <span>Nombre y apellido</span>
+        <input id="coNombre" type="text" autocomplete="name" placeholder="Ej. María Torres" required value="${escapeHtml(state.datos.nombre)}">
+      </label>
+      <label class="campo">
+        <span>Teléfono / WhatsApp</span>
+        <input id="coTelefono" type="tel" inputmode="numeric" autocomplete="tel"
+               placeholder="Ej. 987654321" pattern="[0-9]{9}" maxlength="9" required
+               title="Nueve dígitos, como 987654321" value="${escapeHtml(state.datos.telefono)}">
+      </label>
+      <label class="campo">
+        <span>Correo electrónico</span>
+        <input id="coCorreo" type="email" autocomplete="email" placeholder="Ej. maria@correo.com" required value="${escapeHtml(state.datos.correo)}">
+      </label>
+      <label class="campo">
+        <span>${state.entrega==='tienda' ? 'Quién lo recoge y cuándo' : 'Dirección de entrega'}</span>
+        <textarea id="coDireccion" rows="2" placeholder="${state.entrega==='tienda' ? 'Ej. Paso yo mañana por la tarde' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
+      </label>
+      <div class="campo-resumen">${escapeHtml(entregaResumen)}</div>
+
+      ${resumenTotalesHtml('Total a pagar')}
+
+      <p class="nota-cierre">${medio.key === 'tarjeta'
+        ? 'Al continuar te llevamos a Mercado Pago para pagar con tarjeta. Al volver te confirmamos el pedido.'
+        : 'Al confirmar, tu pedido llega armado al WhatsApp de la tienda con productos, color y forma de entrega. Un asesor valida el stock y te da los datos para pagar.'}</p>
+
+      <div class="barra-fija">
+        <button type="submit" class="btn-app ${medio.key === 'tarjeta' ? 'terracota' : 'verde'}" id="btnConfirmar">
+          ${medio.key === 'tarjeta' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp'}
+        </button>
+      </div>
+    </form>
+  </div>`;
 }
-function backToCart(){
-  state.checkoutOpen = false;
-  navigateTo('/carrito', true);
-  aplicarMetaSesion('carrito');
-  renderCartDrawer();
+
+/* --------------------------- /pedido/<id> --------------------------- */
+function renderPedido(){
+  const entregaResumen = state.pedidoEnviado && state.pedidoEnviado.entrega === 'tienda'
+    ? 'Recojo en tienda'
+    : 'Envío a domicilio · Lima y provincias';
+  const totalTexto = state.pedidoEnviado ? fmt(state.pedidoEnviado.total) : '';
+
+  return `
+  <div class="app-shell">
+    <div class="pedido-ok">
+      <span class="pedido-check">✓</span>
+      <h1 class="pedido-titulo">Pedido enviado</h1>
+      <p class="pedido-copy">Pedido <strong>#${escapeHtml(state.orderId || '')}</strong>${totalTexto?` por ${totalTexto}`:''}. Te escribimos por WhatsApp para confirmar stock y darte los datos de pago.</p>
+      <div class="pedido-tarjeta">
+        <div class="pedido-modo">${escapeHtml(entregaResumen)}</div>
+        <div class="pedido-dir">${escapeHtml(STORE_ADDRESS)} · ${escapeHtml(STORE_HOURS)}</div>
+      </div>
+      <a class="btn-app verde" target="_blank" rel="noopener" href="${waHref('Hola, acabo de enviar el pedido #' + (state.orderId||'') + '.')}">Abrir el chat</a>
+      <button type="button" class="btn-app contorno" onclick="terminarPedido()">Seguir comprando</button>
+    </div>
+  </div>`;
 }
 
 /* ⚠️ Reemplaza con tu número real de WhatsApp Business (código de país + número, sin +, espacios ni guiones) */
@@ -4082,31 +4372,6 @@ function ratingBadgeHTML(){
 }
 
 /* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
-const FREE_SHIPPING_THRESHOLD = 100;
-const SHIPPING_FEE = 15;
-
-/* Descuento por pagar con transferencia bancaria o recojo en tienda (evita comisión de pasarela) */
-const ALT_PAYMENT_DISCOUNT_RATE = 0.05;
-const ALT_PAYMENT_DISCOUNT_METHODS = ['Yape / Plin', 'Transferencia bancaria', 'Recojo en tienda'];
-
-/* Método de pago que aparece ya marcado al abrir "Finalizar pedido". El cliente
-   puede cambiarlo, pero arranca en el que nos conviene: Yape/Plin no cobra
-   comisión de pasarela y el cliente ve de entrada el precio con el 5% menos.
-   Debe ser 'mp' o uno de ALT_PAYMENT_DISCOUNT_METHODS. */
-const METODO_PAGO_INICIAL = 'Yape / Plin';
-
-function isAltPaymentDiscountMethod(metodo){
-  return ALT_PAYMENT_DISCOUNT_METHODS.includes(metodo);
-}
-function altPaymentDiscount(subtotal, metodo){
-  return isAltPaymentDiscountMethod(metodo) ? Math.round(subtotal * ALT_PAYMENT_DISCOUNT_RATE) : 0;
-}
-function computeOrderTotals(metodo){
-  const subtotal = cartSubtotal();
-  const ship = shippingCost(subtotal);
-  const discount = altPaymentDiscount(subtotal, metodo);
-  return { subtotal, ship, discount, total: subtotal - discount + ship };
-}
 
 /* ⚠️ Pega aquí la URL de tu Web App de Google Apps Script (ver mercadopago-backend.gs) */
 const MP_API_URL = 'https://script.google.com/macros/s/AKfycbxyrzUjXsG2wiE-gA2oWsQ1cBWEBNLK1Ffmav9TrbcLCw9jufGrb7ESqLxz-GzxRu-_/exec';
@@ -4156,53 +4421,87 @@ function trackAdsConversion(labelKey, value){
   gtag('event', 'conversion', params);
 }
 
+/* Lee el formulario y lo guarda en el estado, para que volver atrás al
+   carrito y regresar no borre lo que ya había escrito. */
+function leerDatosDelFormulario(){
+  const v = id => (document.getElementById(id) || {}).value || '';
+  state.datos = {
+    nombre: v('coNombre').trim(),
+    telefono: v('coTelefono').trim(),
+    correo: v('coCorreo').trim(),
+    direccion: v('coDireccion').trim(),
+  };
+  return state.datos;
+}
+
 async function submitOrder(e){
   e.preventDefault();
-  const nombre = document.getElementById('coNombre').value.trim();
-  const telefono = document.getElementById('coTelefono').value.trim();
-  const correo = document.getElementById('coCorreo').value.trim();
-  const direccion = document.getElementById('coDireccion').value.trim();
-  const metodoPago = document.querySelector('input[name="metodoPago"]:checked').value;
-  if(!nombre || !telefono || !correo || !direccion){ return; }
+  const datos = leerDatosDelFormulario();
+  if(!datos.nombre || !datos.telefono || !datos.correo || !datos.direccion) return;
 
-  if(metodoPago === 'mp'){
-    await payWithMercadoPago({nombre, telefono, correo, direccion});
+  const medio = medioPago(state.pago);
+
+  /* La tarjeta se cobra en línea; el resto se cierra en el chat. */
+  if(medio.key === 'tarjeta'){
+    await payWithMercadoPago(datos);
     return;
   }
 
-  const { subtotal, ship, discount, total } = computeOrderTotals(metodoPago);
+  const { subtotal, ship, discount, total } = computeOrderTotals();
   const lineas = state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
-    return `• ${c.qty}x ${p.name} — ${fmt(p.price*c.qty)}`;
-  }).join('\n');
+    if(!p) return '';
+    return `• ${c.qty}x ${p.name}${c.color ? ` (${c.color})` : ''} — ${fmt(p.price*c.qty)}`;
+  }).filter(Boolean).join('\n');
+
+  const numero = nuevoNumeroPedido();
+  const entregaTexto = state.entrega === 'tienda'
+    ? 'Recojo en tienda (Av. Los Héroes 382)'
+    : 'Envío a domicilio';
 
   const mensaje =
-`🎵 Nuevo pedido - Instrumentos Chipao
+`🎵 Pedido #${numero} — Chipao Music
 
 ${lineas}
 
 Subtotal: ${fmt(subtotal)}
-${discount>0 ? `Descuento por ${metodoPago} (5%): -${fmt(discount)}\n` : ''}Envío: ${ship>0?fmt(ship):'Gratis'}
+${discount>0 ? `Descuento por ${medio.label} (5%): -${fmt(discount)}\n` : ''}${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fmt(ship):'Gratis'}`}
 Total: ${fmt(total)}
 
-Cliente: ${nombre}
-Teléfono: ${telefono}
-Correo: ${correo}
-Dirección: ${direccion}
-Método de pago: ${metodoPago}`;
+Entrega: ${entregaTexto}
+Medio de pago: ${medio.label}
 
-  const url = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, '_blank', 'noopener');
+Cliente: ${datos.nombre}
+Teléfono: ${datos.telefono}
+Correo: ${datos.correo}
+${state.entrega === 'tienda' ? 'Recojo' : 'Dirección'}: ${datos.direccion}`;
+
+  window.open(`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank', 'noopener');
   trackAdsConversion('purchase', total);
+  cerrarPedido(numero, total);
+}
 
-  state.orderId = nuevoNumeroPedido();
+/* Deja el pedido por cerrado: guarda lo que la pantalla de confirmación
+   necesita enseñar, vacía el carrito y navega a /pedido/<id>. */
+function cerrarPedido(numero, total){
+  state.pedidoEnviado = { total, entrega: state.entrega };
+  state.orderId = numero;
   state.orderPlaced = true;
-  state.checkoutOpen = false;
   state.cart = [];
   updateCartCount();
-  navigateTo('/pedido/' + state.orderId, true);
+  state.view = 'pedido';
+  navigateTo('/pedido/' + numero, true);
   aplicarMetaSesion('pedido');
-  renderCartDrawer();
+  render();
+  window.scrollTo({top:0});
+}
+
+/* "Seguir comprando": limpia el pedido cerrado y vuelve a la portada. */
+function terminarPedido(){
+  state.orderPlaced = false;
+  state.orderId = null;
+  state.pedidoEnviado = null;
+  goHome();
 }
 
 async function payWithMercadoPago(comprador){
@@ -4210,25 +4509,29 @@ async function payWithMercadoPago(comprador){
     showToast('Falta configurar MP_API_URL en el código. Revisa las instrucciones.');
     return;
   }
-  const btn = document.getElementById('checkoutSubmitBtn');
+  const btn = document.getElementById('btnConfirmar');
   const original = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Redirigiendo a Mercado Pago...';
 
+  /* El color va en el título para que aparezca en el comprobante de Mercado
+     Pago y en el correo que le llega al cliente. */
   const items = state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
-    return { title: p.name, quantity: c.qty, unit_price: p.price };
+    return { title: p.name + (c.color ? ' (' + c.color + ')' : ''), quantity: c.qty, unit_price: p.price };
   });
-  const ship = shippingCost(cartSubtotal());
+  const { ship } = computeOrderTotals();
   if(ship>0){
     items.push({ title: 'Costo de envío', quantity: 1, unit_price: ship });
   }
+  /* La tarjeta no lleva el 5%, así que no hay descuento que restar aquí. */
+  const entrega = state.entrega === 'tienda' ? 'Recojo en tienda' : 'Envío a domicilio';
 
   try{
     const res = await fetch(MP_API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS con Apps Script
-      body: JSON.stringify({ items, comprador })
+      body: JSON.stringify({ items, comprador, entrega })
     });
     const data = await res.json();
     if(data.init_point){
@@ -4249,10 +4552,15 @@ function checkPaymentReturnStatus(){
   const status = params.get('status');
   if(!status) return;
   if(status === 'approved'){
-    trackAdsConversion('purchase', cartTotal());
-    state.cart = []; updateCartCount();
-    showToast('✅ Pago aprobado. ¡Gracias por tu compra!');
-  }else if(status === 'pending'){
+    const total = cartTotal();
+    trackAdsConversion('purchase', total);
+    /* Se limpia el parámetro antes de cerrar el pedido, porque cerrarPedido
+       navega a /pedido/<id> y si no el ?status se arrastraría hasta ahí. */
+    window.history.replaceState({}, '', window.location.pathname);
+    cerrarPedido(nuevoNumeroPedido(), total);
+    return;
+  }
+  if(status === 'pending'){
     showToast('⏳ Tu pago está pendiente de confirmación.');
   }else if(status === 'failure'){
     showToast('❌ El pago no se completó. Puedes intentar de nuevo.');
@@ -4261,18 +4569,6 @@ function checkPaymentReturnStatus(){
   window.history.replaceState({}, '', window.location.pathname);
 }
 
-function finishOrder(){
-  state.orderPlaced = false;
-  state.orderId = null;
-  cerrarPanelCarrito(true);
-}
-
-/* El carrito pasó a tener URL propia, así que abrirlo y cerrarlo es navegar:
-   así el botón atrás del teléfono lo cierra, como espera cualquiera. */
-function toggleCart(show){
-  if(show) goCart();
-  else cerrarPanelCarrito(true);
-}
 /* Abre/cierra el acordeón de una categoría en el menú del celular. Solo queda
    una abierta a la vez: así el menú nunca crece más de lo que cabe en pantalla.
    El alto se calcula del contenido real para que la animación no dé saltos. */
@@ -4312,7 +4608,7 @@ document.getElementById('menuBtn').addEventListener('click', ()=>toggleMenu(true
 document.addEventListener('keydown', (e)=>{
   if(e.key !== 'Escape') return;
   if(document.getElementById('modalOverlay').classList.contains('show')) closeModal();
-  else if(document.getElementById('cartDrawer').classList.contains('show')) toggleCart(false);
+
   else if(document.getElementById('menuDrawer').classList.contains('show')) toggleMenu(false);
 });
 
@@ -4803,15 +5099,20 @@ function render(){
       state.view==='home'     ? renderHome()
     : state.view==='search'   ? renderSearch()
     : state.view==='producto' ? renderProductDetail()
+    : state.view==='carrito'  ? renderCarrito()
+    : state.view==='checkout' ? renderCheckout()
+    : state.view==='pedido'   ? renderPedido()
     : renderShop();
   buildNavLists();
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
-  document.getElementById('bottomNav').classList.toggle('oculta', state.view==='producto');
+  const conBarraFija = state.view==='producto' || state.view==='checkout' || state.view==='pedido'
+    || (state.view==='carrito' && state.cart.length > 0);
+  document.getElementById('bottomNav').classList.toggle('oculta', conBarraFija);
   /* Y tampoco el pie: la barra fija se le montaría encima. La ficha es una
      pantalla de decisión, termina en el CTA. */
-  document.body.classList.toggle('en-ficha', state.view==='producto');
+  document.body.classList.toggle('en-ficha', conBarraFija);
   /* La portada del rediseño no lleva banner rotativo, así que ya no hay
      temporizador que arrancar. El que había buscaba #heroBg, que ya no
      existe. La maquinaria del banner se retira en la fase de limpieza. */
