@@ -20,7 +20,7 @@
 
 const SITE_ORIGIN = 'https://chipaomusic.com';
 const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
-const DEFAULT_OG_IMAGE = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music.jpg';
+const DEFAULT_OG_IMAGE = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-2.jpg';
 
 const SITE_TITLE = 'Instrumentos Musicales en Lima | Chipao Music';
 const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Guitarras, teclados, percusión, viento y accesorios. Envíos a todo el Perú y recojo en tienda.';
@@ -29,14 +29,33 @@ const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan d
    agrégala también aquí para que su página tenga título propio. Los
    productos NO se duplican: se piden a la API en cada visita. */
 const CATEGORIES = [
-  { key: 'cuerda', label: 'Instrumentos de Cuerda', subs: ['Guitarras', 'Violines', 'Ukeleles', 'Charangos'] },
-  { key: 'teclados', label: 'Teclados', subs: [] },
-  { key: 'percusion', label: 'Percusión', subs: ['Tambores', 'Bombos', 'Tarolas', 'Cajones', 'Metalófono'] },
-  { key: 'viento', label: 'Viento', subs: ['Flautas', 'Melódicas', 'Quenas', 'Zampoñas'] },
-  { key: 'audio', label: 'Micrófono y Audio', subs: ['Micrófonos', 'Interfaces'] },
-  { key: 'colegio', label: 'Para Colegio', subs: [] },
-  { key: 'accesorios', label: 'Accesorios', subs: ['Cuerdas (Acústica/Clásica)', 'Cuerdas (Eléctrica)', 'Capotrastes', 'Púas y pines', 'Afinadores y metrónomos', 'Atriles y parantes', 'Baquetas y parches', 'Cañas y boquillas'] },
+  { key: 'cuerda', label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: ['Guitarras', 'Bajos', 'Violines', 'Ukeleles', 'Charangos'] },
+  { key: 'teclados', label: 'Teclados', desc: 'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [] },
+  { key: 'percusion', label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: ['Tambores', 'Bombos', 'Tarolas', 'Cajones', 'Metalófono', 'Panderetas', 'Kalimbas'] },
+  { key: 'viento', label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Flautas', 'Melódicas', 'Quenas', 'Zampoñas'] },
+  { key: 'audio', label: 'Micrófono y Audio', desc: 'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Micrófonos', 'Interfaces', 'Amplificadores'] },
+  { key: 'colegio', label: 'Para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [] },
+  { key: 'accesorios', label: 'Accesorios', desc: 'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Cuerdas (Acústica/Clásica)', 'Cuerdas (Eléctrica)', 'Capotrastes', 'Púas y pines', 'Afinadores y metrónomos', 'Atriles y parantes', 'Baquetas y parches', 'Cañas y boquillas', 'Violín (resina y puentes)', 'Limpieza y repuestos'] },
 ];
+
+/* Copia de CROSS_LISTED_CATS de index.html: productos que se listan en una
+   categoría extra además de la suya. Si cambias uno allá, cámbialo aquí para
+   que la página de la categoría muestre lo mismo que ve Google. */
+const CROSS_LISTED_CATS = {
+  23: ["colegio"],   // Flauta Dulce Soprano Yamaha
+  57: ["colegio"],   // Tarolita de Niño (Percusión) también va en Para Colegio
+  127: ["colegio"],  // Melódica California 37 Teclas (colores disponibles)
+  140: ["colegio"],  // Melódica California 32 Teclas (colores disponibles)
+  202: ["colegio"],  // Pandereta Media Luna (varios colores)
+  203: ["colegio"],  // Pandereta Media Luna Doble Hilera
+  208: ["colegio"],  // Xilófono Infantil de 8 Notas con Baquetas
+  209: ["colegio"],  // Flauta Dulce Soprano Hohner Melody con Funda
+  210: ["colegio"],  // Quena Lupaca con Funda
+  211: ["colegio"],  // Zampoña Lupaca con Funda
+};
+function productInCat(p, catKey) {
+  return p.cat === catKey || (CROSS_LISTED_CATS[p.id] || []).includes(catKey);
+}
 
 /* La secuencia "<", escrita sin barra invertida literal. Sirve para
    escapar los "<" que pudiera traer la descripción de un producto y que
@@ -126,9 +145,11 @@ function offersMeta() {
 
 function categoryMeta(cat) {
   const subsList = cat.subs.join(', ');
-  const description = subsList
+  /* La descripción propia gana; la plantilla queda de respaldo para una
+     categoría nueva a la que todavía no le hayan escrito la suya. */
+  const description = cat.desc || (subsList
     ? `Compra ${cat.label.toLowerCase()} en Lima y todo el Perú: ${subsList}. Tienda en San Juan de Miraflores con envíos a todo el país.`
-    : `Compra ${cat.label.toLowerCase()} en Lima y todo el Perú. Tienda en San Juan de Miraflores con envíos a todo el país.`;
+    : `Compra ${cat.label.toLowerCase()} en Lima y todo el Perú. Tienda en San Juan de Miraflores con envíos a todo el país.`);
   const path = `/categoria/${cat.key}`;
   return {
     title: `${cat.label} en Lima | Chipao Music`,
@@ -172,12 +193,27 @@ function productMeta(p) {
             price: p.price,
             availability: (p.stock || 0) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             itemCondition: 'https://schema.org/NewCondition',
+            /* Google avisa de "falta priceValidUntil" si la oferta no dice
+               hasta cuándo vale el precio. Damos 90 días desde hoy: como la
+               página se genera en cada visita, la fecha nunca queda vencida. */
+            priceValidUntil: new Date(Date.now() + 90 * 864e5).toISOString().slice(0, 10),
             seller: { '@id': SITE_ORIGIN + '/#tienda' },
           },
         },
         breadcrumbSchema(trail),
       ],
     },
+  };
+}
+
+/* <head> de un producto que ya no está en el catálogo. Va con noindex y la
+   respuesta sale con estado 404, para que Google entienda que la página se
+   retiró en vez de tomarla por una copia de la home. */
+function notFoundMeta(pathname) {
+  return {
+    title: 'Producto no disponible | Chipao Music',
+    description: 'Este producto ya no está en el catálogo. Mira los instrumentos disponibles ahora en Chipao Music.',
+    path: pathname,
   };
 }
 
@@ -200,11 +236,31 @@ function routeFor(pathname, products) {
     const p = products.find(x => String(x.id) === productMatch[1]);
     if (p) return { meta: productMeta(p), product: p };
     /* Sin datos de la API no sabemos si el producto existe: dejamos el
-       <head> por defecto en vez de marcar noindex por error. */
-    return products.length ? null : { meta: homeMeta() };
+       <head> por defecto en vez de dar un 404 por error. */
+    if (!products.length) return { meta: homeMeta() };
+    return { meta: notFoundMeta(pathname), noIndex: true, noEncontrado: true };
   }
 
   return null;
+}
+
+/* Lista de productos en formato schema.org. En una página de categoría o del
+   catálogo, le dice a Google qué productos hay y en qué orden, en vez de
+   dejarle adivinarlo de los enlaces. */
+function itemListSchema(products, nombre) {
+  const items = products.slice(0, 30).map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: p.name,
+    url: SITE_ORIGIN + productPath(p),
+  }));
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: nombre,
+    numberOfItems: products.length,
+    itemListElement: items,
+  };
 }
 
 /* ==================== CONTENIDO DE <main id="app"> ====================
@@ -264,20 +320,29 @@ function productBody(p) {
   return partes.join('');
 }
 
+function notFoundBody() {
+  return '<h1>Producto no disponible</h1>'
+    + '<p>Este producto ya no está en el catálogo. Puede que lo hayamos retirado o que la dirección esté mal escrita.</p>'
+    + '<p><a href="/tienda">Ver todo el catálogo</a></p>'
+    + '<p><a href="/">Ir al inicio</a></p>';
+}
+
 /* Devuelve el HTML del cuerpo, o null para dejar el que ya trae index.html
    (es el caso de la home, cuyo bloque escrito a mano ya es correcto). */
 function bodyFor(route, products) {
   if (!route) return null;
 
+  if (route.noEncontrado) return notFoundBody();
+
   if (route.product) return productBody(route.product);
 
   if (route.cat) {
-    const suyos = products.filter(p => p.cat === route.cat.key);
+    const suyos = products.filter(p => productInCat(p, route.cat.key));
     return listBody(
       `${route.cat.label} en Lima`,
       route.meta.description,
       suyos,
-      'Estamos actualizando esta categoría. Escríbenos por WhatsApp y te decimos qué tenemos disponible.'
+      'Estamos actualizando esta categoría, disculpa las molestias.'
     );
   }
 
@@ -303,10 +368,19 @@ function bodyFor(route, products) {
 function sitemapXml(products) {
   const rutas = ['/', '/tienda', '/ofertas'];
   for (const c of CATEGORIES) rutas.push(`/categoria/${c.key}`);
-  for (const p of products) rutas.push(productPath(p));
 
-  const urls = rutas.map(r => `  <url><loc>${escapeHtml(SITE_ORIGIN + r)}</loc></url>`).join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+  const fijas = rutas.map(r => `  <url><loc>${escapeHtml(SITE_ORIGIN + r)}</loc></url>`);
+
+  /* Cada producto declara además sus fotos, para que puedan salir en la
+     búsqueda de imágenes de Google — que en una tienda trae visitas. */
+  const fichas = products.map(p => {
+    const imgs = (p.images || []).slice(0, 5).map(src =>
+      `\n    <image:image><image:loc>${escapeHtml(src)}</image:loc><image:title>${escapeHtml(p.name)}</image:title></image:image>`
+    ).join('');
+    return `  <url><loc>${escapeHtml(SITE_ORIGIN + productPath(p))}</loc>${imgs}\n  </url>`;
+  });
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${fijas.concat(fichas).join('\n')}\n</urlset>\n`;
 }
 
 /* ========================= REESCRITURA DEL HTML ====================== */
@@ -343,7 +417,7 @@ class HeadExtras {
 }
 
 function rewrite(response, route, body, pathname) {
-  const noindex = !route;
+  const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
   const image = m.image || DEFAULT_OG_IMAGE;
@@ -365,6 +439,25 @@ function rewrite(response, route, body, pathname) {
   if (body) rewriter.on('main#app', new SetHtml(body));
 
   return rewriter.transform(response);
+}
+
+/* Añade el ItemList al esquema de la ruta, junto a las migas de pan que ya
+   lleva. Solo en las rutas que enseñan una lista y solo si hay productos. */
+function agregaListaDeProductos(route, products) {
+  if (!route || !products.length) return;
+  let lista = null;
+  if (route.cat) {
+    lista = itemListSchema(products.filter(p => productInCat(p, route.cat.key)), route.cat.label);
+  } else if (route.meta.path === '/tienda') {
+    lista = itemListSchema(products, 'Catálogo de instrumentos musicales');
+  } else if (route.meta.path === '/ofertas') {
+    lista = itemListSchema(products.filter(isOffer), 'Ofertas');
+  }
+  if (!lista || !lista.numberOfItems) return;
+  const previo = route.meta.schema;
+  route.meta = Object.assign({}, route.meta, {
+    schema: { '@context': 'https://schema.org', '@graph': [previo, lista] },
+  });
 }
 
 /* Rutas cuyo contenido depende del catálogo. La home no lo necesita: su
@@ -405,6 +498,15 @@ export default {
 
     const products = necesitaProductos(url.pathname) ? await fetchProducts() : [];
     const route = routeFor(url.pathname, products);
-    return rewrite(response, route, bodyFor(route, products), url.pathname);
+    agregaListaDeProductos(route, products);
+    const salida = rewrite(response, route, bodyFor(route, products), url.pathname);
+
+    /* Un producto que ya no está devuelve 404 de verdad. El cuerpo sigue siendo
+       el del sitio, así que el visitante ve la tienda igual en cuanto carga el
+       JS; el estado es solo para los buscadores. */
+    if (route && route.noEncontrado) {
+      return new Response(salida.body, { status: 404, headers: salida.headers });
+    }
+    return salida;
   },
 };

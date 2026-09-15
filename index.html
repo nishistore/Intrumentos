@@ -14,7 +14,7 @@
 <meta property="og:description" content="Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Guitarras, teclados, percusión, viento y accesorios. Envíos a todo el Perú.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://chipaomusic.com/">
-<meta property="og:image" content="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music.jpg">
+<meta property="og:image" content="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-2.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Chipao Music, instrumentos musicales en San Juan de Miraflores, Lima">
@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Instrumentos Musicales en Lima | Chipao Music">
 <meta name="twitter:description" content="Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Envíos a todo el Perú.">
-<meta name="twitter:image" content="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music.jpg">
+<meta name="twitter:image" content="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-2.jpg">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -31,10 +31,10 @@
   "name": "Chipao Music",
   "alternateName": "Instrumentos Chipao",
   "description": "Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Guitarras, teclados, percusión, viento, audio y accesorios, con envíos a todo el Perú.",
-  "image": "https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music.jpg",
-  "logo": "https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo.png",
+  "image": "https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-2.jpg",
+  "logo": "https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png",
   "url": "https://chipaomusic.com/",
-  "telephone": "+51917100948",
+  "telephone": "+51921317384",
   "email": "contacto@chipao.com",
   "priceRange": "S/",
   "currenciesAccepted": "PEN",
@@ -65,8 +65,8 @@
   },
   "aggregateRating": {
     "@type": "AggregateRating",
-    "ratingValue": "4.5",
-    "reviewCount": "76"
+    "ratingValue": "4.6",
+    "reviewCount": "87"
   },
   "sameAs": [
     "https://www.facebook.com/instrumentoschipao",
@@ -102,7 +102,8 @@
   --chrome-muted:#848da3;
   --radius-lg:22px;
   --radius-md:14px;
-  --header-h:64px;
+  --header-h:82px;
+  --logo-h:60px;   /* alto del logo en la cabecera */
   --bar-h:38px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -130,12 +131,9 @@ ul{list-style:none;}
 }
 .topbar-inner{
   max-width:1280px;margin:0 auto;height:var(--bar-h);
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:flex-end;
   padding:0 18px;gap:10px;
 }
-.topbar-msgs{display:flex;align-items:center;gap:16px;overflow:hidden;white-space:nowrap;}
-.topbar-msgs span{opacity:.92;}
-.topbar-msgs span:not(:last-child)::after{content:'|';margin-left:16px;opacity:.35;font-weight:300;}
 .topbar-contact{display:flex;align-items:center;gap:18px;flex-shrink:0;}
 .topbar-contact a{display:flex;align-items:center;gap:6px;color:#e9ecf5;font-weight:600;white-space:nowrap;}
 .topbar-contact svg{width:14px;height:14px;stroke:var(--gold-light);flex-shrink:0;}
@@ -159,9 +157,9 @@ header.site{
   white-space:nowrap;
   flex-shrink:0;
 }
-.logo-mark{display:block;height:44px;width:auto;}
-.logo.logo-on-dark{background:#fff;border-radius:12px;padding:8px 12px;display:inline-flex;}
-.logo.logo-on-dark .logo-mark{height:36px;}
+.logo-mark{display:block;height:var(--logo-h);width:auto;}
+.logo.logo-on-dark{display:inline-flex;}
+.logo.logo-on-dark .logo-mark{height:calc(var(--logo-h) + 4px);}
 .icon-btn{
   width:40px;height:40px;border-radius:50%;
   border:1px solid var(--chrome-line);background:var(--chrome-bg2);
@@ -234,19 +232,60 @@ nav.catbar::-webkit-scrollbar{display:none;}
   opacity:0;pointer-events:none;transition:opacity .25s ease;
 }
 .overlay.show{opacity:1;pointer-events:auto;}
+/* Menú de categorías del celular: panel azul de la marca, con las
+   subcategorías plegadas en acordeón para que quepan 7 filas en pantalla en
+   vez de las 30 de la lista completa. Solo afecta a este menú — el cajón del
+   carrito usa .cart-drawer. */
 .drawer{
   position:fixed;top:0;bottom:0;left:0;width:86%;max-width:340px;
-  background:var(--chrome-bg);border-right:1px solid var(--chrome-line);
-  z-index:61;transform:translateX(-105%);transition:transform .3s ease;
-  overflow-y:auto;padding:20px 0 40px;
-  color:var(--chrome-text);
+  background:var(--navy-bar);
+  z-index:61;transform:translateX(-105%);transition:transform .42s cubic-bezier(.22,1,.36,1);
+  overflow-y:auto;padding:18px 0 40px;
+  color:#eef0f6;
 }
 .drawer.show{transform:translateX(0);}
 .drawer-head{display:flex;justify-content:space-between;align-items:center;padding:0 20px 16px;border-bottom:1px solid var(--chrome-line);margin-bottom:8px;}
-.drawer a.cat-link{display:block;padding:13px 20px;font-weight:600;font-size:14.5px;border-bottom:1px solid rgba(255,255,255,.06);color:var(--chrome-text);}
-.drawer a.cat-link:hover{background:rgba(214,161,60,.12);color:var(--gold-light);}
-.drawer .sub-link{display:block;padding:9px 20px 9px 34px;font-size:13px;color:var(--chrome-muted);border-bottom:1px solid rgba(255,255,255,.04);}
-.drawer .sub-link:hover{color:var(--gold-light);}
+.drawer .drawer-head{border-bottom:1px solid rgba(214,161,60,.28);}
+.drawer .drawer-head .icon-btn{background:transparent;border-color:rgba(255,255,255,.22);color:#eef0f6;}
+
+/* Cada categoría entra con un pequeño retraso encadenado */
+.drawer-group{border-bottom:1px solid rgba(255,255,255,.07);}
+.drawer .drawer-row{
+  display:flex;align-items:center;gap:11px;width:100%;
+  padding:13px 20px;font-size:14px;font-weight:500;text-align:left;
+  color:#eef0f6;background:none;border:0;
+  opacity:0;transform:translateX(-12px);
+  transition:opacity .34s ease, transform .34s ease, background .2s ease;
+}
+.drawer.show .drawer-row{opacity:1;transform:none;}
+.drawer.show .drawer-group:nth-child(1) .drawer-row{transition-delay:.10s;}
+.drawer.show .drawer-group:nth-child(2) .drawer-row{transition-delay:.16s;}
+.drawer.show .drawer-group:nth-child(3) .drawer-row{transition-delay:.22s;}
+.drawer.show .drawer-group:nth-child(4) .drawer-row{transition-delay:.28s;}
+.drawer.show .drawer-group:nth-child(5) .drawer-row{transition-delay:.34s;}
+.drawer.show .drawer-group:nth-child(6) .drawer-row{transition-delay:.40s;}
+.drawer.show .drawer-group:nth-child(7) .drawer-row{transition-delay:.46s;}
+.drawer .drawer-row svg{width:18px;height:18px;stroke:var(--gold);flex-shrink:0;}
+.drawer .drawer-row .drawer-chev{width:13px;height:13px;margin-left:auto;stroke:rgba(238,240,246,.55);transition:transform .28s ease;}
+.drawer .drawer-group.open .drawer-chev{transform:rotate(180deg);}
+.drawer .drawer-row:active{background:rgba(214,161,60,.14);}
+@media (hover:hover){
+  .drawer .drawer-row:hover{background:rgba(214,161,60,.12);color:var(--gold-light);}
+}
+
+/* El alto real lo pone el JS al desplegar, para que la animación no dé saltos */
+.drawer-subs{max-height:0;overflow:hidden;transition:max-height .34s cubic-bezier(.22,1,.36,1);}
+.drawer .sub-link{display:block;padding:9px 20px 9px 49px;font-size:12.8px;color:#aab3c9;}
+.drawer .sub-link:active{color:var(--gold-light);}
+.drawer .sub-link.todo{color:var(--gold-light);font-weight:500;}
+@media (hover:hover){
+  .drawer .sub-link:hover{color:var(--gold-light);}
+}
+@media (prefers-reduced-motion:reduce){
+  .drawer{transition:none;}
+  .drawer .drawer-row{opacity:1;transform:none;transition:background .2s ease;transition-delay:0s !important;}
+  .drawer-subs{transition:none;}
+}
 
 /* cart drawer */
 .cart-drawer{
@@ -351,11 +390,19 @@ nav.catbar::-webkit-scrollbar{display:none;}
 /* ---------------- hero (todo en una sola imagen, texto encima) ---------------- */
 .hero{
   position:relative;overflow:hidden;
-  min-height:340px;
+  min-height:272px;
 }
 .hero-bg{position:absolute;inset:0;z-index:0;opacity:1;transition:opacity .38s ease;background:#f7f3ea;}
 .hero-bg.fading{opacity:0;}
 .hero-bg svg{width:100%;height:100%;object-fit:cover;display:block;}
+/* El banner recorta la ilustración para cubrir el espacio: en el celular solo
+   queda visible la franja central, así que ahí mostramos un único instrumento
+   colocado donde sí se ve, y el resto del dibujo se apaga. */
+.hero-art-mobile{display:none;}
+@media (max-width:639px){
+  .hero-art-desktop{display:none;}
+  .hero-art-mobile{display:block;opacity:.6;}
+}
 .hero-bg img{width:100%;height:100%;object-fit:cover;display:block;}
 .hero-scrim{
   position:absolute;inset:0;z-index:1;
@@ -367,6 +414,44 @@ nav.catbar::-webkit-scrollbar{display:none;}
   padding:36px 20px;
 }
 .hero-copy{max-width:480px;text-align:left;}
+
+/* Escaparate del banner: una pieza real del catálogo junto al titular. Solo
+   aparece en pantallas anchas — en el celular el banner se queda con el texto,
+   que es lo que cabe. */
+.hero-product{display:none;}
+@media (min-width:900px){
+  .hero-inner{display:flex;align-items:center;justify-content:space-between;gap:36px;}
+  .hero-product{
+    display:flex;flex-direction:column;position:relative;flex-shrink:0;
+    width:264px;padding:16px;border-radius:var(--radius-md);
+    background:#fff;border:1px solid var(--navy-line);
+    box-shadow:0 18px 40px -26px rgba(22,34,74,.55);
+    transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .25s ease;
+  }
+  .hero-product:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 24px 48px -26px rgba(22,34,74,.6);}
+  .hero-product .hp-photo{display:block;height:150px;margin-bottom:12px;}
+  .hero-product .hp-photo img{width:100%;height:100%;object-fit:contain;display:block;}
+  .hero-product .hp-cat{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+  .hero-product .hp-name{
+    font-size:13.5px;font-weight:600;color:var(--brown-heading);line-height:1.3;margin-top:3px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .hero-product .hp-price{font-size:17px;font-weight:800;color:var(--brown-heading);margin-top:7px;}
+  .hero-product .hp-price s{font-size:12px;font-weight:500;color:var(--muted);margin-left:7px;}
+  .hero-product .hp-cta{font-size:12px;font-weight:700;color:var(--gold-dim);margin-top:9px;}
+  .hero-product .hp-badge{
+    position:absolute;top:12px;right:12px;z-index:2;
+    background:var(--err);color:#fff;font-size:11px;font-weight:700;
+    padding:3px 9px;border-radius:50px;
+  }
+  /* Con el escaparate al lado, la ilustración de línea estorba: se queda
+     apenas insinuada detrás. */
+  .hero-art-desktop{opacity:.35;}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-product{transition:border-color .25s ease;}
+  .hero-product:hover{transform:none;}
+}
 .hero-copy-content{transition:opacity .38s ease;opacity:1;}
 .hero-copy-content.fading{opacity:0;}
 .hero .kicker{font-size:11px;letter-spacing:.25em;color:var(--brown-heading);font-weight:600;text-transform:uppercase;opacity:.85;}
@@ -386,9 +471,6 @@ nav.catbar::-webkit-scrollbar{display:none;}
 .hero p{color:var(--ink);max-width:44ch;margin:0 0 22px;font-size:13.5px;line-height:1.6;}
 .hero-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
 .hero-actions .btn-gold, .hero-actions .btn-outline{width:100%;max-width:260px;}
-.hero-badges{display:flex;gap:18px;margin-top:26px;flex-wrap:wrap;color:var(--ink);font-size:11.5px;font-weight:500;}
-.hero-badges div{display:flex;align-items:center;gap:7px;}
-.hero-badges svg{width:16px;height:16px;stroke:var(--gold-dim);}
 
 .hero-arrow{
   position:absolute;top:50%;transform:translateY(-50%);z-index:3;
@@ -419,47 +501,120 @@ nav.catbar::-webkit-scrollbar{display:none;}
 .trust-icon svg{width:16px;height:16px;stroke:var(--gold-light);}
 .trust-item b{font-size:11.5px;font-weight:700;line-height:1.25;}
 .trust-item span{font-size:10px;color:#aeb6cf;line-height:1.35;display:block;}
+.trust-corto{display:none;}
+
+/* En el celular el bloque azul ocupaba media pantalla. Aquí se reduce a una
+   cinta de una línea: mismo azul, íconos dorados pequeños, el texto corto de
+   cada garantía y sin las frases explicativas. */
+@media (max-width:639px){
+  .trust-bar{padding:9px 0;}
+  .trust-bar-inner{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 14px;}
+  .trust-item{flex-direction:row;align-items:center;gap:5px;text-align:left;}
+  .trust-icon{width:auto;height:auto;background:none;border-radius:0;}
+  .trust-icon svg{width:14px;height:14px;stroke:var(--gold-light);}
+  .trust-item b{font-size:9.5px;font-weight:500;line-height:1.2;display:none;}
+  .trust-item b.trust-corto{display:block;}
+  .trust-item span{display:none;}
+}
 
 /* ---------------- section wrap ---------------- */
 .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
 .section-title{display:flex;align-items:baseline;justify-content:space-between;margin:52px 0 22px;}
 .section-title h2,.section-title h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--brown-heading);}
 .section-title span{color:var(--muted);font-size:13px;}
-.cat-intro{color:var(--ink);font-size:13.5px;line-height:1.6;max-width:72ch;margin:-8px 0 24px;}
 
-/* category grid on home */
+/* Encabezado de sección con rótulo arriba, filete corto y salida a la derecha.
+   El rótulo dice qué es la selección y el enlace le da al cliente a dónde ir
+   cuando termina de mirar los destacados. */
+.section-head{display:flex;align-items:flex-end;gap:14px;margin:52px 0 22px;}
+.section-head .kicker-sec{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);font-weight:600;}
+.section-head h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--brown-heading);margin-top:5px;line-height:1.15;}
+.section-head .rule{display:block;width:54px;height:2px;background:var(--gold);margin-top:9px;}
+.section-head .section-link{
+  margin-left:auto;flex-shrink:0;padding-bottom:3px;
+  font-size:12.5px;font-weight:600;color:var(--gold-dim);white-space:nowrap;
+  transition:color .2s ease;
+}
+.section-head .section-link:active{color:var(--gold);}
+@media (hover:hover){ .section-head .section-link:hover{color:var(--gold);} }
+@media (max-width:520px){
+  .section-head{gap:10px;}
+  .section-head h2{font-size:21px;}
+  .section-head .section-link{font-size:11.5px;}
+}
+/* Píldoras con productos reales en stock: le dan a Google nombres concretos
+   enlazados a su ficha, y al cliente un atajo a lo que ya tenemos. */
+.cat-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 56px;padding-top:22px;border-top:1px solid var(--navy-line);}
+.cat-chips .chips-label{font-size:12px;color:var(--muted);align-self:center;margin-right:2px;}
+.cat-chip{
+  display:inline-block;max-width:100%;padding:6px 13px;border-radius:999px;
+  border:1px solid var(--navy-line);background:#fff;color:var(--brown-heading);
+  font-size:12.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:border-color .15s ease,color .15s ease,background .15s ease;
+}
+.cat-chip:hover{border-color:var(--gold);color:var(--gold-dim);background:rgba(214,161,60,.08);}
+@media(max-width:600px){
+  .cat-chips{gap:7px;margin-bottom:40px;padding-top:18px;}
+  .cat-chip{font-size:12px;padding:5px 11px;max-width:46vw;}
+}
+
+/* ---------------- retícula de categorías (home) ----------------
+   En vez de siete cajas iguales, los bloques pesan distinto: uno grande para
+   la familia con más salida, uno ancho para los kits de colegio y el resto
+   pequeños. Los tamaños se deciden en TILE_SPAN (más abajo, en el JS). */
 .cat-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
-  padding-bottom:50px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  margin-top:46px;padding-bottom:50px;
 }
-.cat-card{
-  display:flex;align-items:center;gap:12px;
+.cat-tile{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;gap:3px;
   border-radius:var(--radius-md);
-  background:var(--navy-card);
-  border:1px solid var(--navy-line);
-  padding:16px;text-align:left;
-  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  background:var(--navy-card);border:1px solid var(--navy-line);
+  padding:40px 14px 14px;min-height:104px;text-align:left;
+  transition:transform .25s cubic-bezier(.22,1,.36,1), border-color .25s ease, box-shadow .25s ease;
 }
-.cat-card:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 10px 20px -14px rgba(22,34,74,.35);}
-.cat-card svg{width:26px;height:26px;stroke:var(--brown-heading);flex-shrink:0;}
-.cat-card .cat-card-text{display:flex;flex-direction:column;gap:2px;}
-.cat-card b{font-size:13.5px;color:var(--brown-heading);line-height:1.25;}
-.cat-card small{color:var(--muted);font-size:11px;}
-@media (max-width:639px){
-  .cat-grid{
-    display:flex;gap:16px;overflow-x:auto;padding:2px 2px 12px;
-    scrollbar-width:none;-ms-overflow-style:none;
-  }
-  .cat-grid::-webkit-scrollbar{display:none;}
-  .cat-card{
-    flex:0 0 auto;flex-direction:column;justify-content:flex-start;text-align:center;
-    width:72px;gap:6px;padding:0;border:none;background:none;
-  }
-  .cat-card:hover{transform:none;box-shadow:none;}
-  .cat-card svg{width:22px;height:22px;padding:12px;background:var(--navy-mid);border-radius:50%;box-sizing:content-box;}
-  .cat-card .cat-card-text{align-items:center;}
-  .cat-card b{font-size:11px;font-weight:600;white-space:normal;line-height:1.2;}
-  .cat-card small{display:none;}
+.cat-tile:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 26px -16px rgba(22,34,74,.45);}
+.cat-tile .tile-ico{position:absolute;top:14px;left:14px;}
+.cat-tile .tile-ico svg{
+  width:22px;height:22px;stroke:var(--gold);
+  transition:transform .25s cubic-bezier(.22,1,.36,1);
+}
+.cat-tile:hover .tile-ico svg{transform:scale(1.12);}
+.cat-tile b{font-size:14px;color:var(--brown-heading);line-height:1.2;font-weight:600;}
+.cat-tile .tile-meta{font-size:11px;color:var(--muted);}
+.cat-tile .tile-desde{font-size:11.5px;color:var(--gold-dim);font-weight:600;}
+
+/* Bloque grande: el escaparate de la sección */
+.cat-tile.big{
+  grid-column:span 2;min-height:210px;justify-content:flex-end;
+  background:var(--navy-bar);border-color:transparent;color:#eef1f8;padding:46px 18px 18px;
+}
+.cat-tile.big b{color:#fff;font-family:'Playfair Display',serif;font-size:24px;font-weight:400;line-height:1.1;}
+.cat-tile.big .tile-meta{color:#b9c2d8;}
+.cat-tile.big .tile-desde{color:var(--gold-light);}
+.cat-tile.big .tile-ico svg{width:26px;height:26px;stroke:var(--gold);}
+.cat-tile.big .tile-kicker{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.cat-tile.big .tile-cta{
+  margin-top:11px;align-self:flex-start;
+  background:var(--gold);color:#16224a;font-size:12px;font-weight:700;
+  padding:8px 16px;border-radius:50px;
+}
+.cat-tile.big:hover{border-color:var(--gold);}
+/* aros dorados de fondo, el mismo gesto que la portada */
+.cat-tile.big .tile-aro{position:absolute;border:1px solid rgba(214,161,60,.30);border-radius:50%;pointer-events:none;}
+.cat-tile.big .tile-aro.a{width:210px;height:210px;right:-56px;top:-80px;}
+.cat-tile.big .tile-aro.b{width:150px;height:150px;right:30px;bottom:-96px;border-color:rgba(214,161,60,.18);}
+
+/* Bloque ancho: media altura, ocupa dos columnas */
+.cat-tile.wide{grid-column:span 2;min-height:104px;}
+.cat-tile.wide.crema{background:#f3ece0;border-color:#e6dcc8;}
+
+@media (prefers-reduced-motion:reduce){
+  .cat-tile,.cat-tile .tile-ico svg{transition:border-color .25s ease;}
+  .cat-tile:hover{transform:none;box-shadow:none;}
+  .cat-tile:hover .tile-ico svg{transform:none;}
+}
 }
 
 /* ---------------- shop layout ---------------- */
@@ -589,11 +744,11 @@ input[type=range]{width:100%;accent-color:var(--gold);}
 .product-price-row{display:flex;align-items:baseline;gap:8px;margin-top:2px;}
 .product-price{font-size:16.5px;font-weight:800;color:var(--brown-heading);}
 .product-oldprice{font-size:12px;color:var(--muted);text-decoration:line-through;}
-.color-dots{display:flex;align-items:center;gap:5px;margin-top:1px;flex-wrap:wrap;}
+.color-dots{display:flex;align-items:center;gap:5px;margin-top:1px;flex-wrap:wrap;min-height:13px;}
 .color-dot{width:13px;height:13px;border-radius:50%;border:1px solid var(--navy-line);box-shadow:0 0 0 1px rgba(0,0,0,.03) inset;flex-shrink:0;}
 .color-dot-more{font-size:10px;color:var(--muted);font-weight:600;}
 .add-btn{
-  margin-top:8px;width:100%;padding:11px;border:1px solid var(--gold);border-radius:50px;
+  margin-top:auto;width:100%;padding:11px;border:1px solid var(--gold);border-radius:50px;
   background:var(--gold);color:#1c2540;font-size:12.8px;font-weight:700;
   transition:.2s ease;display:flex;align-items:center;justify-content:center;gap:6px;
 }
@@ -734,7 +889,8 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
 @media (min-width:640px){
-  .cat-grid{grid-template-columns:repeat(3,1fr);}
+  .cat-grid{grid-template-columns:repeat(3,1fr);gap:12px;grid-auto-rows:minmax(104px,auto);}
+  .cat-tile.big{grid-row:span 2;}
   .hero h1{font-size:38px;}
   .hero p{font-size:14.5px;max-width:48ch;}
   .hero-actions{flex-direction:row;}
@@ -751,16 +907,16 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   .topbar.hide-mobile{display:block;}
   .hide-desktop{display:none;}
   .header-top{padding:0 32px;}
-  .hero{min-height:520px;}
-  .hero-bg{padding:34px 0;box-sizing:border-box;}
+  .hero{min-height:420px;}
+  .hero-bg{padding:28px 0;box-sizing:border-box;}
   .hero-bg img{object-fit:contain;object-position:right center;}
-  .hero-inner{padding:0 32px;min-height:520px;display:flex;align-items:center;}
+  .hero-inner{padding:0 32px;min-height:420px;display:flex;align-items:center;}
   .hero h1{font-size:52px;}
   .hero p{max-width:46ch;}
   .hero-arrow{width:42px;height:42px;}
   .hero-arrow.prev{left:24px;}
   .hero-arrow.next{right:24px;}
-  .cat-grid{grid-template-columns:repeat(4,1fr);}
+  .cat-grid{grid-template-columns:repeat(4,1fr);gap:14px;}
   .footer-grid{grid-template-columns:1.1fr .75fr 1.3fr .75fr .75fr;}
 }
 @media (max-width:899px){
@@ -776,9 +932,48 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   body{padding-bottom:60px;}
   .bottom-nav{display:grid;}
 }
+/* Banner en celular: cabecera más baja, botones en una fila, sin flechas
+   (en un teléfono se desliza, y encima tapaban el texto) y la tarjeta del
+   producto en horizontal debajo. */
+.cta-corto{display:none;}
+@media (max-width:639px){
+  :root{--header-h:66px;--logo-h:46px;}
+  .hero-arrow{display:none;}
+  .hero p{
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    margin-bottom:14px;
+  }
+  .hero-actions{flex-direction:row;gap:8px;}
+  .hero-actions .btn-gold,.hero-actions .btn-outline{
+    flex:1;width:auto;max-width:none;padding-left:8px;padding-right:8px;font-size:12.5px;
+  }
+  .cta-largo{display:none;}
+  .cta-corto{display:inline;}
+
+  .hero-product{
+    display:flex;flex-direction:row;align-items:center;gap:10px;
+    position:relative;width:100%;max-width:340px;margin-top:13px;padding:8px 10px;
+    background:#fff;border:1px solid var(--navy-line);border-radius:var(--radius-md);
+    box-shadow:0 8px 20px -16px rgba(22,34,74,.5);
+  }
+  .hero-product .hp-photo{width:46px;height:46px;flex-shrink:0;}
+  .hero-product .hp-photo img{width:100%;height:100%;object-fit:contain;display:block;}
+  .hero-product .hp-info{min-width:0;display:block;}
+  .hero-product .hp-cat{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;}
+  .hero-product .hp-name{
+    font-size:12px;font-weight:600;color:var(--brown-heading);line-height:1.25;display:block;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .hero-product .hp-price{font-size:13.5px;font-weight:800;color:var(--brown-heading);display:block;}
+  .hero-product .hp-price s{font-size:10.5px;font-weight:500;color:var(--muted);margin-left:6px;}
+  .hero-product .hp-cta{display:none;}
+  .hero-product .hp-badge{
+    position:absolute;top:-7px;right:-4px;
+    background:var(--err);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:50px;
+  }
+}
 @media (max-width:520px){
   .hero h1{font-size:26px;}
-  .product-name{min-height:auto;}
 }
 /* ---------------- bottom mobile nav bar ---------------- */
 .bottom-nav{
@@ -809,9 +1004,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   .whatsapp-float svg{width:26px;height:26px;}
 }
 @media (min-width:1180px){
-  .cat-grid{grid-template-columns:repeat(7,1fr);}
-  .cat-card{flex-direction:column;text-align:center;gap:8px;padding:18px 10px;}
-  .cat-card .cat-card-text{align-items:center;}
+  .cat-grid{grid-template-columns:repeat(4,1fr);}
 }
 </style>
 </head>
@@ -821,16 +1014,11 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 <header class="site">
   <div class="topbar hide-mobile">
     <div class="topbar-inner">
-      <div class="topbar-msgs">
-        <span>Envíos a todo el Perú</span>
-        <span>Múltiples formas de pago</span>
-        <span>Garantía en todos los productos</span>
-      </div>
       <div class="topbar-contact">
         <span class="topbar-help">¿Necesitas ayuda?</span>
-        <a href="https://wa.me/51917100948" target="_blank" rel="noopener">
+        <a href="https://wa.me/51921317384" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.2h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.06c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.3-1.63-.6-2.87-1.24-4.74-4.14-4.88-4.33-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.26-.28.57-.35.76-.35.19 0 .38 0 .54.01.17.01.4-.07.63.48.24.57.81 1.98.88 2.12.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.16-.3.36-.42.49-.14.14-.29.3-.13.58.17.28.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.29 1.41.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/></svg>
-          +51 917 100 948
+          +51 921 317 384
         </a>
       </div>
     </div>
@@ -840,7 +1028,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <a href="#" class="logo" onclick="goHome();return false;">
-      <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo.png" alt="Chipao Music" class="logo-mark">
+      <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" class="logo-mark">
     </a>
     <div class="search-wrap hide-mobile">
       <input id="searchInput" type="text" placeholder="Buscar instrumentos, marcas, accesorios..." onkeydown="if(event.key==='Enter')doSearch();">
@@ -918,7 +1106,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span id="toastMsg"></span></div>
 
 <!-- ============ WHATSAPP FLOTANTE ============ -->
-<a class="whatsapp-float" href="https://wa.me/51917100948?text=Hola%2C%20quiero%20hablar%20con%20un%20asesor" target="_blank" rel="noopener" aria-label="Chatea con un asesor por WhatsApp" onclick="trackAdsConversion('whatsapp')">
+<a class="whatsapp-float" href="https://wa.me/51921317384?text=Hola%2C%20quiero%20hablar%20con%20un%20asesor" target="_blank" rel="noopener" aria-label="Chatea con un asesor por WhatsApp" onclick="trackAdsConversion('whatsapp')">
   <svg viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.79.47 3.53 1.36 5.07L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 1.67c2.24 0 4.35.87 5.93 2.45a8.23 8.23 0 0 1 2.42 5.79c0 4.55-3.7 8.25-8.35 8.25a8.3 8.3 0 0 1-4.24-1.16l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.27-4.42c0-4.55 3.7-8.2 8.3-8.2zm-3.61 4.6c-.16 0-.42.06-.64.31-.22.25-.85.83-.85 2.02 0 1.19.87 2.34.99 2.5.12.16 1.7 2.72 4.19 3.71 2.06.83 2.48.66 2.93.62.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.45-.71-1.68-.79-.22-.08-.39-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42h-.47z"/></svg>
 </a>
 
@@ -937,7 +1125,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 <li><a href="/ofertas">Ofertas</a></li>
 </ul></nav>
 <h2>Visítanos en San Juan de Miraflores</h2>
-<p>Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú. Atendemos de lunes a domingo, de 9:30 a.m. a 9:00 p.m. WhatsApp <a href="https://wa.me/51917100948">+51 917 100 948</a>.</p>
+<p>Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú. Atendemos de lunes a domingo, de 9:30 a.m. a 9:00 p.m. WhatsApp <a href="https://wa.me/51921317384">+51 921 317 384</a>.</p>
 </main>
 
 <!-- ============ FOOTER ============ -->
@@ -945,7 +1133,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   <div class="footer-grid">
     <div class="footer-col footer-brand">
       <div class="logo logo-on-dark">
-        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo.png" alt="Chipao Music" class="logo-mark">
+        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" class="logo-mark">
       </div>
       <p>Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
       <div class="footer-social">
@@ -995,19 +1183,19 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
    DATA
    ====================================================================== */
 const CATEGORIES = [
-  {key:'cuerda', label:'Instrumentos de Cuerda', icon:'string',
-    subs:[{key:'guitarras',label:'Guitarras'},{key:'violines',label:'Violines'},{key:'ukeleles',label:'Ukeleles'},{key:'charangos',label:'Charangos'}]},
-  {key:'teclados', label:'Teclados', icon:'keyboard',
+  {key:'cuerda', label:'Instrumentos de Cuerda', icon:'string', desc:'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.',
+    subs:[{key:'guitarras',label:'Guitarras'},{key:'bajos',label:'Bajos'},{key:'violines',label:'Violines'},{key:'ukeleles',label:'Ukeleles'},{key:'charangos',label:'Charangos'}]},
+  {key:'teclados', label:'Teclados', icon:'keyboard', desc:'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[]},
-  {key:'percusion', label:'Percusión', icon:'drum',
-    subs:[{key:'tambores',label:'Tambores'},{key:'bombos',label:'Bombos'},{key:'tarolas',label:'Tarolas'},{key:'cajones',label:'Cajones'},{key:'metalofono',label:'Metalófono'}]},
-  {key:'viento', label:'Viento', icon:'wind',
+  {key:'percusion', label:'Percusión', icon:'drum', desc:'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.',
+    subs:[{key:'tambores',label:'Tambores'},{key:'bombos',label:'Bombos'},{key:'tarolas',label:'Tarolas'},{key:'cajones',label:'Cajones'},{key:'metalofono',label:'Metalófono'},{key:'panderetas',label:'Panderetas'},{key:'kalimbas',label:'Kalimbas'}]},
+  {key:'viento', label:'Viento', icon:'wind', desc:'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[{key:'flautas',label:'Flautas'},{key:'melodicas',label:'Melódicas'},{key:'quenas',label:'Quenas'},{key:'zamponas',label:'Zampoñas'}]},
-  {key:'audio', label:'Micrófono y Audio', icon:'mic',
-    subs:[{key:'microfonos',label:'Micrófonos'},{key:'interfaces',label:'Interfaces'}]},
-  {key:'colegio', label:'Para Colegio', icon:'school',
+  {key:'audio', label:'Micrófono y Audio', icon:'mic', desc:'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
+    subs:[{key:'microfonos',label:'Micrófonos'},{key:'interfaces',label:'Interfaces'},{key:'amplificadores',label:'Amplificadores'}]},
+  {key:'colegio', label:'Para Colegio', icon:'school', desc:'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.',
     subs:[]},
-  {key:'accesorios', label:'Accesorios', icon:'accessory',
+  {key:'accesorios', label:'Accesorios', icon:'accessory', desc:'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[
       {key:'accCuerdasAcustica',label:'Cuerdas (Acústica/Clásica)'},
       {key:'accCuerdasElectrica',label:'Cuerdas (Eléctrica)'},
@@ -1017,8 +1205,31 @@ const CATEGORIES = [
       {key:'accAtriles',label:'Atriles y parantes'},
       {key:'accBaquetas',label:'Baquetas y parches'},
       {key:'accCanas',label:'Cañas y boquillas'},
+      {key:'accViolin',label:'Violín (resina y puentes)'},
+      {key:'accCuidado',label:'Limpieza y repuestos'},
     ]},
 ];
+
+/* Productos que, además de su categoría real, se listan en otra categoría.
+   La "Tarolita de Niño" es de Percusión › Tarolas, pero también se usa en
+   colegios, así que aparece en "Para Colegio" sin duplicar el producto: sigue
+   siendo una sola ficha, con una sola URL, un solo stock y su breadcrumb de
+   Percusión. La clave es el id del producto en la base de datos. */
+const CROSS_LISTED_CATS = {
+  23: ["colegio"],   // Flauta Dulce Soprano Yamaha
+  57: ["colegio"],   // Tarolita de Niño
+  127: ["colegio"],  // Melódica California 37 Teclas (colores disponibles)
+  140: ["colegio"],  // Melódica California 32 Teclas (colores disponibles)
+  202: ["colegio"],  // Pandereta Media Luna (varios colores)
+  203: ["colegio"],  // Pandereta Media Luna Doble Hilera
+  208: ["colegio"],  // Xilófono Infantil de 8 Notas con Baquetas
+  209: ["colegio"],  // Flauta Dulce Soprano Hohner Melody con Funda
+  210: ["colegio"],  // Quena Lupaca con Funda
+  211: ["colegio"],  // Zampoña Lupaca con Funda
+};
+function productInCat(p, catKey){
+  return p.cat === catKey || (CROSS_LISTED_CATS[p.id] || []).includes(catKey);
+}
 
 /* La barra lateral de la tienda agrupa Accesorios por INSTRUMENTO en vez de por tipo
    (así el cliente encuentra más rápido los accesorios de lo que toca). "matches" lista
@@ -1030,7 +1241,8 @@ const ACCESORIOS_FILTER_GROUPS = [
   {key:'accGrpGuitarraElectrica', label:'Guitarra Eléctrica', matches:['accCuerdasElectrica','accCapotrastes','accPuas']},
   {key:'accGrpPercusion', label:'Percusión', matches:['accBaquetas']},
   {key:'accGrpViento', label:'Viento', matches:['accCanas']},
-  {key:'accGrpGenerales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles']},
+  {key:'accGrpViolin', label:'Violín y cuerda frotada', matches:['accViolin']},
+  {key:'accGrpGenerales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles','accCuidado']},
 ];
 
 /* ======================================================================
@@ -1063,24 +1275,26 @@ const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
      }
    ]; */
 const HERO_SLIDES = [
-  { image: 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/hero-guitarra-clean.png' },
+  { pick: 'destacado' },   /* portada limpia: usa la ilustración y el texto por defecto */
   {
     illustration: 'escolar',
+    pick: 'colegio',
     kicker: 'Temporada escolar',
     title: 'Todo listo',
     accent: 'para el colegio',
     text: 'Kits completos de flauta, melódica, bombo y más al mejor precio.',
-    ctaPrimaryLabel: 'Ver kits escolares', ctaPrimaryCat: 'colegio',
-    ctaSecondaryLabel: 'Ver catálogo completo', ctaSecondaryCat: null
+    ctaPrimaryLabel: 'Ver kits escolares', ctaPrimaryShort: 'Ver kits', ctaPrimaryCat: 'colegio',
+    ctaSecondaryLabel: 'Ver catálogo completo', ctaSecondaryShort: 'Ver catálogo', ctaSecondaryCat: null
   },
   {
     illustration: 'percusion',
+    pick: 'oferta',
     kicker: 'Ofertas de la semana',
     title: 'Ritmo al mejor',
     accent: 'precio',
     text: 'Cajones, bombos y tarolas con descuento. Aprovecha antes de que se agoten.',
     ctaPrimaryLabel: 'Ver percusión', ctaPrimaryCat: 'percusion',
-    ctaSecondaryLabel: 'Ver catálogo completo', ctaSecondaryCat: null
+    ctaSecondaryLabel: 'Ver catálogo completo', ctaSecondaryShort: 'Ver catálogo', ctaSecondaryCat: null
   }
 ];
 let heroSlideIndex = 0;
@@ -1091,8 +1305,8 @@ const DEFAULT_SLIDE = {
   title: 'Tu música',
   accent: 'empieza aquí',
   text: 'Guitarras, teclados, percusión, viento y audio, seleccionados para músicos principiantes y profesionales. Calidad, confianza y envíos a todo el país.',
-  ctaPrimaryLabel: 'Ver catálogo completo', ctaPrimaryCat: null,
-  ctaSecondaryLabel: 'Kits para colegio', ctaSecondaryCat: 'colegio'
+  ctaPrimaryLabel: 'Ver catálogo completo', ctaPrimaryShort: 'Ver catálogo', ctaPrimaryCat: null,
+  ctaSecondaryLabel: 'Kits para colegio', ctaSecondaryShort: 'Kits colegio', ctaSecondaryCat: 'colegio'
 };
 
 /* La clave de administrador ya no se guarda aquí — ver sessionAdminSecret,
@@ -1125,6 +1339,7 @@ async function fetchProducts(){
     PRODUCTS = data.products || [];
     PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
     state.priceMax = PRICE_MAX;
+    loadCart();
     render();
     checkPaymentReturnStatus();
     checkAdminUrlTrigger();
@@ -1238,7 +1453,7 @@ function navigateTo(path, push){
 
 /* Actualiza <title>, meta description, og:* y canonical para la vista actual */
 const SITE_ORIGIN = 'https://chipaomusic.com';
-const DEFAULT_OG_IMAGE = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music.jpg';
+const DEFAULT_OG_IMAGE = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-2.jpg';
 
 /* Actualiza título, descripción, canonical y las etiquetas que usan WhatsApp,
    Facebook y X para armar la vista previa al compartir un enlace. */
@@ -1348,9 +1563,11 @@ function applyCurrentViewMeta(){
     const c = CATEGORIES.find(x=>x.key===state.activeCat);
     if(c){
       const subsList = c.subs.map(s=>s.label).join(', ');
-      const desc = subsList
+      /* Misma descripción que sirve el Worker (ver src/index.js): la propia de
+         la categoría, y la plantilla solo como respaldo. */
+      const desc = c.desc || (subsList
         ? `Compra ${c.label.toLowerCase()} en Lima y todo el Perú: ${subsList}. Tienda en San Juan de Miraflores con envíos a todo el país.`
-        : `Compra ${c.label.toLowerCase()} en Lima y todo el Perú. Tienda en San Juan de Miraflores con envíos a todo el país.`;
+        : `Compra ${c.label.toLowerCase()} en Lima y todo el Perú. Tienda en San Juan de Miraflores con envíos a todo el país.`);
       setPageMeta(`${c.label} en Lima | Chipao Music`, desc);
       setBreadcrumbSchema([{name:'Inicio',path:'/'},{name:c.label,path:`/categoria/${c.key}`}]);
       return;
@@ -1395,10 +1612,27 @@ function buildNavLists(){
     `<a href="/categoria/${c.key}" class="${state.view==='shop'&&state.activeCat===c.key?'active':''}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
   ).join('') + `<a href="/tienda" class="${state.view==='shop'&&!state.activeCat?'active':''}" onclick="goShop(null);return false;">Todos</a>`;
 
+  /* Menú del celular: una fila por categoría. Las que tienen subcategorías
+     abren un acordeón (con "Ver todo" arriba, para no perder el acceso a la
+     categoría entera); las que no, van directas a la tienda. */
   document.getElementById('drawerCats').innerHTML = CATEGORIES.map(c=>{
     const subsToShow = c.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : c.subs;
-    return `<a class="cat-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}');return false;">${c.label}</a>` +
-    subsToShow.map(s=>`<a class="sub-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}','${s.key}');return false;">${s.label}</a>`).join('');
+    const irACat = `toggleMenu(false);goShop('${c.key}');return false;`;
+    if(!subsToShow.length){
+      return `<div class="drawer-group">
+        <a class="drawer-row" href="/categoria/${c.key}" onclick="${irACat}">${iconSvg(c.icon)}<span>${c.label}</span></a>
+      </div>`;
+    }
+    return `<div class="drawer-group">
+      <button class="drawer-row" type="button" aria-expanded="false" onclick="drawerToggleGroup(this)">
+        ${iconSvg(c.icon)}<span>${c.label}</span>
+        <svg class="drawer-chev" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="drawer-subs">
+        <a class="sub-link todo" href="/categoria/${c.key}" onclick="${irACat}">Ver todo</a>
+        ${subsToShow.map(s=>`<a class="sub-link" href="/categoria/${c.key}" onclick="toggleMenu(false);goShop('${c.key}','${s.key}');return false;">${s.label}</a>`).join('')}
+      </div>
+    </div>`;
   }).join('');
 
   document.getElementById('footerCats').innerHTML = CATEGORIES.map(c=>
@@ -1472,19 +1706,77 @@ function toggleMobileSearch(){
   el.style.display = el.style.display==='none' ? 'block' : 'none';
 }
 
-/* Nombres reales de productos en stock (uno por categoría cuando se
-   puede, priorizando los que tienen badge) para mostrar en texto en la
-   página de inicio — mejor que solo nombres de categorías genéricas, y
-   siempre queda al día porque sale del catálogo real. */
-function popularProductsText(){
+/* Productos reales en stock (uno por categoría cuando se puede, priorizando
+   los que tienen badge) para enseñarlos en la home como píldoras enlazadas:
+   Google ve nombres concretos con enlace a su ficha en vez de rótulos
+   genéricos, y siempre queda al día porque sale del catálogo real. */
+function popularProducts(){
   const inStock = p => (p.stock||0) > 0;
-  const picks = CATEGORIES
-    .map(c => PRODUCTS.find(p=>p.cat===c.key && p.badge && inStock(p)) || PRODUCTS.find(p=>p.cat===c.key && inStock(p)))
-    .filter(Boolean);
-  const names = picks.slice(0,6).map(p=>escapeHtml(p.name));
-  if(!names.length) return '';
-  if(names.length===1) return names[0];
-  return names.slice(0,-1).join(', ') + ' y ' + names[names.length-1];
+  const elegidos = [];
+  for(const c of CATEGORIES){
+    /* Un producto cruzado (la flauta escolar está en Viento y en Colegio) ya
+       pudo salir en otra categoría: en ese caso esta se lleva el siguiente. */
+    const libre = p => inStock(p) && productInCat(p, c.key) && !elegidos.some(x=>x.id===p.id);
+    const pick = PRODUCTS.find(p=>libre(p) && p.badge) || PRODUCTS.find(libre);
+    if(pick) elegidos.push(pick);
+    if(elegidos.length === 6) break;
+  }
+  return elegidos;
+}
+
+/* Tamaño de cada bloque en la retícula de categorías de la home. 'big' es el
+   escaparate (dos columnas de ancho y doble alto), 'wide' ocupa dos columnas
+   y el resto va en bloques sueltos. Cambiar el escaparate es cambiar esta
+   tabla: lo lógico es poner arriba la familia que más vendes. */
+const TILE_SPAN = {
+  cuerda: 'big',
+  colegio: 'wide crema',
+  accesorios: 'wide',
+};
+
+/* Un bloque de la retícula, con el número de productos y el precio más bajo
+   de la categoría — ambos salen del catálogo en vivo, no están escritos. */
+function categoryTileHTML(c){
+  const suyos = PRODUCTS.filter(p=>productInCat(p, c.key));
+  const clase = TILE_SPAN[c.key] || '';
+  /* Un producto agotado o sin precio no puede marcar el "desde" de la
+     categoría: quedaría un "Desde S/ 0" que no se puede comprar. */
+  const vendibles = suyos.filter(p=>p.price > 0 && (p.stock||0) > 0);
+  const conPrecio = vendibles.length ? vendibles : suyos.filter(p=>p.price > 0);
+  const desde = conPrecio.length ? Math.min(...conPrecio.map(p=>p.price)) : null;
+  const meta = suyos.length
+    ? (suyos.length === 1 ? '1 producto' : suyos.length + ' productos')
+    : 'Actualizando';
+  const precio = desde !== null ? `<span class="tile-desde">Desde ${fmt(desde)}</span>` : '';
+
+  if(clase === 'big'){
+    return `
+      <a class="cat-tile big" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
+        <span class="tile-aro a"></span><span class="tile-aro b"></span>
+        <span class="tile-ico">${iconSvg(c.icon)}</span>
+        <span class="tile-kicker">Lo más buscado</span>
+        <b>${c.label}</b>
+        <span class="tile-meta">${meta}</span>
+        ${precio}
+        <span class="tile-cta">Ver la selección</span>
+      </a>`;
+  }
+  return `
+    <a class="cat-tile ${clase}" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
+      <span class="tile-ico">${iconSvg(c.icon)}</span>
+      <b>${c.label}</b>
+      <span class="tile-meta">${meta}${desde !== null ? ' · desde ' + fmt(desde) : ''}</span>
+    </a>`;
+}
+
+function popularProductsChips(){
+  const picks = popularProducts();
+  if(!picks.length) return '';
+  const chips = picks.map(p=>{
+    const href = `/producto/${p.id}-${slugify(p.name)}`;
+    return `<a class="cat-chip" href="${href}" onclick="openProductDetail(${p.id});return false;" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</a>`;
+  }).join('');
+  return `<div class="cat-chips"><span class="chips-label">En stock ahora:</span>${chips}</div>`;
 }
 
 /* Productos para la sección "Destacados" de la home. Prioriza los que
@@ -1509,6 +1801,7 @@ function renderHome(){
       <div class="hero-copy">
         <div class="hero-copy-content" id="heroCopy">${heroCopyHTML()}</div>
       </div>
+      <div class="hero-copy-content" id="heroProduct">${heroProductHTML()}</div>
     </div>
     ${HERO_SLIDES.length > 1 ? `
     <button class="hero-arrow prev" aria-label="Anterior" onclick="changeHeroSlide(-1)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
@@ -1516,48 +1809,65 @@ function renderHome(){
     <div class="hero-dots" id="heroDots">${HERO_SLIDES.map((_,i)=>`<span class="${i===heroSlideIndex?'active':''}"></span>`).join('')}</div>` : ''}
   </section>
 
+  <!-- En celular esta franja se convierte en una cinta crema de una sola línea
+       (ver .trust-bar en los estilos): por eso cada garantía trae una versión
+       corta del texto, la única que cabe a lo ancho de un teléfono. -->
   <section class="trust-bar">
     <div class="trust-bar-inner">
       <div class="trust-item">
         <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
-        <div><b>Envíos a todo el Perú ${peruFlagSvg}</b><span>Entregas a domicilio o recojo en tienda.</span></div>
+        <div><b>Envíos a todo el Perú ${peruFlagSvg}</b><b class="trust-corto">Envíos a todo el Perú</b><span>Entregas a domicilio o recojo en tienda.</span></div>
       </div>
       <div class="trust-item">
         <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
-        <div><b>Múltiples formas de pago</b><span>Tarjeta, Yape o Plin.</span></div>
+        <div><b>Múltiples formas de pago</b><b class="trust-corto">Yape o tarjeta</b><span>Tarjeta, Yape o Plin.</span></div>
       </div>
       <div class="trust-item">
         <div class="trust-icon">${iconSvg('accessory','style="width:16px;height:16px"')}</div>
-        <div><b>Garantía en todos los productos</b><span>Compra con confianza.</span></div>
+        <div><b>Garantía en todos los productos</b><b class="trust-corto">Garantía</b><span>Compra con confianza.</span></div>
       </div>
     </div>
   </section>
 
   <div class="wrap">
-    <div class="section-title"><h2 class="h-serif">Busca por categoría</h2><span>${CATEGORIES.length} categorías</span></div>
-    ${PRODUCTS.length ? `<p class="cat-intro">Algunos de los instrumentos que tenemos en stock: ${popularProductsText()}.</p>` : ''}
     <div class="cat-grid">
-      ${CATEGORIES.map(c=>`
-        <a class="cat-card" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
-          ${iconSvg(c.icon)}
-          <span class="cat-card-text">
-            <b>${c.label}</b>
-            <small>${c.subs.length} línea${c.subs.length>1?'s':''}</small>
-          </span>
-        </a>`).join('')}
+      ${CATEGORIES.map(categoryTileHTML).join('')}
     </div>
 
-    <div class="section-title"><h2 class="h-serif">Destacados</h2><span>Selección de la casa</span></div>
-    <div class="product-grid" style="margin-bottom:60px;">
+    <div class="section-head">
+      <div>
+        <div class="kicker-sec">Selección de la casa</div>
+        <h2 class="h-serif">Lo que recomendamos</h2>
+        <span class="rule"></span>
+      </div>
+      <a class="section-link" href="/tienda" onclick="goShop(null);return false;">Ver todo el catálogo &rsaquo;</a>
+    </div>
+    <div class="product-grid" style="margin-bottom:34px;">
       ${featuredPicks().slice(0,6).map(productCard).join('')}
     </div>
+
+    ${popularProductsChips()}
   </div>`;
 }
 
 /* Combina el slide actual con DEFAULT_SLIDE (lo que el slide no defina, se
    completa con el texto por defecto) */
 function getSlideData(){
-  return Object.assign({}, DEFAULT_SLIDE, HERO_SLIDES[heroSlideIndex] || {});
+  const slide = HERO_SLIDES[heroSlideIndex] || {};
+  const datos = Object.assign({}, DEFAULT_SLIDE, slide);
+  /* Si el slide trae su propio texto de botón pero no la versión corta para el
+     celular, no puede heredar la corta del texto por defecto: diría otra cosa
+     ("Ver percusión" en pantalla ancha y "Ver catálogo" en el teléfono). */
+  if(slide.ctaPrimaryLabel && !slide.ctaPrimaryShort) datos.ctaPrimaryShort = null;
+  if(slide.ctaSecondaryLabel && !slide.ctaSecondaryShort) datos.ctaSecondaryShort = null;
+  return datos;
+}
+
+/* En el celular los dos botones van lado a lado, así que cada uno lleva una
+   etiqueta corta además de la larga; el CSS enseña la que toca. */
+function ctaLabelHTML(largo, corto){
+  if(!corto || corto === largo) return escapeHtml(largo);
+  return `<span class="cta-largo">${escapeHtml(largo)}</span><span class="cta-corto">${escapeHtml(corto)}</span>`;
 }
 
 /* HTML del texto del hero (título, párrafo, botones, badges) para el slide actual */
@@ -1571,13 +1881,8 @@ function heroCopyHTML(){
     <h1 class="h-serif">${s.title} <span class="accent">${s.accent}</span></h1>
     <p>${s.text}</p>
     <div class="hero-actions">
-      <button class="btn-gold" onclick="goShop(${primaryCat})">${s.ctaPrimaryLabel}</button>
-      <button class="btn-outline" onclick="goShop(${secondaryCat})">${s.ctaSecondaryLabel}</button>
-    </div>
-    <div class="hero-badges">
-      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Envíos a todo el Perú ${peruFlagSvg}</div>
-      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Múltiples formas de pago</div>
-      <div>${iconSvg('accessory','style="width:16px;height:16px"')}Garantía en todos los productos</div>
+      <button class="btn-gold" onclick="goShop(${primaryCat})">${ctaLabelHTML(s.ctaPrimaryLabel, s.ctaPrimaryShort)}</button>
+      <button class="btn-outline" onclick="goShop(${secondaryCat})">${ctaLabelHTML(s.ctaSecondaryLabel, s.ctaSecondaryShort)}</button>
     </div>`;
 }
 
@@ -1610,117 +1915,151 @@ function changeHeroSlide(dir){
   if(HERO_SLIDES.length < 2) return;
   const bg = document.getElementById('heroBg');
   const copy = document.getElementById('heroCopy');
+  const prod = document.getElementById('heroProduct');
   if(!bg || !copy) return;
   startHeroAutoplay();
   bg.classList.add('fading');
   copy.classList.add('fading');
+  if(prod) prod.classList.add('fading');
 
   setTimeout(()=>{
     heroSlideIndex = (heroSlideIndex + dir + HERO_SLIDES.length) % HERO_SLIDES.length;
     bg.innerHTML = renderHeroSlide();
     copy.innerHTML = heroCopyHTML();
+    if(prod) prod.innerHTML = heroProductHTML();
     const dots = document.getElementById('heroDots');
     if(dots) dots.querySelectorAll('span').forEach((d,i)=>d.classList.toggle('active', i===heroSlideIndex));
     // reflow para que la transición de opacidad vuelva a dispararse
     void bg.offsetWidth;
     bg.classList.remove('fading');
     copy.classList.remove('fading');
+    if(prod) prod.classList.remove('fading');
   }, 260);
 }
 
-/* Ilustración de portada de ancho completo (se usa mientras HERO_SLIDES
-   esté vacío). Ocupa todo el banner; el lado izquierdo queda despejado
-   para que el texto se lea encima. */
-function heroIllustration(){
+/* Producto que se enseña junto al titular. Cada slide pide el suyo: la portada
+   uno destacado, el escolar uno de colegio y el de ofertas uno rebajado. Todos
+   salen del catálogo en vivo y tienen que tener foto y stock — un banner con un
+   producto agotado es peor que no tener banner. */
+function heroProductFor(slide){
+  const vendible = p => p.images && p.images.length && (p.stock||0) > 0 && p.price > 0;
+  const tipo = (slide && slide.pick) || 'destacado';
+  let candidatos;
+  if(tipo === 'colegio')      candidatos = PRODUCTS.filter(p=>vendible(p) && productInCat(p,'colegio'));
+  else if(tipo === 'oferta')  candidatos = PRODUCTS
+    .filter(p=>vendible(p) && p.old && p.old > p.price)
+    /* el slide de ofertas enseña el mayor descuento, no el primero de la lista */
+    .sort((a,b)=>(1 - a.price/a.old) < (1 - b.price/b.old) ? 1 : -1);
+  else                        candidatos = PRODUCTS.filter(p=>vendible(p) && p.featured);
+  if(!candidatos.length) candidatos = PRODUCTS.filter(vendible);
+  return candidatos[0] || null;
+}
+
+function heroProductHTML(){
+  const p = heroProductFor(HERO_SLIDES[heroSlideIndex]);
+  if(!p) return '';
+  const catObj = CATEGORIES.find(c=>c.key===p.cat);
+  const subLabel = catObj ? ((catObj.subs.find(s=>s.key===p.sub)||{}).label || catObj.label) : '';
+  const enOferta = p.old && p.old > p.price;
+  return `
+    <a class="hero-product" href="/producto/${p.id}-${slugify(p.name)}" onclick="openProductDetail(${p.id});return false;">
+      ${enOferta ? `<span class="hp-badge">-${Math.round((1-p.price/p.old)*100)}%</span>` : ''}
+      <span class="hp-photo"><img src="${p.images[0]}" alt="${escapeHtml(p.name)}" decoding="async"></span>
+      <span class="hp-info">
+        <span class="hp-cat">${escapeHtml(subLabel)}</span>
+        <span class="hp-name">${escapeHtml(p.name)}</span>
+        <span class="hp-price">${fmt(p.price)}${enOferta ? `<s>${fmt(p.old)}</s>` : ''}</span>
+        <span class="hp-cta">Ver producto &rsaquo;</span>
+      </span>
+    </a>`;
+}
+
+/* Fondo del banner: degradado crema con una ilustración de línea dorada fina
+   a la derecha. El lado izquierdo queda despejado para que se lea el texto.
+   Cada ilustración trae dos versiones — la de escritorio (dos instrumentos,
+   pegada al borde derecho) y la del celular (uno solo, más al centro, que es
+   la única zona que sobrevive al recorte). */
+function heroArt(id, escritorio, celular){
   return `
   <svg viewBox="0 0 1600 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
     <defs>
-      <linearGradient id="heroGrad" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#f7f3ea"/>
-        <stop offset="52%" stop-color="#f2ecdd"/>
-        <stop offset="100%" stop-color="#e6dcc2"/>
+      <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#faf7f0"/>
+        <stop offset="55%" stop-color="#f5efe2"/>
+        <stop offset="100%" stop-color="#ede3cd"/>
       </linearGradient>
     </defs>
-    <rect width="1600" height="700" fill="url(#heroGrad)"/>
-    <ellipse cx="1180" cy="640" rx="420" ry="26" fill="#16224a" opacity=".08"/>
-    <g transform="translate(970,110)" stroke="#16224a" stroke-width="9" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".85">
-      <path d="M120 0v380"/>
-      <rect x="40" y="380" width="180" height="130" rx="18" fill="#16224a" opacity=".08"/>
-      <circle cx="120" cy="445" r="46"/>
-      <path d="M40 150 q80 -46 180 0"/>
+    <rect width="1600" height="700" fill="url(#${id})"/>
+    <g stroke="#d6a13c" stroke-width="3.5" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".8">
+      <g class="hero-art-desktop">${escritorio}</g>
+      <g class="hero-art-mobile">${celular}</g>
     </g>
-    <g transform="translate(1190,300)" stroke="#d6a13c" stroke-width="8" fill="none" stroke-linejoin="round" stroke-linecap="round">
-      <rect x="0" y="0" width="320" height="110" rx="14" fill="#d6a13c" opacity=".14"/>
-      ${Array.from({length:14}).map((_,i)=>`<line x1="${14+i*22}" y1="0" x2="${14+i*22}" y2="110" stroke-width="4"/>`).join('')}
-    </g>
-    <g transform="translate(1420,60)" stroke="#16224a" stroke-width="7" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".7">
-      <path d="M60 0c0 70 -70 70 -70 160s70 100 70 160"/>
-      <ellipse cx="60" cy="230" rx="46" ry="30"/>
-    </g>
-    <text x="1180" y="670" text-anchor="middle" font-family="Poppins, sans-serif" font-size="16" fill="#8a8272" letter-spacing="1">Reemplaza esta ilustración con tu foto en HERO_SLIDES</text>
   </svg>`;
+}
+
+/* Teclas de un teclado/melódica: el marco y las líneas verticales */
+function artTeclas(x, y, ancho, alto, teclas){
+  const paso = ancho / teclas;
+  const lineas = Array.from({length: teclas - 1})
+    .map((_, i) => `<line x1="${Math.round(paso * (i + 1))}" y1="0" x2="${Math.round(paso * (i + 1))}" y2="${alto}"/>`).join('');
+  return `<g transform="translate(${x},${y})"><rect x="0" y="0" width="${ancho}" height="${alto}" rx="10"/>${lineas}</g>`;
+}
+
+/* Guitarra acústica de línea: clavijero, mástil, caja con cintura, boca y
+   puente. El dibujo mide 180 x 660 desde su origen, así que al colocarlo hay
+   que dejarle ese alto por debajo (por eso va escalado). */
+function artGuitarra(x, y, escala){
+  return `<g transform="translate(${x},${y}) scale(${escala})">
+      <rect x="58" y="0" width="64" height="42" rx="12"/>
+      <rect x="68" y="42" width="44" height="262" rx="6"/>
+      <path d="M90 300C20 300 5 355 5 400c0 30 20 50 20 70c0 30 -25 50 -25 90c0 60 40 100 90 100s90 -40 90 -100c0 -40 -25 -60 -25 -90c0 -20 20 -40 20 -70c0 -45 -15 -100 -85 -100z"/>
+      <circle cx="90" cy="470" r="44"/>
+      <rect x="52" y="576" width="76" height="16" rx="7"/>
+    </g>`;
+}
+
+/* Flauta dulce de línea: cuerpo, boquilla y agujeros */
+function artFlauta(x, y, escala){
+  const agujeros = [120, 170, 220, 270, 320].map(cy => `<circle cx="21" cy="${cy}" r="8"/>`).join('');
+  return `<g transform="translate(${x},${y}) scale(${escala})">
+      <path d="M0 40q21 -40 42 0v330q0 34 -21 46q-21 -12 -21 -46z"/>
+      <path d="M0 70h42"/>
+      ${agujeros}
+    </g>`;
+}
+
+/* Cajón peruano de línea: caja y boca */
+function artCajon(x, y, escala){
+  return `<g transform="translate(${x},${y}) scale(${escala})">
+      <rect x="0" y="0" width="230" height="290" rx="16"/>
+      <circle cx="115" cy="110" r="46"/>
+      <path d="M0 230h230"/>
+    </g>`;
+}
+
+function heroIllustration(){
+  return heroArt('heroGrad',
+    artGuitarra(1030, 70, .8) + artTeclas(1215, 410, 215, 92, 10),
+    artGuitarra(955, 300, .42));
 }
 
 /* Ilustración temática: temporada escolar (flauta dulce + melódica) */
 function heroIllustrationEscolar(){
-  return `
-  <svg viewBox="0 0 1600 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
-    <defs>
-      <linearGradient id="heroGradEscolar" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#f7f3ea"/>
-        <stop offset="52%" stop-color="#f2ecdd"/>
-        <stop offset="100%" stop-color="#e6dcc2"/>
-      </linearGradient>
-    </defs>
-    <rect width="1600" height="700" fill="url(#heroGradEscolar)"/>
-    <ellipse cx="1180" cy="640" rx="420" ry="26" fill="#16224a" opacity=".08"/>
-    <g transform="translate(1030,90)" stroke="#16224a" stroke-width="9" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".85">
-      <rect x="0" y="0" width="46" height="420" rx="10" fill="#16224a" opacity=".06"/>
-      <circle cx="23" cy="110" r="7" fill="#16224a" stroke="none"/>
-      <circle cx="23" cy="160" r="7" fill="#16224a" stroke="none"/>
-      <circle cx="23" cy="210" r="7" fill="#16224a" stroke="none"/>
-      <circle cx="23" cy="260" r="7" fill="#16224a" stroke="none"/>
-      <path d="M0 420 q23 36 46 0"/>
-    </g>
-    <g transform="translate(1150,340)" stroke="#d6a13c" stroke-width="8" fill="none" stroke-linejoin="round" stroke-linecap="round">
-      <rect x="0" y="0" width="330" height="110" rx="14" fill="#d6a13c" opacity=".14"/>
-      ${Array.from({length:12}).map((_,i)=>`<line x1="${16+i*26}" y1="0" x2="${16+i*26}" y2="110" stroke-width="4"/>`).join('')}
-    </g>
-    <g transform="translate(1400,110)" stroke="#16224a" stroke-width="7" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".6">
-      <path d="M0 0c40 60 40 120 0 180"/>
-      <circle cx="6" cy="0" r="8" fill="#16224a" stroke="none"/>
-    </g>
-    <text x="1180" y="670" text-anchor="middle" font-family="Poppins, sans-serif" font-size="16" fill="#8a8272" letter-spacing="1">Reemplaza esta ilustración con tu foto en HERO_SLIDES</text>
-  </svg>`;
+  return heroArt('heroGradEscolar',
+    artFlauta(1075, 90, 1) + artTeclas(1195, 430, 235, 92, 10),
+    artFlauta(975, 250, .58));
 }
 
-/* Ilustración temática: percusión / ofertas (cajón peruano) */
+/* Ilustración temática: percusión / ofertas (cajón peruano y baquetas) */
 function heroIllustrationPercusion(){
-  return `
-  <svg viewBox="0 0 1600 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
-    <defs>
-      <linearGradient id="heroGradPercusion" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#f7f3ea"/>
-        <stop offset="52%" stop-color="#f2ecdd"/>
-        <stop offset="100%" stop-color="#e6dcc2"/>
-      </linearGradient>
-    </defs>
-    <rect width="1600" height="700" fill="url(#heroGradPercusion)"/>
-    <ellipse cx="1180" cy="640" rx="420" ry="26" fill="#16224a" opacity=".08"/>
-    <g transform="translate(1030,180)" stroke="#16224a" stroke-width="9" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".85">
-      <rect x="0" y="0" width="230" height="300" rx="18" fill="#16224a" opacity=".07"/>
-      <circle cx="115" cy="115" r="46"/>
-    </g>
-    <g transform="translate(1330,140)" stroke="#d6a13c" stroke-width="7" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity=".8">
-      <path d="M0 70q45-70 100 0"/>
-      <path d="M25 110q60-95 135 0" opacity=".55"/>
-    </g>
-    <g transform="translate(1150,500)" stroke="#16224a" stroke-width="8" stroke-linecap="round" opacity=".7">
-      <path d="M0 20L140 -20"/>
-      <path d="M0 -10L140 30"/>
-    </g>
-    <text x="1180" y="670" text-anchor="middle" font-family="Poppins, sans-serif" font-size="16" fill="#8a8272" letter-spacing="1">Reemplaza esta ilustración con tu foto en HERO_SLIDES</text>
-  </svg>`;
+  return heroArt('heroGradPercusion',
+    artCajon(1055, 200, 1) + `<g transform="translate(1330,175)" opacity=".85">
+        <path d="M0 40q45 -62 96 0"/>
+        <path d="M26 86q52 -80 122 0"/>
+        <path d="M0 322l120 -36"/>
+        <path d="M0 296l120 36"/>
+      </g>`,
+    artCajon(930, 340, .45));
 }
 
 /* ======================================================================
@@ -1747,7 +2086,7 @@ function productCard(p){
     <div class="product-info">
       <div class="product-cat">${subLabel}</div>
       <a class="product-name" href="${productHref}" onclick="openProductDetail(${p.id});return false;" style="cursor:pointer;">${escapeHtml(p.name)}</a>
-      ${colors.length>1 ? `<div class="color-dots" aria-label="Colores disponibles: ${colors.join(', ')}">${colors.slice(0,5).map(c=>`<span class="color-dot" style="background:${COLOR_HEX[c]||'#ccc'}" title="${escapeHtml(c)}"></span>`).join('')}${colors.length>5?`<span class="color-dot-more">+${colors.length-5}</span>`:''}</div>` : ''}
+      ${colors.length>1 ? `<div class="color-dots" aria-label="Colores disponibles: ${colors.join(', ')}">${colors.slice(0,5).map(c=>`<span class="color-dot" style="background:${COLOR_HEX[c]||'#ccc'}" title="${escapeHtml(c)}"></span>`).join('')}${colors.length>5?`<span class="color-dot-more">+${colors.length-5}</span>`:''}</div>` : '<div class="color-dots" aria-hidden="true"></div>'}
       <div class="product-price-row">
         <span class="product-price">${fmt(p.price)}</span>
         ${p.old?`<span class="product-oldprice">${fmt(p.old)}</span>`:''}
@@ -1781,7 +2120,7 @@ function subMatchesActiveFilter(sub){
 
 function getFilteredProducts(){
   return PRODUCTS.filter(p=>{
-    if(state.activeCat && p.cat!==state.activeCat) return false;
+    if(state.activeCat && !productInCat(p, state.activeCat)) return false;
     if(state.activeSubs.size && !subMatchesActiveFilter(p.sub)) return false;
     if(state.offersOnly && !(p.old && p.old > p.price)) return false;
     if(p.price < state.priceMin || p.price > state.priceMax) return false;
@@ -1840,6 +2179,9 @@ function renderFiltersPanel(){
 function renderShop(){
   const list = getFilteredProducts();
   const catObj = CATEGORIES.find(c=>c.key===state.activeCat);
+  /* Si la categoría no tiene ni un producto, el vacío no viene de los filtros:
+     avisamos que la estamos actualizando (mismo texto que sirve el Worker). */
+  const catVacia = Boolean(state.activeCat) && !PRODUCTS.some(p=>productInCat(p, state.activeCat));
   const title = state.search ? `Resultados para "${escapeHtml(state.search)}"` : (state.offersOnly ? 'Ofertas' : (catObj ? catObj.label : 'Todos los productos'));
   return `
   <div class="wrap">
@@ -1864,8 +2206,11 @@ function renderShop(){
         ${list.length ? `<div class="product-grid">${list.map(productCard).join('')}</div>` : `
           <div class="empty-state">
             ${iconSvg('accessory')}
-            <p>No encontramos productos con esos filtros.</p>
-            <button class="btn-outline" style="margin-top:14px;" onclick="clearFilters()">Limpiar filtros</button>
+            ${catVacia
+              ? `<p>Estamos actualizando esta categoría, disculpa las molestias.</p>
+                 <button class="btn-outline" style="margin-top:14px;" onclick="goShop(null)">Ver todo el catálogo</button>`
+              : `<p>No encontramos productos con esos filtros.</p>
+                 <button class="btn-outline" style="margin-top:14px;" onclick="clearFilters()">Limpiar filtros</button>`}
           </div>`}
       </div>
     </div>
@@ -2160,11 +2505,42 @@ function removeFromCart(id){
   updateCartCount();
   renderCartDrawer();
 }
+/* El carrito vive en el navegador del cliente (localStorage), así que
+   sobrevive a un F5, a cerrar la pestaña y a volver desde Mercado Pago o
+   WhatsApp. Es por navegador: no se comparte entre el celular y la PC. */
+const CART_STORAGE_KEY = 'chipao-carrito-v1';
+
+function saveCart(){
+  try{ localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.cart)); }
+  catch(err){ /* modo incógnito o almacenamiento lleno: seguimos sin guardar */ }
+}
+
+/* Recupera el carrito guardado, descartando lo que ya no se puede vender:
+   productos retirados del catálogo y cantidades por encima del stock actual
+   (el carrito pudo quedarse guardado semanas). */
+function loadCart(){
+  let guardado = [];
+  try{ guardado = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]'); }
+  catch(err){ guardado = []; }
+  if(!Array.isArray(guardado)) guardado = [];
+
+  state.cart = guardado
+    .map(c => ({ id: Number(c && c.id), qty: Math.floor(Number(c && c.qty)) }))
+    .filter(c => Number.isFinite(c.id) && c.qty > 0 && PRODUCTS.some(p => p.id === c.id))
+    .map(c => ({ id: c.id, qty: Math.min(c.qty, stockOf(c.id)) }))
+    .filter(c => c.qty > 0);
+
+  updateCartCount();
+}
+
 function updateCartCount(){
   const total = state.cart.reduce((s,c)=>s+c.qty,0);
   const el = document.getElementById('cartCount');
   el.textContent = total;
   el.style.display = total>0 ? 'flex':'none';
+  /* Toda modificación del carrito pasa por aquí, así que este es el único
+     punto donde hace falta guardarlo. */
+  saveCart();
 }
 function cartSubtotal(){
   return state.cart.reduce((s,c)=>{
@@ -2229,6 +2605,9 @@ function renderCartDrawer(){
     const { subtotal, ship, total: mpTotal } = computeOrderTotals('mp');
     const altTotal = computeOrderTotals('Transferencia bancaria').total;
     const altDiscount = altPaymentDiscount(subtotal, 'Transferencia bancaria');
+    /* Lo que se ve al abrir: resumen y botón cuadran con METODO_PAGO_INICIAL */
+    const inicial = computeOrderTotals(METODO_PAGO_INICIAL);
+    const sel = valor => METODO_PAGO_INICIAL === valor ? ' checked' : '';
     wrap.innerHTML = `
       <button class="back-link" onclick="backToCart()">${iconSvg('accessory','style="width:13px;height:13px;stroke:var(--muted)"')} Volver al carrito</button>
       ${freeShippingBarHTML(subtotal)}
@@ -2238,9 +2617,9 @@ function renderCartDrawer(){
           return `<div class="row"><span>${c.qty}× ${escapeHtml(p.name)}</span><span>${fmt(p.price*c.qty)}</span></div>`;
         }).join('')}
         <div class="row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
-        <div class="row" id="rowDiscount" style="display:none;color:var(--ok);"><span>Descuento (5%)</span><span id="valDiscount">-${fmt(altDiscount)}</span></div>
+        <div class="row" id="rowDiscount" style="display:${inicial.discount>0?'':'none'};color:var(--ok);"><span>Descuento (5%)</span><span id="valDiscount">-${fmt(inicial.discount)}</span></div>
         <div class="row"><span>Envío</span><span>${ship>0?fmt(ship):'Gratis'}</span></div>
-        <div class="row total"><span>Total</span><span id="valTotal">${fmt(mpTotal)}</span></div>
+        <div class="row total"><span>Total</span><span id="valTotal">${fmt(inicial.total)}</span></div>
       </div>
       <form id="checkoutForm" class="checkout-form" onsubmit="submitOrder(event)">
         <div class="cfield">
@@ -2263,25 +2642,25 @@ function renderCartDrawer(){
           <label>Método de pago</label>
           <div class="pay-discount-banner">💰 Paga con <b>Yape / Plin</b>, <b>transferencia bancaria</b> o <b>recojo en tienda</b> y ahorra <b>5%</b> (${fmt(altDiscount)} en este pedido)</div>
           <div class="pay-options" id="payOptions">
-            <label class="pay-option checked"><input type="radio" name="metodoPago" value="mp" checked onchange="markPayOption(this)">
+            <label class="pay-option${sel('mp')}"><input type="radio" name="metodoPago" value="mp"${sel('mp')} onchange="markPayOption(this)">
               <span class="pay-option-text">💳 Tarjeta / Mercado Pago (pago en línea)</span>
               <span class="pay-option-price"><span class="pay-price-plain">${fmt(mpTotal)}</span></span>
             </label>
-            <label class="pay-option"><input type="radio" name="metodoPago" value="Yape / Plin" onchange="markPayOption(this)">
+            <label class="pay-option${sel('Yape / Plin')}"><input type="radio" name="metodoPago" value="Yape / Plin"${sel('Yape / Plin')} onchange="markPayOption(this)">
               <span class="pay-option-text">Yape / Plin<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
               <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
             </label>
-            <label class="pay-option"><input type="radio" name="metodoPago" value="Transferencia bancaria" onchange="markPayOption(this)">
+            <label class="pay-option${sel('Transferencia bancaria')}"><input type="radio" name="metodoPago" value="Transferencia bancaria"${sel('Transferencia bancaria')} onchange="markPayOption(this)">
               <span class="pay-option-text">Transferencia bancaria<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
               <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
             </label>
-            <label class="pay-option"><input type="radio" name="metodoPago" value="Recojo en tienda" onchange="markPayOption(this)">
+            <label class="pay-option${sel('Recojo en tienda')}"><input type="radio" name="metodoPago" value="Recojo en tienda"${sel('Recojo en tienda')} onchange="markPayOption(this)">
               <span class="pay-option-text">Recojo en tienda<span class="pay-option-badge">Ahorras ${fmt(altDiscount)}</span></span>
               <span class="pay-option-price"><span class="pay-price-old">${fmt(mpTotal)}</span><span class="pay-price-new">${fmt(altTotal)}</span></span>
             </label>
           </div>
         </div>
-        <button type="submit" class="btn-gold" id="checkoutSubmitBtn" style="width:100%;">Pagar con Mercado Pago</button>
+        <button type="submit" class="btn-gold" id="checkoutSubmitBtn" style="width:100%;">${METODO_PAGO_INICIAL === 'mp' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp'}</button>
       </form>
     `;
     footer.innerHTML = '';
@@ -2347,7 +2726,7 @@ function backToCart(){
 }
 
 /* ⚠️ Reemplaza con tu número real de WhatsApp Business (código de país + número, sin +, espacios ni guiones) */
-const STORE_WHATSAPP = '51917100948';
+const STORE_WHATSAPP = '51921317384';
 
 /* Dirección de tu tienda física (para el mapa y el botón "Ver en Google Maps") */
 const STORE_ADDRESS = 'Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú';
@@ -2355,8 +2734,8 @@ const STORE_MAPS_LINK = 'https://maps.app.goo.gl/y722ggq4K2s6Q5pK9';
 const STORE_HOURS = 'Lunes a domingo, 9:30 a.m. – 9:00 p.m.';
 
 /* Calificación real en Google — actualízala cuando cambie tu promedio/reseñas */
-const STORE_RATING = 4.5;
-const STORE_REVIEW_COUNT = 76;
+const STORE_RATING = 4.6;
+const STORE_REVIEW_COUNT = 87;
 const ratingStarSvg = '<svg viewBox="0 0 24 24" fill="#d6a13c"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>';
 function ratingBadgeHTML(){
   return `<a class="rating-badge" href="${STORE_MAPS_LINK}" target="_blank" rel="noopener">
@@ -2371,6 +2750,12 @@ const SHIPPING_FEE = 15;
 /* Descuento por pagar con transferencia bancaria o recojo en tienda (evita comisión de pasarela) */
 const ALT_PAYMENT_DISCOUNT_RATE = 0.05;
 const ALT_PAYMENT_DISCOUNT_METHODS = ['Yape / Plin', 'Transferencia bancaria', 'Recojo en tienda'];
+
+/* Método de pago que aparece ya marcado al abrir "Finalizar pedido". El cliente
+   puede cambiarlo, pero arranca en el que nos conviene: Yape/Plin no cobra
+   comisión de pasarela y el cliente ve de entrada el precio con el 5% menos.
+   Debe ser 'mp' o uno de ALT_PAYMENT_DISCOUNT_METHODS. */
+const METODO_PAGO_INICIAL = 'Yape / Plin';
 
 function isAltPaymentDiscountMethod(metodo){
   return ALT_PAYMENT_DISCOUNT_METHODS.includes(metodo);
@@ -2545,9 +2930,38 @@ function toggleCart(show){
   document.getElementById('cartOverlay').classList.toggle('show', show);
   if(show){ state.checkoutOpen=false; state.orderPlaced=false; renderCartDrawer(); }
 }
+/* Abre/cierra el acordeón de una categoría en el menú del celular. Solo queda
+   una abierta a la vez: así el menú nunca crece más de lo que cabe en pantalla.
+   El alto se calcula del contenido real para que la animación no dé saltos. */
+function drawerToggleGroup(btn){
+  const grupo = btn.closest('.drawer-group');
+  const subs = grupo.querySelector('.drawer-subs');
+  const abrir = !grupo.classList.contains('open');
+
+  grupo.parentElement.querySelectorAll('.drawer-group.open').forEach(g=>{
+    g.classList.remove('open');
+    g.querySelector('.drawer-subs').style.maxHeight = '';
+    g.querySelector('.drawer-row').setAttribute('aria-expanded','false');
+  });
+
+  if(abrir){
+    grupo.classList.add('open');
+    subs.style.maxHeight = subs.scrollHeight + 'px';
+    btn.setAttribute('aria-expanded','true');
+  }
+}
+
 function toggleMenu(show){
   document.getElementById('menuDrawer').classList.toggle('show', show);
   document.getElementById('menuOverlay').classList.toggle('show', show);
+  /* Al cerrar, todo vuelve plegado para que la próxima vez abra limpio */
+  if(!show){
+    document.querySelectorAll('#drawerCats .drawer-group.open').forEach(g=>{
+      g.classList.remove('open');
+      g.querySelector('.drawer-subs').style.maxHeight = '';
+      g.querySelector('.drawer-row').setAttribute('aria-expanded','false');
+    });
+  }
 }
 document.getElementById('menuBtn').addEventListener('click', ()=>toggleMenu(true));
 
@@ -2629,7 +3043,7 @@ const POLICIES = {
     <p>Puedes solicitar la actualización o eliminación de tus datos escribiéndonos a nuestro correo de contacto.</p>`},
   contacto:{title:'Contáctanos', body:`
     <p>Estamos para ayudarte con cualquier consulta sobre nuestros productos o tu pedido.</p>
-    <ul><li>WhatsApp: +51 917 100 948</li><li>Correo: contacto@chipao.com</li><li>Horario de atención: ${STORE_HOURS}</li></ul>
+    <ul><li>WhatsApp: +51 921 317 384</li><li>Correo: contacto@chipao.com</li><li>Horario de atención: ${STORE_HOURS}</li></ul>
     <h4 style="margin:18px 0 8px;font-size:13px;color:var(--brown-heading);">Nuestra tienda</h4>
     ${storeLocationHTML(220)}`}
 };
