@@ -1622,32 +1622,118 @@ footer.site .footer-bottom{
 }
 
 /* ---------------- /buscar ---------------- */
-.search-page-head{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 0 6px;
-}
-.search-page-input{
-  flex:1;min-width:0;height:46px;
-  padding:0 14px;
-  background:var(--app-sunken);
-  border:1px solid var(--app-line);
+.app-head.buscar{padding-bottom:12px;}
+.buscar-fila{display:flex;align-items:center;gap:10px;}
+.buscar-caja{
+  flex:1;min-width:0;
+  display:flex;align-items:center;gap:10px;
+  height:44px;padding:0 13px;
   border-radius:var(--app-r-input);
-  font-family:var(--app-sans);font-size:14px;color:var(--app-ink);
+  background:var(--app-sunken);
+  border:1px solid var(--app-line-strong);
 }
-.search-page-input::placeholder{color:var(--app-muted-3);}
-.search-page-input:focus{outline:none;border-color:var(--app-line-strong);}
-.search-page-close{
-  flex:none;background:none;border:none;padding:8px 2px;
-  font-family:var(--app-sans);font-size:13.5px;font-weight:500;
-  color:var(--app-terracotta);
+.buscar-caja svg{width:15px;height:15px;flex:none;stroke:var(--app-faint);stroke-width:2;}
+.buscar-caja input{
+  flex:1;min-width:0;
+  border:0;outline:0;background:transparent;
+  font:400 14px/1 var(--app-sans);color:var(--app-ink);
+  /* Menos de 16px y Safari en iPhone hace zoom al enfocar el campo; el
+     tamaño se compensa con -apple-text-size-adjust para no verlo más grande. */
+  -webkit-text-size-adjust:100%;
+}
+.buscar-caja input::placeholder{color:var(--app-muted-3);}
+/* La cruz nativa de type="search" no existe en todos los navegadores y donde
+   existe no encaja con la paleta; se quita y se deja el borrado al teclado. */
+.buscar-caja input::-webkit-search-cancel-button{-webkit-appearance:none;}
+.buscar-cerrar{
+  flex:none;background:none;border:none;padding:10px 2px;
+  font:600 13px/1 var(--app-sans);color:var(--app-terracotta);
   touch-action:manipulation;
 }
-.search-page-close:active{opacity:.88;}
-.search-count{
-  margin:14px 0 10px;
-  font-family:var(--app-sans);font-size:11px;font-weight:600;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--app-muted-2);
+.buscar-cerrar:active{opacity:.88;}
+
+#buscarResultados{padding-top:14px;padding-bottom:20px;}
+
+.buscar-eyebrow{
+  font:600 11px/1 var(--app-sans);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--app-muted-3);
 }
+.sugerencias{margin-top:12px;display:flex;flex-wrap:wrap;gap:9px;}
+.sugerencia{
+  height:34px;padding:0 13px;
+  border-radius:var(--app-r-pill);
+  background:var(--app-surface);
+  border:1px solid rgba(23,20,15,.12);
+  font:500 12.5px/1 var(--app-sans);color:var(--app-ink);
+  touch-action:manipulation;
+}
+.sugerencia:active{opacity:.88;}
+
+.rangos{margin-top:12px;display:flex;flex-direction:column;gap:9px;}
+.rango{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  width:100%;min-height:48px;padding:14px;
+  border-radius:var(--app-r-input);
+  background:var(--app-surface);border:1px solid var(--app-line);
+  text-align:left;touch-action:manipulation;
+}
+.rango:active{opacity:.88;}
+.rango-label{font:500 13px/1 var(--app-sans);color:var(--app-ink);}
+.rango-n{font:400 11.5px/1 var(--app-sans);color:var(--app-muted-2);}
+
+.search-count{
+  display:block;
+  font:400 12px/1 var(--app-sans);color:var(--app-muted-2);
+}
+.res-cabecera{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.res-quitar{
+  flex:none;height:28px;padding:0 10px;
+  border-radius:var(--app-r-pill);
+  border:1px solid var(--app-terracotta);
+  background:var(--app-terracotta-soft);
+  font:600 11.5px/1 var(--app-sans);color:var(--app-terracotta);
+  touch-action:manipulation;
+}
+.res-quitar:active{opacity:.88;}
+
+.lista-res{margin-top:12px;display:flex;flex-direction:column;gap:10px;}
+.fila-res{
+  display:flex;align-items:center;gap:12px;
+  padding:10px;
+  border-radius:var(--app-r-input);
+  background:var(--app-surface);border:1px solid var(--app-line);
+  text-decoration:none;touch-action:manipulation;
+}
+.fila-res:active{opacity:.88;}
+.fila-thumb{
+  width:62px;height:62px;flex:none;
+  border-radius:9px;
+  background:var(--app-stripe);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.fila-thumb img{width:100%;height:100%;object-fit:contain;background:#fff;}
+.fila-thumb svg{width:26px;height:26px;stroke:var(--app-faint);}
+.fila-texto{flex:1;min-width:0;}
+.fila-nombre{
+  display:block;
+  font:500 13px/1.35 var(--app-sans);color:var(--app-ink);
+  /* Dos líneas como mucho: un nombre largo no debe estirar la fila. */
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.fila-linea{margin-top:5px;display:flex;align-items:baseline;gap:7px;}
+.fila-precio{font:700 14px/1 var(--app-sans);color:var(--app-ink);}
+.fila-stock{font:400 11px/1 var(--app-sans);color:var(--app-green);}
+.fila-stock.agotado{color:var(--app-faint);}
+.fila-chevron{flex:none;font:600 15px/1 var(--app-sans);color:#C0B6A8;}
+
+.buscar-vacio{margin-top:36px;text-align:center;}
+.vacio-titulo{font:400 20px/1.2 var(--app-serif);color:var(--app-ink);}
+.buscar-vacio p{
+  margin-top:8px;
+  font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
+}
+.buscar-vacio .btn-app{margin:14px auto 0;max-width:220px;}
 </style>
 </head>
 <body>
@@ -2078,7 +2164,8 @@ const state = {
   checkoutOpen:false,
   orderPlaced:false,
   orderId:null,      // número del último pedido enviado, para /pedido/<id>
-  searchQuery:''     // texto de la pantalla /buscar (independiente del filtro de la tienda)
+  searchQuery:'',    // texto de la pantalla /buscar (independiente del filtro de la tienda)
+  searchRango:null   // rango de precio elegido en /buscar: 'bajo' | 'medio' | 'alto'
 };
 
 const fmt = n => 'S/ ' + n.toLocaleString('es-PE',{minimumFractionDigits:0});
@@ -2509,10 +2596,10 @@ function nuevoNumeroPedido(){
 }
 
 /* ---------------------------- /buscar ----------------------------
-   Filtro por nombre y por categoría, sin distinguir mayúsculas ni tildes,
-   igual que pide el handoff. La pantalla con su diseño definitivo (chips de
-   "lo más buscado", rangos por precio, filas de 62px) llega en su fase; esto
-   es la versión funcional mínima para que la ruta no sea un callejón. */
+   Tres estados, como el handoff: en reposo (sugerencias y rangos de precio),
+   con resultados (filas de 62px) y sin resultados (salida por WhatsApp).
+   Filtra por nombre y por categoría, sin distinguir mayúsculas ni tildes, y
+   en vivo con cada tecla. */
 function sinTildes(str){
   return String(str).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 }
@@ -2525,39 +2612,167 @@ function buscarProductos(q){
   });
 }
 
+/* Rangos de precio del handoff. Los conteos salen del catálogo en cada
+   render, así que no se quedan viejos cuando cambian los precios. */
+const RANGOS_PRECIO = [
+  { key:'bajo',  label:'Menos de S/ 100', min:0,   max:100 },
+  { key:'medio', label:'S/ 100 a S/ 300', min:100, max:300 },
+  { key:'alto',  label:'Más de S/ 300',   min:300, max:Infinity },
+];
+function productosDelRango(key){
+  const r = RANGOS_PRECIO.find(x=>x.key===key);
+  if(!r) return [];
+  return PRODUCTS.filter(p => p.price >= r.min && p.price < r.max);
+}
+
+/* "Lo más buscado" no sale de ninguna analítica —no la hay—, así que es una
+   lista escrita a mano... pero filtrada contra el catálogo real: un chip que
+   lleva a "no hay nada" es peor que no ponerlo. De los seis del handoff,
+   "cajón" se cae porque hoy no hay cajones cargados; detrás van términos de
+   reserva para que la fila no quede coja. */
+const BUSQUEDAS_CANDIDATAS = [
+  'ukelele', 'cajón', 'kalimba', 'violín', 'flauta dulce', 'pandereta',
+  'guitarra', 'micrófono', 'cuerdas', 'afinador',
+];
+function sugerenciasDeBusqueda(){
+  const vivas = [];
+  for(const t of BUSQUEDAS_CANDIDATAS){
+    if(vivas.length >= 6) break;
+    if(buscarProductos(t).length) vivas.push(t);
+  }
+  return vivas;
+}
+
+/* Fila de resultado: 62px de alto, como pide el handoff. */
+function filaResultado(p){
+  const href = `/producto/${p.id}-${slugify(p.name)}`;
+  const foto = (p.images || [])[0];
+  const stock = p.stock || 0;
+  return `
+  <a class="fila-res" href="${href}" onclick="openProductDetail(${p.id});return false;">
+    <span class="fila-thumb">
+      ${foto
+        ? `<img src="${foto}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+        : iconSvg(iconFor(p))}
+    </span>
+    <span class="fila-texto">
+      <span class="fila-nombre">${escapeHtml(p.name)}</span>
+      <span class="fila-linea">
+        <span class="fila-precio">${fmt(p.price)}</span>
+        <span class="fila-stock${stock>0?'':' agotado'}">${stock>0?'En tienda':'Agotado'}</span>
+      </span>
+    </span>
+    <span class="fila-chevron">›</span>
+  </a>`;
+}
+
 function resultadosBusquedaHtml(){
   const q = state.searchQuery.trim();
-  if(!q) return '';
-  const res = buscarProductos(q);
-  if(!res.length){
-    return `<div class="sin-resultados">
-      <p>Nada con “${escapeHtml(q)}”.</p>
-      <a class="btn-app verde" target="_blank" rel="noopener"
-         href="${waHref('Hola, busco ' + q + '. ¿Lo tienen?')}"
-         onclick="trackAdsConversion('whatsapp')">Preguntar por WhatsApp</a>
-    </div>`;
+
+  /* Un rango de precio elegido se comporta como una búsqueda más: enseña sus
+     productos con el mismo listado. */
+  if(!q && state.searchRango){
+    const r = RANGOS_PRECIO.find(x=>x.key===state.searchRango);
+    const res = productosDelRango(state.searchRango).sort((a,b)=>a.price-b.price);
+    return `
+      <div class="res-cabecera">
+        <span class="search-count">${res.length} ${res.length===1?'resultado':'resultados'}</span>
+        <button type="button" class="res-quitar" onclick="limpiarRango()">${escapeHtml(r.label)} ✕</button>
+      </div>
+      <div class="lista-res">${res.map(filaResultado).join('')}</div>`;
   }
-  return `<p class="search-count">${res.length} ${res.length===1?'resultado':'resultados'}</p>
-    <div class="grid-app">${res.map(p=>appProductCard(p, 118)).join('')}</div>`;
+
+  /* En reposo: sugerencias y rangos. */
+  if(!q){
+    const sugerencias = sugerenciasDeBusqueda();
+    return `
+      <div class="buscar-eyebrow">Lo más buscado</div>
+      <div class="sugerencias">
+        ${sugerencias.map(t=>`<button type="button" class="sugerencia" onclick="usarSugerencia('${escapeHtml(t)}')">${escapeHtml(t)}</button>`).join('')}
+      </div>
+      <div class="buscar-eyebrow" style="margin-top:26px;">Por precio</div>
+      <div class="rangos">
+        ${RANGOS_PRECIO.map(r=>{
+          const n = productosDelRango(r.key).length;
+          return `<button type="button" class="rango" onclick="usarRango('${r.key}')">
+            <span class="rango-label">${escapeHtml(r.label)}</span>
+            <span class="rango-n">${n} producto${n!==1?'s':''}</span>
+          </button>`;
+        }).join('')}
+      </div>`;
+  }
+
+  const res = buscarProductos(q);
+
+  /* Sin resultados. */
+  if(!res.length){
+    return `
+      <div class="buscar-vacio">
+        <div class="vacio-titulo">Nada con “${escapeHtml(q)}”</div>
+        <p>Puede que lo tengamos en tienda sin publicar. Pregúntale al asesor.</p>
+        <a class="btn-app verde" target="_blank" rel="noopener"
+           href="${waHref('Hola, busco ' + q + '. ¿Lo tienen en tienda?')}"
+           onclick="trackAdsConversion('whatsapp')">Preguntar por WhatsApp</a>
+      </div>`;
+  }
+
+  return `
+    <span class="search-count">${res.length} ${res.length===1?'resultado':'resultados'}</span>
+    <div class="lista-res">${res.map(filaResultado).join('')}</div>`;
+}
+
+/* Solo se repinta la lista: si se repintara la pantalla entera, el input
+   perdería el foco y el teclado se cerraría en cada tecla. */
+function pintarResultados(){
+  const cont = document.getElementById('buscarResultados');
+  if(cont) cont.innerHTML = resultadosBusquedaHtml();
 }
 
 function onBuscarInput(val){
   state.searchQuery = val;
-  /* Solo se repinta la lista: si se repintara la pantalla entera, el input
-     perdería el foco y el teclado se cerraría en cada tecla. */
-  const cont = document.getElementById('buscarResultados');
-  if(cont) cont.innerHTML = resultadosBusquedaHtml();
+  /* Escribir manda sobre el rango elegido: son dos formas de filtrar lo
+     mismo y tener las dos puestas a la vez confunde. */
+  if(val.trim()) state.searchRango = null;
+  pintarResultados();
+}
+
+function usarSugerencia(texto){
+  state.searchQuery = texto;
+  state.searchRango = null;
+  const input = document.getElementById('buscarInput');
+  if(input){ input.value = texto; input.focus(); }
+  pintarResultados();
+}
+
+function usarRango(key){
+  state.searchRango = key;
+  state.searchQuery = '';
+  const input = document.getElementById('buscarInput');
+  if(input) input.value = '';
+  pintarResultados();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function limpiarRango(){
+  state.searchRango = null;
+  pintarResultados();
 }
 
 function renderSearch(){
   return `
   <div class="app-shell">
-    <div class="search-page-head">
-      <input id="buscarInput" class="search-page-input" type="search" autocomplete="off"
-             placeholder="Buscar instrumento o marca" value="${escapeHtml(state.searchQuery)}"
-             oninput="onBuscarInput(this.value)">
-      <button type="button" class="search-page-close" onclick="goHome()">Cerrar</button>
-    </div>
+    <header class="app-head buscar">
+      <div class="buscar-fila">
+        <span class="buscar-caja">
+          ${iconSvg('search')}
+          <input id="buscarInput" type="search" autocomplete="off" enterkeyhint="search"
+                 placeholder="Buscar instrumento o marca"
+                 value="${escapeHtml(state.searchQuery)}"
+                 oninput="onBuscarInput(this.value)">
+        </span>
+        <button type="button" class="buscar-cerrar" onclick="goHome()">Cerrar</button>
+      </div>
+    </header>
     <div id="buscarResultados">${resultadosBusquedaHtml()}</div>
   </div>`;
 }
@@ -2775,7 +2990,7 @@ function renderHome(){
       </div>
       <a class="buscador-falso" href="/buscar" onclick="goSearch();return false;">
         ${iconSvg('search')}
-        <span>Busca “ukelele”, “cajón”, “teclado”…</span>
+        <span>Busca “ukelele”, “kalimba”, “violín”…</span>
       </a>
     </header>
 
