@@ -81,7 +81,7 @@
      Poppins se cayeron con el sitio anterior: eran dos familias completas
      descargándose en cada visita sin que las usara nadie. Los nombres van en
      orden alfabético porque la API css2 lo exige. -->
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy-deep:#ffffff;
@@ -123,9 +123,9 @@
    ====================================================================== */
 :root{
   /* --- superficies --- */
-  --app-paper:#F7F3EC;            /* fondo de pantalla */
-  --app-surface:#FFFDF9;          /* tarjetas, headers, barras */
-  --app-sunken:#F2EDE4;           /* inputs, chips neutros, botones cuadrados */
+  --app-paper:#FFFFFF;            /* fondo de pantalla */
+  --app-surface:#FFFFFF;          /* tarjetas, headers, barras */
+  --app-sunken:#F3F3F3;           /* inputs, chips neutros, botones cuadrados */
 
   /* --- texto --- */
   --app-ink:#17140F;              /* texto principal, botón oscuro */
@@ -136,24 +136,38 @@
   --app-faint:#9A9083;            /* precios tachados, iconos inactivos */
 
   /* --- bordes (el rediseño no lleva sombras, solo líneas de 1px) --- */
-  --app-line:rgba(23,20,15,.09);
-  --app-line-strong:rgba(23,20,15,.16);
+  --app-line:rgba(23,20,15,.13);
+  --app-line-strong:rgba(23,20,15,.2);
 
   /* --- acentos --- */
-  --app-terracotta:#B4472C;       /* CTA principal, descuentos, selección */
-  --app-terracotta-soft:#FBE6DF;  /* fondo del chip "Ahorras" */
-  --app-green:#1F5C4A;            /* asesor, confirmar pedido, banda de colegio */
-  --app-green-soft:#E8F0EA;       /* fondo del bloque stock / asesor */
-  --app-green-mint:#A8E6C4;       /* punto vivo, eyebrow sobre verde */
+  /* La paleta se cerró a cuatro: negro, rojo, verde y blanco. El terracota
+     que había aquí se disolvió en el negro —la acción de compra ahora es
+     negra— y los siete colores de categoría también, para que la grilla se
+     lea como una sola pieza en vez de como una caja de crayones. */
+  /* El verde vivo es CLARO, así que solo sirve de fondo: encima lleva texto
+     oscuro (--app-on-green), no blanco. Blanco sobre este verde da 2:1 de
+     contraste y se vuelve ilegible. Para verde como TEXTO sobre fondo claro
+     —"Stock en tienda", títulos— está --app-green-ink, que es el mismo tono
+     oscurecido hasta que se lee bien. */
+  --app-green:#6FC87A;            /* verde vivo: SOLO fondos */
+  --app-green-hover:#5DB869;      /* hover del verde (solo escritorio) */
+  --app-green-ink:#1B7A3D;        /* el mismo verde para TEXTO sobre claro */
+  --app-on-green:#0F2E1B;         /* texto sobre el verde vivo */
+  --app-green-soft:#EDF9EF;       /* fondo del bloque stock / asesor */
+  --app-green-mint:#B9F5D6;       /* solo sobre tinta oscura (franja, pie) */
+  --peru-rojo:#D91023;            /* rojo de la bandera: banda y descuentos */
+  --peru-rojo-soft:#FDE7E9;       /* fondo del chip "Ahorras" */
 
   /* --- color por categoría (tiles del carrusel de la portada) --- */
-  --app-cat-cuerda:#B4472C;
-  --app-cat-teclados:#1F5C4A;
-  --app-cat-percusion:#8A5A1E;
-  --app-cat-viento:#3A4A7A;
-  --app-cat-audio:#4A3A5E;
-  --app-cat-colegio:#2F6B4F;
-  --app-cat-accesorios:#6B5B4A;
+  /* Todas las categorías comparten el mismo marco negro: lo que distingue a
+     una de otra pasa a ser su foto y su nombre, no un color inventado. */
+  --app-cat-cuerda:#17140F;
+  --app-cat-teclados:#17140F;
+  --app-cat-percusion:#17140F;
+  --app-cat-viento:#17140F;
+  --app-cat-audio:#17140F;
+  --app-cat-colegio:#17140F;
+  --app-cat-accesorios:#17140F;
 
   /* --- tipografía --- */
   --app-serif:'Instrument Serif',Georgia,serif;   /* títulos editoriales */
@@ -177,11 +191,11 @@
   --app-tabbar-h:78px;
 
   /* Único "ring" del rediseño: el swatch de color seleccionado. */
-  --app-ring:0 0 0 3px #FFFDF9, 0 0 0 4.5px #17140F;
+  --app-ring:0 0 0 3px #FFFFFF, 0 0 0 4.5px #17140F;
 
   /* Rayado de los placeholders de foto. Como las fotos reales ya están en
      R2, aquí sirve sobre todo para los skeletons de carga. */
-  --app-stripe:repeating-linear-gradient(135deg,#EDE6DA 0 8px,#E4DBCB 8px 16px);
+  --app-stripe:repeating-linear-gradient(135deg,#F0F0F0 0 8px,#E7E7E7 8px 16px);
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -230,7 +244,7 @@ ul{list-style:none;}
 .rating-badge svg{width:16px;height:16px;flex-shrink:0;}
 .rating-badge b{color:var(--brown-heading);font-weight:800;}
 .rating-badge span{color:var(--muted);}
-.rating-badge:hover span{color:var(--gold-dim);text-decoration:underline;}}
+.rating-badge:hover span{color:var(--gold-dim);text-decoration:underline;}
 .empty-state svg{width:44px;height:44px;stroke:var(--gold-dim);margin:0 auto 14px;}
 
 /* ---------------- policy modal ---------------- */
@@ -402,12 +416,12 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   font-family:var(--app-sans);
   font-size:10px;font-weight:600;line-height:1;letter-spacing:.01em;
 }
-.tab-item.active{color:var(--app-terracotta);}
+.tab-item.active{color:var(--app-ink);}
 .tab-badge{
   position:absolute;top:-5px;right:-7px;
   min-width:16px;height:16px;padding:0 4px;
   border-radius:var(--app-r-pill);
-  background:var(--app-terracotta);color:#fff;
+  background:var(--app-ink);color:#fff;
   font-family:var(--app-sans);font-size:9.5px;font-weight:700;line-height:16px;
   text-align:center;
 }
@@ -432,6 +446,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    cabeceras y los carruseles tienen que llegar de borde a borde. */
 .app-shell > *{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
 .app-shell > .carrusel{padding-left:0;padding-right:0;}
+.app-shell > .cat-barra{padding-left:0;padding-right:0;}
 
 /* ---------------- cabecera de pantalla ----------------
    Sticky arriba del todo. El handoff usa padding-top:62px para dejar libre
@@ -472,11 +487,18 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   flex:none;display:inline-flex;align-items:center;gap:6px;
   height:36px;padding:0 12px;border-radius:var(--app-r-pill);
   background:var(--app-green);
-  font:600 12px/1 var(--app-sans);color:#fff;
+  font:600 12px/1 var(--app-sans);color:var(--app-on-green);
   text-decoration:none;touch-action:manipulation;
 }
 .pill-asesor:active{opacity:.88;}
 .punto-vivo{width:8px;height:8px;border-radius:50%;background:var(--app-green-mint);}
+
+/* El logo de WhatsApp dentro de los botones de asesor. Va con el glifo tal
+   cual y en blanco sobre el verde de la tienda: así se entiende a dónde lleva
+   el botón sin tener que escribir "WhatsApp" en cada uno. */
+.ico-wa{flex:none;display:flex;align-items:center;justify-content:center;}
+.ico-wa svg{width:15px;height:15px;display:block;}
+.pill-asesor .ico-wa svg{width:15px;height:15px;}
 
 .buscador-falso{
   margin-top:14px;
@@ -491,13 +513,30 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .buscador-falso svg{width:16px;height:16px;flex:none;stroke:var(--app-faint);stroke-width:2;}
 
 /* ---------------- portada ---------------- */
-.hero-app{padding-top:20px;padding-bottom:2px;}
+.hero-app{padding-top:16px;padding-bottom:6px;}
+/* El titular del hero va en Archivo 800, no en el serif editorial: es el
+   bloque que tiene que empujar a comprar. El serif sigue mandando en los
+   títulos de sección, la ficha y el pie. */
+.hero-eyebrow{
+  display:block;margin-bottom:9px;
+  font:700 9.5px/1.3 var(--app-sans);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--app-ink);
+}
 .hero-app h1{
-  font:400 30px/1.08 var(--app-serif);letter-spacing:-.01em;color:var(--app-ink);
+  font-family:var(--app-sans);font-weight:800;
+  font-size:29px;line-height:1.05;letter-spacing:-.03em;color:var(--app-ink);
 }
 .hero-app p{
-  margin-top:8px;
-  font:400 13px/1.5 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
+  margin-top:10px;
+  font:400 13px/1.5 var(--app-sans);color:var(--app-ink-70);text-wrap:pretty;
+}
+/* Los tres datos duros, en fila de tres. */
+.hero-datos{display:flex;gap:14px;margin-top:16px;}
+.hero-datos span{flex:1;min-width:0;}
+.hero-datos b{display:block;font:800 14px/1.15 var(--app-sans);color:var(--app-ink);}
+.hero-datos i{
+  display:block;margin-top:3px;
+  font:400 10px/1.25 var(--app-sans);font-style:normal;color:var(--app-muted-2);
 }
 
 /* Carrusel horizontal. scroll-snap para que las tarjetas queden alineadas al
@@ -513,25 +552,60 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .carrusel::-webkit-scrollbar{display:none;}
 .carrusel > *{scroll-snap-align:start;}
 
-.cat-tile-app{
-  flex:none;width:112px;text-decoration:none;
+/* ---------------- barra de categorías ----------------
+   En el teléfono son tarjetas negras sueltas, separadas por un hueco, en una
+   fila que se desplaza. El ancho de 94px está elegido para que entren tres y
+   se asome la cuarta cortada por el borde: esa tarjeta a medias es lo que
+   avisa de que hay más a la derecha, y la flecha del borde lo remata.
+
+   En escritorio las siete se juntan en un solo panel (ver el @media). */
+.cat-barra{
+  display:flex;gap:10px;
+  margin-left:var(--app-gutter);margin-right:var(--app-gutter);
+  overflow-x:auto;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;
+}
+.cat-barra::-webkit-scrollbar{display:none;}
+/* La flecha va pegada al borde con position:sticky mientras el resto se
+   desplaza, y se apaga sola al llegar al final (ver .al-final). */
+.cat-barra::after{
+  content:'›';
+  flex:none;align-self:center;
+  position:sticky;right:0;
+  width:28px;height:28px;margin-left:-28px;
+  border-radius:50%;
+  background:var(--app-ink);box-shadow:0 0 0 3px #fff;
+  display:flex;align-items:center;justify-content:center;
+  font:700 16px/1 var(--app-sans);color:#fff;
+  padding-bottom:2px;
+  pointer-events:none;
+  opacity:1;transition:opacity .2s ease;
+}
+.cat-barra.al-final::after{opacity:0;}
+.cat-item{
+  flex:none;width:94px;
+  background:var(--app-ink);border-radius:14px;
+  padding:14px 6px;
+  text-align:center;text-decoration:none;
+  scroll-snap-align:start;
   touch-action:manipulation;
 }
-.cat-tile-app:active{opacity:.88;}
-.cat-tile-color{
-  height:76px;border-radius:var(--app-r-tile);
-  display:flex;align-items:flex-end;padding:9px;
+.cat-item:active{opacity:.75;}
+.cat-item-ico{display:flex;align-items:center;justify-content:center;height:22px;}
+.cat-item-ico svg{
+  width:22px;height:22px;
+  stroke:var(--app-green);stroke-width:1.4;fill:none;
 }
-.cat-tile-color svg{width:26px;height:26px;stroke:#fff;opacity:.55;stroke-width:1.5;}
-/* Dos líneas fijas: "Instrumentos de Cuerda" ocupa dos y el resto una, y sin
-   alto fijo el subtítulo de cada tile quedaba a distinta altura. */
-.cat-tile-nombre{
-  display:block;margin-top:7px;height:30px;overflow:hidden;
-  font:600 12.5px/1.2 var(--app-sans);color:var(--app-ink);
+/* Dos líneas fijas: "Instrumentos de Cuerda" parte en dos y el resto en una,
+   y sin alto fijo las tarjetas quedaban desniveladas. */
+.cat-item-nombre{
+  display:block;margin-top:8px;height:26px;overflow:hidden;
+  font:600 10.5px/1.25 var(--app-sans);color:#fff;
 }
-.cat-tile-sub{
-  display:block;margin-top:2px;
-  font:400 10.5px/1.25 var(--app-sans);color:var(--app-muted-3);
+.cat-item-desde{
+  display:block;margin-top:3px;
+  font:400 10px/1 var(--app-sans);color:rgba(255,255,255,.55);
 }
 
 .seccion-head{
@@ -543,7 +617,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 }
 .seccion-titulo{margin-top:24px;}
 .seccion-head a{
-  flex:none;font:600 12px/1 var(--app-sans);color:var(--app-terracotta);
+  flex:none;font:600 12px/1 var(--app-sans);color:var(--app-ink);
   text-decoration:none;touch-action:manipulation;
 }
 .carrusel-item{flex:none;width:166px;}
@@ -570,10 +644,13 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   display:flex;align-items:center;justify-content:center;height:100%;
 }
 .pcard-sinfoto svg{width:34px;height:34px;stroke:var(--app-faint);}
+/* Todo lo que anuncia un descuento va en el rojo de la bandera, no en el
+   terracota de la marca: así el "-20%" salta desde lejos y no se confunde con
+   los botones de compra, que sí son terracota. */
 .pcard-off{
   position:absolute;top:8px;right:8px;
   padding:3px 7px;border-radius:6px;
-  background:var(--app-terracotta);
+  background:var(--peru-rojo);
   font:700 10px/1 var(--app-sans);color:#fff;
 }
 /* Alto fijo de dos líneas: si no, las tarjetas de una fila quedan
@@ -585,7 +662,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .pcard-precios{margin-top:4px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
 .pcard-precio{font:700 15px/1 var(--app-sans);color:var(--app-ink);}
 .pcard-antes{font:400 11px/1 var(--app-sans);color:var(--app-faint);text-decoration:line-through;}
-.pcard-stock{margin-top:6px;font:500 10.5px/1 var(--app-sans);color:var(--app-green);}
+.pcard-stock{margin-top:6px;font:500 10.5px/1 var(--app-sans);color:var(--app-green-ink);}
 .pcard-stock.agotado{color:var(--app-faint);}
 
 .grid-app{
@@ -608,21 +685,21 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .banda-eyebrow{
   display:block;
   font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;
-  color:var(--app-green-mint);
+  color:rgba(15,46,27,.72);
 }
 .banda-titulo{
   display:block;margin-top:7px;
-  font:400 20px/1.15 var(--app-serif);color:#fff;
+  font:400 20px/1.15 var(--app-serif);color:var(--app-on-green);
 }
 .banda-copy{
   display:block;margin-top:6px;
-  font:400 12px/1.45 var(--app-sans);color:rgba(255,255,255,.78);text-wrap:pretty;
+  font:400 12px/1.45 var(--app-sans);color:rgba(15,46,27,.78);text-wrap:pretty;
 }
 .banda-chevron{
   flex:none;width:34px;height:34px;border-radius:50%;
-  background:rgba(255,255,255,.16);
+  background:rgba(15,46,27,.14);
   display:flex;align-items:center;justify-content:center;
-  font:600 16px/1 var(--app-sans);color:#fff;padding-bottom:2px;
+  font:600 16px/1 var(--app-sans);color:var(--app-on-green);padding-bottom:2px;
 }
 
 /* ---------------- tarjeta "visítanos" ---------------- */
@@ -634,7 +711,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 }
 .eyebrow-terracota{
   font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;
-  color:var(--app-terracotta);
+  color:var(--app-ink);
 }
 .visitanos-dir{margin-top:9px;font:500 14px/1.4 var(--app-sans);color:var(--app-ink);}
 .visitanos-horario{margin-top:5px;font:400 12.5px/1.45 var(--app-sans);color:var(--app-muted);}
@@ -662,7 +739,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .btn-app:active{opacity:.88;}
 .btn-app.oscuro{background:var(--app-ink);color:#fff;}
 .btn-app.contorno{background:transparent;border-color:var(--app-line-strong);color:var(--app-ink);}
-.btn-app.verde{background:var(--app-green);color:#fff;}
+.btn-app.verde{background:var(--app-green);color:var(--app-on-green);}
 
 /* ---------------- chips de filtro ---------------- */
 .chips-fila{
@@ -689,9 +766,9 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 }
 .chip:active{opacity:.88;}
 .chip.activo{
-  border-color:var(--app-terracotta);
-  background:var(--app-terracotta-soft);
-  color:var(--app-terracotta);
+  border-color:var(--app-ink);
+  background:var(--app-sunken);
+  color:var(--app-ink);
 }
 .chip.limpiar{border-style:dashed;color:var(--app-muted);}
 
@@ -748,7 +825,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   height:36px;min-width:36px;
   display:flex;align-items:center;justify-content:center;gap:7px;
   border:none;border-radius:var(--app-r-pill);
-  background:rgba(255,253,249,.92);
+  background:rgba(255,255,255,.92);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   color:var(--app-ink);text-decoration:none;
   font:600 12px/1 var(--app-sans);
@@ -761,7 +838,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .ficha-contador{
   position:absolute;left:var(--app-gutter);bottom:14px;
   font:500 10px/1 var(--app-mono);letter-spacing:.04em;color:var(--app-muted-3);
-  background:rgba(255,253,249,.82);padding:4px 7px;border-radius:5px;
+  background:rgba(255,255,255,.82);padding:4px 7px;border-radius:5px;
 }
 
 .ficha-cuerpo{padding-top:18px;}
@@ -775,8 +852,8 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .ficha-antes{font:400 14px/1 var(--app-sans);color:var(--app-faint);text-decoration:line-through;}
 .ficha-ahorras{
   padding:4px 8px;border-radius:6px;
-  background:var(--app-terracotta-soft);
-  font:700 11px/1 var(--app-sans);color:var(--app-terracotta);
+  background:var(--peru-rojo-soft);
+  font:700 11px/1 var(--app-sans);color:var(--peru-rojo);
 }
 
 .ficha-chips{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
@@ -785,9 +862,9 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   display:inline-flex;align-items:center;
   font:600 11.5px/1 var(--app-sans);
 }
-.ficha-chip.verde{background:var(--app-green-soft);color:var(--app-green);}
+.ficha-chip.verde{background:var(--app-green-soft);color:var(--app-green-ink);}
 .ficha-chip.neutro{background:var(--app-sunken);color:var(--app-muted);}
-.ficha-chip.alerta{background:var(--app-terracotta-soft);color:var(--app-terracotta);}
+.ficha-chip.alerta{background:var(--peru-rojo-soft);color:var(--peru-rojo);}
 
 .ficha-color-label{
   margin-top:22px;
@@ -837,7 +914,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   font:400 12.5px/1.35 var(--app-sans);color:var(--app-ink-70);
 }
 .incluye-item + .incluye-item{margin-top:8px;}
-.incluye-punto{width:5px;height:5px;flex:none;border-radius:50%;background:var(--app-terracotta);}
+.incluye-punto{width:5px;height:5px;flex:none;border-radius:50%;background:var(--app-ink);}
 
 .bloque-asesor{
   margin-top:14px;
@@ -848,11 +925,15 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   text-decoration:none;touch-action:manipulation;
 }
 .bloque-asesor:active{opacity:.88;}
-.asesor-icono{width:30px;height:30px;flex:none;border-radius:50%;background:var(--app-green);}
+.asesor-icono{
+  width:30px;height:30px;flex:none;border-radius:50%;background:var(--app-green);
+  display:flex;align-items:center;justify-content:center;color:var(--app-on-green);
+}
+.asesor-icono svg{width:17px;height:17px;display:block;}
 .asesor-texto{flex:1;min-width:0;}
 .asesor-titulo{display:block;font:600 12.5px/1.25 var(--app-sans);color:var(--app-ink);}
 .asesor-sub{display:block;margin-top:3px;font:400 11.5px/1.35 var(--app-sans);color:#41604F;}
-.asesor-chevron{flex:none;font:600 15px/1 var(--app-sans);color:var(--app-green);}
+.asesor-chevron{flex:none;font:600 15px/1 var(--app-sans);color:var(--app-green-ink);}
 
 /* Barra fija de acción. Ocupa el sitio de la barra inferior, que en la ficha
    se esconde. El padding de abajo suma la franja de gestos del teléfono. */
@@ -861,18 +942,18 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   max-width:var(--app-max);margin:0 auto;
   display:flex;gap:10px;
   padding:12px var(--app-gutter) calc(12px + max(18px, env(safe-area-inset-bottom)));
-  background:rgba(255,253,249,.96);
+  background:rgba(255,255,255,.96);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   border-top:1px solid rgba(23,20,15,.1);
 }
 .ficha-barra .btn-app{height:var(--app-cta-h);font-size:14px;}
-.btn-app.terracota{background:var(--app-terracotta);color:#fff;}
+.btn-app.terracota{background:var(--app-ink);color:#fff;}
 .btn-app.terracota[disabled]{background:var(--app-sunken);color:var(--app-faint);}
 .btn-wa-cuadrado{
   flex:none;width:var(--app-cta-h);height:var(--app-cta-h);
   display:flex;align-items:center;justify-content:center;
   border-radius:var(--app-r-btn);
-  background:var(--app-green);color:#fff;
+  background:var(--app-green);color:var(--app-on-green);
   touch-action:manipulation;
 }
 .btn-wa-cuadrado:active{opacity:.88;}
@@ -896,7 +977,7 @@ footer.site{
   font-family:var(--app-sans);
 }
 footer.site .footer-grid{max-width:var(--app-max);margin:0 auto;padding:26px var(--app-gutter);}
-footer.site h4{font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--app-terracotta);}
+footer.site h4{font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--app-ink);}
 footer.site p,footer.site .link{font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);}
 footer.site .link{background:none;border:none;padding:0;text-align:left;display:block;}
 footer.site .logo-mark{height:40px;}
@@ -906,6 +987,14 @@ footer.site .footer-bottom{
   padding:14px var(--app-gutter);text-align:center;
   font:400 11px/1.4 var(--app-sans);color:var(--app-muted-3);
 }
+/* Piezas que solo existen en el pie de escritorio (ver el @media): el
+   teléfono suelto y la columna de pagos y envíos. En el móvil esa
+   información ya vive en la portada y en el carrito. */
+.footer-solo-esc{display:none;}
+footer.site .footer-pagos{display:none;}
+/* Ayuda y Legal van envueltas para poder tumbarlas en una fila en
+   escritorio. Aquí replican el hueco que tenían como celdas sueltas. */
+footer.site .footer-legal{display:grid;gap:30px;}
 
 /* ---------------- /buscar ---------------- */
 .app-head.buscar{padding-bottom:12px;}
@@ -933,7 +1022,7 @@ footer.site .footer-bottom{
 .buscar-caja input::-webkit-search-cancel-button{-webkit-appearance:none;}
 .buscar-cerrar{
   flex:none;background:none;border:none;padding:10px 2px;
-  font:600 13px/1 var(--app-sans);color:var(--app-terracotta);
+  font:600 13px/1 var(--app-sans);color:var(--app-ink);
   touch-action:manipulation;
 }
 .buscar-cerrar:active{opacity:.88;}
@@ -975,9 +1064,9 @@ footer.site .footer-bottom{
 .res-quitar{
   flex:none;height:28px;padding:0 10px;
   border-radius:var(--app-r-pill);
-  border:1px solid var(--app-terracotta);
-  background:var(--app-terracotta-soft);
-  font:600 11.5px/1 var(--app-sans);color:var(--app-terracotta);
+  border:1px solid var(--app-ink);
+  background:var(--app-sunken);
+  font:600 11.5px/1 var(--app-sans);color:var(--app-ink);
   touch-action:manipulation;
 }
 .res-quitar:active{opacity:.88;}
@@ -1009,7 +1098,7 @@ footer.site .footer-bottom{
 }
 .fila-linea{margin-top:5px;display:flex;align-items:baseline;gap:7px;}
 .fila-precio{font:700 14px/1 var(--app-sans);color:var(--app-ink);}
-.fila-stock{font:400 11px/1 var(--app-sans);color:var(--app-green);}
+.fila-stock{font:400 11px/1 var(--app-sans);color:var(--app-green-ink);}
 .fila-stock.agotado{color:var(--app-faint);}
 .fila-chevron{flex:none;font:600 15px/1 var(--app-sans);color:#C0B6A8;}
 
@@ -1034,7 +1123,7 @@ footer.site .footer-bottom{
   max-width:var(--app-max);margin:0 auto;
   display:flex;gap:10px;
   padding:12px var(--app-gutter) calc(12px + max(18px, env(safe-area-inset-bottom)));
-  background:rgba(255,253,249,.96);
+  background:rgba(255,255,255,.96);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   border-top:1px solid rgba(23,20,15,.1);
 }
@@ -1102,14 +1191,14 @@ footer.site .footer-bottom{
   text-align:left;touch-action:manipulation;
 }
 .opcion:active{opacity:.88;}
-.opcion.sel{border-color:var(--app-terracotta);}
+.opcion.sel{border-color:var(--app-ink);}
 .opcion-radio{
   width:18px;height:18px;flex:none;
   border-radius:50%;border:1.5px solid var(--app-line-strong);
   display:flex;align-items:center;justify-content:center;
 }
-.opcion.sel .opcion-radio{border-color:var(--app-terracotta);}
-.opcion-punto{width:9px;height:9px;border-radius:50%;background:var(--app-terracotta);}
+.opcion.sel .opcion-radio{border-color:var(--app-ink);}
+.opcion-punto{width:9px;height:9px;border-radius:50%;background:var(--app-ink);}
 .opcion-texto{flex:1;min-width:0;}
 .opcion-titulo{display:block;font:600 12.5px/1.25 var(--app-sans);color:var(--app-ink);}
 .opcion-nota{display:block;margin-top:3px;font:400 11.5px/1.35 var(--app-sans);color:var(--app-muted-2);}
@@ -1127,7 +1216,7 @@ footer.site .footer-bottom{
 }
 .resumen-fila > span:last-child{color:var(--app-ink);}
 .resumen-fila.descuento,
-.resumen-fila.descuento > span:last-child{color:var(--app-green);}
+.resumen-fila.descuento > span:last-child{color:var(--app-green-ink);}
 .resumen-total{
   margin-top:9px;padding-top:11px;
   border-top:1px solid var(--app-line);
@@ -1169,8 +1258,8 @@ footer.site .footer-bottom{
   resize:vertical;
 }
 .campo input::placeholder,.campo textarea::placeholder{color:var(--app-muted-3);font-size:14px;}
-.campo input:focus,.campo textarea:focus{outline:none;border-color:var(--app-terracotta);}
-.campo input:invalid:not(:placeholder-shown){border-color:var(--app-terracotta);}
+.campo input:focus,.campo textarea:focus{outline:none;border-color:var(--app-ink);}
+.campo input:invalid:not(:placeholder-shown){border-color:var(--app-ink);}
 .campo-resumen{
   margin-top:9px;
   min-height:46px;padding:14px 13px;
@@ -1194,7 +1283,7 @@ footer.site .footer-bottom{
   display:flex;align-items:center;justify-content:center;
   width:64px;height:64px;margin:0 auto;
   border-radius:50%;background:var(--app-green);
-  font:600 26px/1 var(--app-sans);color:#fff;
+  font:600 26px/1 var(--app-sans);color:var(--app-on-green);
 }
 .pedido-titulo{
   margin-top:20px;
@@ -1217,47 +1306,193 @@ footer.site .footer-bottom{
 /* Va ANTES del @media a propósito: las dos reglas tienen la misma
    especificidad y gana la última escrita. Con el display:none aquí, el
    display:block de dentro del @media manda en escritorio. */
+/* ==================== BANDA DE OFERTA DE LA SEMANA ====================
+   El rojo es el de la bandera (#D91023), no el terracota de la marca: es un
+   aviso temporal y tiene que distinguirse de los botones de compra.
+
+   En el teléfono es una sola línea de 50px que va debajo del buscador (ver
+   renderBandaOferta); en escritorio crece a la tarjeta con la llama asomando
+   y va debajo de la barra de categorías. */
+.banda-oferta{padding:14px var(--app-gutter) 0;}
+.bo-caja{background:var(--peru-rojo);border-radius:12px;}
+
+.bo-llama{
+  flex:none;
+  width:28px;height:28px;border-radius:50%;
+  background:#fff;border:2px solid var(--peru-rojo);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;line-height:1;
+}
+
+/* ---- versión fina (teléfono) ---- */
+.bo-fina{
+  display:flex;align-items:center;gap:10px;
+  height:50px;padding:0 11px;text-decoration:none;
+}
+.bo-fina:active{opacity:.88;}
+.bo-fina-txt{
+  flex:1;min-width:0;
+  font:700 12.5px/1.25 var(--app-sans);color:#fff;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.bo-fina-reloj{
+  flex:none;
+  font:800 13px/1 var(--app-sans);color:#fff;
+  font-variant-numeric:tabular-nums;
+}
+.bo-fina-chev{flex:none;font:700 17px/1 var(--app-sans);color:rgba(255,255,255,.72);}
+
+/* ==================== CABECERA DE ESCRITORIO ====================
+   Tres piezas apiladas del handoff de escritorio: franja utilitaria negra de
+   38px, cabecera pegajosa de 78px (marca · buscador con resultados en vivo ·
+   asesor · carrito) y barra de 7 categorías de 48px.
+
+   Todas nacen apagadas. Por debajo de 900px manda la barra inferior del
+   teléfono y ninguna de estas existe; se encienden dentro del @media, que va
+   más abajo y por tanto gana. */
+
+/* ---------------- franja utilitaria ---------------- */
+.franja-util{display:none;background:var(--app-ink);}
+.franja-util-inner{
+  max-width:var(--app-max);margin:0 auto;height:38px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:0 var(--app-gutter);
+}
+.franja-util span{font:400 12px/1 var(--app-sans);color:rgba(255,255,255,.72);}
+.franja-derecha{display:flex;align-items:center;gap:20px;}
+.franja-horario{font-weight:500;color:var(--app-green-mint) !important;}
+
 /* ---------------- barra superior ---------------- */
 .nav-esc{
   display:none;                      /* solo escritorio */
   position:sticky;top:0;z-index:60;
-  background:rgba(255,253,249,.96);
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  background:var(--app-surface);
   border-bottom:1px solid var(--app-line);
 }
 .nav-esc-inner{
-  max-width:var(--app-max);margin:0 auto;
-  display:flex;align-items:center;gap:26px;
-  padding:12px var(--app-gutter);
+  max-width:var(--app-max);margin:0 auto;height:78px;
+  display:flex;align-items:center;gap:28px;
+  padding:0 var(--app-gutter);
 }
-.nav-esc-marca{display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;}
-.nav-esc-marca img{width:38px;height:38px;border-radius:50%;object-fit:cover;}
-.nav-esc-marca b{display:block;font:600 14px/1.2 var(--app-sans);color:var(--app-ink);}
-.nav-esc-marca i{display:block;font:400 11px/1.3 var(--app-sans);font-style:normal;color:var(--app-muted-2);}
-.nav-esc-links{display:flex;align-items:center;gap:22px;flex:1;}
-.nav-esc-links a{
-  font:500 13.5px/1 var(--app-sans);color:var(--app-ink-70);
-  text-decoration:none;padding:6px 0;border-bottom:2px solid transparent;
+.nav-esc-marca{display:flex;align-items:center;gap:11px;text-decoration:none;flex:none;}
+.nav-esc-marca img{width:44px;height:44px;border-radius:50%;object-fit:cover;}
+.nav-esc-marca b{display:block;font:600 17px/1.1 var(--app-sans);letter-spacing:-.01em;color:var(--app-ink);}
+.nav-esc-marca i{display:block;font:400 11.5px/1.3 var(--app-sans);font-style:normal;color:var(--app-muted-2);}
+
+/* ---------------- buscador con dropdown en vivo ----------------
+   En escritorio el buscador deja de ser un botón que salta a /buscar: filtra
+   mientras escribes y enseña hasta cinco filas debajo del input. La ruta
+   /buscar sigue existiendo para el teléfono y para quien llegue por enlace. */
+.nav-buscar{position:relative;flex:1;max-width:520px;}
+.nav-buscar-caja{
+  display:flex;align-items:center;gap:11px;height:46px;padding:0 16px;
+  border-radius:var(--app-r-input);
+  background:var(--app-sunken);border:1px solid rgba(23,20,15,.1);
 }
-.nav-esc-links a:hover{color:var(--app-ink);}
-.nav-esc-links a.activo{color:var(--app-terracotta);border-bottom-color:var(--app-terracotta);}
-.nav-esc-buscar{
-  display:flex;align-items:center;gap:8px;flex:none;
-  height:38px;padding:0 14px;
-  border-radius:var(--app-r-pill);
-  background:var(--app-sunken);border:1px solid var(--app-line);
-  font:400 13px/1 var(--app-sans);color:var(--app-muted-3);text-decoration:none;
+.nav-buscar-caja:focus-within{border-color:var(--app-ink);}
+.nav-buscar-caja > svg{width:16px;height:16px;flex:none;stroke:var(--app-faint);stroke-width:2;}
+.nav-buscar-caja input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;
+  font:400 14px/1 var(--app-sans);color:var(--app-ink);
 }
-.nav-esc-buscar svg{width:15px;height:15px;stroke:var(--app-faint);stroke-width:2;}
+.nav-buscar-caja input::-webkit-search-cancel-button{display:none;}
+.nav-buscar-limpiar{
+  background:none;border:0;padding:0;flex:none;
+  font:600 12px/1 var(--app-sans);color:var(--app-ink);
+}
+.nav-buscar-menu{
+  position:absolute;top:54px;left:0;right:0;z-index:70;
+  background:var(--app-surface);
+  border:1px solid rgba(23,20,15,.12);border-radius:14px;
+  box-shadow:0 18px 40px rgba(23,20,15,.14);
+  padding:10px;
+}
+/* Sin nada escrito el contenedor va vacío: si no, quedaría una caja con
+   borde y sombra colgando del input. */
+.nav-buscar-menu:empty{display:none;}
+.nav-res-conteo{
+  padding:4px 8px 8px;
+  font:600 10.5px/1 var(--app-sans);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--app-muted-3);
+}
+.nav-res{
+  display:flex;gap:12px;align-items:center;padding:9px;
+  border-radius:10px;text-decoration:none;
+}
+.nav-res:hover,.nav-res.marcado{background:var(--app-sunken);}
+.nav-res-thumb{
+  width:48px;height:48px;flex:none;border-radius:8px;overflow:hidden;
+  background:var(--app-stripe);
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-res-thumb img{width:100%;height:100%;object-fit:contain;background:#fff;}
+.nav-res-thumb svg{width:22px;height:22px;stroke:var(--app-faint);}
+.nav-res-texto{flex:1;min-width:0;}
+.nav-res-nombre{
+  display:block;font:500 13px/1.3 var(--app-sans);color:var(--app-ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.nav-res-linea{margin-top:4px;display:flex;gap:8px;align-items:baseline;}
+.nav-res-precio{font:700 13.5px/1 var(--app-sans);color:var(--app-ink);}
+.nav-res-stock{font:400 11px/1 var(--app-sans);color:var(--app-green-ink);}
+.nav-res-stock.agotado{color:var(--app-muted-3);}
+.nav-res-chevron{font:600 15px/1 var(--app-sans);color:#C0B6A8;flex:none;}
+.nav-buscar-vacio{padding:16px 10px;text-align:center;}
+.nav-buscar-vacio .nbv-titulo{font:400 17px/1.2 var(--app-serif);color:var(--app-ink);}
+.nav-buscar-vacio p{margin-top:6px;font:400 12px/1.45 var(--app-sans);color:var(--app-muted);}
+.nav-buscar-vacio a{
+  margin:12px auto 0;max-width:220px;height:38px;border-radius:10px;
+  background:var(--app-green);text-decoration:none;
+  display:flex;align-items:center;justify-content:center;
+  font:600 12.5px/1 var(--app-sans);color:var(--app-on-green);
+}
+.nav-buscar-vacio a:hover{background:var(--app-green-hover);}
+
+/* ---------------- asesor y carrito ---------------- */
+.nav-esc-asesor{
+  flex:none;display:flex;align-items:center;gap:8px;
+  height:44px;padding:0 16px;border-radius:var(--app-r-pill);
+  background:var(--app-green);text-decoration:none;
+  font:600 13px/1 var(--app-sans);color:var(--app-on-green);
+}
+.nav-esc-asesor .ico-wa svg{width:17px;height:17px;}
+.nav-esc-asesor:hover{background:var(--app-green-hover);}
 .nav-esc-carrito{
   position:relative;flex:none;
-  width:38px;height:38px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;gap:9px;
+  height:44px;padding:0 16px;border-radius:var(--app-r-pill);
+  border:1px solid var(--app-line-strong);
   color:var(--app-ink);text-decoration:none;
 }
-.nav-esc-carrito svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.7;}
-.nav-esc-carrito.activo{color:var(--app-terracotta);}
-.nav-esc-carrito .tab-badge{top:0;right:0;}
+.nav-esc-carrito:hover{background:var(--app-sunken);}
+.nav-esc-carrito svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.8;}
+.nav-esc-carrito span{font:600 13px/1 var(--app-sans);white-space:nowrap;}
+.nav-esc-carrito.activo{border-color:var(--app-ink);color:var(--app-ink);}
+.nav-badge{
+  position:absolute;top:-4px;right:-4px;
+  min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+  background:var(--app-ink);
+  display:flex;align-items:center;justify-content:center;
+  font:700 10.5px/1 var(--app-sans);color:#fff;
+}
+
+/* ---------------- barra de categorías ---------------- */
+.nav-esc-cats{
+  max-width:var(--app-max);margin:0 auto;height:48px;
+  display:flex;align-items:center;gap:26px;
+  padding:0 var(--app-gutter);
+  border-top:1px solid rgba(23,20,15,.07);
+}
+.nav-esc-cats a{
+  height:47px;display:flex;align-items:center;flex:none;
+  font:600 13px/1 var(--app-sans);color:var(--app-ink-70);
+  text-decoration:none;border-bottom:2px solid transparent;
+}
+.nav-esc-cats a:hover{color:var(--app-ink);}
+.nav-esc-cats a.activo{color:var(--app-ink);border-bottom-color:var(--app-ink);}
+.nav-esc-cats .nav-ofertas{
+  margin-left:auto;height:auto;border-bottom:none;color:var(--app-ink);
+}
 
 /* ======================================================================
    ESCRITORIO (≥900px)
@@ -1268,11 +1503,22 @@ footer.site .footer-bottom{
    ====================================================================== */
 @media (min-width:900px){
 
-  :root{--app-max:1200px;--app-gutter:24px;}
+  /* El contenedor del handoff de escritorio: 1280px con 40px de margen. */
+  :root{--app-max:1280px;--app-gutter:40px;}
+
+  /* position:sticky no engancha si <body> es su propio contenedor de scroll,
+     y lo es en cuanto lleva overflow-x:hidden (con un eje recortado, el otro
+     pasa de visible a auto). Por eso la cabecera se iba con el scroll aunque
+     tuviera position:sticky. `clip` recorta igual pero NO crea contenedor de
+     scroll, así que la cabecera, el panel de filtros y el de compra se quedan
+     pegados de verdad. En el teléfono se deja `hidden`, que es lo que hay
+     probado ahí. */
+  html,body{overflow-x:clip;}
 
   /* la navegación sube: abajo estorba cuando hay ratón */
   .bottom-nav{display:none;}
   body{padding-bottom:0;}
+  .franja-util{display:block;}
   .nav-esc{display:block;}
 
   /* las cabeceras de pantalla dejan de ser pegajosas: ya lo es la de arriba */
@@ -1282,63 +1528,193 @@ footer.site .footer-bottom{
   /* el botón atrás es un gesto de teléfono; aquí está la barra superior */
   .app-head.cat .btn-volver{display:none;}
 
+  /* ---------------- banda de oferta ---------------- */
+  .banda-oferta{padding:18px var(--app-gutter) 0;}
+  .bo-caja{
+    position:relative;max-width:var(--app-max);margin:0 auto;
+    border-radius:16px;
+  }
+  .bo-llama{
+    position:absolute;left:18px;top:-16px;
+    width:58px;height:58px;border-width:3px;font-size:29px;
+  }
+  .bo-fila{
+    display:flex;flex-wrap:nowrap;align-items:center;gap:20px;
+    padding:0 26px 0 88px;height:74px;
+  }
+  .bo-texto{flex:1 1 auto;min-width:0;}
+  .bo-eyebrow{
+    display:block;
+    font:700 10px/1 var(--app-sans);letter-spacing:.14em;
+    text-transform:uppercase;color:rgba(255,255,255,.78);
+  }
+  .bo-titulo{
+    display:block;margin-top:6px;
+    font:800 19px/1 var(--app-sans);letter-spacing:-.015em;color:#fff;
+  }
+  .bo-reloj{display:flex;gap:8px;flex:none;}
+  .bo-cel{
+    flex:none;min-width:54px;
+    background:#fff;border-radius:9px;padding:8px 12px;text-align:center;
+  }
+  .bo-cel b{display:block;font:800 19px/1 var(--app-sans);color:var(--peru-rojo);}
+  .bo-cel i{
+    display:block;margin-top:3px;
+    font:600 8.5px/1 var(--app-sans);font-style:normal;
+    letter-spacing:.1em;color:rgba(217,16,35,.7);
+  }
+  .bo-cta{
+    flex:none;display:flex;align-items:center;justify-content:center;
+    height:42px;padding:0 20px;border-radius:var(--app-r-pill);
+    background:var(--app-ink);color:#fff;text-decoration:none;
+    font:700 13px/1 var(--app-sans);white-space:nowrap;
+  }
+  .bo-cta:hover{background:#000;}
+
   /* ---------------- portada ---------------- */
   .hero-editorial{
-    display:grid;grid-template-columns:minmax(0,1fr) 400px;
-    column-gap:56px;align-items:center;
-    padding-top:44px;padding-bottom:40px;
+    display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+    column-gap:36px;align-items:center;
+    padding-top:40px;padding-bottom:8px;
   }
   .hero-editorial.sin-destacado{grid-template-columns:minmax(0,1fr);}
+  .hero-texto{display:flex;flex-direction:column;justify-content:center;padding:8px 0;}
   .hero-eyebrow{
-    font:600 11px/1 var(--app-sans);letter-spacing:.09em;
-    text-transform:uppercase;color:var(--app-terracotta);
+    margin-bottom:0;
+    font:700 11px/1 var(--app-sans);letter-spacing:.14em;
+    text-transform:uppercase;color:var(--app-ink);
   }
-  .hero-editorial h1{font-size:56px;line-height:1.04;margin-top:14px;}
-  .hero-editorial p{font-size:15px;line-height:1.6;max-width:46ch;margin-top:14px;}
-  .hero-ctas{display:flex;gap:12px;margin-top:26px;max-width:420px;}
-  .hero-ctas .btn-app{height:50px;font-size:13.5px;}
+  /* El titular del hero rompe con el serif editorial del resto del sitio y se
+     va a Archivo en peso 800: es el bloque que tiene que empujar a comprar, y
+     la sans pesada lee como tienda. Instrument Serif sigue mandando en los
+     títulos de sección, la ficha y el pie. */
+  .hero-editorial h1{
+    font-family:var(--app-sans);font-weight:800;
+    font-size:54px;line-height:1.02;letter-spacing:-.035em;margin-top:16px;
+  }
+  .hero-editorial p{
+    font-size:16px;line-height:1.55;color:var(--app-ink-70);
+    max-width:470px;margin-top:18px;
+  }
+  .hero-ctas{display:flex;gap:12px;margin-top:28px;}
+  .hero-ctas .btn-app{flex:none;width:auto;height:50px;padding:0 24px;font:700 15px/1 var(--app-sans);}
+  .hero-ctas .btn-app.terracota:hover{background:#000000;}
+  .hero-ctas .btn-app.contorno:hover{background:var(--app-surface);}
+  /* Los tres datos duros del handoff, con el umbral real de envío gratis. */
+  /* En el teléfono los tres datos se reparten el ancho; aquí van pegados a
+     la izquierda con su separación propia. */
+  .hero-datos{display:flex;gap:34px;margin-top:32px;}
+  .hero-datos span{flex:none;}
+  .hero-datos b{display:block;font:800 22px/1 var(--app-sans);color:var(--app-ink);}
+  .hero-datos i{display:block;margin-top:5px;font:400 12px/1.3 var(--app-sans);font-style:normal;color:var(--app-muted-2);}
 
-  .hero-destacado{
-    display:block;text-decoration:none;
-    background:var(--app-surface);border:1px solid var(--app-line);
-    border-radius:18px;padding:20px;
-    touch-action:manipulation;
+  /* Mosaico de tres fotos: una alta a la izquierda y dos apiladas. */
+  .hero-mosaico{
+    display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+    gap:12px;height:440px;
   }
-  .hero-destacado:active{opacity:.88;}
-  .hero-dest-foto{
-    position:relative;display:flex;align-items:center;justify-content:center;
-    height:260px;margin-bottom:16px;
-    border-radius:var(--app-r-img);background:var(--app-stripe);overflow:hidden;
+  .hero-tile{
+    display:flex;flex-direction:column;overflow:hidden;
+    border-radius:16px;padding:14px;text-decoration:none;
+    background:var(--app-sunken);
+    transition:transform .18s ease;
   }
-  .hero-dest-foto img{width:100%;height:100%;object-fit:contain;background:#fff;}
-  .hero-dest-foto svg{width:60px;height:60px;stroke:var(--app-faint);}
-  .hero-dest-eyebrow{
+  .hero-tile:hover{transform:translateY(-2px);}
+  .hero-tile.alto{grid-row:span 2;}
+  .hero-tile.tono-negro{background:var(--app-ink);}
+  .hero-tile.tono-verde{background:var(--app-green);}
+  .hero-tile-foto{
+    position:relative;flex:1;min-height:0;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:10px;background:#fff;overflow:hidden;
+  }
+  .hero-tile-foto img{width:100%;height:100%;object-fit:contain;}
+  .hero-tile-foto svg{width:44px;height:44px;stroke:var(--app-faint);}
+  .hero-tile-pie{display:block;margin-top:10px;}
+  .hero-tile-pie b{
+    display:block;font:600 13px/1.3 var(--app-sans);color:var(--app-ink);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .hero-tile-pie i{display:block;margin-top:4px;font:700 15px/1 var(--app-sans);font-style:normal;color:var(--app-ink);}
+  .hero-tile-pie s{font:400 12px/1 var(--app-sans);color:var(--app-faint);margin-left:6px;}
+  /* El tile negro lleva texto blanco y el verde texto oscuro: son fondos
+     opuestos y compartir regla dejaba uno de los dos ilegible. */
+  .hero-tile.tono-negro .hero-tile-pie b,.hero-tile.tono-negro .hero-tile-pie i{color:#fff;}
+  .hero-tile.tono-negro .hero-tile-pie s{color:rgba(255,255,255,.55);}
+  .hero-tile.tono-verde .hero-tile-pie b,.hero-tile.tono-verde .hero-tile-pie i{color:var(--app-on-green);}
+  .hero-tile.tono-verde .hero-tile-pie s{color:rgba(15,46,27,.6);}
+
+  /* Los carruseles dejan de desplazarse: son grillas, así que recuperan el
+     margen lateral que en el teléfono se quitaba para sangrar al borde. */
+  .app-shell > .carrusel{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
+
+  /* ---------------- barra de categorías ----------------
+     Aquí sí caben las siete en una fila, con los iconos grandes. */
+  /* Aquí caben las siete: se juntan en un solo panel con líneas de 1px, y no
+     hay nada que desplazar ni que insinuar. */
+  .cat-barra{
+    background:var(--app-ink);border-radius:16px;overflow:hidden;
+    gap:0;margin-top:40px;
+  }
+  .cat-barra::after{display:none;}
+  .cat-item{
+    flex:1;width:auto;min-width:0;padding:22px 14px 20px;
+    background:none;border-radius:0;
+    border-left:1px solid rgba(255,255,255,.1);
+    transition:background .18s ease;
+  }
+  .cat-item:first-child{border-left:none;}
+  .cat-item:hover{background:rgba(255,255,255,.06);}
+  .cat-item-ico{height:40px;}
+  .cat-item-ico svg{width:38px;height:38px;}
+  .cat-item-nombre{margin-top:14px;height:auto;font-size:13px;}
+  .cat-item-desde{margin-top:6px;font-size:12px;}
+
+  /* ---------------- banda de la lista escolar ----------------
+     Antes era la celda grande de la grilla; sin grilla pasa a ser una banda
+     ancha debajo de la barra, que le da el mismo peso sin romper la fila. */
+  .tile-escolar{
+    position:relative;display:block;
+    margin-top:16px;margin-left:var(--app-gutter);margin-right:var(--app-gutter);
+  }
+  .tile-escolar-color{
+    display:flex;align-items:center;gap:28px;
+    background:var(--app-green);border-radius:16px;
+    padding:22px 26px;height:auto;text-decoration:none;
+  }
+  .tile-escolar-fotos{display:flex;gap:12px;flex:none;}
+  .tile-escolar-foto{
+    width:132px;height:132px;flex:none;
+    border-radius:10px;overflow:hidden;background:#fff;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .tile-escolar-foto img{width:100%;height:100%;object-fit:contain;padding:10px;}
+  .tile-escolar-txt{flex:1;min-width:0;display:block;padding-bottom:0;}
+  .tile-escolar-eyebrow{
     display:block;font:600 10px/1 var(--app-sans);letter-spacing:.09em;
-    text-transform:uppercase;color:var(--app-terracotta);
+    text-transform:uppercase;color:rgba(15,46,27,.72);
   }
-  .hero-dest-nombre{display:block;margin-top:8px;font:500 14px/1.35 var(--app-sans);color:var(--app-ink);}
-  .hero-dest-precio{display:block;margin-top:7px;font:700 24px/1 var(--app-sans);color:var(--app-ink);}
-  .hero-dest-precio s{font:400 14px/1 var(--app-sans);color:var(--app-faint);margin-left:8px;}
-
-  /* categorías en mosaico: la primera manda, viento cae en vertical */
-  nav.carrusel{
-    display:grid;overflow:visible;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    grid-auto-rows:118px;gap:12px;
-    padding-top:4px;padding-bottom:0;
+  .tile-escolar-titulo{display:block;margin-top:10px;font:400 30px/1.12 var(--app-serif);color:var(--app-on-green);}
+  .tile-escolar-copy{
+    display:block;margin-top:10px;max-width:52ch;
+    font:400 13.5px/1.55 var(--app-sans);color:rgba(15,46,27,.74);
   }
-  .cat-tile-app{width:auto;}
-  .cat-tile-app:nth-child(1){grid-column:span 2;grid-row:span 2;}
-  .cat-tile-app:nth-child(4){grid-row:span 2;}
-  .cat-tile-color{
-    height:100%;flex-direction:column;align-items:flex-start;justify-content:flex-end;
-    padding:14px;position:relative;overflow:hidden;
+  .tile-escolar-datos{
+    display:block;margin-top:12px;
+    font:400 12.5px/1 var(--app-sans);color:rgba(15,46,27,.74);
   }
-  .cat-tile-color svg{position:absolute;top:14px;left:14px;opacity:.4;}
-  .cat-tile-app:nth-child(1) .cat-tile-color svg{width:42px;height:42px;}
-  .cat-tile-nombre{height:auto;margin-top:0;color:#fff;font-size:14px;}
-  .cat-tile-app:nth-child(1) .cat-tile-nombre{font-size:21px;}
-  .cat-tile-sub{margin-top:3px;color:rgba(255,255,255,.72);}
+  .tile-escolar-datos b{font-weight:700;color:var(--app-on-green);}
+  .tile-escolar-ver{
+    display:block;margin-top:14px;
+    font:600 12.5px/1 var(--app-sans);color:var(--app-on-green);
+  }
+  .tile-escolar-wa{
+    position:absolute;right:26px;bottom:22px;
+    display:flex;align-items:center;height:40px;padding:0 18px;
+    border-radius:var(--app-r-pill);background:var(--app-surface);
+    font:600 12.5px/1 var(--app-sans);color:var(--app-green-ink);text-decoration:none;
+  }
+  .tile-escolar-wa:hover{background:#fff;}
 
   /* ofertas y recién llegados: cuatro por fila, sin desplazamiento lateral */
   div.carrusel{
@@ -1347,87 +1723,451 @@ footer.site .footer-bottom{
   }
   .carrusel-item{width:auto;}
   .grid-app{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-top:16px;}
+  .pcard{padding:12px;transition:border-color .18s ease;}
+  .pcard:hover{border-color:rgba(23,20,15,.24);}
   .pcard-foto{height:200px !important;}
-  .seccion-head{margin-top:44px;}
+  .pcard-nombre{height:36px;margin-top:12px;font-size:13.5px;line-height:1.35;}
+  .pcard-precio{font-size:20px;}
+  .pcard-antes{font-size:12.5px;}
+  .pcard-stock{margin-top:8px;font-size:11.5px;}
+  .seccion-head{margin-top:48px;}
   .seccion-head h2,.seccion-titulo{font-size:30px;}
-  .seccion-titulo{margin-top:44px;}
+  .seccion-titulo{margin-top:48px;}
 
-  /* la banda de colegio, estirada a 1200px, pedía aire y jerarquía */
-  .banda-colegio{margin-top:44px;padding:36px 40px;gap:32px;}
-  .banda-titulo{font-size:32px;}
-  .banda-copy{font-size:14px;max-width:52ch;}
-  .banda-chevron{width:44px;height:44px;font-size:20px;}
-
+  /* ---------------- visítanos ----------------
+     Dos columnas: el mapa a la izquierda (el handoff pone ahí una foto de la
+     fachada, que la tienda todavía no tiene) y el texto con los CTAs a la
+     derecha. */
   .tarjeta-visitanos{
-    margin-top:44px;padding:28px 32px;
-    display:grid;grid-template-columns:minmax(0,1fr) 300px;
+    margin-top:56px;padding:0;overflow:hidden;
+    display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);
     column-gap:40px;align-items:center;
   }
-  .tarjeta-visitanos > *{grid-column:1;}
-  .visitanos-botones{grid-column:2;grid-row:1/span 4;margin-top:0;flex-direction:column;}
+  .tarjeta-visitanos > *{grid-column:2;padding-left:0;padding-right:32px;}
+  .visitanos-mapa{
+    grid-column:1;grid-row:1 / span 6;align-self:stretch;
+    min-height:300px;background:var(--app-stripe);padding:0;
+  }
+  .visitanos-mapa iframe{width:100%;height:100%;border:0;display:block;}
+  /* El título serif hace de cabecera; el eyebrow sobraría encima. */
+  .tarjeta-visitanos .eyebrow-terracota{display:none;}
+  .visitanos-titulo{font-size:32px;line-height:1.14;margin-top:28px;}
+  .visitanos-dir{margin-top:14px;font-size:15px;}
+  .visitanos-horario{margin-top:6px;font-size:13.5px;}
+  .visitanos-botones{margin-top:20px;margin-bottom:28px;}
+  .visitanos-botones .btn-app{flex:none;width:auto;height:48px;padding:0 22px;font-size:13.5px;}
 
-  /* ---------------- categoría y buscador ---------------- */
+  /* ---------------- categoría ----------------
+     Migas, título de 40px con los chips de orden al lado y dos columnas:
+     panel de filtros fijo de 248px y grilla de tres. */
+  .migas{
+    padding-top:28px;
+    display:flex;align-items:center;gap:8px;
+    font:400 12.5px/1 var(--app-sans);color:var(--app-muted-3);
+  }
+  .migas a{color:var(--app-ink);text-decoration:none;}
+  .migas a:hover{text-decoration:underline;}
+  .migas b{font-weight:400;color:var(--app-muted);}
+
+  .cat-head{
+    margin-top:14px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  }
+  .cat-titulo{font:400 40px/1.08 var(--app-serif);color:var(--app-ink);}
+  .cat-conteo{margin-top:8px;font:400 13px/1.4 var(--app-sans);color:var(--app-muted);}
+  .cat-orden{display:flex;gap:8px;flex:none;}
+  .chip-orden{
+    height:38px;padding:0 16px;border-radius:var(--app-r-pill);
+    background:var(--app-surface);border:1px solid var(--app-line-strong);
+    font:600 12.5px/1 var(--app-sans);color:var(--app-ink-70);
+  }
+  .chip-orden:hover{border-color:rgba(23,20,15,.28);}
+  .chip-orden.activo{
+    background:var(--app-sunken);
+    border-color:var(--app-ink);color:var(--app-ink);
+  }
+
+  .cat-layout{
+    margin-top:26px;
+    display:grid;grid-template-columns:248px minmax(0,1fr);
+    gap:32px;align-items:start;
+  }
+  .cat-sidebar{position:sticky;top:140px;display:flex;flex-direction:column;gap:22px;}
+  .side-bloque{display:flex;flex-direction:column;}
+  .side-titulo{
+    font:600 11px/1 var(--app-sans);letter-spacing:.08em;
+    text-transform:uppercase;color:var(--app-muted-3);margin-bottom:12px;
+  }
+  .side-cat{
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    padding:6px 0;text-decoration:none;
+    font:400 13px/1.35 var(--app-sans);color:var(--app-ink-70);
+  }
+  .side-cat:hover{color:var(--app-ink);}
+  .side-cat i{font-style:normal;font-size:11.5px;color:var(--app-faint);}
+  .side-cat.activa{font-weight:600;color:var(--app-ink);}
+  .side-cat.activa i{color:var(--app-ink);}
+
+  .casilla{
+    display:flex;align-items:center;gap:10px;
+    background:none;border:0;padding:6px 0;text-align:left;width:100%;
+    font:400 13px/1.35 var(--app-sans);color:var(--app-ink-70);
+  }
+  .casilla:hover{color:var(--app-ink);}
+  .casilla-cuadro{
+    flex:none;width:16px;height:16px;border-radius:4px;
+    border:1.5px solid var(--app-line-strong);background:var(--app-surface);
+    display:flex;align-items:center;justify-content:center;
+    font:700 10px/1 var(--app-sans);color:#fff;
+  }
+  .casilla.marcada .casilla-cuadro{background:var(--app-ink);border-color:var(--app-ink);}
+  .casilla.marcada .casilla-label{color:var(--app-ink);font-weight:500;}
+  .casilla-label{flex:1;min-width:0;}
+  .casilla-n{font-size:11.5px;color:var(--app-faint);}
+  .side-limpiar{
+    align-self:flex-start;background:none;border:0;padding:0;
+    font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
+  }
+  .side-limpiar:hover{text-decoration:underline;}
+
+  .side-asesor{
+    background:var(--app-green-soft);border-radius:var(--app-r-card);
+    padding:18px;
+  }
+  .side-asesor-titulo{font:400 18px/1.15 var(--app-serif);color:var(--app-green-ink);}
+  .side-asesor p{margin-top:8px;font:400 12.5px/1.5 var(--app-sans);color:var(--app-ink-70);}
+  .side-asesor .btn-app{margin-top:14px;height:42px;font-size:12.5px;gap:8px;}
+  .side-asesor .ico-wa svg{width:16px;height:16px;}
+  .side-asesor .btn-app.verde:hover{background:var(--app-green-hover);}
+
+  /* La grilla de la categoría es de tres, no de cuatro: hay 248px menos de
+     ancho y las tarjetas llevan una fila más con el botón de agregar. */
+  .cat-lista .grid-app{grid-template-columns:repeat(3,minmax(0,1fr));padding-top:0;}
+  .cat-lista .pcard-foto{height:210px !important;}
+  .pcard-wrap{position:relative;display:flex;}
+  .pcard-wrap > .pcard{flex:1;min-width:0;}
+  .pcard-wrap .pcard-stock{padding-right:84px;}
+  .pcard-agregar{
+    position:absolute;right:12px;bottom:11px;
+    height:34px;padding:0 14px;border-radius:9px;
+    background:var(--app-surface);border:1px solid var(--app-ink);
+    font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
+    transition:background .16s ease,color .16s ease;
+  }
+  .pcard-agregar:hover{background:var(--app-ink);color:#fff;}
+  .pcard-agregar[disabled]{
+    border-color:var(--app-line-strong);color:var(--app-faint);
+    background:var(--app-sunken);cursor:default;
+  }
+  .pcard-agregar.added{background:var(--app-green);border-color:var(--app-green);color:var(--app-on-green);}
+
+  .cat-lista .catalogo-en-camino,
+  .cat-lista .sin-resultados{margin-top:0;padding:48px 40px;}
+  .cat-lista .cec-titulo{font-size:26px;}
+  .cat-lista .catalogo-en-camino p{font-size:13.5px;max-width:52ch;margin-left:auto;margin-right:auto;}
+
+  /* ---------------- buscador ---------------- */
   .chips-fila{flex-wrap:wrap;overflow:visible;margin-left:0;margin-right:0;padding:0;}
   .lista-res{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
 
-  /* ---------------- ficha ---------------- */
-  .app-shell.ficha{
-    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);
-    column-gap:48px;align-items:start;
-    padding-top:28px;
+  /* ---------------- ficha de producto ----------------
+     Foto grande con miniaturas y el texto largo debajo a dos columnas; el
+     panel de compra se queda pegado al costado (top:140px, que es lo que
+     mide la cabecera: 78 + 48). */
+  .fe-layout{
+    margin-top:18px;
+    display:grid;grid-template-columns:minmax(0,1.25fr) 452px;
+    gap:40px;align-items:start;
   }
-  .app-shell.ficha > .ficha-galeria{
-    grid-row:1 / span 2;
-    height:auto;aspect-ratio:1;
+  .fe-foto{
+    aspect-ratio:1;max-height:520px;
     border-radius:18px;border:1px solid var(--app-line);
-    margin-left:var(--app-gutter);
-    position:sticky;top:96px;
+    background:var(--app-surface);overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
   }
-  /* los flotantes sobran: hay barra arriba y el carrito está en ella */
-  .ficha-flotante{display:none;}
-  .ficha-cuerpo{grid-column:2;padding-top:0;padding-bottom:0;}
-  .ficha-nombre{font-size:34px;}
-  .app-shell.ficha > .ficha-barra{
-    grid-column:2;position:static;max-width:none;margin:0;
-    background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
-    border-top:none;padding:20px var(--app-gutter) 0;
+  .fe-foto img,.fe-foto video,.fe-foto iframe{
+    width:100%;height:100%;object-fit:contain;border:0;display:block;
+  }
+  .fe-foto .ficha-sinfoto{display:flex;align-items:center;justify-content:center;height:100%;}
+  .fe-foto .ficha-sinfoto svg{width:72px;height:72px;stroke:var(--app-faint);}
+  .fe-thumbs{margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;}
+  .fe-thumb{
+    width:104px;height:104px;padding:0;overflow:hidden;
+    border-radius:var(--app-r-img);
+    border:1px solid var(--app-line);background:var(--app-surface);
+  }
+  .fe-thumb img{width:100%;height:100%;object-fit:contain;}
+  .fe-thumb.sel{border:1.5px solid var(--app-ink);}
+  .fe-thumb-video{
+    display:flex;align-items:center;justify-content:center;height:100%;
+    font-size:22px;color:var(--app-muted-3);
+  }
+  .fe-texto{
+    margin-top:40px;
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:36px;align-items:start;
+  }
+  .fe-h2{font:400 24px/1.15 var(--app-serif);color:var(--app-ink);}
+  .fe-desc{margin-top:14px;}
+  .fe-desc p{font:400 14px/1.65 var(--app-sans);color:var(--app-ink-70);text-wrap:pretty;}
+  .fe-desc p + p{margin-top:12px;}
+  .fe-texto .ficha-specs{margin-top:14px;}
+  .fe-texto .ficha-incluye{margin-top:18px;}
+
+  /* panel de compra */
+  .fe-der{position:sticky;top:140px;}
+  .fe-panel{
+    background:var(--app-surface);border:1px solid var(--app-line);
+    border-radius:18px;padding:24px;
+  }
+  .fe-panel .ficha-nombre{margin-top:10px;font-size:32px;line-height:1.14;}
+  .fe-panel .ficha-precio{font-size:38px;}
+  .fe-panel .ficha-antes{font-size:16px;}
+  .fe-panel .ficha-ahorras{font-size:12px;padding:5px 9px;}
+  .fe-panel .ficha-precios{margin-top:14px;}
+  .fe-panel .ficha-chips{margin-top:14px;}
+  .fe-panel .swatch{width:46px;height:46px;}
+  .fe-compra{margin-top:24px;display:flex;gap:12px;}
+  .fe-stepper{
+    flex:none;display:flex;align-items:center;
+    border:1px solid var(--app-line-strong);border-radius:var(--app-r-btn);
+    height:52px;overflow:hidden;
+  }
+  .fe-stepper button{
+    width:42px;height:100%;background:var(--app-sunken);border:0;
+    font:400 18px/1 var(--app-sans);color:var(--app-ink);
+  }
+  .fe-stepper button:hover:not([disabled]){background:var(--app-line);}
+  .fe-stepper button[disabled]{color:var(--app-faint);cursor:default;}
+  .fe-stepper span{
+    min-width:44px;text-align:center;
+    font:600 14px/1 var(--app-sans);color:var(--app-ink);
+  }
+  .fe-compra .btn-app{height:52px;font-size:14px;}
+  .fe-compra .btn-app.terracota:hover:not([disabled]){background:#000000;}
+  .fe-ir-carrito{margin-top:10px;height:46px;font-size:13.5px;}
+  .fe-datos{margin-top:22px;border-top:1px solid var(--app-line);padding-top:16px;}
+  .fe-datos span{
+    display:block;padding:7px 0;
+    font:400 12.5px/1.45 var(--app-sans);color:var(--app-muted);
+  }
+  .fe-datos b{display:block;font-weight:600;color:var(--app-ink);}
+  .fe-der .bloque-asesor{margin-top:16px;}
+
+  /* ---------------- carrito y pago ----------------
+     Las dos pantallas comparten esqueleto: contenido a la izquierda y panel
+     de resumen pegado a la derecha, con el CTA dentro del panel en vez de en
+     una barra fija abajo (que es cosa del teléfono). */
+  .ped-titulo{margin-top:14px;font:400 40px/1.08 var(--app-serif);color:var(--app-ink);}
+  .ped-layout{
+    margin-top:26px;padding-bottom:48px;
+    display:grid;grid-template-columns:minmax(0,1fr) 420px;
+    gap:32px;align-items:start;
+  }
+  .ped-izq{display:flex;flex-direction:column;gap:16px;}
+  .ped-der{position:sticky;top:140px;}
+  .ped-panel,.ped-card{
+    background:var(--app-surface);border:1px solid var(--app-line);
+    border-radius:18px;padding:24px;
+  }
+  .ped-panel .bloque-titulo,.ped-card .bloque-titulo{margin-top:0;}
+  .ped-panel .resumen{
+    margin-top:18px;padding:16px 0 0;background:none;border:none;
+    border-top:1px solid var(--app-line);border-radius:0;
+  }
+  .ped-panel .resumen-fila{font-size:13px;}
+  .ped-panel .resumen-cifra{font-size:30px;}
+  .ped-cta{width:100%;height:52px;margin-top:18px;font-size:14px;}
+  .ped-cta.terracota:hover{background:#000000;}
+  .ped-cta.verde:hover{background:var(--app-green-hover);}
+  .ped-nota{
+    margin-top:12px;text-align:center;
+    font:400 11.5px/1.5 var(--app-sans);color:var(--app-muted-3);
   }
 
-  /* ---------------- carrito ---------------- */
-  .app-shell.con-barra{
-    display:grid;grid-template-columns:minmax(0,1fr) 360px;
-    column-gap:40px;align-items:start;
-    padding-bottom:40px;
+  /* líneas del carrito */
+  .ped-izq .lineas{padding-top:0;gap:12px;}
+  .ped-izq .linea{padding:16px;gap:18px;align-items:flex-start;}
+  .ped-izq .linea-thumb{width:120px;height:120px;border-radius:12px;}
+  .ped-izq .linea-nombre{font-size:15px;line-height:1.35;-webkit-line-clamp:2;}
+  .ped-izq .linea-meta{margin-top:5px;font-size:12.5px;}
+  .linea-unitario{display:block;margin-top:4px;font:400 12.5px/1.3 var(--app-sans);color:var(--app-muted-3);}
+  .ped-izq .linea-pie{margin-top:14px;flex-direction:row-reverse;justify-content:space-between;gap:24px;}
+  .ped-izq .linea-total{font-size:18px;}
+  .linea-quitar{
+    margin-top:10px;background:none;border:0;padding:0;
+    font:600 12px/1 var(--app-sans);color:var(--app-muted-3);
   }
-  .app-shell.con-barra > .app-head{grid-column:1 / -1;}
-  .app-shell.con-barra > .lineas,
-  .app-shell.con-barra > .bloque-titulo,
-  .app-shell.con-barra > .opciones,
-  .app-shell.con-barra > .carrito-vacio{grid-column:1;}
-  .app-shell.con-barra > .resumen{grid-column:2;grid-row:3 / span 3;margin-top:0;}
-  .app-shell.con-barra > .barra-fija{
-    grid-column:2;position:static;max-width:none;margin:0;
-    background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
-    border-top:none;padding:12px var(--app-gutter) 0;
+  .linea-quitar:hover{color:var(--app-ink);text-decoration:underline;}
+  .seguir-catalogo{
+    display:block;padding:18px;text-align:center;
+    border:1px dashed rgba(23,20,15,.2);border-radius:var(--app-r-card);
+    font:600 13px/1 var(--app-sans);color:var(--app-muted);text-decoration:none;
   }
+  .seguir-catalogo:hover{border-color:var(--app-ink);color:var(--app-ink);}
 
-  /* el pago se queda en una columna estrecha: los formularios se leen mejor */
-  .app-shell.con-barra:has(.datos){grid-template-columns:minmax(0,660px);justify-content:center;}
-  .app-shell.con-barra:has(.datos) > *{grid-column:1;}
-  .datos .barra-fija{position:static;max-width:none;margin:0;background:none;
-    backdrop-filter:none;-webkit-backdrop-filter:none;border-top:none;
-    padding:16px var(--app-gutter) 0;}
+  /* medios de pago en rejilla de dos, como el handoff */
+  .opciones.rejilla{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  }
+  .opciones.rejilla .opcion{align-items:flex-start;}
+  .ped-card .campo:first-of-type{margin-top:4px;}
+  .ped-card .campo{margin-top:14px;}
+  .ped-card .campo-resumen{
+    margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .ped-card .campo-resumen a{color:var(--app-ink);font-weight:600;}
+
+  /* resumen del pedido en el pago */
+  .res-items{margin-top:14px;display:flex;flex-direction:column;gap:12px;}
+  .res-item{display:flex;align-items:center;gap:12px;}
+  .res-item-thumb{
+    width:52px;height:52px;flex:none;border-radius:8px;overflow:hidden;
+    background:var(--app-stripe);display:flex;align-items:center;justify-content:center;
+  }
+  .res-item-thumb img{width:100%;height:100%;object-fit:contain;background:#fff;}
+  .res-item-thumb svg{width:20px;height:20px;stroke:var(--app-faint);}
+  .res-item-texto{flex:1;min-width:0;}
+  .res-item-nombre{
+    display:block;font:500 12.5px/1.35 var(--app-sans);color:var(--app-ink);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .res-item-linea{display:block;margin-top:3px;font:400 11.5px/1 var(--app-sans);color:var(--app-muted-3);}
+  .res-item-total{flex:none;font:600 13px/1 var(--app-sans);color:var(--app-ink);}
+
+  .ped-esc .carrito-vacio{
+    margin:40px auto 64px;max-width:520px;padding:56px 32px;
+    background:var(--app-surface);border:1px dashed rgba(23,20,15,.18);
+    border-radius:18px;
+  }
 
   /* ---------------- confirmación ---------------- */
-  .pedido-ok{max-width:560px;margin:0 auto;padding-top:72px;}
+  .pedido-ok{max-width:660px;margin:0 auto;padding-top:80px;padding-bottom:72px;}
+  .pedido-check{width:72px;height:72px;font-size:30px;}
+  .pedido-titulo{font-size:44px;margin-top:24px;}
+  .pedido-copy{font-size:14.5px;max-width:48ch;margin-left:auto;margin-right:auto;}
+  .pedido-tarjeta{padding:20px;border-radius:18px;}
+  .pedido-modo{font-size:13.5px;}
+  .pedido-dir{font-size:12.5px;}
+  .pedido-ok .btn-app{width:100%;max-width:280px;margin-left:auto;margin-right:auto;height:50px;}
 
-  /* ---------------- pie ---------------- */
+  /* ---------------- pie ----------------
+     En escritorio el pie es el bloque oscuro del handoff: cuatro columnas
+     (marca · catálogo · tienda · pagos y envíos) sobre --app-ink. Las
+     políticas y lo legal, que el diseño no contempla pero aquí no se pueden
+     perder, bajan a una fila de enlaces encima del copyright. */
+  footer.site{
+    background:var(--app-ink);
+    border-top:none;
+    color:rgba(255,255,255,.72);
+  }
+  /* El pie se enseña también en ficha, carrito y pago: la barra fija que lo
+     escondía en el teléfono no existe de 900px para arriba. */
+  body.en-ficha footer.site{display:block;}
   footer.site .footer-grid{
     max-width:var(--app-max);
-    grid-template-columns:1.4fr .8fr 1.2fr .8fr .8fr;
-    gap:32px;padding:40px var(--app-gutter);
+    grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));
+    gap:36px;padding:48px var(--app-gutter) 40px;
   }
-  footer.site .footer-bottom{padding:16px var(--app-gutter);}
+  footer.site h4{
+    font:600 11px/1 var(--app-sans);letter-spacing:.08em;
+    text-transform:uppercase;color:rgba(255,255,255,.45);
+    margin-bottom:14px;
+  }
+  footer.site p,
+  footer.site .link,
+  footer.site .store-address,
+  footer.site .store-hours{font:400 13px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
+  footer.site .link:hover,footer.site a:hover{color:#FFFFFF;}
+  footer.site #footerCats .link,
+  footer.site .footer-col .link{margin-bottom:9px;}
+  footer.site .footer-brand .logo-mark{height:40px;}
+  footer.site .footer-brand p{max-width:320px;color:rgba(255,255,255,.6);margin-top:14px;}
+  footer.site .footer-social a{background:rgba(255,255,255,.08);}
+  footer.site .footer-social a:hover{background:rgba(255,255,255,.18);}
+  footer.site .footer-social a svg{stroke:rgba(255,255,255,.8);fill:rgba(255,255,255,.8);}
+  footer.site .store-address svg{stroke:rgba(255,255,255,.5);}
+  footer.site .store-maps-btn{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.72);}
+  footer.site .store-maps-btn:hover{border-color:var(--app-green-mint);color:var(--app-green-mint);}
+  footer.site .store-map-embed{border-color:rgba(255,255,255,.14);}
+  /* El teléfono va pegado al horario, como en el diseño, y el mapa cae al
+     final de la columna. Aplanando los dos envoltorios con display:contents
+     ambos quedan como hermanos y basta un `order` para bajar el mapa. */
+  footer.site .footer-tienda{display:flex;flex-direction:column;}
+  footer.site .footer-tienda #footerLocation,
+  footer.site .footer-tienda .store-location{display:contents;}
+  /* El mapa del pie sobra en escritorio: la portada ya trae uno grande en el
+     bloque "Visítanos" y dos mapas en la misma pantalla es ruido. Queda el
+     enlace a Google Maps, que es lo que el diseño pone en esta columna. */
+  footer.site .footer-tienda .store-map-embed{display:none;}
+  .footer-solo-esc{display:block;}
+  .footer-telefono{color:var(--app-green-mint) !important;margin-top:9px;}
+  footer.site .footer-pagos{display:block;}
+  .footer-pagos span{display:block;margin-bottom:9px;font:400 13px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
+  /* Ayuda y Legal dejan de ser columnas: se estiran en una fila de enlaces */
+  footer.site .footer-legal{
+    grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px 26px;
+    padding-top:28px;border-top:1px solid rgba(255,255,255,.12);
+  }
+  footer.site .footer-legal .footer-col{display:contents;}
+  footer.site .footer-legal h4{display:none;}
+  footer.site .footer-legal .link{margin-bottom:0;font-size:12.5px;color:rgba(255,255,255,.55);}
+  footer.site .footer-bottom{
+    border-top:none;padding:0 var(--app-gutter) 32px;text-align:left;
+    max-width:var(--app-max);margin:0 auto;
+    font-size:12px;color:rgba(255,255,255,.4);
+  }
+}
+
+/* ======================================================================
+   ESCRITORIO ESTRECHO (900–1200px)
+
+   Los escalones que pide la tabla de breakpoints del handoff: las grillas de
+   cuatro bajan a tres, la de categoría de tres a dos y los paneles laterales
+   se estrechan. Ni una pantalla cambia de estructura, solo de anchos.
+   ====================================================================== */
+@media (min-width:900px) and (max-width:1199px){
+  .nav-esc-cats{gap:18px;}
+
+  nav.carrusel,div.carrusel,.grid-app{grid-template-columns:repeat(3,minmax(0,1fr));}
+
+  .hero-editorial h1{font-size:46px;}
+  .hero-editorial p{font-size:14.5px;}
+  .hero-datos{gap:20px;}
+  .hero-mosaico{height:380px;}
+
+  .cat-layout{grid-template-columns:200px minmax(0,1fr);gap:24px;}
+  .cat-lista .grid-app{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .cat-titulo{font-size:34px;}
+
+  .fe-layout{grid-template-columns:minmax(0,1fr) 380px;gap:28px;}
+  .fe-texto{grid-template-columns:minmax(0,1fr);gap:28px;}
+  .fe-panel{padding:20px;}
+  .fe-panel .ficha-nombre{font-size:27px;}
+  .fe-panel .ficha-precio{font-size:32px;}
+
+  .ped-layout{grid-template-columns:minmax(0,1fr) 360px;gap:24px;}
+  .ped-titulo{font-size:34px;}
+  .ped-izq .linea-thumb{width:96px;height:96px;}
+
+  .tarjeta-visitanos{grid-template-columns:minmax(0,320px) minmax(0,1fr);column-gap:28px;}
+}
+
+/* Por debajo de 1000px ya no caben dos columnas con panel al lado: la ficha,
+   el carrito y el pago pasan a una sola y el panel deja de ser pegajoso. */
+@media (min-width:900px) and (max-width:999px){
+  .fe-layout,.ped-layout{grid-template-columns:minmax(0,1fr);}
+  .fe-der,.ped-der{position:static;}
+  .opciones.rejilla{grid-template-columns:1fr;}
+  .cat-layout{grid-template-columns:minmax(0,1fr);}
+  .cat-sidebar{
+    position:static;
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:20px 24px;align-items:start;
+  }
+  .side-asesor{grid-column:1 / -1;}
+  .side-asesor p{max-width:62ch;}
+  .side-asesor .btn-app{max-width:260px;}
 }
 
 </style>
@@ -1436,6 +2176,19 @@ footer.site .footer-bottom{
 
 <!-- ============ BOTTOM MOBILE NAV ============ -->
 <nav class="bottom-nav" id="bottomNav"></nav>
+
+<!-- ============ FRANJA UTILITARIA (ESCRITORIO) ============
+     Texto fijo: no depende de datos, así que no pasa por JS. Se esconde por
+     debajo de 900px con CSS. -->
+<div class="franja-util">
+  <div class="franja-util-inner">
+    <span>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día</span>
+    <div class="franja-derecha">
+      <span>Av. Los Héroes 382, San Juan de Miraflores</span>
+      <span class="franja-horario">9:30 a.m. &ndash; 9:00 p.m.</span>
+    </div>
+  </div>
+</div>
 
 <!-- ============ BARRA SUPERIOR (ESCRITORIO) ============ -->
 <header class="nav-esc" id="navEscritorio"></header>
@@ -1495,25 +2248,37 @@ footer.site .footer-bottom{
         <a class="link" href="/categoria/accesorios">Accesorios</a>
       </div>
     </div>
-    <div class="footer-col">
+    <div class="footer-col footer-tienda">
       <h4>Visítanos</h4>
       <div id="footerLocation">
         <p>Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú</p>
         <p>Lunes a domingo, 9:30 a.m. &ndash; 9:00 p.m.</p>
       </div>
+      <p class="footer-solo-esc footer-telefono">+51 921 317 384</p>
     </div>
-    <div class="footer-col">
-      <h4>Ayuda</h4>
-      <button class="link" onclick="openPolicy('envios')">Política de envíos</button>
-      <button class="link" onclick="openPolicy('cambios')">Cambios y devoluciones</button>
-      <button class="link" onclick="openPolicy('pagos')">Medios de pago</button>
-      <button class="link" onclick="openPolicy('garantia')">Garantía de productos</button>
+    <!-- Cuarta columna del handoff de escritorio. En el teléfono no se enseña:
+         lo mismo ya está en el carrito y en la ficha, al lado del precio. -->
+    <div class="footer-col footer-pagos">
+      <h4>Pagos y envíos</h4>
+      <span>Yape · Plin · transferencia</span>
+      <span>Visa y Mastercard</span>
+      <span>Envío gratis desde S/ 100</span>
+      <span>Recojo en tienda en 1 hora</span>
     </div>
-    <div class="footer-col">
-      <h4>Legal</h4>
-      <button class="link" onclick="openPolicy('terminos')">Términos y condiciones</button>
-      <button class="link" onclick="openPolicy('privacidad')">Política de privacidad</button>
-      <button class="link" onclick="openPolicy('contacto')">Contáctanos</button>
+    <div class="footer-legal">
+      <div class="footer-col">
+        <h4>Ayuda</h4>
+        <button class="link" onclick="openPolicy('envios')">Política de envíos</button>
+        <button class="link" onclick="openPolicy('cambios')">Cambios y devoluciones</button>
+        <button class="link" onclick="openPolicy('pagos')">Medios de pago</button>
+        <button class="link" onclick="openPolicy('garantia')">Garantía de productos</button>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <button class="link" onclick="openPolicy('terminos')">Términos y condiciones</button>
+        <button class="link" onclick="openPolicy('privacidad')">Política de privacidad</button>
+        <button class="link" onclick="openPolicy('contacto')">Contáctanos</button>
+      </div>
     </div>
   </div>
   <div class="footer-bottom">© 2026 Instrumentos Chipao. Todos los derechos reservados.</div>
@@ -1534,7 +2299,7 @@ const CATEGORIES = [
     subs:[{key:'flautas',label:'Flautas'},{key:'melodicas',label:'Melódicas'},{key:'quenas',label:'Quenas'},{key:'zamponas',label:'Zampoñas'}]},
   {key:'audio', label:'Micrófono y Audio', icon:'mic', desc:'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[{key:'microfonos',label:'Micrófonos'},{key:'interfaces',label:'Interfaces'},{key:'amplificadores',label:'Amplificadores'}]},
-  {key:'colegio', label:'Para Colegio', icon:'school', desc:'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.',
+  {key:'colegio', label:'Para Colegio', seo:'Instrumentos para Colegio', icon:'school', desc:'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.',
     subs:[]},
   {key:'accesorios', label:'Accesorios', icon:'accessory', desc:'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[
@@ -1710,6 +2475,9 @@ const state = {
   soloStock:false,   // chip "Recojo hoy": solo lo que hay ahora en tienda
   priceMin:0,
   priceMax:PRICE_MAX,
+  /* Rangos marcados en el panel lateral de escritorio (claves de
+     RANGOS_PRECIO). Vacío en el teléfono, que filtra por chips. */
+  rangosPrecio:new Set(),
   sort:'relevancia',
   search:'',
   cart:[],           // {id, qty, color}
@@ -1862,8 +2630,10 @@ function applyCurrentViewMeta(){
     return;
   }
   if(state.offersOnly){
-    setPageMeta('Ofertas en Instrumentos Musicales | Chipao Music',
-      'Instrumentos musicales en oferta en Lima y todo el Perú: descuentos en guitarras, teclados, percusión y accesorios. Tienda en San Juan de Miraflores.');
+    const enOf = PRODUCTS.filter(p => enOferta(p) && (p.stock||0) > 0);
+    const desdeOf = enOf.length ? Math.min(...enOf.map(p=>p.price)) : 0;
+    setPageMeta('Instrumentos Musicales Económicos en Lima | Chipao Music',
+      `Instrumentos musicales baratos en Lima${desdeOf ? `, desde ${fmt(desdeOf)}` : ''}: guitarras, flautas, panderetas y accesorios con descuento. Tienda en San Juan de Miraflores.`);
     setBreadcrumbSchema([{name:'Inicio',path:'/'},{name:'Ofertas',path:'/ofertas'}]);
     return;
   }
@@ -1876,7 +2646,12 @@ function applyCurrentViewMeta(){
       const desc = c.desc || (subsList
         ? `Compra ${c.label.toLowerCase()} en Lima y todo el Perú: ${subsList}. Tienda en San Juan de Miraflores con envíos a todo el país.`
         : `Compra ${c.label.toLowerCase()} en Lima y todo el Perú. Tienda en San Juan de Miraflores con envíos a todo el país.`);
-      setPageMeta(`${c.label} en Lima | Chipao Music`, desc);
+      /* El precio de entrada delante, como en el Worker: Google corta la
+         descripción por el final. */
+      const vendibles = productosDeCategoria(c.key).filter(x => (x.stock||0) > 0);
+      const desde = vendibles.length ? Math.min(...vendibles.map(x=>x.price)) : 0;
+      setPageMeta(`${c.seo || c.label} en Lima | Chipao Music`,
+        desde ? `Desde ${fmt(desde)}. ${desc}` : desc);
       setBreadcrumbSchema([{name:'Inicio',path:'/'},{name:c.label,path:`/categoria/${c.key}`}]);
       return;
     }
@@ -2055,10 +2830,21 @@ function goCart(push){
   if(push !== false) window.scrollTo({top:0});
 }
 
+/* "Inició el pago" se mide UNA vez por pedido. Ir y volver entre el carrito y
+   el pago es normal —se cambia el medio de pago, se corrige la dirección— y
+   contar cada vuelta como una conversión le daría a Google un número inflado.
+   El flag se reinicia al cerrar un pedido (ver cerrarPedido), para que la
+   siguiente compra de la misma visita sí cuente. */
+let pagoMedido = false;
+
 function goCheckout(push){
   /* A pagar no se llega con el carrito vacío: sería un formulario sin nada
      que cobrar. Se manda al carrito, que ya sabe mostrar su estado vacío. */
   if(!state.cart.length){ goCart(push); return; }
+  if(!pagoMedido){
+    pagoMedido = true;
+    trackAdsConversion('inicioPago', cartTotal());
+  }
   state.view = 'checkout';
   state.orderPlaced = false;
   navigateTo('/checkout', push);
@@ -2318,18 +3104,18 @@ function pillAsesorHtml(){
   return `<a class="pill-asesor" target="_blank" rel="noopener"
     href="${waHref('Hola, quiero hablar con un asesor.')}"
     onclick="trackAdsConversion('whatsapp')">
-    <span class="punto-vivo"></span>Asesor</a>`;
+    <span class="ico-wa">${iconWhatsapp}</span>Asesor</a>`;
 }
 
 /* --------------------------- tarjeta de producto ---------------------------
    Una sola tarjeta para las tres listas (ofertas, recién llegados y el grid
    del catálogo); lo único que cambia entre ellas es el alto de la foto, que
    el handoff fija en 124, 116 y 118px. */
-function appProductCard(p, altoFoto){
+function appProductCard(p, altoFoto, conAgregar){
   const href = `/producto/${p.id}-${slugify(p.name)}`;
   const foto = (p.images || [])[0];
   const stock = p.stock || 0;
-  return `
+  const tarjeta = `
   <a class="pcard" href="${href}" onclick="openProductDetail(${p.id});return false;">
     <div class="pcard-foto" style="height:${altoFoto}px">
       ${foto
@@ -2342,8 +3128,20 @@ function appProductCard(p, altoFoto){
       <span class="pcard-precio">${fmt(p.price)}</span>
       ${enOferta(p) ? `<span class="pcard-antes">${fmt(p.old)}</span>` : ''}
     </div>
-    <div class="pcard-stock${stock>0?'':' agotado'}">${stock>0 ? 'En tienda' : 'Agotado'}</div>
+    <div class="pcard-stock${stock>0?'':' agotado'}">${stock>0 ? (esEscritorio() ? 'Stock en tienda' : 'En tienda') : 'Agotado'}</div>
   </a>`;
+
+  /* El botón "Agregar" de la grilla de categoría (escritorio) va FUERA del
+     enlace: un <button> dentro de un <a> es marcado inválido y rompe la
+     navegación por teclado. Se posiciona sobre la esquina de la tarjeta, que
+     es donde lo dibuja el handoff, y el envoltorio le da el `position`. */
+  if(!conAgregar) return tarjeta;
+  return `
+  <div class="pcard-wrap">
+    ${tarjeta}
+    <button type="button" class="pcard-agregar"${stock>0?'':' disabled'}
+      onclick="addToCart(${p.id}, this)">${stock>0 ? 'Agregar' : 'Agotado'}</button>
+  </div>`;
 }
 
 /* ------------------------------ portada ------------------------------ */
@@ -2354,8 +3152,23 @@ function appProductCard(p, altoFoto){
    inventarla, el bloque conserva su color (que sí es un token del diseño) y
    lleva el icono de la categoría del propio proyecto.
 
-   En escritorio el texto se mete DENTRO del bloque, que ahí es grande y lo
-   admite; en el teléfono va debajo, como en el prototipo. */
+   El nombre y el subtítulo van debajo del bloque en las dos versiones: el
+   handoff de escritorio dibuja la grilla 4×2 con el texto fuera, igual que
+   el móvil, así que no hay razón para tener dos marcados. */
+/* Producto que representa a la categoría en la portada de escritorio: el
+   marcado como destacado y, si no hay ninguno, el más caro con stock, que
+   suele ser también el más reconocible (la guitarra, el bombo, el Marshall).
+   `usados` lleva la cuenta de los ya repartidos para que dos categorías que
+   comparten producto —la melódica está en Viento y en Para Colegio— no
+   acaben enseñando la misma foto una al lado de la otra. */
+function productoDeCategoria(catKey, usados){
+  const candidatos = productosDeCategoria(catKey)
+    .filter(p => (p.stock||0) > 0 && (p.images||[]).length)
+    .sort((a,b) => (b.featured?1:0) - (a.featured?1:0) || b.price - a.price);
+  if(!candidatos.length) return null;
+  return candidatos.find(p => !usados || !usados.has(p.id)) || candidatos[0];
+}
+
 function tileCategoriaHtml(c){
   const suyos = productosDeCategoria(c.key);
   /* Solo cuenta lo que se puede comprar: si no, un producto agotado con el
@@ -2363,64 +3176,164 @@ function tileCategoriaHtml(c){
      decía "desde S/ 0" por un juego de cuerdas cargado a cero. */
   const vendibles = suyos.filter(p => (p.stock||0) > 0);
   const desde = vendibles.length ? Math.min(...vendibles.map(p=>p.price)) : 0;
-  const sub = vendibles.length
-    ? `${suyos.length} producto${suyos.length!==1?'s':''} · desde ${fmt(desde)}`
-    : 'Consúltanos';
   const icono = iconSvg(c.icon || iconFor({cat:c.key}));
-  const nombre = `<span class="cat-tile-nombre">${escapeHtml(c.label)}</span>`;
-  const subtitulo = `<span class="cat-tile-sub">${escapeHtml(sub)}</span>`;
-  const dentro = esEscritorio();
+
   return `
-  <a class="cat-tile-app" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
-    <span class="cat-tile-color" style="background:var(--app-cat-${c.key})">
-      ${icono}${dentro ? nombre + subtitulo : ''}
-    </span>
-    ${dentro ? '' : nombre + subtitulo}
+  <a class="cat-item" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
+    <span class="cat-item-ico">${icono}</span>
+    <span class="cat-item-nombre">${escapeHtml(c.label)}</span>
+    <span class="cat-item-desde">${vendibles.length ? 'Desde ' + fmt(desde) : 'Por encargo'}</span>
   </a>`;
 }
 
-/* Hero de escritorio: título editorial a la izquierda y, a la derecha, el
-   producto con el descuento más grande del catálogo — que es el argumento
-   más fuerte que tenemos y además se actualiza solo. */
+
+/* Celda grande (2×2) de la lista escolar, arriba a la izquierda de la grilla
+   de escritorio. Es la apuesta de temporada: Para Colegio es la categoría con
+   el precio de entrada más bajo del catálogo (S/ 10), la segunda con más
+   stock y la mitad de sus productos está en oferta.
+
+   Se come a la antigua tarjeta verde "Armamos el kit": tener el bloque grande
+   de colegio y además una tarjeta suelta de colegio era repetirse. El botón
+   de WhatsApp va FUERA del enlace de la categoría —un <a> dentro de otro <a>
+   es marcado inválido— y el envoltorio le da el `position`.
+
+   En el teléfono nada de esto existe: ahí el mensaje es la banda ancha que va
+   entre las ofertas y los recién llegados (ver .banda-colegio). */
+function tileEscolarHtml(usados){
+  const suyos = productosDeCategoria('colegio');
+  const vendibles = suyos.filter(p => (p.stock||0) > 0);
+  const desde = vendibles.length ? Math.min(...vendibles.map(p=>p.price)) : 0;
+  const ofertas = suyos.filter(enOferta);
+  const maxDesc = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
+
+  /* Tres fotos en fila: la celda es grande y una sola foto la dejaba vacía.
+     Además "kit" se entiende mejor con varios instrumentos que con uno. */
+  const fotos = vendibles
+    .filter(p => (p.images||[]).length)
+    .sort((a,b) => (b.featured?1:0) - (a.featured?1:0) || b.price - a.price)
+    .slice(0, 3);
+  /* Se apuntan como usadas para que ninguna categoría de al lado repita la
+     misma foto: la melódica es de Viento y también del kit escolar. */
+  if(usados) fotos.forEach(p => usados.add(p.id));
+
+  const datos = [
+    vendibles.length ? `Desde <b>${fmt(desde)}</b>` : '',
+    `${suyos.length} producto${suyos.length!==1?'s':''}`,
+    maxDesc ? `hasta &minus;${maxDesc}%` : '',
+  ].filter(Boolean).join(' · ');
+
+  return `
+  <div class="cat-tile-app tile-escolar">
+    <a class="cat-tile-color tile-escolar-color" href="/categoria/colegio"
+       onclick="goShop('colegio');return false;">
+      ${fotos.length ? `
+      <span class="tile-escolar-fotos">
+        ${fotos.map(p => `
+          <span class="tile-escolar-foto">
+            <img src="${(p.images||[])[0]}" alt="" loading="lazy" decoding="async">
+          </span>`).join('')}
+      </span>` : ''}
+      <span class="tile-escolar-txt">
+        <span class="tile-escolar-eyebrow">Para colegio · lista escolar</span>
+        <span class="tile-escolar-titulo">Armamos el kit de tu lista escolar</span>
+        <span class="tile-escolar-copy">Flauta, melódica, xilófono, claves y pandereta en un solo pedido, con stock en tienda.</span>
+        <span class="tile-escolar-datos">${datos}</span>
+        <span class="tile-escolar-ver">Ver todo lo de colegio ›</span>
+      </span>
+    </a>
+    <a class="tile-escolar-wa" target="_blank" rel="noopener"
+       href="${waHref('Hola, les mando la lista del colegio para que me coticen el kit.')}"
+       onclick="trackAdsConversion('whatsapp')">Mándanos tu lista</a>
+  </div>`;
+}
+
+/* Los tres productos del mosaico del hero: primero las rebajas más gordas y,
+   si no llegan a tres, se completa con lo recién llegado. Sin catálogo
+   cargado devuelve lista vacía y el hero se queda a una columna. */
+function productosDelMosaico(){
+  const elegidos = [];
+  const meter = p => { if(p && !elegidos.some(x => x.id === p.id)) elegidos.push(p); };
+  ofertasDeLaSemana(3).forEach(meter);
+  recienLlegados(6).forEach(meter);
+  return elegidos.slice(0, 3);
+}
+
+/* Una celda del mosaico. El handoff las dibuja como bloques rayados, uno
+   terracota y otro verde; aquí el color se queda como marco y la foto real
+   va dentro, sobre blanco, porque los recortes de producto vienen con fondo
+   claro y sobre el color plano se verían como un cuadro blanco pegado. */
+function heroTileHtml(p, tono){
+  const foto = (p.images || [])[0];
+  return `
+  <a class="hero-tile ${tono}" href="/producto/${p.id}-${slugify(p.name)}"
+     onclick="openProductDetail(${p.id});return false;">
+    <span class="hero-tile-foto">
+      ${foto
+        ? `<img src="${foto}" alt="${escapeHtml(p.name)}" decoding="async">`
+        : iconSvg(iconFor(p))}
+      ${enOferta(p) ? `<span class="pcard-off">-${pctDescuento(p)}%</span>` : ''}
+    </span>
+    <span class="hero-tile-pie">
+      <b>${escapeHtml(p.name)}</b>
+      <i>${fmt(p.price)}${enOferta(p) ? ` <s>${fmt(p.old)}</s>` : ''}</i>
+    </span>
+  </a>`;
+}
+
+/* Hero de escritorio: columna editorial a la izquierda (eyebrow, titular
+   serif de 60px, dos CTAs y los tres datos duros) y mosaico de fotos a la
+   derecha — uno alto y dos apilados, como el handoff. */
 function heroEscritorioHtml(){
-  const destacado = ofertasDeLaSemana(1)[0];
+  const tres = productosDelMosaico();
   const texto = `
     <div class="hero-texto">
-      <span class="hero-eyebrow">Instrumentos musicales en Lima</span>
-      <h1>Instrumentos para<br>todos los niveles</h1>
-      <p>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día.</p>
+      <span class="hero-eyebrow">Instrumentos musicales en San Juan de Miraflores</span>
+      <h1>Pruébalo en tienda antes de comprarlo</h1>
+      <p>Cuerda, percusión, teclados y todo para la lista del colegio, con stock real en tienda. Y si te queda lejos, te lo enviamos a todo el Perú: Yape, Plin, tarjeta o transferencia.</p>
       <div class="hero-ctas">
-        <a class="btn-app terracota" href="/tienda" onclick="goShop(null);return false;">Ver el catálogo</a>
-        <a class="btn-app contorno" href="/ofertas" onclick="goOffers();return false;">Ofertas de la semana</a>
+        <a class="btn-app terracota" href="/tienda" onclick="goShop(null);return false;">Ver catálogo</a>
+        <a class="btn-app contorno" target="_blank" rel="noopener"
+           href="${waHref('Hola, quiero consultar por un instrumento.')}"
+           onclick="trackAdsConversion('whatsapp')">Escribir por WhatsApp</a>
+      </div>
+      <div class="hero-datos">
+        <span><b>+12 años</b><i>atendiendo músicos</i></span>
+        <span><b>Envío gratis</b><i>desde ${fmt(FREE_SHIPPING_THRESHOLD)}</i></span>
+        <span><b>1 hora</b><i>listo para recojo</i></span>
       </div>
     </div>`;
 
-  /* Sin ofertas activas no hay tarjeta que enseñar: el hero se queda con el
-     texto a todo lo ancho en vez de con un hueco. */
-  if(!destacado) return `<section class="hero-app hero-editorial sin-destacado">${texto}</section>`;
+  /* Sin productos que enseñar el hero se queda con el texto a todo lo ancho,
+     en vez de con tres huecos rayados. */
+  if(tres.length < 3) return `<section class="hero-app hero-editorial sin-destacado">${texto}</section>`;
 
-  const foto = (destacado.images || [])[0];
   return `
   <section class="hero-app hero-editorial">
     ${texto}
-    <a class="hero-destacado" href="/producto/${destacado.id}-${slugify(destacado.name)}"
-       onclick="openProductDetail(${destacado.id});return false;">
-      <span class="hero-dest-foto">
-        ${foto ? `<img src="${foto}" alt="${escapeHtml(destacado.name)}" decoding="async">` : iconSvg(iconFor(destacado))}
-        <span class="pcard-off">-${pctDescuento(destacado)}%</span>
-      </span>
-      <span class="hero-dest-eyebrow">La mayor rebaja de la semana</span>
-      <span class="hero-dest-nombre">${escapeHtml(destacado.name)}</span>
-      <span class="hero-dest-precio">${fmt(destacado.price)} <s>${fmt(destacado.old)}</s></span>
-    </a>
+    <div class="hero-mosaico">
+      ${heroTileHtml(tres[0], 'alto')}
+      ${heroTileHtml(tres[1], 'tono-negro')}
+      ${heroTileHtml(tres[2], 'tono-verde')}
+    </div>
   </section>`;
 }
 
 function heroMovilHtml(){
+  /* Mismo mensaje que el hero de escritorio, apretado para el teléfono. Los
+     tres datos duros bajan aquí también: son la razón por la que alguien le
+     compra a una tienda con local en vez de a un marketplace, y en el móvil
+     no aparecían por ningún lado. El párrafo dejó de repetir envío y recojo
+     —que ya están en los datos— para hablar del catálogo. */
   return `
     <section class="hero-app">
-      <h1>Instrumentos para<br>todos los niveles</h1>
-      <p>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día.</p>
+      <span class="hero-eyebrow">Instrumentos musicales en Lima</span>
+      <h1>Pruébalo en tienda antes de comprarlo</h1>
+      <p>Cuerda, percusión, teclados y todo para la lista del colegio, con stock real en tienda.</p>
+      <div class="hero-datos">
+        <span><b>+12 años</b><i>atendiendo músicos</i></span>
+        <span><b>Envío gratis</b><i>desde ${fmt(FREE_SHIPPING_THRESHOLD)}</i></span>
+        <span><b>1 hora</b><i>listo para recojo</i></span>
+      </div>
     </section>`;
 }
 
@@ -2446,28 +3359,49 @@ function cabeceraPortadaHtml(){
 }
 
 function renderHome(){
-  const ofertas = ofertasDeLaSemana(8);
-  const nuevos = recienLlegados(6);
+  const esc = esEscritorio();
+  /* En escritorio las dos listas son grillas de cuatro, así que se piden
+     cuatro. En el teléfono son carruseles y admiten más para desplazar. */
+  const ofertas = ofertasDeLaSemana(esc ? 4 : 8);
+  const nuevos = recienLlegados(esc ? 4 : 6);
+
+  /* Las categorías sin catálogo cargado se van al final de la grilla. Hoy
+     Teclados está vacío y ocupaba la segunda celda: el mejor sitio de la
+     portada llevando a un "catálogo en camino", mientras Accesorios, con 47
+     productos, quedaba en la última fila. El orden canónico (el de la barra
+     de categorías y el del pie) no se toca. `sort` es estable, así que entre
+     las que sí tienen catálogo se respeta el orden de siempre.
+
+     Para Colegio sigue en la barra: el bloque del kit escolar es una banda
+     aparte debajo (ver tileEscolarHtml), no una celda que la reemplace. */
+  const ordenadas = [...CATEGORIES].sort((a,b) =>
+    (productosDeCategoria(b.key).length ? 1 : 0) - (productosDeCategoria(a.key).length ? 1 : 0));
+  const catsPortada = ordenadas;
+  const usadosEnTiles = new Set();
+
   return `
   <div class="app-shell">
 
-    ${esEscritorio() ? '' : cabeceraPortadaHtml()}
+    ${esc ? '' : cabeceraPortadaHtml()}
 
-    ${esEscritorio() ? heroEscritorioHtml() : heroMovilHtml()}
+    ${esc ? heroEscritorioHtml() : heroMovilHtml()}
 
-    <nav class="carrusel" aria-label="Categorías">
-      ${CATEGORIES.map(tileCategoriaHtml).join('')}
+    <nav class="carrusel cat-barra" aria-label="Categorías">
+      ${catsPortada.map(tileCategoriaHtml).join('')}
     </nav>
+
+    ${esc ? tileEscolarHtml(usadosEnTiles) : ''}
 
     ${ofertas.length ? `
     <div class="seccion-head">
-      <h2>Ofertas de la semana</h2>
+      <h2>Ofertas</h2>
       <a href="/ofertas" onclick="goOffers();return false;">Ver todas</a>
     </div>
     <div class="carrusel">
       ${ofertas.map(p => `<div class="carrusel-item">${appProductCard(p, 124)}</div>`).join('')}
     </div>` : ''}
 
+    ${esc ? '' : `
     <a class="banda-colegio" href="/categoria/colegio" onclick="goShop('colegio');return false;">
       <span class="banda-texto">
         <span class="banda-eyebrow">Para colegio</span>
@@ -2475,7 +3409,7 @@ function renderHome(){
         <span class="banda-copy">Mándanos la lista y te cotizamos flauta, xilófono y pandereta en un solo pedido.</span>
       </span>
       <span class="banda-chevron">›</span>
-    </a>
+    </a>`}
 
     <h2 class="seccion-titulo">Recién llegados</h2>
     <div class="grid-app">
@@ -2483,6 +3417,12 @@ function renderHome(){
     </div>
 
     <section class="tarjeta-visitanos">
+      ${esc ? `
+      <div class="visitanos-mapa">
+        <iframe title="Mapa de la tienda" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
+                src="https://www.google.com/maps?q=${encodeURIComponent('Instrumentos Chipao, ' + STORE_ADDRESS)}&output=embed"></iframe>
+      </div>
+      <h2 class="visitanos-titulo h-serif">Visítanos en San Juan de Miraflores</h2>` : ''}
       <div class="eyebrow-terracota">Visítanos</div>
       <div class="visitanos-dir">${escapeHtml(STORE_ADDRESS.replace(', Lima 15801, Perú',''))}</div>
       <div class="visitanos-horario">${escapeHtml(STORE_HOURS)} · Prueba el instrumento antes de comprarlo.</div>
@@ -2518,6 +3458,11 @@ function getFilteredProducts(){
     if((state.offersOnly || state.soloOfertas) && !enOferta(p)) return false;
     if(state.soloStock && (p.stock||0) <= 0) return false;
     if(p.price < state.priceMin || p.price > state.priceMax) return false;
+    /* Rangos de precio del panel lateral de escritorio. Se suman entre sí:
+       marcar dos deja pasar lo que caiga en cualquiera de los dos. En el
+       teléfono el conjunto va siempre vacío y esta línea no filtra nada. */
+    if(state.rangosPrecio.size && !RANGOS_PRECIO.some(r =>
+        state.rangosPrecio.has(r.key) && p.price >= r.min && p.price < r.max)) return false;
     if(state.search && !p.name.toLowerCase().includes(state.search.toLowerCase())) return false;
     return true;
   }).sort((a,b)=>{
@@ -2567,6 +3512,84 @@ function chipsFiltroHtml(){
   return `<div class="chips-fila">${chips.join('')}</div>`;
 }
 
+/* ---------------- panel lateral de categoría (escritorio) ----------------
+   Lo que en el teléfono es una fila de chips aquí es una columna fija: las
+   siete categorías con su conteo, los rangos de precio, las subcategorías de
+   la que esté abierta y la tarjeta verde del asesor. */
+function casillaHtml(texto, marcada, accion, conteo){
+  return `
+  <button type="button" class="casilla${marcada?' marcada':''}"
+          aria-pressed="${marcada?'true':'false'}" onclick="${accion}">
+    <span class="casilla-cuadro">${marcada?'✓':''}</span>
+    <span class="casilla-label">${escapeHtml(texto)}</span>
+    ${conteo != null ? `<span class="casilla-n">${conteo}</span>` : ''}
+  </button>`;
+}
+
+function sidebarCategoriaHtml(){
+  const cat = CATEGORIES.find(c=>c.key===state.activeCat);
+  const subs = cat ? (cat.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs) : [];
+
+  const categorias = CATEGORIES.map(c=>{
+    const n = productosDeCategoria(c.key).length;
+    return `
+      <a class="side-cat${state.activeCat===c.key?' activa':''}" href="/categoria/${c.key}"
+         onclick="goShop('${c.key}');return false;">
+        <span>${escapeHtml(c.label)}</span><i>${n || '—'}</i>
+      </a>`;
+  }).join('');
+
+  const rangos = RANGOS_PRECIO.map(r=>
+    casillaHtml(r.label, state.rangosPrecio.has(r.key), `toggleRangoPrecio('${r.key}')`)
+  ).join('');
+
+  const limpiables = state.rangosPrecio.size || state.activeSubs.size
+    || state.soloStock || state.soloOfertas || state.sort!=='relevancia';
+
+  return `
+  <aside class="cat-sidebar">
+    <div class="side-bloque">
+      <div class="side-titulo">Categorías</div>
+      ${categorias}
+    </div>
+
+    <div class="side-bloque">
+      <div class="side-titulo">Precio</div>
+      ${rangos}
+      ${casillaHtml('Solo lo que hay en tienda', state.soloStock, 'toggleSoloStock()')}
+    </div>
+
+    ${subs.length ? `
+    <div class="side-bloque">
+      <div class="side-titulo">Dentro de ${escapeHtml(cat.label)}</div>
+      ${subs.map(s=>casillaHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`)).join('')}
+    </div>` : ''}
+
+    ${limpiables ? `<button type="button" class="side-limpiar" onclick="clearFilters()">Limpiar filtros</button>` : ''}
+
+    <div class="side-asesor">
+      <div class="side-asesor-titulo">¿No sabes cuál elegir?</div>
+      <p>Cuéntanos para quién es y qué nivel tiene. Te recomendamos el que le conviene y te decimos si está en tienda hoy.</p>
+      <a class="btn-app verde" target="_blank" rel="noopener"
+         href="${waHref('Hola, necesito ayuda para elegir un instrumento.')}"
+         onclick="trackAdsConversion('whatsapp')"><span class="ico-wa">${iconWhatsapp}</span>Hablar con un asesor</a>
+    </div>
+  </aside>`;
+}
+
+/* Los tres chips de orden del handoff, a la derecha del título. */
+function chipsOrdenHtml(){
+  const chip = (texto, activo, accion) =>
+    `<button type="button" class="chip-orden${activo?' activo':''}"
+       aria-pressed="${activo?'true':'false'}" onclick="${accion}">${texto}</button>`;
+  return `
+    <div class="cat-orden">
+      ${chip('Destacados', state.sort==='relevancia', "setOrden('relevancia')")}
+      ${chip('Menor precio', state.sort==='price-asc', "setOrden('price-asc')")}
+      ${state.offersOnly ? '' : chip('Solo en oferta', state.soloOfertas, 'toggleSoloOfertas()')}
+    </div>`;
+}
+
 function renderShop(){
   const list = getFilteredProducts();
   const cat = CATEGORIES.find(c=>c.key===state.activeCat);
@@ -2576,10 +3599,12 @@ function renderShop(){
     titulo = `“${state.search}”`;
     subtitulo = 'Resultados de tu búsqueda';
   }else if(state.offersOnly && !cat){
-    titulo = 'Ofertas';
+    /* El <h1> lleva "instrumentos musicales" porque es lo que se busca; la
+       pestaña del menú sigue diciendo solo "Ofertas". */
+    titulo = 'Ofertas en instrumentos musicales';
     subtitulo = 'Instrumentos con descuento';
   }else if(cat){
-    titulo = cat.label;
+    titulo = cat.seo || cat.label;
     subtitulo = cat.subs.length ? cat.subs.map(s=>s.label).join(', ') : cat.desc;
   }else{
     titulo = 'Todo el catálogo';
@@ -2608,7 +3633,32 @@ function renderShop(){
         <button type="button" class="btn-app contorno" onclick="clearFilters()">Limpiar filtros</button>
       </div>`;
   }else{
-    cuerpo = `<div class="grid-app">${list.map(p=>appProductCard(p, 118)).join('')}</div>`;
+    cuerpo = `<div class="grid-app">${list.map(p=>appProductCard(p, 118, esEscritorio())).join('')}</div>`;
+  }
+
+  /* En escritorio la pantalla es otra: migas, título grande con los chips de
+     orden al lado y dos columnas, panel de filtros fijo a la izquierda. */
+  if(esEscritorio()){
+    const miga = cat
+      ? escapeHtml(cat.label)
+      : state.offersOnly ? 'Ofertas' : state.search ? 'Búsqueda' : 'Todo el catálogo';
+    return `
+    <div class="app-shell cat-esc">
+      <nav class="migas" aria-label="Ruta">
+        <a href="/" onclick="goHome();return false;">Inicio</a><span>·</span><b>${miga}</b>
+      </nav>
+      <header class="cat-head">
+        <div class="cat-head-texto">
+          <h1 class="cat-titulo h-serif">${escapeHtml(titulo)}</h1>
+          <div class="cat-conteo">${list.length} producto${list.length!==1?'s':''}${subtitulo?' · '+escapeHtml(subtitulo):''}</div>
+        </div>
+        ${sinCatalogo ? '' : chipsOrdenHtml()}
+      </header>
+      <div class="cat-layout">
+        ${sidebarCategoriaHtml()}
+        <div class="cat-lista">${cuerpo}</div>
+      </div>
+    </div>`;
   }
 
   return `
@@ -2637,7 +3687,11 @@ function renderShop(){
    filtro parece no haber hecho nada cuando estabas a medio scroll. */
 function trasFiltrar(){
   render();
-  window.scrollTo({top:0, behavior:'smooth'});
+  /* En el teléfono los chips van en la cabecera y la lista empieza debajo:
+     sin este salto el filtro parece no haber hecho nada cuando estabas a
+     medio scroll. En escritorio el panel de filtros está fijo al costado y
+     la grilla se ve entera, así que mover la página solo despista. */
+  if(!esEscritorio()) window.scrollTo({top:0, behavior:'smooth'});
 }
 function toggleOrdenPrecio(){
   state.sort = state.sort==='price-asc' ? 'relevancia' : 'price-asc';
@@ -2658,12 +3712,27 @@ function toggleChipSub(subKey){
    Percusión quiere ver toda la percusión, no todo el catálogo. */
 function clearFilters(){
   state.activeSubs = new Set();
+  state.rangosPrecio = new Set();
   state.soloOfertas = false;
   state.soloStock = false;
   state.priceMin = 0;
   state.priceMax = PRICE_MAX;
   state.sort = 'relevancia';
   trasFiltrar();
+}
+
+/* ---------------- filtros del panel lateral (escritorio) ----------------
+   Repintan sin subir al principio de la lista: el panel está a la vista y
+   quien marca una casilla quiere ver cómo cambia la grilla de al lado, no
+   perder el sitio. */
+function toggleRangoPrecio(key){
+  if(state.rangosPrecio.has(key)) state.rangosPrecio.delete(key);
+  else state.rangosPrecio.add(key);
+  render();
+}
+function setOrden(valor){
+  state.sort = valor;
+  render();
 }
 
 /* ======================================================================
@@ -2820,6 +3889,15 @@ function setActiveSlide(i){
   render();
 }
 
+/* Stepper de cantidad del panel de compra de escritorio. En el teléfono la
+   barra fija solo tiene el CTA y se agrega de uno en uno, así que pdState.qty
+   se queda en 1 y esta función no se usa. */
+function cambiarQtyFicha(delta){
+  const tope = stockOf(pdState.productId) || 1;
+  pdState.qty = Math.min(Math.max(1, pdState.qty + delta), tope);
+  render();
+}
+
 function renderProductDetail(){
   const p = PRODUCTS.find(x => x.id === pdState.productId);
   if(!p){
@@ -2860,6 +3938,130 @@ function renderProductDetail(){
   const ahorro = enOferta(p) ? p.old - p.price : 0;
   const consulta = `Hola, me interesa ${p.name}${colorActivo ? ' (color ' + colorActivo + ')' : ''}. ¿Está disponible?`;
 
+  const swatchesHtml = !hayColores ? '' : `
+      <div class="ficha-color-label">Color — <span>${escapeHtml(colorActivo || 'elige uno')}</span></div>
+      <div class="ficha-swatches">
+        ${images.map((url, i) => {
+          const label = colores[i];
+          if(!label) return '';
+          const sel = i === pdState.activeIndex;
+          return `<button type="button" class="swatch${sel ? ' sel' : ''}"
+            style="background:${COLOR_HEX[label] || '#ccc'}"
+            aria-label="${escapeHtml(label)}" aria-pressed="${sel ? 'true' : 'false'}"
+            onclick="setActiveSlide(${i})"></button>`;
+        }).join('')}
+      </div>`;
+
+  const asesorHtml = `
+      <a class="bloque-asesor" target="_blank" rel="noopener"
+         href="${waHref(consulta)}" onclick="trackAdsConversion('whatsapp')">
+        <span class="asesor-icono">${iconWhatsapp}</span>
+        <span class="asesor-texto">
+          <span class="asesor-titulo">¿Dudas con el instrumento?</span>
+          <span class="asesor-sub">Te responde un asesor de la tienda en minutos.</span>
+        </span>
+        <span class="asesor-chevron">›</span>
+      </a>`;
+
+  /* ---------------- escritorio ----------------
+     Foto grande con sus miniaturas y, debajo, descripción y especificaciones
+     a dos columnas. El panel de compra se queda pegado al costado mientras
+     se lee todo lo demás. */
+  if(esEscritorio()){
+    const preciosHtml = `
+      <div class="ficha-precios">
+        <span class="ficha-precio">${fmt(p.price)}</span>
+        ${enOferta(p) ? `
+          <span class="ficha-antes">${fmt(p.old)}</span>
+          <span class="ficha-ahorras">Ahorras ${fmt(ahorro)}</span>` : ''}
+      </div>`;
+
+    const thumbs = slides.length > 1 ? `
+      <div class="fe-thumbs">
+        ${slides.map((s, i) => `
+          <button type="button" class="fe-thumb${i === pdState.activeIndex ? ' sel' : ''}"
+                  aria-label="Ver imagen ${i + 1}" onclick="setActiveSlide(${i})">
+            ${s.type === 'image'
+              ? `<img src="${s.url}" alt="" loading="lazy" decoding="async">`
+              : `<span class="fe-thumb-video">▶</span>`}
+          </button>`).join('')}
+      </div>` : '';
+
+    return `
+    <div class="app-shell ficha-esc">
+      <nav class="migas" aria-label="Ruta">
+        <a href="/" onclick="goHome();return false;">Inicio</a><span>·</span>
+        ${cat ? `<a href="/categoria/${cat.key}" onclick="goShop('${cat.key}');return false;">${escapeHtml(cat.label)}</a><span>·</span>` : ''}
+        <b>${escapeHtml(p.name)}</b>
+      </nav>
+
+      <div class="fe-layout">
+        <div class="fe-izq">
+          <div class="fe-foto">${galeria}</div>
+          ${thumbs}
+          <div class="fe-texto">
+            <section>
+              <h2 class="fe-h2 h-serif">Sobre este instrumento</h2>
+              ${parrafos.length
+                ? `<div class="fe-desc">${parrafos.map(t => `<p>${escapeHtml(t)}</p>`).join('')}</div>`
+                : `<div class="fe-desc"><p>Escríbenos por WhatsApp y te contamos todo sobre este instrumento: nivel, medidas y qué trae.</p></div>`}
+              ${incluye.length ? `
+              <div class="ficha-incluye">
+                <div class="incluye-titulo">Incluye</div>
+                ${incluye.map(i => `<div class="incluye-item"><span class="incluye-punto"></span>${escapeHtml(i)}</div>`).join('')}
+              </div>` : ''}
+            </section>
+            ${specs.length ? `
+            <section>
+              <h2 class="fe-h2 h-serif">Especificaciones</h2>
+              <div class="ficha-specs">
+                ${specs.map(s => `<div class="spec-fila">
+                  <span class="spec-k">${escapeHtml(s.k)}</span>
+                  ${s.v ? `<span class="spec-v">${escapeHtml(s.v)}</span>` : ''}
+                </div>`).join('')}
+              </div>
+            </section>` : ''}
+          </div>
+        </div>
+
+        <div class="fe-der">
+          <div class="fe-panel">
+            <div class="eyebrow-terracota">${escapeHtml(cat ? cat.label : 'Instrumentos')}</div>
+            <h1 class="ficha-nombre">${escapeHtml(p.name)}</h1>
+            ${preciosHtml}
+            <div class="ficha-chips">
+              ${stock > 0
+                ? '<span class="ficha-chip verde">Stock en tienda</span>'
+                : '<span class="ficha-chip neutro">Bajo pedido</span>'}
+              <span class="ficha-chip neutro">Envío a todo el Perú</span>
+              ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
+            </div>
+            ${swatchesHtml}
+
+            <div class="fe-compra">
+              ${stock > 0 ? `
+              <div class="fe-stepper">
+                <button type="button" onclick="cambiarQtyFicha(-1)" aria-label="Quitar uno"${pdState.qty<=1?' disabled':''}>−</button>
+                <span aria-live="polite">${pdState.qty}</span>
+                <button type="button" onclick="cambiarQtyFicha(1)" aria-label="Agregar uno"${pdState.qty>=stock?' disabled':''}>+</button>
+              </div>
+              <button type="button" class="btn-app terracota" onclick="addFromDetail(${p.id})">Agregar al carrito</button>`
+              : '<button type="button" class="btn-app terracota" disabled>Agotado</button>'}
+            </div>
+            ${enCarrito > 0 ? `<a class="btn-app contorno fe-ir-carrito" href="/carrito" onclick="goCart();return false;">Ir al carrito (${enCarrito})</a>` : ''}
+
+            <div class="fe-datos">
+              <span><b>Recojo en tienda</b> listo en 1 hora</span>
+              <span><b>Envío a todo el Perú</b> gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)}</span>
+              <span><b>Pagas como quieras</b> Yape, Plin, tarjeta o transferencia</span>
+            </div>
+          </div>
+          ${asesorHtml}
+        </div>
+      </div>
+    </div>`;
+  }
+
   return `
   <div class="app-shell ficha">
 
@@ -2891,19 +4093,7 @@ function renderProductDetail(){
         ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
       </div>
 
-      ${hayColores ? `
-      <div class="ficha-color-label">Color — <span>${escapeHtml(colorActivo || 'elige uno')}</span></div>
-      <div class="ficha-swatches">
-        ${images.map((url, i) => {
-          const label = colores[i];
-          if(!label) return '';
-          const sel = i === pdState.activeIndex;
-          return `<button type="button" class="swatch${sel ? ' sel' : ''}"
-            style="background:${COLOR_HEX[label] || '#ccc'}"
-            aria-label="${escapeHtml(label)}" aria-pressed="${sel ? 'true' : 'false'}"
-            onclick="setActiveSlide(${i})"></button>`;
-        }).join('')}
-      </div>` : ''}
+      ${swatchesHtml}
 
       ${parrafos.length ? `<div class="ficha-desc">${parrafos.map(t => `<p>${escapeHtml(t)}</p>`).join('')}</div>` : ''}
 
@@ -2921,15 +4111,7 @@ function renderProductDetail(){
         ${incluye.map(i => `<div class="incluye-item"><span class="incluye-punto"></span>${escapeHtml(i)}</div>`).join('')}
       </div>` : ''}
 
-      <a class="bloque-asesor" target="_blank" rel="noopener"
-         href="${waHref(consulta)}" onclick="trackAdsConversion('whatsapp')">
-        <span class="asesor-icono"></span>
-        <span class="asesor-texto">
-          <span class="asesor-titulo">¿Dudas con la talla o el nivel?</span>
-          <span class="asesor-sub">Te responde un asesor de la tienda en minutos.</span>
-        </span>
-        <span class="asesor-chevron">›</span>
-      </a>
+      ${asesorHtml}
     </div>
 
     <div class="ficha-barra">
@@ -3033,6 +4215,9 @@ function updateCartCount(){
   buildBottomNav();
   const enFicha = document.querySelector('.ficha-flotante.carrito span');
   if(enFicha) enFicha.textContent = total;
+  /* Y el tercero, el pill de la cabecera de escritorio, que además del
+     número enseña cuánto llevas. */
+  pintarNavCarrito();
   /* Toda modificación del carrito pasa por aquí, así que este es el único
      punto donde hace falta guardarlo. */
   saveCart();
@@ -3194,19 +4379,40 @@ function resumenTotalesHtml(etiquetaTotal){
   </div>`;
 }
 
+/* Quita una línea entera del carrito, sin tener que bajar la cantidad de uno
+   en uno. Solo existe en escritorio: el handoff del teléfono cierra la línea
+   con el stepper y aquí hay sitio para un enlace explícito. */
+function quitarLinea(id, color){
+  state.cart = state.cart.filter(c => !mismaLinea(c, id, color));
+  updateCartCount();
+  render();
+}
+
+/* Cabecera de las páginas de pedido en escritorio: migas y título serif, en
+   vez de la barra con la flecha de volver del teléfono. */
+function cabeceraPedidoEscritorio(titulo, migaTexto){
+  return `
+    <nav class="migas" aria-label="Ruta">
+      <a href="/" onclick="goHome();return false;">Inicio</a><span>·</span><b>${escapeHtml(migaTexto)}</b>
+    </nav>
+    <h1 class="ped-titulo h-serif">${escapeHtml(titulo)}</h1>`;
+}
+
 /* ------------------------------ /carrito ------------------------------ */
 function renderCarrito(){
+  const esc = esEscritorio();
+
   if(!state.cart.length){
-    return `
-    <div class="app-shell">
-      ${cabeceraPedido('Tu carrito', 'goHome()')}
+    const vacio = `
       <div class="carrito-vacio">
         <span class="vacio-cuadro"></span>
         <div class="vacio-titulo">Aún no hay nada aquí</div>
         <p>Empieza por las ofertas de la semana.</p>
         <button type="button" class="btn-app oscuro" onclick="goHome()">Ver catálogo</button>
-      </div>
-    </div>`;
+      </div>`;
+    return esc
+      ? `<div class="app-shell ped-esc">${cabeceraPedidoEscritorio('Tu carrito','Tu carrito')}${vacio}</div>`
+      : `<div class="app-shell">${cabeceraPedido('Tu carrito', 'goHome()')}${vacio}</div>`;
   }
 
   const { subtotal, total } = computeOrderTotals();
@@ -3229,6 +4435,7 @@ function renderCarrito(){
       <span class="linea-texto">
         <span class="linea-nombre">${escapeHtml(p.name)}</span>
         <span class="linea-meta">${escapeHtml(meta)}</span>
+        ${esc ? `<span class="linea-unitario">${fmt(p.price)} c/u</span>` : ''}
         <span class="linea-pie">
           <span class="linea-total">${fmt(p.price * c.qty)}</span>
           <span class="stepper">
@@ -3237,22 +4444,49 @@ function renderCarrito(){
             <button type="button" onclick="changeQty(${p.id}, ${colorArg}, 1)" aria-label="Agregar uno">+</button>
           </span>
         </span>
+        ${esc ? `<button type="button" class="linea-quitar" onclick="quitarLinea(${p.id}, ${colorArg})">Quitar</button>` : ''}
       </span>
     </div>`;
   }).join('');
+
+  const entregaHtml = `
+    <div class="bloque-titulo">¿Cómo lo recibes?</div>
+    <div class="opciones">
+      ${filaRadio(state.entrega==='envio', 'Envío a todo el Perú', notaEnvio(subtotal),
+         shippingCost(subtotal,'envio') > 0 ? fmt(shippingCost(subtotal,'envio')) : 'Gratis', "setEntrega('envio')")}
+      ${filaRadio(state.entrega==='tienda', 'Recojo en tienda',
+         'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda')")}
+    </div>`;
+
+  /* Escritorio: las líneas a la izquierda y el panel de entrega y totales
+     pegado a la derecha, con el CTA dentro del propio panel. */
+  if(esc){
+    return `
+    <div class="app-shell ped-esc">
+      ${cabeceraPedidoEscritorio('Tu carrito','Tu carrito')}
+      <div class="ped-layout">
+        <div class="ped-izq">
+          <div class="lineas">${lineas}</div>
+          <a class="seguir-catalogo" href="/tienda" onclick="goShop(null);return false;">+ Seguir viendo el catálogo</a>
+        </div>
+        <aside class="ped-der">
+          <div class="ped-panel">
+            ${entregaHtml}
+            ${resumenTotalesHtml('Total')}
+            <button type="button" class="btn-app terracota ped-cta" onclick="goCheckout()">Continuar al pago</button>
+            <p class="ped-nota">Un asesor valida el stock por WhatsApp antes de cobrarte nada.</p>
+          </div>
+        </aside>
+      </div>
+    </div>`;
+  }
 
   return `
   <div class="app-shell con-barra">
     ${cabeceraPedido('Tu carrito', 'goHome()')}
     <div class="lineas">${lineas}</div>
 
-    <div class="bloque-titulo">¿Cómo lo recibes?</div>
-    <div class="opciones">
-      ${filaRadio(state.entrega==='envio', 'Envío a todo el Perú', notaEnvio(subtotal),
-         shippingCost(subtotal,'envio') > 0 ? fmt(shippingCost(subtotal,'envio')) : 'Gratis', "setEntrega('envio')")}
-      ${filaRadio(state.entrega==='tienda', 'Recojo en tienda',
-         'Av. Los Héroes 382 · listo en 2 horas', 'Gratis', "setEntrega('tienda')")}
-    </div>
+    ${entregaHtml}
 
     ${resumenTotalesHtml('Total')}
 
@@ -3273,19 +4507,7 @@ function renderCheckout(){
     ? 'Recojo en tienda · Av. Los Héroes 382'
     : 'Envío a domicilio · Lima y provincias';
 
-  return `
-  <div class="app-shell con-barra">
-    ${cabeceraPedido('Pago y confirmación', 'goCart()')}
-
-    <div class="bloque-titulo">Medio de pago</div>
-    <div class="opciones">
-      ${mediosDisponibles().map(m => filaRadio(
-          state.pago===m.key, m.label, m.nota,
-          m.descuento ? '−5%' : '', `setPago('${m.key}')`)).join('')}
-    </div>
-
-    <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)">
-      <div class="bloque-titulo">Tus datos</div>
+  const camposHtml = `
       <label class="campo">
         <span>Nombre y apellido</span>
         <input id="coNombre" type="text" autocomplete="name" placeholder="Ej. María Torres" required value="${escapeHtml(state.datos.nombre)}">
@@ -3303,19 +4525,97 @@ function renderCheckout(){
       <label class="campo">
         <span>${state.entrega==='tienda' ? 'Quién lo recoge y cuándo' : 'Dirección de entrega'}</span>
         <textarea id="coDireccion" rows="2" placeholder="${state.entrega==='tienda' ? 'Ej. Paso yo mañana por la tarde' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
-      </label>
+      </label>`;
+
+  const notaCierre = medio.key === 'tarjeta'
+    ? 'Al continuar te llevamos a Mercado Pago para pagar con tarjeta. Al volver te confirmamos el pedido.'
+    : 'Al confirmar, tu pedido llega armado al WhatsApp de la tienda con productos, color y forma de entrega. Un asesor valida el stock y te da los datos para pagar.';
+  const ctaTexto = medio.key === 'tarjeta' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp';
+  const ctaClase = medio.key === 'tarjeta' ? 'terracota' : 'verde';
+
+  /* Escritorio: los medios de pago en rejilla y el formulario a la
+     izquierda, con el resumen del pedido pegado a la derecha. El <form>
+     envuelve las dos columnas para que el botón del resumen siga siendo el
+     submit de los campos de al lado. */
+  if(esEscritorio()){
+    const items = state.cart.map(c=>{
+      const p = PRODUCTS.find(x=>x.id===c.id);
+      if(!p) return '';
+      const fotos = p.images || [];
+      const iColor = c.color ? fotos.findIndex(u => colorFromImageUrl(u) === c.color) : -1;
+      const foto = fotos[iColor >= 0 ? iColor : 0];
+      return `
+      <div class="res-item">
+        <span class="res-item-thumb">
+          ${foto ? `<img src="${foto}" alt="" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
+        </span>
+        <span class="res-item-texto">
+          <span class="res-item-nombre">${escapeHtml(p.name)}${c.color ? ` · ${escapeHtml(c.color)}` : ''}</span>
+          <span class="res-item-linea">${c.qty} × ${fmt(p.price)}</span>
+        </span>
+        <span class="res-item-total">${fmt(p.price * c.qty)}</span>
+      </div>`;
+    }).join('');
+
+    return `
+    <div class="app-shell ped-esc">
+      ${cabeceraPedidoEscritorio('Pago y confirmación','Pago')}
+      <form id="pedidoForm" class="ped-layout" onsubmit="submitOrder(event)">
+        <div class="ped-izq">
+          <div class="ped-card">
+            <div class="bloque-titulo">Medio de pago</div>
+            <div class="opciones rejilla">
+              ${mediosDisponibles().map(m => filaRadio(
+                  state.pago===m.key, m.label, m.nota,
+                  m.descuento ? '−5%' : '', `setPago('${m.key}')`)).join('')}
+            </div>
+          </div>
+
+          <div class="ped-card datos">
+            <div class="bloque-titulo">Tus datos</div>
+            ${camposHtml}
+            <div class="campo-resumen">
+              ${escapeHtml(entregaResumen)}
+              <a href="/carrito" onclick="goCart();return false;">Cambiar</a>
+            </div>
+          </div>
+        </div>
+
+        <aside class="ped-der">
+          <div class="ped-panel">
+            <div class="bloque-titulo">Tu pedido</div>
+            <div class="res-items">${items}</div>
+            ${resumenTotalesHtml('Total a pagar')}
+            <button type="submit" class="btn-app ${ctaClase} ped-cta" id="btnConfirmar">${ctaTexto}</button>
+            <p class="ped-nota">${notaCierre}</p>
+          </div>
+        </aside>
+      </form>
+    </div>`;
+  }
+
+  return `
+  <div class="app-shell con-barra">
+    ${cabeceraPedido('Pago y confirmación', 'goCart()')}
+
+    <div class="bloque-titulo">Medio de pago</div>
+    <div class="opciones">
+      ${mediosDisponibles().map(m => filaRadio(
+          state.pago===m.key, m.label, m.nota,
+          m.descuento ? '−5%' : '', `setPago('${m.key}')`)).join('')}
+    </div>
+
+    <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)">
+      <div class="bloque-titulo">Tus datos</div>
+      ${camposHtml}
       <div class="campo-resumen">${escapeHtml(entregaResumen)}</div>
 
       ${resumenTotalesHtml('Total a pagar')}
 
-      <p class="nota-cierre">${medio.key === 'tarjeta'
-        ? 'Al continuar te llevamos a Mercado Pago para pagar con tarjeta. Al volver te confirmamos el pedido.'
-        : 'Al confirmar, tu pedido llega armado al WhatsApp de la tienda con productos, color y forma de entrega. Un asesor valida el stock y te da los datos para pagar.'}</p>
+      <p class="nota-cierre">${notaCierre}</p>
 
       <div class="barra-fija">
-        <button type="submit" class="btn-app ${medio.key === 'tarjeta' ? 'terracota' : 'verde'}" id="btnConfirmar">
-          ${medio.key === 'tarjeta' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp'}
-        </button>
+        <button type="submit" class="btn-app ${ctaClase}" id="btnConfirmar">${ctaTexto}</button>
       </div>
     </form>
   </div>`;
@@ -3378,10 +4678,25 @@ const MP_API_URL = 'https://script.google.com/macros/s/AKfycbxyrzUjXsG2wiE-gA2oW
    carga ningún script de Google, así que no rompe nada dejarlo así.
    ====================================================================== */
 const GOOGLE_ADS_CONVERSION_ID = 'AW-PEGA_AQUI_TU_ID'; // ej. 'AW-123456789'
+
+/* Cuatro acciones, no tres. La diferencia entre las dos últimas es la que
+   decide si Google optimiza con datos reales o con humo:
+
+   - pedidoWhatsapp: el cliente le dio a "Confirmar pedido" y se le abrió el
+     chat. TODAVÍA NO PAGÓ: un asesor tiene que validar stock y pasarle el
+     número de Yape, y una parte de estos pedidos nunca se cobra. En Google
+     Ads va como "Cliente potencial", no como "Compra".
+   - compraPagada: Mercado Pago devolvió status=approved. Eso sí es plata
+     cobrada, y es la única que debería contar como "Compra".
+
+   Si las dos van juntas con el monto completo, Google cree que rindes más de
+   lo que rindes y te gasta el presupuesto donde no toca. */
 const GOOGLE_ADS_LABELS = {
-  whatsapp:   'PEGA_AQUI_ETIQUETA_WHATSAPP',   // clic en el botón flotante de WhatsApp
-  addToCart:  'PEGA_AQUI_ETIQUETA_CARRITO',    // clic en "Agregar al carrito"
-  purchase:   'PEGA_AQUI_ETIQUETA_COMPRA'      // pedido confirmado (WhatsApp o Mercado Pago)
+  whatsapp:        'PEGA_AQUI_ETIQUETA_WHATSAPP',  // clic en cualquier botón de WhatsApp
+  addToCart:       'PEGA_AQUI_ETIQUETA_CARRITO',   // clic en "Agregar al carrito"
+  inicioPago:      'PEGA_AQUI_ETIQUETA_PAGO',      // llegó a /checkout con carrito
+  pedidoWhatsapp:  'PEGA_AQUI_ETIQUETA_PEDIDO',    // pedido enviado al chat, sin cobrar
+  compraPagada:    'PEGA_AQUI_ETIQUETA_COMPRA'     // pago aprobado en Mercado Pago
 };
 
 function googleAdsConfigured(){
@@ -3401,8 +4716,8 @@ function loadGoogleAdsTracking(){
   gtag('config', GOOGLE_ADS_CONVERSION_ID);
 }
 
-/* Avisa a Google Ads que ocurrió una conversión (whatsapp/addToCart/purchase).
-   No hace nada si aún no configuraste tus etiquetas arriba. */
+/* Avisa a Google Ads que ocurrió una conversión. labelKey es una clave de
+   GOOGLE_ADS_LABELS. No hace nada si aún no configuraste tus etiquetas. */
 function trackAdsConversion(labelKey, value){
   if(!googleAdsConfigured() || typeof gtag !== 'function') return;
   const label = GOOGLE_ADS_LABELS[labelKey];
@@ -3468,13 +4783,15 @@ Correo: ${datos.correo}
 ${state.entrega === 'tienda' ? 'Recojo' : 'Dirección'}: ${datos.direccion}`;
 
   window.open(`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank', 'noopener');
-  trackAdsConversion('purchase', total);
+  /* Pedido enviado, no cobrado: va como cliente potencial. */
+  trackAdsConversion('pedidoWhatsapp', total);
   cerrarPedido(numero, total);
 }
 
 /* Deja el pedido por cerrado: guarda lo que la pantalla de confirmación
    necesita enseñar, vacía el carrito y navega a /pedido/<id>. */
 function cerrarPedido(numero, total){
+  pagoMedido = false;   // el próximo pedido vuelve a medir su inicio de pago
   state.pedidoEnviado = { total, entrega: state.entrega };
   state.orderId = numero;
   state.orderPlaced = true;
@@ -3544,7 +4861,8 @@ function checkPaymentReturnStatus(){
   if(!status) return;
   if(status === 'approved'){
     const total = cartTotal();
-    trackAdsConversion('purchase', total);
+    /* La única venta cobrada de verdad que el sitio puede confirmar solo. */
+    trackAdsConversion('compraPagada', total);
     /* Se limpia el parámetro antes de cerrar el pedido, porque cerrarPedido
        navega a /pedido/<id> y si no el ?status se arrastraría hasta ahí. */
     window.history.replaceState({}, '', window.location.pathname);
@@ -4039,39 +5357,361 @@ function esEscritorio(){
   return window.matchMedia('(min-width:' + ANCHO_ESCRITORIO + 'px)').matches;
 }
 
-/* Barra superior. En el teléfono la navegación va abajo (ver .bottom-nav);
-   de 900px para arriba pasa aquí, que es donde la busca quien usa un ratón,
-   y de paso recupera el logo y el buscador que en móvil viven dentro de la
-   portada. */
+/* Nombre corto para la barra de categorías: ahí hay 48px de alto y siete
+   pestañas que tienen que caber en una fila, así que "Instrumentos de Cuerda"
+   se queda en "Cuerda". El nombre largo sigue mandando en la ficha, el pie y
+   el <title> de la página, que es donde lo lee Google. */
+const CAT_CORTO = {
+  cuerda:'Cuerda', teclados:'Teclados', percusion:'Percusión', viento:'Viento',
+  audio:'Micro y Audio', colegio:'Para Colegio', accesorios:'Accesorios',
+};
+
+/* ---------------- buscador en vivo de la cabecera ----------------
+   En el teléfono buscar es una pantalla (/buscar). En escritorio sobra el
+   salto: hay sitio para enseñar los resultados colgando del input. La ruta
+   /buscar se queda igual para el móvil y para quien llegue por enlace.
+
+   Vive fuera de `state` a propósito: es estado de un widget, no del sitio.
+   Nada de lo que hay aquí cambia la URL ni lo que se pinta en #app. */
+const NAV_MAX_RESULTADOS = 5;
+let navQuery = '';
+let navMarcado = -1;   // fila resaltada con las flechas; -1 = ninguna
+
+function navResultados(){
+  const q = navQuery.trim();
+  return q ? buscarProductos(q) : [];
+}
+
+function navFilaHtml(p, i){
+  const foto = (p.images || [])[0];
+  const stock = p.stock || 0;
+  return `
+  <a class="nav-res${i===navMarcado?' marcado':''}" data-i="${i}"
+     href="/producto/${p.id}-${slugify(p.name)}"
+     onclick="abrirDesdeNavBuscar(${p.id});return false;">
+    <span class="nav-res-thumb">
+      ${foto
+        ? `<img src="${foto}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+        : iconSvg(iconFor(p))}
+    </span>
+    <span class="nav-res-texto">
+      <span class="nav-res-nombre">${escapeHtml(p.name)}</span>
+      <span class="nav-res-linea">
+        <span class="nav-res-precio">${fmt(p.price)}</span>
+        <span class="nav-res-stock${stock>0?'':' agotado'}">${stock>0?'Stock en tienda':'Agotado'}</span>
+      </span>
+    </span>
+    <span class="nav-res-chevron">›</span>
+  </a>`;
+}
+
+function navBuscarMenuHtml(){
+  const q = navQuery.trim();
+  if(!q) return '';
+  const todos = navResultados();
+
+  if(!todos.length){
+    return `
+      <div class="nav-buscar-vacio">
+        <div class="nbv-titulo">Nada con “${escapeHtml(q)}”</div>
+        <p>Puede que lo tengamos en tienda sin publicar.</p>
+        <a target="_blank" rel="noopener"
+           href="${waHref('Hola, busco ' + q + '. ¿Lo tienen en tienda?')}"
+           onclick="trackAdsConversion('whatsapp')">Preguntar por WhatsApp</a>
+      </div>`;
+  }
+
+  const vistos = todos.slice(0, NAV_MAX_RESULTADOS);
+  const conteo = todos.length === 1
+    ? '1 resultado'
+    : `${todos.length} resultados${todos.length > vistos.length ? ` · se enseñan ${vistos.length}` : ''}`;
+  return `<div class="nav-res-conteo">${conteo}</div>${vistos.map(navFilaHtml).join('')}`;
+}
+
+/* Solo se repinta el desplegable: repintar la cabecera entera le quitaría el
+   foco al input y se cortaría la escritura en cada tecla. */
+function pintarNavBuscar(){
+  const menu = document.getElementById('navBuscarMenu');
+  if(menu) menu.innerHTML = navBuscarMenuHtml();
+  const limpiar = document.getElementById('navBuscarLimpiar');
+  if(limpiar) limpiar.hidden = !navQuery.trim();
+}
+
+function onNavBuscar(val){
+  navQuery = val;
+  navMarcado = -1;
+  pintarNavBuscar();
+}
+
+function limpiarNavBuscar(){
+  navQuery = '';
+  navMarcado = -1;
+  const input = document.getElementById('navBuscarInput');
+  if(input){ input.value = ''; input.focus(); }
+  pintarNavBuscar();
+}
+
+/* Cerrar de verdad: vacía la consulta para que el desplegable no reaparezca
+   solo la próxima vez que algo repinte la cabecera. */
+function cerrarNavBuscar(){
+  navQuery = '';
+  navMarcado = -1;
+  const input = document.getElementById('navBuscarInput');
+  if(input) input.value = '';
+  pintarNavBuscar();
+}
+
+function abrirDesdeNavBuscar(id){
+  cerrarNavBuscar();
+  openProductDetail(id);
+}
+
+/* Flechas para recorrer las filas, Enter para abrir la marcada (o la primera
+   si no hay ninguna), Escape para cerrar. */
+function onNavBuscarTecla(e){
+  const vistos = navResultados().slice(0, NAV_MAX_RESULTADOS);
+  if(e.key === 'Escape'){ cerrarNavBuscar(); e.target.blur(); return; }
+  if(!vistos.length) return;
+
+  if(e.key === 'ArrowDown'){
+    e.preventDefault();
+    navMarcado = navMarcado + 1 >= vistos.length ? 0 : navMarcado + 1;
+    pintarNavBuscar();
+    return;
+  }
+  if(e.key === 'ArrowUp'){
+    e.preventDefault();
+    navMarcado = navMarcado <= 0 ? vistos.length - 1 : navMarcado - 1;
+    pintarNavBuscar();
+    return;
+  }
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const elegido = vistos[navMarcado >= 0 ? navMarcado : 0];
+    if(elegido) abrirDesdeNavBuscar(elegido.id);
+  }
+}
+
+/* Un clic fuera del buscador lo cierra. Se registra una sola vez, al cargar,
+   y no hace nada mientras no haya nada escrito. */
+document.addEventListener('click', e => {
+  if(!navQuery.trim()) return;
+  if(e.target.closest('.nav-buscar')) return;
+  cerrarNavBuscar();
+});
+
+/* El pill del carrito se repinta solo, sin pasar por render(): agregar al
+   carrito no vuelve a pintar la pantalla (ver updateCartCount) y si no el
+   total de la cabecera se quedaría viejo. */
+function navCarritoHtml(){
+  const unidades = state.cart.reduce((s,c)=>s+c.qty, 0);
+  const etiqueta = unidades > 0 ? fmt(cartSubtotal()) : 'Carrito';
+  return `${iconSvg('cart')}<span>${etiqueta}</span>${unidades>0?`<span class="nav-badge">${unidades}</span>`:''}`;
+}
+function pintarNavCarrito(){
+  const pill = document.getElementById('navCarrito');
+  if(pill) pill.innerHTML = navCarritoHtml();
+}
+
+/* Cabecera de escritorio: franja utilitaria (estática, en el HTML), esta
+   barra de 78px y la fila de categorías de 48px. En el teléfono la
+   navegación va abajo (ver .bottom-nav) y nada de esto se enseña. */
 function renderNavEscritorio(){
   const el = document.getElementById('navEscritorio');
   if(!el) return;
-  const enCarrito = state.cart.reduce((s,c)=>s+c.qty, 0);
-  const activo = v => state.view === v ? ' activo' : '';
+  const enCarrito = ['carrito','checkout','pedido'].includes(state.view);
   el.innerHTML = `
     <div class="nav-esc-inner">
-      <a class="nav-esc-marca" href="/" onclick="goHome();return false;">
-        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" width="38" height="38">
+      <a class="nav-esc-marca" href="/" onclick="cerrarNavBuscar();goHome();return false;">
+        <img src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" width="44" height="44">
         <span>
           <b>Chipao Music</b>
-          <i>San Juan de Miraflores · ${estadoTienda()}</i>
+          <i>Instrumentos musicales</i>
         </span>
       </a>
-      <nav class="nav-esc-links">
-        <a class="${activo('home')}" href="/" onclick="goHome();return false;">Inicio</a>
-        <a class="${state.view==='shop'?'activo':''}" href="/tienda" onclick="goShop(null);return false;">Catálogo</a>
-        <a href="/ofertas" onclick="goOffers();return false;">Ofertas</a>
-        <a href="/categoria/colegio" onclick="goShop('colegio');return false;">Para colegio</a>
-      </nav>
-      <a class="nav-esc-buscar" href="/buscar" onclick="goSearch();return false;">
-        ${iconSvg('search')}<span>Buscar</span>
-      </a>
-      <a class="nav-esc-carrito${['carrito','checkout','pedido'].includes(state.view)?' activo':''}"
-         href="/carrito" onclick="goCart();return false;">
-        ${iconSvg('cart')}${enCarrito>0?`<span class="tab-badge">${enCarrito}</span>`:''}
-      </a>
-      ${pillAsesorHtml()}
-    </div>`;
+
+      <div class="nav-buscar">
+        <div class="nav-buscar-caja">
+          ${iconSvg('search')}
+          <input id="navBuscarInput" type="search" autocomplete="off" enterkeyhint="search"
+                 aria-label="Buscar instrumentos"
+                 placeholder="Busca “ukelele”, “cajón”, “teclado”…"
+                 value="${escapeHtml(navQuery)}"
+                 oninput="onNavBuscar(this.value)"
+                 onkeydown="onNavBuscarTecla(event)">
+          <button type="button" class="nav-buscar-limpiar" id="navBuscarLimpiar"
+                  ${navQuery.trim()?'':'hidden'} onclick="limpiarNavBuscar()">Limpiar</button>
+        </div>
+        <div class="nav-buscar-menu" id="navBuscarMenu" role="listbox"
+             aria-label="Resultados de búsqueda">${navBuscarMenuHtml()}</div>
+      </div>
+
+      <a class="nav-esc-asesor" target="_blank" rel="noopener"
+         href="${waHref('Hola, quiero hablar con un asesor.')}"
+         onclick="trackAdsConversion('whatsapp')">
+        <span class="ico-wa">${iconWhatsapp}</span>Hablar con un asesor</a>
+
+      <a class="nav-esc-carrito${enCarrito?' activo':''}" id="navCarrito"
+         href="/carrito" onclick="cerrarNavBuscar();goCart();return false;"
+         aria-label="Ver el carrito">${navCarritoHtml()}</a>
+    </div>
+
+    <nav class="nav-esc-cats" aria-label="Categorías">
+      ${CATEGORIES.map(c=>`
+        <a class="${state.view==='shop' && state.activeCat===c.key ? 'activo':''}"
+           href="/categoria/${c.key}"
+           onclick="cerrarNavBuscar();goShop('${c.key}');return false;">${escapeHtml(CAT_CORTO[c.key] || c.label)}</a>`).join('')}
+      <a class="nav-ofertas" href="/ofertas"
+         onclick="cerrarNavBuscar();goOffers();return false;">Ofertas</a>
+    </nav>`;
+}
+
+/* ---------------- banda de oferta ----------------
+   Cuenta contra un plazo REAL: ciclos de 22 horas anclados a una fecha fija,
+   iguales para todo el que entre. Un reloj que arranca de cero en cada visita
+   es publicidad engañosa y en Perú Indecopi lo puede tomar como tal.
+
+   Los números salen del catálogo en cada pintada: si cambian los descuentos,
+   la banda se actualiza sola, y si algún día no queda ninguna oferta con
+   stock, no se enseña en vez de mentir. */
+/* Ciclo de 22 horas anclado a una fecha fija, NO a cuándo abriste la página.
+   Es la diferencia entre un plazo real y un engaño: al ir contra un instante
+   absoluto, todos los que entran ven el mismo tiempo restante. Si el contador
+   arrancara en 22:00:00 para cada visitante, sería un reloj de mentira.
+
+   El ancla es el 1 de enero de 2026 a las 00:00 de Lima (05:00 UTC). Con un
+   ciclo de 24 horas eso deja el corte a medianoche de Lima todos los días.
+   Mover el ancla mueve la hora del corte. */
+const CICLO_HORAS = 24;
+const CICLO_ANCLA = Date.UTC(2026, 0, 1, 5, 0, 0);
+
+function segundosHastaFinDeCiclo(){
+  const ms = CICLO_HORAS * 3600 * 1000;
+  const transcurrido = ((Date.now() - CICLO_ANCLA) % ms + ms) % ms;
+  return Math.ceil((ms - transcurrido) / 1000);
+}
+
+/* Al cerrarse un ciclo se vuelve a pedir el catálogo: si cambiaste los
+   descuentos desde el panel, la banda y la portada se actualizan solas sin
+   que nadie recargue. Es una versión ligera de fetchProducts() a propósito:
+   la original también revisa la URL y puede navegar a otra pantalla, y eso
+   aquí sería un salto inesperado a mitad de la visita. */
+let refrescandoOfertas = false;
+async function refrescarOfertas(){
+  if(refrescandoOfertas) return;
+  refrescandoOfertas = true;
+  try{
+    const res = await fetch(`${PRODUCTS_API_URL}/products`);
+    const data = await res.json();
+    if(!data.error && Array.isArray(data.products) && data.products.length){
+      PRODUCTS = data.products;
+      PRICE_MAX = Math.max(...PRODUCTS.map(p => p.price));
+      if(state.priceMax > PRICE_MAX) state.priceMax = PRICE_MAX;
+      render();
+    }
+  }catch(err){
+    /* Sin conexión la banda sigue con lo que ya tenía: mejor un dato viejo
+       que una pantalla rota. */
+  }
+  refrescandoOfertas = false;
+}
+
+/* La banda no aparece dentro del flujo de compra: un contador corriendo
+   mientras alguien llena sus datos de pago es presión, no información. */
+const VISTAS_CON_BANDA = ['home', 'shop'];
+
+let relojBanda = null;
+
+let ultimoRestante = Infinity;
+
+function pintarRelojBanda(){
+  const el = document.getElementById('bandaOferta');
+  if(!el) return;
+  const celdas = el.querySelectorAll('[data-reloj]');
+  if(!celdas.length) return;
+  const s = segundosHastaFinDeCiclo();
+
+  /* El ciclo se cerró: el restante dejó de bajar y volvió a subir. */
+  if(s > ultimoRestante) refrescarOfertas();
+  ultimoRestante = s;
+
+  const partes = [
+    String(Math.floor(s / 3600)).padStart(2, '0'),
+    String(Math.floor(s % 3600 / 60)).padStart(2, '0'),
+    String(s % 60).padStart(2, '0'),
+  ];
+  celdas.forEach((c, i) => { c.textContent = partes[i]; });
+}
+
+/* Se crea de cero en cada pintada en vez de vivir fija en el HTML: en el
+   teléfono va DENTRO de #app —debajo del buscador— y ahí el innerHTML de
+   render() se la llevaría por delante. */
+function renderBandaOferta(){
+  const previa = document.getElementById('bandaOferta');
+  if(previa) previa.remove();
+
+  const ofertas = PRODUCTS.filter(p => enOferta(p) && (p.stock || 0) > 0);
+  if(!ofertas.length || !VISTAS_CON_BANDA.includes(state.view)){
+    if(relojBanda){ clearInterval(relojBanda); relojBanda = null; }
+    return;
+  }
+
+  const maxDesc = Math.max(...ofertas.map(pctDescuento));
+  const el = document.createElement('div');
+  el.className = 'banda-oferta';
+  el.id = 'bandaOferta';
+
+  if(esEscritorio()){
+    el.innerHTML = `
+      <div class="bo-caja">
+        <span class="bo-llama" aria-hidden="true">🦙</span>
+        <div class="bo-fila">
+          <span class="bo-texto">
+            <span class="bo-eyebrow">La oferta termina en</span>
+            <span class="bo-titulo">Hasta &minus;${maxDesc}% en ${ofertas.length} productos</span>
+          </span>
+          <span class="bo-reloj" role="timer" aria-label="Tiempo restante de la oferta">
+            <span class="bo-cel"><b data-reloj>00</b><i>HRS</i></span>
+            <span class="bo-cel"><b data-reloj>00</b><i>MIN</i></span>
+            <span class="bo-cel"><b data-reloj>00</b><i>SEG</i></span>
+          </span>
+          <a class="bo-cta" href="/ofertas" onclick="goOffers();return false;">Ver ofertas</a>
+        </div>
+      </div>`;
+    document.getElementById('app').before(el);
+  }else{
+    /* En el teléfono: una sola línea, toda ella enlace, con el reloj en
+       formato corto. La llama se queda pero pequeña y en línea, sin el
+       círculo que asoma: ahí arriba estorbaba más de lo que sumaba. */
+    el.innerHTML = `
+      <a class="bo-caja bo-fina" href="/ofertas" onclick="goOffers();return false;">
+        <span class="bo-llama" aria-hidden="true">🦙</span>
+        <span class="bo-fina-txt">Hasta &minus;${maxDesc}% por tiempo limitado</span>
+        <span class="bo-fina-reloj" role="timer" aria-label="Tiempo restante de la oferta"><b data-reloj>00</b>:<b data-reloj>00</b>:<b data-reloj>00</b></span>
+        <span class="bo-fina-chev" aria-hidden="true">&rsaquo;</span>
+      </a>`;
+    const cabecera = document.querySelector('#app .app-head');
+    if(cabecera) cabecera.after(el);
+    else document.getElementById('app').before(el);
+  }
+
+  pintarRelojBanda();
+  if(!relojBanda) relojBanda = setInterval(pintarRelojBanda, 1000);
+}
+
+/* El degradado del borde derecho de la barra de categorías se apaga cuando ya
+   no queda nada que desplazar. Se engancha en cada pintada porque la barra se
+   crea de nuevo con el innerHTML de render(); el listener viejo se va con el
+   nodo viejo, así que no se acumulan. */
+function prepararBarraCategorias(){
+  const barra = document.querySelector('.cat-barra');
+  if(!barra) return;
+  const marcar = () => {
+    const fin = barra.scrollLeft + barra.clientWidth >= barra.scrollWidth - 4;
+    barra.classList.toggle('al-final', fin);
+  };
+  barra.addEventListener('scroll', marcar, { passive: true });
+  marcar();
 }
 
 /* Cruzar los 900px cambia el marcado de la portada, así que hay que volver a
@@ -4096,6 +5736,8 @@ function render(){
     : renderShop();
   buildNavLists();
   renderNavEscritorio();
+  renderBandaOferta();
+  prepararBarraCategorias();
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */

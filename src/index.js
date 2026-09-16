@@ -34,7 +34,7 @@ const CATEGORIES = [
   { key: 'percusion', label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: ['Tambores', 'Bombos', 'Tarolas', 'Cajones', 'Metalófono', 'Panderetas', 'Kalimbas'] },
   { key: 'viento', label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Flautas', 'Melódicas', 'Quenas', 'Zampoñas'] },
   { key: 'audio', label: 'Micrófono y Audio', desc: 'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Micrófonos', 'Interfaces', 'Amplificadores'] },
-  { key: 'colegio', label: 'Para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [] },
+  { key: 'colegio', label: 'Para Colegio', seo: 'Instrumentos para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [] },
   { key: 'accesorios', label: 'Accesorios', desc: 'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Cuerdas (Acústica/Clásica)', 'Cuerdas (Eléctrica)', 'Capotrastes', 'Púas y pines', 'Afinadores y metrónomos', 'Atriles y parantes', 'Baquetas y parches', 'Cañas y boquillas', 'Violín (resina y puentes)', 'Limpieza y repuestos'] },
 ];
 
@@ -131,10 +131,23 @@ function shopMeta() {
   };
 }
 
-function offersMeta() {
+/* Precio más bajo con stock, para las descripciones. Sin catKey mira todo el
+   catálogo. Devuelve 0 si no hay nada que vender, y quien llama lo omite. */
+function minPrice(products, catKey, soloOfertas) {
+  const hay = (products || []).filter(p =>
+    (p.stock || 0) > 0
+    && (!catKey || productInCat(p, catKey))
+    && (!soloOfertas || isOffer(p)));
+  return hay.length ? Math.min(...hay.map(p => p.price)) : 0;
+}
+
+function offersMeta(products) {
+  const desde = minPrice(products, null, true);
   return {
-    title: 'Ofertas en Instrumentos Musicales | Chipao Music',
-    description: 'Instrumentos musicales en oferta en Lima y todo el Perú: descuentos en guitarras, teclados, percusión y accesorios. Tienda en San Juan de Miraflores.',
+    /* "Económicos" en el título y "baratos" en la descripción: el título es lo
+       que define la marca en los resultados, la descripción pesa menos. */
+    title: 'Instrumentos Musicales Económicos en Lima | Chipao Music',
+    description: `Instrumentos musicales baratos en Lima${desde ? `, desde S/ ${desde}` : ''}: guitarras, flautas, panderetas y accesorios con descuento. Tienda en San Juan de Miraflores.`,
     path: '/ofertas',
     schema: withContext(breadcrumbSchema([
       { name: 'Inicio', path: '/' },
@@ -143,7 +156,15 @@ function offersMeta() {
   };
 }
 
-function categoryMeta(cat) {
+/* El nombre con el que la categoría sale en <title> y <h1>. "Para Colegio en
+   Lima" no contiene la frase que la gente busca ("instrumentos para colegio"),
+   así que las categorías cuyo nombre de menú no funciona como término de
+   búsqueda llevan un "seo" propio. El nombre corto sigue mandando en el menú. */
+function catSeoLabel(cat) {
+  return cat.seo || cat.label;
+}
+
+function categoryMeta(cat, products) {
   const subsList = cat.subs.join(', ');
   /* La descripción propia gana; la plantilla queda de respaldo para una
      categoría nueva a la que todavía no le hayan escrito la suya. */
@@ -151,9 +172,14 @@ function categoryMeta(cat) {
     ? `Compra ${cat.label.toLowerCase()} en Lima y todo el Perú: ${subsList}. Tienda en San Juan de Miraflores con envíos a todo el país.`
     : `Compra ${cat.label.toLowerCase()} en Lima y todo el Perú. Tienda en San Juan de Miraflores con envíos a todo el país.`);
   const path = `/categoria/${cat.key}`;
+  /* El precio de entrada va DELANTE de la descripción, no detrás: Google corta
+     por el final, y ahí es donde está el texto de tienda y envíos que se
+     repite en todas las páginas. Sale del catálogo en cada visita, así que no
+     se queda viejo si cambian los precios. */
+  const desde = minPrice(products, cat.key);
   return {
-    title: `${cat.label} en Lima | Chipao Music`,
-    description,
+    title: `${catSeoLabel(cat)} en Lima | Chipao Music`,
+    description: desde ? `Desde S/ ${desde}. ${description}` : description,
     path,
     schema: withContext(breadcrumbSchema([
       { name: 'Inicio', path: '/' },
@@ -265,7 +291,7 @@ function sesionMeta(pathname) {
 function routeFor(pathname, products) {
   if (pathname === '/') return { meta: homeMeta() };
   if (pathname === '/tienda') return { meta: shopMeta() };
-  if (pathname === '/ofertas') return { meta: offersMeta() };
+  if (pathname === '/ofertas') return { meta: offersMeta(products) };
 
   const sesion = sesionMeta(pathname);
   if (sesion) return { meta: sesion, noIndex: true };
@@ -273,7 +299,7 @@ function routeFor(pathname, products) {
   const catMatch = pathname.match(/^\/categoria\/([a-z]+)$/);
   if (catMatch) {
     const cat = CATEGORIES.find(c => c.key === catMatch[1]);
-    return cat ? { meta: categoryMeta(cat), cat } : null;
+    return cat ? { meta: categoryMeta(cat, products), cat } : null;
   }
 
   const productMatch = pathname.match(/^\/producto\/(\d+)/);
@@ -384,7 +410,7 @@ function bodyFor(route, products) {
   if (route.cat) {
     const suyos = products.filter(p => productInCat(p, route.cat.key));
     return listBody(
-      `${route.cat.label} en Lima`,
+      `${catSeoLabel(route.cat)} en Lima`,
       route.meta.description,
       suyos,
       'Estamos actualizando esta categoría, disculpa las molestias.'
@@ -397,7 +423,7 @@ function bodyFor(route, products) {
   }
 
   if (route.meta.path === '/ofertas') {
-    return listBody('Ofertas', route.meta.description, products.filter(isOffer),
+    return listBody('Ofertas en instrumentos musicales', route.meta.description, products.filter(isOffer),
       'Ahora mismo no hay ofertas activas. Vuelve pronto.');
   }
 
