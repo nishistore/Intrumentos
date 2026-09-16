@@ -81,7 +81,7 @@
      Poppins se cayeron con el sitio anterior: eran dos familias completas
      descargándose en cada visita sin que las usara nadie. Los nombres van en
      orden alfabético porque la API css2 lo exige. -->
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy-deep:#ffffff;
@@ -156,6 +156,13 @@
   --app-green-soft:#EDF9EF;       /* fondo del bloque stock / asesor */
   --app-green-mint:#B9F5D6;       /* solo sobre tinta oscura (franja, pie) */
   --peru-rojo:#D91023;            /* rojo de la bandera: banda y descuentos */
+  /* Verde de WhatsApp: es su color de marca, no el de la tienda. Va aparte
+     para que un botón de WhatsApp nunca se confunda con uno de compra. */
+  --wa:#25D366;
+  --wa-ink:#0b2e14;
+  /* Tipografías del handoff de portada. */
+  --app-black:'Archivo Black','Archivo',system-ui,sans-serif;
+  --app-mono2:'IBM Plex Mono',ui-monospace,Menlo,monospace;
   --peru-rojo-soft:#FDE7E9;       /* fondo del chip "Ahorras" */
 
   /* --- color por categoría (tiles del carrusel de la portada) --- */
@@ -551,75 +558,336 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .carrusel::-webkit-scrollbar{display:none;}
 .carrusel > *{scroll-snap-align:start;}
 
-/* ---------------- barra de categorías ----------------
-   En el teléfono son tarjetas negras sueltas, separadas por un hueco, en una
-   fila que se desplaza. El ancho de 94px está elegido para que entren tres y
-   se asome la cuarta cortada por el borde: esa tarjeta a medias es lo que
-   avisa de que hay más a la derecha, y la flecha del borde lo remata.
+/* ======================================================================
+   PORTADA DE VENTA  (handoff "Home full ventas")
 
-   En escritorio las siete se juntan en un solo panel (ver el @media). */
-.cat-barra{
-  display:flex;gap:10px;
-  margin-left:var(--app-gutter);margin-right:var(--app-gutter);
-  overflow-x:auto;scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
-  scroll-snap-type:x proximity;
+   Todo lo de aquí es de la portada y solo de la portada. Las medidas son las
+   del README: gutter de 16px en el teléfono y 40px en escritorio, tarjetas de
+   10–16px de radio, botones de 8–11px.
+
+   Móvil primero: lo de escritorio va en el @media de más abajo.
+   ====================================================================== */
+.app-shell.portada{padding-bottom:0;}
+.app-shell.portada > *{padding-left:0;padding-right:0;}
+/* Menos el hero y la vitrina, que sí llevan el gutter y lo declaran con
+   padding: la regla de arriba pesa más y se lo estaba comiendo, así que sus
+   tarjetas llegaban pegadas al borde de la pantalla. */
+.app-shell.portada > .hero-venta,
+.app-shell.portada > .vitrina{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
+
+/* ---- piezas compartidas ---- */
+.btn-comprar{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  width:100%;min-height:48px;padding:15px;
+  background:var(--app-ink);color:#fff;border:none;
+  border-radius:11px;font:800 16px/1 var(--app-sans);
+  text-decoration:none;text-align:center;
+  touch-action:manipulation;transition:background .15s ease,transform .15s ease;
 }
-.cat-barra::-webkit-scrollbar{display:none;}
-/* La flecha va pegada al borde con position:sticky mientras el resto se
-   desplaza, y se apaga sola al llegar al final (ver .al-final). */
-.cat-barra::after{
-  content:'›';
-  flex:none;align-self:center;
-  position:sticky;right:0;
-  width:28px;height:28px;margin-left:-28px;
-  border-radius:50%;
-  background:var(--app-ink);box-shadow:0 0 0 3px #fff;
-  display:flex;align-items:center;justify-content:center;
-  font:700 16px/1 var(--app-sans);color:#fff;
-  padding-bottom:2px;
-  pointer-events:none;
-  opacity:1;transition:opacity .2s ease;
+.btn-comprar:active{opacity:.9;}
+.btn-contorno{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  min-height:48px;padding:14px 20px;
+  background:#fff;border:1.5px solid var(--app-line-strong);
+  border-radius:11px;font:700 15px/1 var(--app-sans);color:var(--app-ink);
+  text-decoration:none;
 }
-.cat-barra.al-final::after{opacity:0;}
-.cat-item{
-  flex:none;width:94px;
-  background:var(--app-ink);border-radius:14px;
-  padding:14px 6px;
-  text-align:center;text-decoration:none;
-  scroll-snap-align:start;
-  touch-action:manipulation;
+.btn-wa-contorno{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  min-height:48px;padding:14px;
+  background:var(--wa);color:var(--wa-ink);border:none;
+  border-radius:11px;font:800 15px/1 var(--app-sans);text-decoration:none;
 }
-.cat-item:active{opacity:.75;}
-.cat-item-ico{display:flex;align-items:center;justify-content:center;height:22px;}
-.cat-item-ico svg{
-  width:22px;height:22px;
-  stroke:var(--app-green);stroke-width:1.4;fill:none;
+.btn-wa-contorno .ico-wa svg,.btn-comprar .ico-wa svg{width:18px;height:18px;}
+.enlace-sub{
+  font:700 14px/1 var(--app-sans);color:var(--app-ink);text-decoration:none;
+  border-bottom:1.5px solid var(--app-line-strong);padding-bottom:2px;
 }
-/* Dos líneas fijas: "Instrumentos de Cuerda" parte en dos y el resto en una,
-   y sin alto fijo las tarjetas quedaban desniveladas. */
-.cat-item-nombre{
-  display:block;margin-top:8px;height:26px;overflow:hidden;
-  font:600 10.5px/1.25 var(--app-sans);color:#fff;
+.enlace-sub.verde{color:var(--app-on-green);border-bottom-color:rgba(15,46,27,.35);}
+.badge-dto{
+  background:var(--peru-rojo);color:#fff;
+  font:800 11.5px/1 var(--app-sans);padding:4px 8px;border-radius:5px;
 }
-.cat-item-desde{
-  display:block;margin-top:3px;
-  font:400 10px/1 var(--app-sans);color:rgba(255,255,255,.55);
+.badge-negro{
+  background:var(--app-ink);color:#fff;
+  font:700 11.5px/1 var(--app-sans);padding:4px 8px;border-radius:5px;
+}
+.badge-dto.esquina{position:absolute;top:9px;left:9px;z-index:2;}
+.sinfoto{
+  display:flex;align-items:center;justify-content:center;height:100%;padding:10px;
+  background:var(--app-sunken);font:500 11px/1.3 var(--app-sans);
+  color:var(--app-muted-3);text-align:center;
+}
+.stock-linea{display:block;margin-top:8px;font:700 12.5px/1 var(--app-sans);}
+.stock-linea.escasez{color:var(--peru-rojo);}
+.stock-linea.bien{color:var(--app-green-ink);}
+
+/* ---- barra de urgencia ---- */
+.urgencia{background:#1a1a18;color:#fff;}
+.urg-inner{
+  max-width:var(--app-max);margin:0 auto;
+  padding:10px var(--app-gutter);
+  display:flex;align-items:center;gap:10px;
+}
+.urg-label-movil{flex:1;min-width:0;font:400 12.5px/1 var(--app-sans);color:#b9b9b2;}
+.urg-reloj{display:flex;align-items:center;gap:5px;flex:none;}
+.urg-cel{
+  background:#2e2e2a;padding:4px 8px;border-radius:5px;
+  font:500 14px/1 var(--app-mono2);color:#fff;font-variant-numeric:tabular-nums;
+}
+.urg-reloj i{font-style:normal;color:#6e6e68;}
+.urg-ver{
+  flex:none;font:700 12.5px/1 var(--app-sans);color:#fff;text-decoration:none;
+  border-bottom:1.5px solid #6e6e68;padding-bottom:1px;
 }
 
-.seccion-head{
-  margin-top:22px;
-  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+/* ---- hero ---- */
+.hero-venta{padding:16px var(--app-gutter) 0;}
+.hv-gancho{
+  position:relative;
+  background:var(--app-sunken);border:1px solid var(--app-line);
+  border-radius:16px;padding:14px;
 }
-.seccion-head h2,.seccion-titulo{
-  font:700 19px/1.2 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);
+.hv-badges{position:absolute;top:24px;left:24px;z-index:2;display:flex;gap:8px;}
+.hv-foto{
+  display:block;position:relative;aspect-ratio:4/3;
+  border-radius:12px;overflow:hidden;background:#fff;
 }
-.seccion-titulo{margin-top:24px;}
-.seccion-head a{
-  flex:none;font:600 12px/1 var(--app-sans);color:var(--app-ink);
-  text-decoration:none;touch-action:manipulation;
+.hv-foto img{width:100%;height:100%;object-fit:contain;}
+.hv-detalle{display:block;}
+.hv-eyebrow{
+  display:block;margin-top:13px;
+  font:500 10.5px/1 var(--app-mono2);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--app-green-ink);
 }
-.carrusel-item{flex:none;width:166px;}
+.hv-titulo{
+  margin-top:6px;
+  /* El handoff pone 26px contando con un nombre corto tipo "Guitarra
+     acústica + funda + púas". Los del catálogo son bastante más largos, así
+     que baja un punto y se limita a tres líneas: con cuatro, el precio y el
+     botón se iban de la primera pantalla. */
+  font:400 23px/1.1 var(--app-black);letter-spacing:-.02em;
+  color:var(--app-ink);text-wrap:pretty;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.hv-precios{margin-top:12px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.hv-precio{font:400 33px/1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+.hv-antes{font:400 16px/1 var(--app-sans);color:var(--app-faint);text-decoration:line-through;}
+.hv-cuotas{margin-top:5px;font:400 13.5px/1.4 var(--app-sans);color:var(--app-ink-70);}
+.hv-cuotas strong{color:var(--app-ink);}
+.hv-alerta{
+  margin-top:12px;display:flex;align-items:center;gap:8px;
+  background:var(--peru-rojo-soft);border:1px solid #f6cdc8;
+  color:#a9271f;font:700 13px/1.3 var(--app-sans);
+  padding:9px 12px;border-radius:8px;
+}
+.punto-alerta{
+  width:8px;height:8px;flex:none;border-radius:50%;
+  background:var(--peru-rojo);animation:pulseDot 1.8s infinite;
+}
+.hv-ctas{margin-top:14px;display:flex;flex-direction:column;gap:9px;}
+.hv-micro{
+  margin-top:11px;text-align:center;
+  font:400 12.5px/1.55 var(--app-sans);color:var(--app-muted);
+}
+
+/* ---- dos ofertas secundarias ---- */
+.hv-secundarias{margin-top:12px;display:flex;flex-direction:column;gap:12px;}
+.hv-of{
+  position:relative;display:flex;gap:14px;align-items:center;
+  padding:14px;border-radius:14px;
+}
+.hv-of.oscura{background:var(--app-ink);}
+.hv-of.verde{background:var(--app-green);}
+.hv-of-foto{
+  width:96px;height:96px;flex:none;border-radius:10px;
+  overflow:hidden;background:#fff;display:block;
+}
+.hv-of-foto img{width:100%;height:100%;object-fit:contain;}
+/* Obligatorio: sin este hueco el badge absoluto tapa el final del título. */
+.hv-of-texto{flex:1;min-width:0;padding-right:52px;}
+.hv-of-eyebrow{
+  display:block;font:400 10px/1 var(--app-mono2);letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.hv-of-titulo{
+  display:block;margin-top:5px;text-decoration:none;
+  font:700 16px/1.25 var(--app-sans);
+}
+.hv-of-precios{margin-top:7px;display:flex;align-items:baseline;gap:7px;}
+.hv-of-precio{font:400 23px/1 var(--app-black);letter-spacing:-.02em;}
+.hv-of-precios s{font:400 13.5px/1 var(--app-sans);}
+.hv-of-linea{display:block;margin-top:5px;font:400 12px/1 var(--app-sans);}
+.hv-of-btn{
+  margin-top:10px;border:none;border-radius:9px;
+  padding:10px 18px;font:800 13.5px/1 var(--app-sans);
+}
+.hv-of.oscura .hv-of-eyebrow{color:var(--app-green-mint);}
+.hv-of.oscura .hv-of-titulo{color:#fff;}
+.hv-of.oscura .hv-of-precio{color:#fff;}
+.hv-of.oscura .hv-of-precios s{color:#9a9a92;}
+.hv-of.oscura .hv-of-linea{color:#b9b9b2;}
+.hv-of.oscura .hv-of-btn{background:var(--wa);color:var(--wa-ink);}
+.hv-of.verde .hv-of-eyebrow{color:#1f4a23;}
+.hv-of.verde .hv-of-titulo,.hv-of.verde .hv-of-precio{color:var(--app-on-green);}
+.hv-of.verde .hv-of-precios s{color:#3d6b41;}
+.hv-of.verde .hv-of-linea{color:#27522b;}
+.hv-of.verde .hv-of-btn{background:var(--app-ink);color:#fff;}
+.hv-of .badge-dto.esquina{top:11px;right:11px;left:auto;padding:4px 7px;font-size:11px;}
+
+/* ---- franja de confianza ---- */
+.confianza{
+  margin:16px var(--app-gutter) 0;
+  display:grid;grid-template-columns:1fr 1fr;gap:9px;
+}
+.conf-celda{
+  background:var(--app-sunken);border:1px solid var(--app-line);
+  border-radius:10px;padding:11px 12px;
+}
+.conf-titulo{display:block;font:800 13.5px/1.2 var(--app-sans);color:var(--app-ink);}
+.conf-sub{display:block;margin-top:2px;font:400 11.5px/1.3 var(--app-sans);color:var(--app-muted);}
+
+/* ---- vitrina ---- */
+.vitrina{padding:26px var(--app-gutter) 0;}
+.vitrina-head h2{font:400 23px/1.1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+.vitrina-head p{margin-top:4px;font:400 13px/1.45 var(--app-sans);color:var(--app-muted);}
+.vitrina-head .enlace-sub{display:none;}
+.vitrina-grid{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.tv{
+  display:flex;flex-direction:column;
+  background:#fff;border:1px solid var(--app-line);
+  border-radius:12px;padding:10px;
+}
+.tv-foto{
+  display:block;position:relative;aspect-ratio:1/1;
+  border-radius:9px;overflow:hidden;background:#fff;
+}
+.tv-foto img{width:100%;height:100%;object-fit:contain;}
+.tv .badge-dto.esquina{top:7px;left:7px;padding:3px 6px;font-size:10.5px;}
+.tv-titulo{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:9px;font:700 13.5px/1.3 var(--app-sans);color:var(--app-ink);text-decoration:none;
+}
+.tv-precios{margin-top:6px;display:flex;align-items:baseline;gap:6px;}
+.tv-precio{font:400 19px/1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+.tv-precios s{font:400 12px/1 var(--app-sans);color:var(--app-faint);}
+.tv-cuotas{display:block;margin-top:2px;font:400 11.5px/1 var(--app-sans);color:var(--app-ink-70);}
+.tv .stock-linea{margin-top:5px;font-size:11.5px;}
+.tv-btn{margin-top:auto;padding-top:11px;padding-bottom:11px;min-height:44px;font-size:13.5px;border-radius:9px;}
+.tv-btn{margin-top:9px;}
+.vitrina-vertodo{
+  display:block;margin-top:14px;padding:13px;text-align:center;
+  border:1.5px solid var(--app-line-strong);border-radius:11px;
+  font:700 14px/1 var(--app-sans);color:var(--app-ink);text-decoration:none;
+}
+
+/* ---- prueba social ---- */
+.prueba{
+  margin:26px var(--app-gutter) 0;
+  background:var(--app-ink);border-radius:14px;padding:20px 18px;color:#fff;
+}
+.prueba-cabecera{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 8px;}
+.prueba-cifra{font:400 26px/1 var(--app-black);letter-spacing:-.02em;}
+.prueba-de{font:400 14px/1 var(--app-sans);color:#b9b9b2;}
+.prueba-texto{
+  flex:1 1 100%;margin-top:8px;
+  font:400 13px/1.55 var(--app-sans);color:#b9b9b2;
+}
+/* Las tres reseñas. En el teléfono van apiladas: una fila con scroll lateral
+   esconde dos de las tres y aquí el que las lea entero es el que compra. */
+.prueba-citas{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+.cita{
+  margin:0;background:#232320;border:1px solid #3a3a36;
+  border-radius:11px;padding:14px;
+}
+.cita blockquote{
+  margin:0;font:400 13px/1.55 var(--app-sans);color:#e6e6e0;
+}
+.cita figcaption{
+  margin-top:9px;font:400 11.5px/1 var(--app-sans);color:#9d9d96;
+}
+.cita figcaption b{color:#fff;font-weight:700;}
+.prueba-texto strong{color:#fff;font-weight:700;}
+.prueba-texto a{color:var(--app-green-mint);text-decoration:none;font-weight:700;}
+
+/* ---- kit escolar ---- */
+.kit{
+  margin:16px var(--app-gutter) 0;
+  background:var(--app-green);border-radius:14px;padding:18px;
+}
+.kit-fotos{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px;order:2;}
+.kit-foto{
+  display:block;aspect-ratio:1/1;border-radius:9px;overflow:hidden;background:#fff;
+}
+.kit-foto img{width:100%;height:100%;object-fit:contain;padding:8px;}
+.kit{display:flex;flex-direction:column;}
+.kit-texto{order:1;}
+.kit-eyebrow{
+  display:block;font:500 10.5px/1 var(--app-mono2);letter-spacing:.12em;
+  text-transform:uppercase;color:#1f4a23;
+}
+.kit-titulo{
+  margin-top:7px;font:400 23px/1.1 var(--app-black);letter-spacing:-.02em;
+  color:var(--app-on-green);text-wrap:pretty;
+}
+.kit-copy{margin-top:8px;font:400 13.5px/1.55 var(--app-sans);color:#1b4520;}
+.kit-ctas{margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.kit-ctas .btn-comprar{font-size:14.5px;}
+
+/* ---- cierre de tienda ---- */
+.cierre{
+  margin:16px var(--app-gutter) 24px;
+  border:1.5px dashed var(--app-line-strong);border-radius:12px;
+  padding:16px;text-align:center;
+}
+.cierre h2{font:800 15.5px/1.25 var(--app-sans);color:var(--app-ink);}
+.cierre p{margin-top:4px;font:400 12.5px/1.55 var(--app-sans);color:var(--app-muted);}
+.cierre-botones{margin-top:12px;display:flex;flex-direction:column;gap:9px;}
+
+/* ---- barra de compra fija (teléfono) ---- */
+/* Va encima de la barra de pestañas, no en su sitio: navegar es lo primero.
+   --nav-real lo mide el JS porque la altura de .bottom-nav depende de la
+   franja de gestos del teléfono. Y solo se asoma cuando los botones del hero
+   ya salieron de pantalla: mientras se ven, sería el mismo CTA dos veces
+   comiendo 139px de los 812 que tiene un celular. */
+.barra-compra{
+  position:fixed;left:0;right:0;bottom:var(--nav-real,62px);z-index:45;
+  max-width:var(--app-max);margin:0 auto;
+  background:#fff;border-top:1px solid var(--app-line);
+  box-shadow:0 -8px 24px rgba(0,0,0,.09);
+  padding:12px var(--app-gutter);
+  display:flex;align-items:center;gap:11px;
+  transform:translateY(calc(100% + var(--nav-real,62px)));
+  visibility:hidden;
+  transition:transform .22s ease-out, visibility .22s;
+}
+.barra-compra.visible{transform:none;visibility:visible;}
+.bc-precios{flex:none;display:flex;flex-direction:column;}
+.bc-precio{font:400 21px/1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+.bc-precios s{font:400 11px/1 var(--app-sans);color:var(--app-faint);margin-top:2px;}
+.bc-cta{flex:1;min-height:48px;padding:15px 10px;font-size:15.5px;}
+.bc-wa{
+  flex:none;width:52px;height:52px;border-radius:11px;background:var(--wa);
+  display:flex;align-items:center;justify-content:center;color:var(--wa-ink);
+}
+.bc-wa svg{width:26px;height:26px;}
+/* Hueco para que la barra no tape el final del documento. Va en el body y no
+   en la portada: debajo de la portada está el pie, y ahí es donde la barra se
+   apoya de verdad. */
+body:has(.barra-compra){padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-area-inset-bottom));}
+
+/* ---- CTA flotante de WhatsApp (solo escritorio, ver @media) ---- */
+.wa-flotante{display:none;}
+
+@keyframes pulseDot{
+  0%,100%{opacity:1;transform:scale(1);}
+  50%{opacity:.35;transform:scale(.8);}
+}
+@media (prefers-reduced-motion: reduce){
+  .punto-alerta,.punto-vivo{animation:none !important;}
+  .tv,.btn-comprar{transition:none !important;}
+  .barra-compra{transition:none !important;}
+}
 
 /* ---------------- tarjeta de producto ---------------- */
 .pcard{
@@ -1341,42 +1609,6 @@ footer.site .footer-bottom{
 /* Va ANTES del @media a propósito: las dos reglas tienen la misma
    especificidad y gana la última escrita. Con el display:none aquí, el
    display:block de dentro del @media manda en escritorio. */
-/* ==================== BANDA DE OFERTA DE LA SEMANA ====================
-   El rojo es el de la bandera (#D91023), no el terracota de la marca: es un
-   aviso temporal y tiene que distinguirse de los botones de compra.
-
-   En el teléfono es una sola línea de 50px que va debajo del buscador (ver
-   renderBandaOferta); en escritorio crece a la tarjeta con la llama asomando
-   y va debajo de la barra de categorías. */
-.banda-oferta{padding:14px var(--app-gutter) 0;}
-.bo-caja{background:var(--peru-rojo);border-radius:12px;}
-
-.bo-llama{
-  flex:none;
-  width:28px;height:28px;border-radius:50%;
-  background:#fff;border:2px solid var(--peru-rojo);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;line-height:1;
-}
-
-/* ---- versión fina (teléfono) ---- */
-.bo-fina{
-  display:flex;align-items:center;gap:10px;
-  height:50px;padding:0 11px;text-decoration:none;
-}
-.bo-fina:active{opacity:.88;}
-.bo-fina-txt{
-  flex:1;min-width:0;
-  font:700 12.5px/1.25 var(--app-sans);color:#fff;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.bo-fina-reloj{
-  flex:none;
-  font:800 13px/1 var(--app-sans);color:#fff;
-  font-variant-numeric:tabular-nums;
-}
-.bo-fina-chev{flex:none;font:700 17px/1 var(--app-sans);color:rgba(255,255,255,.72);}
-
 /* ==================== CABECERA DE ESCRITORIO ====================
    Tres piezas apiladas del handoff de escritorio: franja utilitaria negra de
    38px, cabecera pegajosa de 78px (marca · buscador con resultados en vivo ·
@@ -1563,243 +1795,170 @@ footer.site .footer-bottom{
   /* el botón atrás es un gesto de teléfono; aquí está la barra superior */
   .app-head.cat .btn-volver{display:none;}
 
-  /* ---------------- banda de oferta ---------------- */
-  .banda-oferta{padding:18px var(--app-gutter) 0;}
-  .bo-caja{
-    position:relative;max-width:var(--app-max);margin:0 auto;
-    border-radius:16px;
-  }
-  .bo-llama{
-    position:absolute;left:18px;top:-16px;
-    width:58px;height:58px;border-width:3px;font-size:29px;
-  }
-  .bo-fila{
-    display:flex;flex-wrap:nowrap;align-items:center;gap:20px;
-    padding:0 26px 0 88px;height:74px;
-  }
-  .bo-texto{flex:1 1 auto;min-width:0;}
-  .bo-eyebrow{
-    display:block;
-    font:700 10px/1 var(--app-sans);letter-spacing:.14em;
-    text-transform:uppercase;color:rgba(255,255,255,.78);
-  }
-  .bo-titulo{
-    display:block;margin-top:6px;
-    font:800 19px/1 var(--app-sans);letter-spacing:-.015em;color:#fff;
-  }
-  .bo-reloj{display:flex;gap:8px;flex:none;}
-  .bo-cel{
-    flex:none;min-width:54px;
-    background:#fff;border-radius:9px;padding:8px 12px;text-align:center;
-  }
-  .bo-cel b{display:block;font:800 19px/1 var(--app-sans);color:var(--peru-rojo);}
-  .bo-cel i{
-    display:block;margin-top:3px;
-    font:600 8.5px/1 var(--app-sans);font-style:normal;
-    letter-spacing:.1em;color:rgba(217,16,35,.7);
-  }
-  .bo-cta{
-    flex:none;display:flex;align-items:center;justify-content:center;
-    height:42px;padding:0 20px;border-radius:var(--app-r-pill);
-    background:var(--app-ink);color:#fff;text-decoration:none;
-    font:700 13px/1 var(--app-sans);white-space:nowrap;
-  }
-  .bo-cta:hover{background:#000;}
+  /* ==================== PORTADA DE VENTA (escritorio) ====================
+     Gutter de 40px, grid de 4 y el hero a dos columnas. Las medidas salen del
+     README del handoff. */
 
-  /* ---------------- portada ---------------- */
-  .hero-editorial{
-    display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
-    column-gap:36px;align-items:center;
-    padding-top:40px;padding-bottom:8px;
+  /* ---- barra de urgencia ---- */
+  .urg-inner{padding:11px var(--app-gutter);gap:24px;}
+  .urg-label{
+    flex:none;font:400 11px/1 var(--app-mono2);letter-spacing:.12em;
+    text-transform:uppercase;color:#9d9d96;
   }
-  .hero-editorial.sin-destacado{grid-template-columns:minmax(0,1fr);}
-  .hero-texto{display:flex;flex-direction:column;justify-content:center;padding:8px 0;}
-  .hero-eyebrow{
-    margin-bottom:0;
-    font:700 11px/1 var(--app-sans);letter-spacing:.14em;
-    text-transform:uppercase;color:var(--app-ink);
+  .urg-cel{font-size:15px;padding:4px 9px;}
+  .urg-divisor{flex:none;width:1px;height:22px;background:#3a3a36;}
+  .urg-chips-label{flex:none;font:400 13px/1 var(--app-sans);color:#b9b9b2;}
+  .urg-chips{flex:1;min-width:0;display:flex;gap:10px;align-items:center;overflow:hidden;}
+  .urg-chip{
+    flex:none;display:flex;align-items:center;gap:9px;
+    background:#2b2b27;border:1px solid #3d3d38;
+    padding:5px 11px 5px 6px;border-radius:999px;
+    font:600 13px/1 var(--app-sans);color:#fff;text-decoration:none;
   }
-  /* El titular más grande de la página: Archivo en peso 800. */
-  .hero-editorial h1{
-    font-family:var(--app-sans);font-weight:800;
-    font-size:54px;line-height:1.02;letter-spacing:-.035em;margin-top:16px;
+  .urg-chip:hover{background:#35352f;}
+  .urg-chip-foto{
+    width:22px;height:22px;flex:none;border-radius:50%;
+    overflow:hidden;background:#fff;display:block;
   }
-  .hero-editorial p{
-    font-size:16px;line-height:1.55;color:var(--app-ink-70);
-    max-width:470px;margin-top:18px;
+  .urg-chip-foto img{width:100%;height:100%;object-fit:contain;}
+  .urg-chip-nombre{
+    max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
-  .hero-ctas{display:flex;gap:12px;margin-top:28px;}
-  .hero-ctas .btn-app{flex:none;width:auto;height:50px;padding:0 24px;font:700 15px/1 var(--app-sans);}
-  .hero-ctas .btn-app.terracota:hover{background:#000000;}
-  .hero-ctas .btn-app.contorno:hover{background:var(--app-surface);}
-  /* Los tres datos duros del handoff, con el umbral real de envío gratis. */
-  /* En el teléfono los tres datos se reparten el ancho; aquí van pegados a
-     la izquierda con su separación propia. */
-  .hero-datos{display:flex;gap:34px;margin-top:32px;}
-  .hero-datos span{flex:none;}
-  .hero-datos b{display:block;font:800 22px/1 var(--app-sans);color:var(--app-ink);}
-  .hero-datos i{display:block;margin-top:5px;font:400 12px/1.3 var(--app-sans);font-style:normal;color:var(--app-muted-2);}
+  .urg-chip-precio{color:#7fd48e;}
+  .urg-chip-dto{
+    background:#fff;color:var(--peru-rojo);
+    font:800 11px/1 var(--app-sans);padding:2px 5px;border-radius:3px;
+  }
+  .urg-ver{font-size:13.5px;}
 
-  /* Mosaico de tres fotos: una alta a la izquierda y dos apiladas. */
-  .hero-mosaico{
-    display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
-    gap:12px;height:440px;
+  /* ---- hero ---- */
+  .hero-venta{
+    padding:34px var(--app-gutter) 0;
+    display:grid;grid-template-columns:1.25fr 1fr;gap:26px;align-items:stretch;
   }
-  .hero-tile{
-    display:flex;flex-direction:column;overflow:hidden;
-    border-radius:16px;padding:14px;text-decoration:none;
-    background:var(--app-sunken);
-    transition:transform .18s ease;
+  .hv-gancho{
+    padding:28px;
+    display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;
   }
-  .hero-tile:hover{transform:translateY(-2px);}
-  .hero-tile.alto{grid-row:span 2;}
-  .hero-tile.tono-negro{background:var(--app-ink);}
-  .hero-tile.tono-verde{background:var(--app-green);}
-  .hero-tile-foto{
-    position:relative;flex:1;min-height:0;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:10px;background:#fff;overflow:hidden;
+  .hv-badges{top:20px;left:20px;}
+  .hv-badges .badge-dto,.hv-badges .badge-negro{font-size:12.5px;padding:6px 10px;border-radius:6px;}
+  .hv-foto{aspect-ratio:1/1;}
+  .hv-eyebrow{margin-top:0;font-size:11px;}
+  .hv-titulo{margin-top:9px;font-size:30px;line-height:1.06;}
+  .hv-precios{margin-top:16px;gap:11px;}
+  .hv-precio{font-size:42px;}
+  .hv-antes{font-size:19px;}
+  .hv-cuotas{font-size:14px;}
+  .hv-alerta{margin-top:14px;font-size:13.5px;padding:8px 12px;}
+  .hv-ctas{margin-top:18px;}
+  .btn-wa-contorno{
+    background:#fff;border:1.5px solid var(--app-line-strong);color:var(--app-ink);
+    font-weight:700;
   }
-  .hero-tile-foto img{width:100%;height:100%;object-fit:contain;}
-  .hero-tile-foto svg{width:44px;height:44px;stroke:var(--app-faint);}
-  .hero-tile-pie{display:block;margin-top:10px;}
-  .hero-tile-pie b{
-    display:block;font:600 13px/1.3 var(--app-sans);color:var(--app-ink);
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  }
-  .hero-tile-pie i{display:block;margin-top:4px;font:700 15px/1 var(--app-sans);font-style:normal;color:var(--app-ink);}
-  .hero-tile-pie s{font:400 12px/1 var(--app-sans);color:var(--app-faint);margin-left:6px;}
-  /* El tile negro lleva texto blanco y el verde texto oscuro: son fondos
-     opuestos y compartir regla dejaba uno de los dos ilegible. */
-  .hero-tile.tono-negro .hero-tile-pie b,.hero-tile.tono-negro .hero-tile-pie i{color:#fff;}
-  .hero-tile.tono-negro .hero-tile-pie s{color:rgba(255,255,255,.55);}
-  .hero-tile.tono-verde .hero-tile-pie b,.hero-tile.tono-verde .hero-tile-pie i{color:var(--app-on-green);}
-  .hero-tile.tono-verde .hero-tile-pie s{color:rgba(15,46,27,.6);}
+  .btn-wa-contorno:hover{background:var(--app-sunken);}
+  .hv-micro{text-align:left;font-size:13px;}
 
-  /* Los carruseles dejan de desplazarse: son grillas, así que recuperan el
-     margen lateral que en el teléfono se quitaba para sangrar al borde. */
-  .app-shell > .carrusel{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
+  /* ---- dos ofertas secundarias ---- */
+  .hv-secundarias{margin-top:0;gap:14px;}
+  .hv-of{flex:1;padding:20px;gap:18px;border-radius:16px;}
+  .hv-of-foto{width:130px;height:130px;}
+  .hv-of-eyebrow{font-size:10.5px;}
+  .hv-of-titulo{margin-top:6px;font-size:19px;line-height:1.2;}
+  .hv-of-precio{font-size:27px;}
+  .hv-of-precios s{font-size:15px;}
+  .hv-of-linea{font-size:13px;}
+  .hv-of-btn{margin-top:12px;padding:9px 16px;}
+  .hv-of .badge-dto.esquina{top:14px;right:14px;font-size:11.5px;padding:4px 8px;}
 
-  /* ---------------- barra de categorías ----------------
-     Aquí sí caben las siete en una fila, con los iconos grandes. */
-  /* Aquí caben las siete: se juntan en un solo panel con líneas de 1px, y no
-     hay nada que desplazar ni que insinuar. */
-  /* Gana a la regla de los carruseles, que le metía el margen lateral de
-     pantalla como relleno: ".app-shell > .carrusel" pesa más que ".cat-barra"
-     a secas, y el panel acababa con 40px a los lados y 8 arriba. */
-  .app-shell > .cat-barra{
-    background:var(--app-ink);border-radius:16px;overflow:hidden;
-    gap:0;margin-top:40px;padding:8px;
+  /* ---- franja de confianza ---- */
+  .confianza{
+    margin:24px var(--app-gutter) 0;
+    grid-template-columns:repeat(5,1fr);gap:0;
+    background:var(--app-sunken);border:1px solid var(--app-line);border-radius:12px;
   }
-  .cat-barra::after{display:none;}
-  .cat-item{
-    flex:1;width:auto;min-width:0;padding:26px 16px 24px;
-    position:relative;
-    background:none;border-radius:10px;border-left:none;
-    transition:background .18s ease;
+  .conf-celda{
+    background:none;border:none;border-right:1px solid var(--app-line);
+    border-radius:0;padding:16px 18px;
   }
-  /* El separador no llega a los bordes: una línea corta y centrada deja
-     respirar al bloque sin partirlo en siete cajas. Va en ::before de la
-     siguiente celda, así la primera no lleva ninguno. */
-  .cat-item + .cat-item::before{
-    content:'';position:absolute;left:0;top:24%;bottom:24%;
-    width:1px;background:rgba(255,255,255,.14);
-  }
-  /* Al iluminar una celda, sus dos líneas estorban: el resalte ya la separa. */
-  .cat-item:hover::before,
-  .cat-item:hover + .cat-item::before{background:transparent;}
-  .cat-item:hover{background:rgba(255,255,255,.06);}
-  .cat-item-ico{height:40px;}
-  .cat-item-ico svg{width:38px;height:38px;}
-  .cat-item-nombre{margin-top:14px;height:auto;font-size:13px;}
-  .cat-item-desde{margin-top:6px;font-size:12px;}
+  .conf-celda:last-child{border-right:none;}
+  .conf-titulo{font-size:14.5px;}
+  .conf-sub{font-size:12.5px;}
 
-  /* ---------------- banda de la lista escolar ----------------
-     Antes era la celda grande de la grilla; sin grilla pasa a ser una banda
-     ancha debajo de la barra, que le da el mismo peso sin romper la fila. */
-  .tile-escolar{
-    position:relative;display:block;
-    margin-top:16px;margin-left:var(--app-gutter);margin-right:var(--app-gutter);
-  }
-  .tile-escolar-color{
-    display:flex;align-items:center;gap:28px;
-    background:var(--app-green);border-radius:16px;
-    padding:22px 26px;height:auto;text-decoration:none;
-  }
-  .tile-escolar-fotos{display:flex;gap:12px;flex:none;}
-  .tile-escolar-foto{
-    width:132px;height:132px;flex:none;
-    border-radius:10px;overflow:hidden;background:#fff;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .tile-escolar-foto img{width:100%;height:100%;object-fit:contain;padding:10px;}
-  .tile-escolar-txt{flex:1;min-width:0;display:block;padding-bottom:0;}
-  .tile-escolar-eyebrow{
-    display:block;font:600 10px/1 var(--app-sans);letter-spacing:.09em;
-    text-transform:uppercase;color:rgba(15,46,27,.72);
-  }
-  .tile-escolar-titulo{display:block;margin-top:10px;font:800 26px/1.18 var(--app-sans);letter-spacing:-.025em;color:var(--app-on-green);}
-  .tile-escolar-copy{
-    display:block;margin-top:10px;max-width:52ch;
-    font:400 13.5px/1.55 var(--app-sans);color:rgba(15,46,27,.74);
-  }
-  .tile-escolar-datos{
-    display:block;margin-top:12px;
-    font:400 12.5px/1 var(--app-sans);color:rgba(15,46,27,.74);
-  }
-  .tile-escolar-datos b{font-weight:700;color:var(--app-on-green);}
-  .tile-escolar-ver{
-    display:block;margin-top:14px;
-    font:600 12.5px/1 var(--app-sans);color:var(--app-on-green);
-  }
-  .tile-escolar-wa{
-    position:absolute;right:26px;bottom:22px;
-    display:flex;align-items:center;height:40px;padding:0 18px;
-    border-radius:var(--app-r-pill);background:var(--app-surface);
-    font:600 12.5px/1 var(--app-sans);color:var(--app-green-ink);text-decoration:none;
-  }
-  .tile-escolar-wa:hover{background:#fff;}
+  /* ---- vitrina ---- */
+  .vitrina{padding:34px var(--app-gutter) 0;}
+  .vitrina-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;}
+  .vitrina-head h2{font-size:29px;}
+  .vitrina-head p{margin-top:5px;font-size:14.5px;}
+  .vitrina-head .enlace-sub{display:block;flex:none;font-size:14.5px;}
+  .vitrina-grid{margin-top:22px;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .tv{border-radius:14px;padding:14px;transition:transform .15s ease-out,box-shadow .15s ease-out;}
+  .tv-foto{border-radius:10px;}
+  .tv .badge-dto.esquina{top:9px;left:9px;font-size:11.5px;padding:4px 8px;}
+  .tv-titulo{margin-top:12px;font-size:15.5px;}
+  .tv-precios{margin-top:9px;gap:8px;}
+  .tv-precio{font-size:24px;}
+  .tv-precios s{font-size:14px;}
+  .tv .stock-linea{font-size:12.5px;}
+  .tv-btn{margin-top:11px;padding:12px;font-size:14.5px;}
+  .vitrina-vertodo{display:none;}
 
-  /* ofertas y recién llegados: cuatro por fila, sin desplazamiento lateral */
-  div.carrusel{
-    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:16px;overflow:visible;padding-top:16px;
+  /* ---- prueba social ---- */
+  .prueba{
+    margin:36px var(--app-gutter) 0;border-radius:16px;padding:26px 32px;
   }
-  .carrusel-item{width:auto;}
-  .grid-app{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-top:16px;}
-  .pcard{padding:12px;transition:border-color .18s ease;}
-  .pcard:hover{border-color:rgba(23,20,15,.24);}
-  .pcard-foto{height:200px !important;}
-  .pcard-nombre{height:36px;margin-top:12px;font-size:13.5px;line-height:1.35;}
-  .pcard-precio{font-size:20px;}
-  .pcard-antes{font-size:12.5px;}
-  .pcard-stock{margin-top:8px;font-size:11.5px;}
-  .seccion-head{margin-top:48px;}
-  .seccion-head h2,.seccion-titulo{font-size:28px;}
-  .seccion-titulo{margin-top:48px;}
+  .prueba-cabecera{align-items:baseline;gap:0 10px;}
+  .prueba-cifra{font-size:31px;}
+  .prueba-de{font-size:16px;}
+  .prueba-texto{flex:1 1 auto;margin-top:0;font-size:14.5px;}
+  .prueba-citas{margin-top:20px;flex-direction:row;gap:16px;}
+  .cita{flex:1;padding:18px;}
+  .cita blockquote{font-size:14px;line-height:1.6;}
+  .cita figcaption{margin-top:12px;font-size:12.5px;}
 
-  /* ---------------- visítanos ----------------
-     Dos columnas: el mapa a la izquierda (el handoff pone ahí una foto de la
-     fachada, que la tienda todavía no tiene) y el texto con los CTAs a la
-     derecha. */
-  .tarjeta-visitanos{
-    margin-top:56px;padding:0;overflow:hidden;
-    display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);
-    column-gap:40px;align-items:center;
+  /* ---- kit escolar ---- */
+  .kit{
+    margin:22px var(--app-gutter) 0;border-radius:16px;padding:28px 32px;
+    display:grid;grid-template-columns:1fr 1.05fr;gap:32px;align-items:center;
   }
-  .tarjeta-visitanos > *{grid-column:2;padding-left:0;padding-right:32px;}
-  .visitanos-mapa{
-    grid-column:1;grid-row:1 / span 6;align-self:stretch;
-    min-height:300px;background:var(--app-stripe);padding:0;
+  .kit-fotos{order:0;margin-top:0;gap:12px;}
+  .kit-texto{order:0;}
+  .kit-eyebrow{font-size:11px;}
+  .kit-titulo{margin-top:9px;font-size:31px;line-height:1.06;}
+  .kit-copy{margin-top:10px;font-size:14.5px;line-height:1.6;}
+  .kit-ctas{flex-direction:row;align-items:center;gap:14px;margin-top:16px;}
+  .kit-ctas .btn-comprar{width:auto;padding:14px 22px;font-size:15px;}
+
+  /* ---- cierre de tienda ---- */
+  .cierre{
+    margin:22px var(--app-gutter) 40px;border-radius:14px;padding:22px 26px;
+    text-align:left;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
   }
-  .visitanos-mapa iframe{width:100%;height:100%;border:0;display:block;}
-  /* El título serif hace de cabecera; el eyebrow sobraría encima. */
-  .tarjeta-visitanos .eyebrow-terracota{display:none;}
-  .visitanos-titulo{font-size:27px;line-height:1.2;margin-top:28px;}
-  .visitanos-dir{margin-top:14px;font-size:15px;}
-  .visitanos-horario{margin-top:6px;font-size:13.5px;}
-  .visitanos-botones{margin-top:20px;margin-bottom:28px;}
-  .visitanos-botones .btn-app{flex:none;width:auto;height:48px;padding:0 22px;font-size:13.5px;}
+  .cierre h2{font-size:19px;}
+  .cierre p{font-size:14px;}
+  .cierre-botones{flex-direction:row;flex:none;gap:10px;margin-top:0;}
+  .cierre-botones .btn-comprar{width:auto;padding:13px 20px;font-size:14.5px;}
+
+  /* ---- CTA flotante de WhatsApp ----
+     Fijo y visible siempre. En la maqueta iba al final del flujo solo porque
+     el prototipo no tiene scroll propio. */
+  .wa-flotante{
+    position:fixed;right:var(--app-gutter);bottom:26px;z-index:50;
+    display:flex;align-items:center;gap:11px;
+    background:var(--wa);color:var(--wa-ink);
+    padding:14px 20px;border-radius:999px;
+    font:800 15px/1 var(--app-sans);text-decoration:none;
+    box-shadow:0 10px 26px rgba(37,211,102,.4);
+  }
+  .wa-flotante .ico-wa svg{width:20px;height:20px;}
+  .wa-flotante:hover{background:#1fb855;}
+
+  /* ---- hover, solo con ratón ---- */
+  @media (hover: hover){
+    .tv:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.09);}
+    .btn-comprar:hover{background:#000;transform:translateY(-1px);}
+    .enlace-sub:hover{border-bottom-color:var(--app-ink);}
+  }
 
   /* ---------------- categoría ----------------
      Migas, título de 40px con los chips de orden al lado y dos columnas:
@@ -2158,6 +2317,20 @@ footer.site .footer-bottom{
   .ped-izq .linea-thumb{width:96px;height:96px;}
 
   .tarjeta-visitanos{grid-template-columns:minmax(0,320px) minmax(0,1fr);column-gap:28px;}
+
+  /* Portada: entre 900 y 1200 la columna de texto del hero baja de 300px y
+     "Comprar por WhatsApp" se partía en dos líneas. Menos aire y menos cuerpo
+     de letra, que el titular ya viene largo de fábrica. */
+  .hero-venta{grid-template-columns:1.15fr 1fr;gap:20px;}
+  .hv-gancho{padding:22px;gap:20px;}
+  .hv-titulo{font-size:27px;}
+  .hv-precio{font-size:35px;}
+  .hv-ctas .btn-comprar,.hv-ctas .btn-wa-contorno{font-size:14px;padding:13px 12px;}
+  .hv-of-foto{width:104px;height:104px;}
+  .hv-of-titulo{font-size:17px;}
+  .conf-celda{padding:14px;}
+  .conf-titulo{font-size:13.5px;}
+  .conf-sub{font-size:11.5px;}
 }
 
 /* Por debajo de 1000px ya no caben dos columnas con panel al lado: la ficha,
@@ -3168,281 +3341,343 @@ function appProductCard(p, altoFoto, conAgregar){
    `usados` lleva la cuenta de los ya repartidos para que dos categorías que
    comparten producto —la melódica está en Viento y en Para Colegio— no
    acaben enseñando la misma foto una al lado de la otra. */
-function productoDeCategoria(catKey, usados){
-  const candidatos = productosDeCategoria(catKey)
-    .filter(p => (p.stock||0) > 0 && (p.images||[]).length)
-    .sort((a,b) => (b.featured?1:0) - (a.featured?1:0) || b.price - a.price);
-  if(!candidatos.length) return null;
-  return candidatos.find(p => !usados || !usados.has(p.id)) || candidatos[0];
+/* ======================================================================
+   PORTADA ORIENTADA A VENTA  (handoff "Home full ventas")
+
+   El diseño llegaba con productos inventados —cajón, teclado de 61 teclas,
+   batería— que no están en el catálogo. Aquí cada bloque elige de lo que sí
+   hay, con stock y con foto, así que la portada se mantiene sola cuando
+   cambia el inventario. Ningún precio se escribe a mano: todos salen de D1.
+   ====================================================================== */
+
+/* Palancas para probar sin tocar código, como pide el handoff. El diseño
+   trae líneas de cuotas en todas las tarjetas; la tienda no las ofrece
+   todavía, así que nacen apagadas. Las de escasez sí, porque el stock es
+   real y sale de la base. */
+const FLAGS = { showCuotas: false, showStock: true };
+
+/* Los accesorios quedan fuera de la portada a propósito: el rediseño existe
+   justo para que la home deje de abrir con cuerdas y púas de S/ 10. */
+function candidatosPortada(){
+  return PRODUCTS.filter(x => (x.stock||0) > 0 && x.cat !== 'accesorios' && (x.images||[]).length);
 }
 
-function tileCategoriaHtml(c){
-  const suyos = productosDeCategoria(c.key);
-  /* Solo cuenta lo que se puede comprar: si no, un producto agotado con el
-     precio mal puesto arrastra el "desde" de toda la categoría. Accesorios
-     decía "desde S/ 0" por un juego de cuerdas cargado a cero. */
-  const vendibles = suyos.filter(p => (p.stock||0) > 0);
-  const desde = vendibles.length ? Math.min(...vendibles.map(p=>p.price)) : 0;
-  const icono = iconSvg(c.icon || iconFor({cat:c.key}));
-
-  return `
-  <a class="cat-item" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">
-    <span class="cat-item-ico">${icono}</span>
-    <span class="cat-item-nombre">${escapeHtml(c.label)}</span>
-    <span class="cat-item-desde">${vendibles.length ? 'Desde ' + fmt(desde) : 'Por encargo'}</span>
-  </a>`;
+/* El gancho: el destacado que esté en oferta; si no hay, el destacado a
+   secas; y si tampoco, el de mayor ticket. */
+function heroProducto(){
+  const c = [...candidatosPortada()].sort((a,b) => b.price - a.price);
+  return c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0] || null;
 }
 
+function ofertasSecundarias(){
+  const hero = heroProducto();
+  return [...candidatosPortada()].sort((a,b) => b.price - a.price)
+    .filter(x => !hero || x.id !== hero.id).slice(0, 2);
+}
 
-/* Celda grande (2×2) de la lista escolar, arriba a la izquierda de la grilla
-   de escritorio. Es la apuesta de temporada: Para Colegio es la categoría con
-   el precio de entrada más bajo del catálogo (S/ 10), la segunda con más
-   stock y la mitad de sus productos está en oferta.
+/* Barajado estable: cambia cada día pero no en cada repintado. Con Math.random
+   los cuatro productos saltarían al agregar algo al carrito. */
+function barajaDelDia(lista){
+  const dia = Math.floor(Date.now() / 864e5);
+  return [...lista]
+    .map(x => ({ x, k: Math.sin(x.id * 9301 + dia * 49297) }))
+    .sort((a,b) => a.k - b.k)
+    .map(o => o.x);
+}
 
-   Se come a la antigua tarjeta verde "Armamos el kit": tener el bloque grande
-   de colegio y además una tarjeta suelta de colegio era repetirse. El botón
-   de WhatsApp va FUERA del enlace de la categoría —un <a> dentro de otro <a>
-   es marcado inválido— y el envoltorio le da el `position`.
+/* TODO: "Los más vendidos" es ahora mismo una selección al azar entre los
+   instrumentos con stock — el sitio no guarda pedidos, así que no hay datos
+   de ventas que ordenar. Reemplazar por los de verdad cuando existan. */
+function vitrinaDestacados(){
+  const fuera = new Set([heroProducto(), ...ofertasSecundarias()].filter(Boolean).map(x => x.id));
+  return barajaDelDia(candidatosPortada().filter(x => !fuera.has(x.id))).slice(0, 4);
+}
 
-   En el teléfono nada de esto existe: ahí el mensaje es la banda ancha que va
-   entre las ofertas y los recién llegados (ver .banda-colegio). */
-function tileEscolarHtml(usados){
-  const suyos = productosDeCategoria('colegio');
-  const vendibles = suyos.filter(p => (p.stock||0) > 0);
-  const desde = vendibles.length ? Math.min(...vendibles.map(p=>p.price)) : 0;
-  const ofertas = suyos.filter(enOferta);
-  const maxDesc = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
+function topDescuentos(n){
+  return PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0)
+    .sort((a,b) => pctDescuento(b) - pctDescuento(a))
+    .slice(0, n);
+}
 
-  /* Tres fotos en fila: la celda es grande y una sola foto la dejaba vacía.
-     Además "kit" se entiende mejor con varios instrumentos que con uno. */
-  const fotos = vendibles
-    .filter(p => (p.images||[]).length)
-    .sort((a,b) => (b.featured?1:0) - (a.featured?1:0) || b.price - a.price)
-    .slice(0, 3);
-  /* Se apuntan como usadas para que ninguna categoría de al lado repita la
-     misma foto: la melódica es de Viento y también del kit escolar. */
-  if(usados) fotos.forEach(p => usados.add(p.id));
+function hrefProducto(x){ return `/producto/${x.id}-${slugify(x.name)}`; }
+function fotoDe(x){ return (x.images||[])[0] || ''; }
+function waProducto(x){ return waHref(`Hola, me interesa ${x.name} (${fmt(x.price)}). ¿Tienen stock?`); }
 
-  const datos = [
-    vendibles.length ? `Desde <b>${fmt(desde)}</b>` : '',
-    `${suyos.length} producto${suyos.length!==1?'s':''}`,
-    maxDesc ? `hasta &minus;${maxDesc}%` : '',
-  ].filter(Boolean).join(' · ');
+function imgProducto(x, extra){
+  const f = fotoDe(x);
+  return f
+    ? `<img src="${f}" alt="${escapeHtml(x.name)}" ${extra||'loading="lazy"'} decoding="async">`
+    : `<span class="sinfoto">${escapeHtml(x.name)}</span>`;
+}
+
+/* Línea de escasez o de beneficio. Roja bajo 5 unidades, verde cuando lo que
+   hay que decir es bueno. Solo con stock real: nunca se inventa el número. */
+function lineaStock(x){
+  if(!FLAGS.showStock) return '';
+  const n = x.stock || 0;
+  if(n <= 0) return '';
+  if(n <= 5) return `<span class="stock-linea escasez">Quedan ${n} en tienda</span>`;
+  return `<span class="stock-linea bien">En stock${x.price >= FREE_SHIPPING_THRESHOLD ? ' · envío gratis' : ' · listo para recojo'}</span>`;
+}
+
+function badgeDescuento(x, clase){
+  return enOferta(x) ? `<span class="badge-dto ${clase||''}">&minus;${pctDescuento(x)}%</span>` : '';
+}
+
+function catLabel(x){
+  const c = CATEGORIES.find(k => k.key === x.cat);
+  return c ? c.label : 'Instrumentos';
+}
+
+/* ---------------- barra de urgencia · chips ---------------- */
+function chipsUrgenciaHtml(){
+  return topDescuentos(3).map(x => `
+    <a class="urg-chip" href="${hrefProducto(x)}" onclick="cerrarNavBuscar();openProductDetail(${x.id});return false;">
+      <span class="urg-chip-foto">${imgProducto(x)}</span>
+      <span class="urg-chip-nombre">${escapeHtml(x.name)}</span>
+      <span class="urg-chip-precio">${fmt(x.price)}</span>
+      <span class="urg-chip-dto">&minus;${pctDescuento(x)}%</span>
+    </a>`).join('');
+}
+
+/* ---------------- hero de producto ---------------- */
+function heroVentasHtml(){
+  const x = heroProducto();
+  if(!x) return '';
+  const cuotas = FLAGS.showCuotas
+    ? `<p class="hv-cuotas">o 3 cuotas sin interés de <strong>${fmt(Math.round(x.price/3))}</strong></p>` : '';
+  const alerta = (FLAGS.showStock && (x.stock||0) > 0 && (x.stock||0) <= 5)
+    ? `<p class="hv-alerta"><span class="punto-alerta"></span>Últimas ${x.stock} unidades en tienda</p>` : '';
 
   return `
-  <div class="cat-tile-app tile-escolar">
-    <a class="cat-tile-color tile-escolar-color" href="/categoria/colegio"
-       onclick="goShop('colegio');return false;">
-      ${fotos.length ? `
-      <span class="tile-escolar-fotos">
-        ${fotos.map(p => `
-          <span class="tile-escolar-foto">
-            <img src="${(p.images||[])[0]}" alt="" loading="lazy" decoding="async">
-          </span>`).join('')}
-      </span>` : ''}
-      <span class="tile-escolar-txt">
-        <span class="tile-escolar-eyebrow">Para colegio · lista escolar</span>
-        <span class="tile-escolar-titulo">Armamos el kit de tu lista escolar</span>
-        <span class="tile-escolar-copy">Flauta, melódica, xilófono, claves y pandereta en un solo pedido, con stock en tienda.</span>
-        <span class="tile-escolar-datos">${datos}</span>
-        <span class="tile-escolar-ver">Ver todo lo de colegio ›</span>
+  <section class="hero-venta">
+    <div class="hv-gancho">
+      <span class="hv-badges">
+        ${badgeDescuento(x)}
+        ${x.featured ? '<span class="badge-negro">Más vendida</span>' : ''}
       </span>
-    </a>
-    <a class="tile-escolar-wa" target="_blank" rel="noopener"
-       href="${waHref('Hola, les mando la lista del colegio para que me coticen el kit.')}"
-       onclick="trackAdsConversion('whatsapp')">Mándanos tu lista</a>
-  </div>`;
-}
-
-/* Los tres productos del mosaico del hero: primero las rebajas más gordas y,
-   si no llegan a tres, se completa con lo recién llegado. Sin catálogo
-   cargado devuelve lista vacía y el hero se queda a una columna. */
-function productosDelMosaico(){
-  const elegidos = [];
-  const meter = p => { if(p && !elegidos.some(x => x.id === p.id)) elegidos.push(p); };
-  ofertasDeLaSemana(3).forEach(meter);
-  recienLlegados(6).forEach(meter);
-  return elegidos.slice(0, 3);
-}
-
-/* Una celda del mosaico. El handoff las dibuja como bloques rayados, uno
-   terracota y otro verde; aquí el color se queda como marco y la foto real
-   va dentro, sobre blanco, porque los recortes de producto vienen con fondo
-   claro y sobre el color plano se verían como un cuadro blanco pegado. */
-function heroTileHtml(p, tono){
-  const foto = (p.images || [])[0];
-  return `
-  <a class="hero-tile ${tono}" href="/producto/${p.id}-${slugify(p.name)}"
-     onclick="openProductDetail(${p.id});return false;">
-    <span class="hero-tile-foto">
-      ${foto
-        ? `<img src="${foto}" alt="${escapeHtml(p.name)}" decoding="async">`
-        : iconSvg(iconFor(p))}
-      ${enOferta(p) ? `<span class="pcard-off">-${pctDescuento(p)}%</span>` : ''}
-    </span>
-    <span class="hero-tile-pie">
-      <b>${escapeHtml(p.name)}</b>
-      <i>${fmt(p.price)}${enOferta(p) ? ` <s>${fmt(p.old)}</s>` : ''}</i>
-    </span>
-  </a>`;
-}
-
-/* Hero de escritorio: columna editorial a la izquierda (eyebrow, titular
-   serif de 60px, dos CTAs y los tres datos duros) y mosaico de fotos a la
-   derecha — uno alto y dos apilados, como el handoff. */
-function heroEscritorioHtml(){
-  const tres = productosDelMosaico();
-  const texto = `
-    <div class="hero-texto">
-      <span class="hero-eyebrow">Instrumentos musicales en Lima</span>
-      <h1>Empieza a tocar esta semana</h1>
-      <p>Cuerda, percusión, teclados y todo para la lista del colegio, con stock real en tienda. Y si te queda lejos, te lo enviamos a todo el Perú: Yape, Plin, tarjeta o transferencia.</p>
-      <div class="hero-ctas">
-        <a class="btn-app terracota" href="/tienda" onclick="goShop(null);return false;">Ver catálogo</a>
-        <a class="btn-app contorno" target="_blank" rel="noopener"
-           href="${waHref('Hola, quiero consultar por un instrumento.')}"
-           onclick="trackAdsConversion('whatsapp')">Escribir por WhatsApp</a>
+      <a class="hv-foto" href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">
+        ${imgProducto(x, 'fetchpriority="high"')}
+      </a>
+      <div class="hv-detalle">
+        <span class="hv-eyebrow">${escapeHtml(catLabel(x))}</span>
+        <h1 class="hv-titulo">${escapeHtml(x.name)}</h1>
+        <div class="hv-precios">
+          <span class="hv-precio">${fmt(x.price)}</span>
+          ${enOferta(x) ? `<s class="hv-antes">${fmt(x.old)}</s>` : ''}
+        </div>
+        ${cuotas}
+        ${alerta}
+        <div class="hv-ctas">
+          <button type="button" class="btn-comprar" onclick="addToCart(${x.id}, this)">Agregar al carrito</button>
+          <a class="btn-wa-contorno" target="_blank" rel="noopener" href="${waProducto(x)}"
+             onclick="trackAdsConversion('whatsapp')"><span class="ico-wa">${iconWhatsapp}</span>Comprar por WhatsApp</a>
+        </div>
+        <p class="hv-micro">Pedidos antes de las 4:00 p.m. salen hoy · Recojo en San Juan de Miraflores en 1 hora</p>
       </div>
-      <div class="hero-datos">
-        <span><b>+12 años</b><i>atendiendo músicos</i></span>
-        <span><b>Envío gratis</b><i>desde ${fmt(FREE_SHIPPING_THRESHOLD)}</i></span>
-        <span><b>1 hora</b><i>listo para recojo</i></span>
-      </div>
-    </div>`;
+    </div>
 
-  /* Sin productos que enseñar el hero se queda con el texto a todo lo ancho,
-     en vez de con tres huecos rayados. */
-  if(tres.length < 3) return `<section class="hero-app hero-editorial sin-destacado">${texto}</section>`;
-
-  return `
-  <section class="hero-app hero-editorial">
-    ${texto}
-    <div class="hero-mosaico">
-      ${heroTileHtml(tres[0], 'alto')}
-      ${heroTileHtml(tres[1], 'tono-negro')}
-      ${heroTileHtml(tres[2], 'tono-verde')}
+    <div class="hv-secundarias">
+      ${ofertasSecundarias().map((o,i) => `
+      <article class="hv-of ${i===0 ? 'oscura' : 'verde'}">
+        ${badgeDescuento(o, 'esquina')}
+        <a class="hv-of-foto" href="${hrefProducto(o)}" onclick="openProductDetail(${o.id});return false;">${imgProducto(o)}</a>
+        <div class="hv-of-texto">
+          <span class="hv-of-eyebrow">${escapeHtml(catLabel(o))}</span>
+          <a class="hv-of-titulo" href="${hrefProducto(o)}" onclick="openProductDetail(${o.id});return false;">${escapeHtml(o.name)}</a>
+          <div class="hv-of-precios">
+            <span class="hv-of-precio">${fmt(o.price)}</span>
+            ${enOferta(o) ? `<s>${fmt(o.old)}</s>` : ''}
+          </div>
+          <span class="hv-of-linea">${(o.stock||0) > 5 ? 'En stock' : 'Quedan ' + (o.stock||0)}${o.price >= FREE_SHIPPING_THRESHOLD ? ' · envío gratis' : ''}</span>
+          <button type="button" class="hv-of-btn" onclick="addToCart(${o.id}, this)">Agregar</button>
+        </div>
+      </article>`).join('')}
     </div>
   </section>`;
 }
 
-function heroMovilHtml(){
-  /* Mismo mensaje que el hero de escritorio, apretado para el teléfono. Los
-     tres datos duros bajan aquí también: son la razón por la que alguien le
-     compra a una tienda con local en vez de a un marketplace, y en el móvil
-     no aparecían por ningún lado. El párrafo dejó de repetir envío y recojo
-     —que ya están en los datos— para hablar del catálogo. */
-  return `
-    <section class="hero-app">
-      <span class="hero-eyebrow">Instrumentos musicales en Lima</span>
-      <h1>Empieza a tocar esta semana</h1>
-      <p>Cuerda, percusión, teclados y todo para la lista del colegio, con stock real en tienda.</p>
-      <div class="hero-datos">
-        <span><b>+12 años</b><i>atendiendo músicos</i></span>
-        <span><b>Envío gratis</b><i>desde ${fmt(FREE_SHIPPING_THRESHOLD)}</i></span>
-        <span><b>1 hora</b><i>listo para recojo</i></span>
-      </div>
-    </section>`;
+/* ---------------- franja de confianza ----------------
+   El diseño ponía "Pago contra entrega" como ventaja principal; la tienda no
+   lo ofrece, así que esa celda dice los medios de pago que sí existen. */
+function franjaConfianzaHtml(){
+  const celdas = [
+    ['Envío gratis', 'en compras desde ' + fmt(FREE_SHIPPING_THRESHOLD)],
+    ['Yape, Plin o tarjeta', 'y 5% menos sin pasarela'],
+    ['Garantía de fábrica', 'cambio en tienda sin vueltas'],
+    ['Recojo en 1 hora', 'Av. Los Héroes 382, S.J.M.'],
+    ['+12 años atendiendo', 'a músicos y colegios de Lima'],
+  ];
+  return `<div class="confianza">${celdas.map(c => `
+    <div class="conf-celda">
+      <span class="conf-titulo">${escapeHtml(c[0])}</span>
+      <span class="conf-sub">${escapeHtml(c[1])}</span>
+    </div>`).join('')}</div>`;
 }
 
-/* Cabecera de la portada. Solo en el teléfono: en escritorio su trabajo
-   —logo, estado de la tienda, asesor y buscador— lo hace la barra
-   superior, y repetirlo dejaría dos logos uno encima del otro. */
-function cabeceraPortadaHtml(){
+/* ---------------- vitrina ---------------- */
+function tarjetaVentaHtml(x){
+  const cuotas = FLAGS.showCuotas
+    ? `<span class="tv-cuotas">o 3 × ${fmt(Math.round(x.price/3))}</span>` : '';
   return `
-    <header class="app-head home">
-      <div class="app-head-fila">
-        <img class="app-head-logo" src="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/logo-redondo.png" alt="Chipao Music" width="36" height="36">
-        <div class="app-head-texto">
-          <div class="app-head-nombre">Chipao Music</div>
-          <div class="app-head-sub">San Juan de Miraflores · ${estadoTienda()}</div>
-        </div>
-        ${pillAsesorHtml()}
+  <article class="tv">
+    <a class="tv-foto" href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">
+      ${imgProducto(x)}${badgeDescuento(x, 'esquina')}
+    </a>
+    <a class="tv-titulo" href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">${escapeHtml(x.name)}</a>
+    <div class="tv-precios">
+      <span class="tv-precio">${fmt(x.price)}</span>
+      ${enOferta(x) ? `<s>${fmt(x.old)}</s>` : ''}
+    </div>
+    ${cuotas}
+    ${lineaStock(x)}
+    <button type="button" class="btn-comprar tv-btn" onclick="addToCart(${x.id}, this)">Agregar al carrito</button>
+  </article>`;
+}
+
+function vitrinaHtml(){
+  const lista = vitrinaDestacados();
+  if(!lista.length) return '';
+  const enOfertaTotal = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0).length;
+  return `
+  <section class="vitrina">
+    <header class="vitrina-head">
+      <div>
+        <h2>Los más vendidos esta semana</h2>
+        <p>Todos con stock real en tienda y listos para recojo hoy</p>
       </div>
-      <a class="buscador-falso" href="/buscar" onclick="goSearch();return false;">
-        ${iconSvg('search')}
-        <span>Busca “ukelele”, “kalimba”, “violín”…</span>
-      </a>
-    </header>`;
+      <a class="enlace-sub" href="/tienda" onclick="goShop(null);return false;">Ver catálogo completo ›</a>
+    </header>
+    <div class="vitrina-grid">${lista.map(tarjetaVentaHtml).join('')}</div>
+    <a class="vitrina-vertodo" href="/ofertas" onclick="goOffers();return false;">Ver los ${enOfertaTotal} productos en oferta ›</a>
+  </section>`;
+}
+
+/* ---------------- prueba social ----------------
+   El rating, el número de reseñas y los tres testimonios son los reales de
+   la ficha de Google Maps de la tienda, citados tal cual y con enlace a la
+   ficha para que cualquiera los compruebe. Se firman con el nombre y la
+   inicial del apellido: en Google salen completos, pero en una portada no
+   hace falta exponerlos enteros. */
+const RESENAS_GOOGLE = [
+  {
+    texto: 'La atención fue excelente, fueron muy amables y me ayudaron a elegir lo que necesitaba. Tienen buena variedad de instrumentos y accesorios, y los precios son accesibles.',
+    firma: 'Katy S.'
+  },
+  {
+    texto: 'Excelente lugar para adquirir equipos e instrumentos. Mi primera compra fue una guitarra eléctrica Jackson, un bajo Vozzex y un amplificador, todos de buena calidad.',
+    firma: 'Christian E.'
+  },
+  {
+    texto: 'Ya llevo como 3 instrumentos que voy comprando de esa tienda y es de lo mejor, no solo por la calidad sino también por la atención muy profesional y excelente. 10/10',
+    firma: 'Francisco P.'
+  }
+];
+
+function pruebaSocialHtml(){
+  const citas = RESENAS_GOOGLE.map(r => `
+      <figure class="cita">
+        <blockquote>“${r.texto}”</blockquote>
+        <figcaption><b>${r.firma}</b> · Reseña en Google</figcaption>
+      </figure>`).join('');
+  return `
+  <section class="prueba">
+    <div class="prueba-cabecera">
+      <span class="prueba-cifra">${STORE_RATING}</span>
+      <span class="prueba-de">/ 5</span>
+      <p class="prueba-texto">
+        Promedio de <strong>${STORE_REVIEW_COUNT} reseñas</strong> de clientes en Google.
+        <a href="${STORE_MAPS_LINK}" target="_blank" rel="noopener">Léelas ›</a>
+      </p>
+    </div>
+    <div class="prueba-citas">${citas}</div>
+  </section>`;
+}
+
+/* ---------------- kit escolar ---------------- */
+function kitEscolarHtml(){
+  const suyos = productosDeCategoria('colegio').filter(x => (x.stock||0) > 0 && (x.images||[]).length);
+  if(!suyos.length) return '';
+  const desde = Math.min(...suyos.map(x => x.price));
+  const fotos = [...suyos].sort((a,b) => (b.featured?1:0)-(a.featured?1:0) || b.price-a.price).slice(0,3);
+  return `
+  <section class="kit">
+    <div class="kit-fotos">${fotos.map(x => `<span class="kit-foto">${imgProducto(x)}</span>`).join('')}</div>
+    <div class="kit-texto">
+      <span class="kit-eyebrow">Para colegio · lista escolar</span>
+      <h2 class="kit-titulo">Mándanos la lista y te devolvemos el kit cotizado en 1 hora</h2>
+      <p class="kit-copy">Flauta, melódica, xilófono, claves y pandereta en un solo pedido, con stock en tienda.</p>
+      <div class="kit-ctas">
+        <a class="btn-comprar" target="_blank" rel="noopener"
+           href="${waHref('Hola, les mando la lista de útiles musicales del colegio para cotizar.')}"
+           onclick="trackAdsConversion('whatsapp')"><span class="ico-wa">${iconWhatsapp}</span>Mándanos tu lista</a>
+        <a class="enlace-sub verde" href="/categoria/colegio" onclick="goShop('colegio');return false;">Ver todo desde ${fmt(desde)} ›</a>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ---------------- cierre de tienda física ---------------- */
+function cierreTiendaHtml(){
+  return `
+  <section class="cierre">
+    <div class="cierre-texto">
+      <h2>¿Lo necesitas hoy? Recógelo en San Juan de Miraflores en 1 hora</h2>
+      <p>${escapeHtml(STORE_ADDRESS.replace(', Lima 15801, Perú',''))} · ${escapeHtml(STORE_HOURS)} · Pedidos antes de las 4:00 p.m. salen el mismo día</p>
+    </div>
+    <div class="cierre-botones">
+      <a class="btn-comprar" href="/tienda" onclick="goShop(null);return false;">Ver stock en tienda</a>
+      <a class="btn-contorno" href="${STORE_MAPS_LINK}" target="_blank" rel="noopener">Cómo llegar</a>
+    </div>
+  </section>`;
+}
+
+/* ---------------- barra de compra fija (teléfono) ----------------
+   Lo de mayor impacto del handoff: el precio y el CTA no salen de pantalla.
+   Solo en la portada y solo si hay producto gancho. */
+function barraCompraHtml(){
+  const x = heroProducto();
+  if(!x) return '';
+  return `
+  <div class="barra-compra">
+    <span class="bc-precios">
+      <span class="bc-precio">${fmt(x.price)}</span>
+      ${enOferta(x) ? `<s>${fmt(x.old)}</s>` : ''}
+    </span>
+    <button type="button" class="btn-comprar bc-cta" onclick="addToCart(${x.id}, this)">Agregar al carrito</button>
+    <a class="bc-wa" target="_blank" rel="noopener" aria-label="Comprar por WhatsApp"
+       href="${waProducto(x)}" onclick="trackAdsConversion('whatsapp')">${iconWhatsapp}</a>
+  </div>`;
+}
+
+/* La barra de compra se asoma cuando los CTA del hero salen de pantalla, y
+   se esconde si el usuario vuelve arriba. Con IntersectionObserver para no
+   colgarse de un listener de scroll. */
+let vigiaBarraCompra = null;
+function prepararBarraCompra(){
+  if(vigiaBarraCompra){ vigiaBarraCompra.disconnect(); vigiaBarraCompra = null; }
+  const nav = document.getElementById('bottomNav');
+  if(nav) document.documentElement.style.setProperty('--nav-real', nav.offsetHeight + 'px');
+  const barra = document.querySelector('.barra-compra');
+  const ctas  = document.querySelector('.hv-ctas');
+  if(!barra || !ctas) return;
+  vigiaBarraCompra = new IntersectionObserver(([e]) => {
+    barra.classList.toggle('visible', !e.isIntersecting && e.boundingClientRect.top < 0);
+  }, { threshold: 0 });
+  vigiaBarraCompra.observe(ctas);
 }
 
 function renderHome(){
-  const esc = esEscritorio();
-  /* En escritorio las dos listas son grillas de cuatro, así que se piden
-     cuatro. En el teléfono son carruseles y admiten más para desplazar. */
-  const ofertas = ofertasDeLaSemana(esc ? 4 : 8);
-  const nuevos = recienLlegados(esc ? 4 : 6);
-
-  /* Las categorías sin catálogo cargado se van al final de la grilla. Hoy
-     Teclados está vacío y ocupaba la segunda celda: el mejor sitio de la
-     portada llevando a un "catálogo en camino", mientras Accesorios, con 47
-     productos, quedaba en la última fila. El orden canónico (el de la barra
-     de categorías y el del pie) no se toca. `sort` es estable, así que entre
-     las que sí tienen catálogo se respeta el orden de siempre.
-
-     Para Colegio sigue en la barra: el bloque del kit escolar es una banda
-     aparte debajo (ver tileEscolarHtml), no una celda que la reemplace. */
-  const ordenadas = [...CATEGORIES].sort((a,b) =>
-    (productosDeCategoria(b.key).length ? 1 : 0) - (productosDeCategoria(a.key).length ? 1 : 0));
-  const catsPortada = ordenadas;
-  const usadosEnTiles = new Set();
-
   return `
-  <div class="app-shell">
-
-    ${esc ? '' : cabeceraPortadaHtml()}
-
-    ${esc ? heroEscritorioHtml() : heroMovilHtml()}
-
-    <nav class="carrusel cat-barra" aria-label="Categorías">
-      ${catsPortada.map(tileCategoriaHtml).join('')}
-    </nav>
-
-    ${esc ? tileEscolarHtml(usadosEnTiles) : ''}
-
-    ${ofertas.length ? `
-    <div class="seccion-head">
-      <h2>Ofertas</h2>
-      <a href="/ofertas" onclick="goOffers();return false;">Ver todas</a>
-    </div>
-    <div class="carrusel">
-      ${ofertas.map(p => `<div class="carrusel-item">${appProductCard(p, 124)}</div>`).join('')}
-    </div>` : ''}
-
-    ${esc ? '' : `
-    <a class="banda-colegio" href="/categoria/colegio" onclick="goShop('colegio');return false;">
-      <span class="banda-texto">
-        <span class="banda-eyebrow">Para colegio</span>
-        <span class="banda-titulo">Armamos el kit de tu lista escolar</span>
-        <span class="banda-copy">Mándanos la lista y te cotizamos flauta, xilófono y pandereta en un solo pedido.</span>
-      </span>
-      <span class="banda-chevron">›</span>
-    </a>`}
-
-    <h2 class="seccion-titulo">Recién llegados</h2>
-    <div class="grid-app">
-      ${nuevos.map(p => appProductCard(p, 116)).join('')}
-    </div>
-
-    <section class="tarjeta-visitanos">
-      ${esc ? `
-      <div class="visitanos-mapa">
-        <iframe title="Mapa de la tienda" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
-                src="https://www.google.com/maps?q=${encodeURIComponent('Instrumentos Chipao, ' + STORE_ADDRESS)}&output=embed"></iframe>
-      </div>
-      <h2 class="visitanos-titulo h-serif">Visítanos en San Juan de Miraflores</h2>` : ''}
-      <div class="eyebrow-terracota">Visítanos</div>
-      <div class="visitanos-dir">${escapeHtml(STORE_ADDRESS.replace(', Lima 15801, Perú',''))}</div>
-      <div class="visitanos-horario">${escapeHtml(STORE_HOURS)} · Prueba el instrumento antes de comprarlo.</div>
-        ${ratingBadgeHTML()}
-      <div class="visitanos-botones">
-        <a class="btn-app oscuro" target="_blank" rel="noopener"
-           href="${waHref('Hola, quiero consultar por un instrumento.')}"
-           onclick="trackAdsConversion('whatsapp')">Escribir por WhatsApp</a>
-        <a class="btn-app contorno" target="_blank" rel="noopener" href="${STORE_MAPS_LINK}">Cómo llegar</a>
-      </div>
-    </section>
-
-  </div>`;
+  <div class="app-shell portada">
+    ${heroVentasHtml()}
+    ${franjaConfianzaHtml()}
+    ${vitrinaHtml()}
+    ${pruebaSocialHtml()}
+    ${kitEscolarHtml()}
+    ${cierreTiendaHtml()}
+  </div>
+  ${esEscritorio() ? '' : barraCompraHtml()}`;
 }
 
 /* Un producto de accesorios cae bajo un grupo por instrumento si su sub real
@@ -5574,17 +5809,17 @@ function renderNavEscritorio(){
 }
 
 /* ---------------- banda de oferta ----------------
-   Cuenta contra un plazo REAL: ciclos de 22 horas anclados a una fecha fija,
+   Cuenta contra un plazo REAL: ciclos de 24 horas anclados a una fecha fija,
    iguales para todo el que entre. Un reloj que arranca de cero en cada visita
    es publicidad engañosa y en Perú Indecopi lo puede tomar como tal.
 
    Los números salen del catálogo en cada pintada: si cambian los descuentos,
    la banda se actualiza sola, y si algún día no queda ninguna oferta con
    stock, no se enseña en vez de mentir. */
-/* Ciclo de 22 horas anclado a una fecha fija, NO a cuándo abriste la página.
+/* Ciclo de 24 horas anclado a una fecha fija, NO a cuándo abriste la página.
    Es la diferencia entre un plazo real y un engaño: al ir contra un instante
    absoluto, todos los que entran ven el mismo tiempo restante. Si el contador
-   arrancara en 22:00:00 para cada visitante, sería un reloj de mentira.
+   arrancara en 24:00:00 para cada visitante, sería un reloj de mentira.
 
    El ancla es el 1 de enero de 2026 a las 00:00 de Lima (05:00 UTC). Con un
    ciclo de 24 horas eso deja el corte a medianoche de Lima todos los días.
@@ -5653,72 +5888,65 @@ function pintarRelojBanda(){
 /* Se crea de cero en cada pintada en vez de vivir fija en el HTML: en el
    teléfono va DENTRO de #app —debajo del buscador— y ahí el innerHTML de
    render() se la llevaría por delante. */
+/* Barra delgada oscura con el contador a la izquierda y los tres mayores
+   descuentos clicables al centro. Sustituye a la banda de la llama: el
+   handoff cambia el banner por producto real dentro de la barra, que es lo
+   que se puede tocar. */
 function renderBandaOferta(){
   const previa = document.getElementById('bandaOferta');
   if(previa) previa.remove();
 
-  const ofertas = PRODUCTS.filter(p => enOferta(p) && (p.stock || 0) > 0);
+  const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
   if(!ofertas.length || !VISTAS_CON_BANDA.includes(state.view)){
     if(relojBanda){ clearInterval(relojBanda); relojBanda = null; }
     return;
   }
 
-  const maxDesc = Math.max(...ofertas.map(pctDescuento));
   const el = document.createElement('div');
-  el.className = 'banda-oferta';
+  el.className = 'urgencia';
   el.id = 'bandaOferta';
+  const reloj = `
+    <span class="urg-reloj" role="timer" aria-live="off">
+      <span class="urg-cel" data-reloj>00</span><i>:</i><span class="urg-cel" data-reloj>00</span><i>:</i><span class="urg-cel" data-reloj>00</span>
+    </span>`;
 
-  if(esEscritorio()){
-    el.innerHTML = `
-      <div class="bo-caja">
-        <span class="bo-llama" aria-hidden="true">🦙</span>
-        <div class="bo-fila">
-          <span class="bo-texto">
-            <span class="bo-eyebrow">La oferta termina en</span>
-            <span class="bo-titulo">Hasta &minus;${maxDesc}% en ${ofertas.length} productos</span>
-          </span>
-          <span class="bo-reloj" role="timer" aria-label="Tiempo restante de la oferta">
-            <span class="bo-cel"><b data-reloj>00</b><i>HRS</i></span>
-            <span class="bo-cel"><b data-reloj>00</b><i>MIN</i></span>
-            <span class="bo-cel"><b data-reloj>00</b><i>SEG</i></span>
-          </span>
-          <a class="bo-cta" href="/ofertas" onclick="goOffers();return false;">Ver ofertas</a>
-        </div>
-      </div>`;
-    document.getElementById('app').before(el);
-  }else{
-    /* En el teléfono: una sola línea, toda ella enlace, con el reloj en
-       formato corto. La llama se queda pero pequeña y en línea, sin el
-       círculo que asoma: ahí arriba estorbaba más de lo que sumaba. */
-    el.innerHTML = `
-      <a class="bo-caja bo-fina" href="/ofertas" onclick="goOffers();return false;">
-        <span class="bo-llama" aria-hidden="true">🦙</span>
-        <span class="bo-fina-txt">Hasta &minus;${maxDesc}% por tiempo limitado</span>
-        <span class="bo-fina-reloj" role="timer" aria-label="Tiempo restante de la oferta"><b data-reloj>00</b>:<b data-reloj>00</b>:<b data-reloj>00</b></span>
-        <span class="bo-fina-chev" aria-hidden="true">&rsaquo;</span>
-      </a>`;
-    const cabecera = document.querySelector('#app .app-head');
-    if(cabecera) cabecera.after(el);
-    else document.getElementById('app').before(el);
-  }
+  el.innerHTML = esEscritorio() ? `
+    <div class="urg-inner">
+      <span class="urg-label">Termina en</span>
+      ${reloj}
+      <span class="urg-divisor"></span>
+      <span class="urg-chips-label">Los 3 mayores descuentos:</span>
+      <span class="urg-chips">${chipsUrgenciaHtml()}</span>
+      <a class="urg-ver" href="/ofertas" onclick="goOffers();return false;">Ver las ${ofertas.length} ofertas ›</a>
+    </div>` : `
+    <div class="urg-inner">
+      <span class="urg-label-movil">La oferta termina en</span>
+      ${reloj}
+      <a class="urg-ver" href="/ofertas" onclick="goOffers();return false;">Ver ${ofertas.length} ›</a>
+    </div>`;
 
+  document.getElementById('app').before(el);
   pintarRelojBanda();
   if(!relojBanda) relojBanda = setInterval(pintarRelojBanda, 1000);
 }
 
-/* El degradado del borde derecho de la barra de categorías se apaga cuando ya
-   no queda nada que desplazar. Se engancha en cada pintada porque la barra se
-   crea de nuevo con el innerHTML de render(); el listener viejo se va con el
-   nodo viejo, así que no se acumulan. */
-function prepararBarraCategorias(){
-  const barra = document.querySelector('.cat-barra');
-  if(!barra) return;
-  const marcar = () => {
-    const fin = barra.scrollLeft + barra.clientWidth >= barra.scrollWidth - 4;
-    barra.classList.toggle('al-final', fin);
-  };
-  barra.addEventListener('scroll', marcar, { passive: true });
-  marcar();
+/* CTA flotante de WhatsApp. El handoff lo pide fijo y visible siempre; en la
+   maqueta aparecía al final del flujo solo porque el prototipo no tiene
+   scroll. En el teléfono no va: ahí ya está la barra de compra fija abajo y
+   dos elementos flotantes se pisarían. */
+function renderWaFlotante(){
+  const previo = document.getElementById('waFlotante');
+  if(previo) previo.remove();
+  if(!esEscritorio()) return;
+  const a = document.createElement('a');
+  a.id = 'waFlotante';
+  a.className = 'wa-flotante';
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.href = waHref('Hola, quiero que me ayuden a elegir un instrumento.');
+  a.setAttribute('onclick', "trackAdsConversion('whatsapp')");
+  a.innerHTML = `<span class="ico-wa">${iconWhatsapp}</span>Te ayudamos a elegir`;
+  document.body.appendChild(a);
 }
 
 /* Cruzar los 900px cambia el marcado de la portada, así que hay que volver a
@@ -5744,7 +5972,8 @@ function render(){
   buildNavLists();
   renderNavEscritorio();
   renderBandaOferta();
-  prepararBarraCategorias();
+  renderWaFlotante();
+  prepararBarraCompra();
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
