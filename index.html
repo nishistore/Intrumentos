@@ -815,13 +815,30 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   margin:16px var(--app-gutter) 0;
   background:var(--app-green);border-radius:14px;padding:18px;
 }
-.kit-fotos{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px;order:2;}
+/* Las tres fotos van entre el texto y los botones, no sueltas al final: ahí
+   parecían decoración. Cada una es un enlace a su producto y lleva nombre y
+   precio, que es lo que hace que se vean tocables. */
+.kit-fotos{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px;order:2;}
 .kit-foto{
-  display:block;aspect-ratio:1/1;border-radius:9px;overflow:hidden;background:#fff;
+  display:flex;flex-direction:column;
+  border-radius:10px;overflow:hidden;background:#fff;
+  padding:8px;text-decoration:none;
 }
-.kit-foto img{width:100%;height:100%;object-fit:contain;padding:8px;}
+.kit-foto-img{display:block;aspect-ratio:1/1;}
+.kit-foto img{width:100%;height:100%;object-fit:contain;}
+.kit-foto-nombre{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:6px;font:600 11px/1.3 var(--app-sans);color:var(--app-ink);
+}
+/* margin-top:auto empuja el precio al fondo de la tarjeta, para que los
+   tres queden a la misma altura aunque un nombre ocupe dos lineas y otro una. */
+.kit-foto-precio{
+  margin-top:auto;padding-top:5px;font:400 13px/1 var(--app-black);
+  letter-spacing:-.01em;color:var(--app-ink);
+}
 .kit{display:flex;flex-direction:column;}
-.kit-texto{order:1;}
+.kit-texto{order:1;display:contents;}
+.kit-ctas{order:3;}
 .kit-eyebrow{
   display:block;font:500 10.5px/1 var(--app-mono2);letter-spacing:.12em;
   text-transform:uppercase;color:#1f4a23;
@@ -1982,7 +1999,11 @@ footer.site .footer-bottom{
     display:grid;grid-template-columns:1fr 1.05fr;gap:32px;align-items:center;
   }
   .kit-fotos{order:0;margin-top:0;gap:12px;}
-  .kit-texto{order:0;}
+  .kit-texto{order:0;display:block;}
+  .kit-ctas{order:0;}
+  .kit-foto{padding:10px;}
+  .kit-foto-nombre{font-size:12px;}
+  .kit-foto-precio{font-size:14.5px;}
   .kit-eyebrow{font-size:11px;}
   .kit-titulo{margin-top:9px;font-size:31px;line-height:1.06;}
   .kit-copy{margin-top:10px;font-size:14.5px;line-height:1.6;}
@@ -3671,7 +3692,12 @@ function kitEscolarHtml(){
   const fotos = [...suyos].sort((a,b) => (b.featured?1:0)-(a.featured?1:0) || b.price-a.price).slice(0,3);
   return `
   <section class="kit">
-    <div class="kit-fotos">${fotos.map(x => `<span class="kit-foto">${imgProducto(x)}</span>`).join('')}</div>
+    <div class="kit-fotos">${fotos.map(x => `
+      <a class="kit-foto" href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">
+        <span class="kit-foto-img">${imgProducto(x)}</span>
+        <span class="kit-foto-nombre">${escapeHtml(x.name)}</span>
+        <span class="kit-foto-precio">${fmt(x.price)}</span>
+      </a>`).join('')}</div>
     <div class="kit-texto">
       <span class="kit-eyebrow">Para colegio · lista escolar</span>
       <h2 class="kit-titulo">Mándanos la lista y te devolvemos el kit cotizado en 1 hora</h2>
