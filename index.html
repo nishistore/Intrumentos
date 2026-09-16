@@ -1204,6 +1204,24 @@ body:has(.barra-compra){padding-bottom:calc(var(--app-tabbar-h) + 77px + env(saf
   width:100%;height:100%;border:0;
   object-fit:contain;background:#fff;
 }
+/* Los puntitos van fuera de la galería, no encima de la foto: una foto de
+   instrumento sobre fondo blanco se traga cualquier cosa clara que le pongas
+   encima. El activo se estira en vez de solo oscurecerse, que se distingue
+   aunque no se vea bien la diferencia de tono. */
+.ficha-puntos{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px 0 2px;
+}
+.punto-foto{
+  width:6px;height:6px;padding:0;border:none;border-radius:999px;
+  background:rgba(23,20,15,.22);cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:width .2s ease, background-color .2s ease;
+}
+.punto-foto.sel{width:18px;background:var(--app-ink);}
+@media (prefers-reduced-motion: reduce){
+  .punto-foto{transition:none;}
+}
 .ficha-sinfoto{display:flex;align-items:center;justify-content:center;}
 .ficha-sinfoto svg{width:56px;height:56px;stroke:var(--app-faint);}
 
@@ -4371,6 +4389,22 @@ function renderProductDetail(){
   const ahorro = enOferta(p) ? p.old - p.price : 0;
   const consulta = `Hola, me interesa ${p.name}${colorActivo ? ' (color ' + colorActivo + ')' : ''}. ¿Está disponible?`;
 
+  /* Puntitos debajo de la foto: dicen cuántas fotos hay y en cuál estás, y
+     son la pista de que se puede deslizar. Cada uno lleva a su foto, así que
+     también sirven de atajo para quien prefiera tocar.
+     Por encima de ocho fotos dejan de leerse y vuelve el contador "N de M";
+     hoy el producto con más fotos tiene seis. */
+  const puntosHtml = (slides.length < 2 || slides.length > 8) ? '' : `
+    <div class="ficha-puntos" role="tablist" aria-label="Fotos del producto">
+      ${slides.map((_, i) => {
+        const sel = i === pdState.activeIndex;
+        const etiqueta = colores[i] || ('Foto ' + (i + 1));
+        return `<button type="button" class="punto-foto${sel ? ' sel' : ''}" role="tab"
+          aria-label="${escapeHtml(etiqueta)}" aria-selected="${sel ? 'true' : 'false'}"
+          onclick="setActiveSlide(${i})"></button>`;
+      }).join('')}
+    </div>`;
+
   const swatchesHtml = !hayColores ? '' : `
       <div class="ficha-color-label">Color — <span>${escapeHtml(colorActivo || 'elige uno')}</span></div>
       <div class="ficha-swatches">
@@ -4504,8 +4538,9 @@ function renderProductDetail(){
       <a class="ficha-flotante carrito" href="/carrito" onclick="goCart();return false;" aria-label="Ver carrito">
         ${iconSvg('cart')}<span>${enCarrito}</span>
       </a>
-      ${slides.length > 1 ? `<span class="ficha-contador">${pdState.activeIndex + 1} de ${slides.length}</span>` : ''}
+      ${(slides.length > 1 && slides.length > 8) ? `<span class="ficha-contador">${pdState.activeIndex + 1} de ${slides.length}</span>` : ''}
     </div>
+    ${puntosHtml}
 
     <div class="ficha-cuerpo">
       <div class="eyebrow-terracota">${escapeHtml(cat ? cat.label : 'Instrumentos')}</div>
