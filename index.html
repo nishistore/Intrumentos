@@ -917,11 +917,35 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   -webkit-overflow-scrolling:touch;
 }
 .cab-chips::-webkit-scrollbar{display:none;}
+/* Mismo comportamiento que las categorías de escritorio, traducido al dedo:
+   aquí no hay ratón, así que lo que se ilumina es el momento de tocar. El
+   fondo baja un tono y la píldora se hunde un pelo, en los mismos 180ms.
+   -webkit-tap-highlight-color evita que Android pinte encima su recuadro gris
+   y se coma la animación. */
 .cab-chip{
   flex:0 0 auto;
   background:var(--app-sunken);border:1px solid #e2e2de;
   color:#3a3a36;font:600 12.5px/1 var(--app-sans);
   padding:7px 13px;border-radius:999px;text-decoration:none;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease, border-color .18s ease,
+             color .18s ease, transform .18s ease;
+}
+.cab-chip:active{
+  background:#E4E4E1;border-color:#d3d3ce;color:var(--app-ink);
+  transform:scale(.97);
+}
+.cab-chip.activo:active{background:#A8101F;border-color:#A8101F;}
+/* Si la cabecera del teléfono cae en una pantalla con ratón (una ventana
+   estrecha en la computadora), se comporta igual que la de escritorio. */
+@media (hover: hover){
+  .cab-chip:hover{background:#E4E4E1;border-color:#d3d3ce;color:var(--app-ink);}
+  .cab-chip.activo:hover{background:#A8101F;border-color:#A8101F;color:#fff;}
+}
+@media (prefers-reduced-motion: reduce){
+  .cab-chip{transition:none;}
+  .cab-chip:active{transform:none;}
 }
 /* El chip de ofertas es el único rojo de la fila: es el que tiene que
    llamar, los demás son navegación. */
