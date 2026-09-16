@@ -81,7 +81,7 @@
      Poppins se cayeron con el sitio anterior: eran dos familias completas
      descargándose en cada visita sin que las usara nadie. Los nombres van en
      orden alfabético porque la API css2 lo exige. -->
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy-deep:#ffffff;
@@ -170,7 +170,6 @@
   --app-cat-accesorios:#17140F;
 
   /* --- tipografía --- */
-  --app-serif:'Instrument Serif',Georgia,serif;   /* títulos editoriales */
   --app-sans:'Archivo',system-ui,sans-serif;      /* toda la interfaz */
   --app-mono:ui-monospace,Menlo,monospace;        /* etiquetas técnicas */
 
@@ -213,7 +212,9 @@ img,svg{display:block;}
 a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:pointer;}
 ul{list-style:none;}
-.h-serif{font-family:var(--app-serif);font-weight:400;}
+/* Quedó el nombre por compatibilidad con el marcado; ya no hay serif: toda
+   la página va en Archivo. */
+.h-serif{font-family:var(--app-sans);font-weight:700;letter-spacing:-.02em;}
 .logo{
   display:flex;align-items:center;
   white-space:nowrap;
@@ -260,7 +261,7 @@ ul{list-style:none;}
 }
 .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--navy-card);border:1px solid var(--navy-line);display:flex;align-items:center;justify-content:center;z-index:5;}
 .modal-close svg{width:14px;height:14px;stroke:var(--cream);}
-.modal h3{font-family:var(--app-serif);font-weight:400;color:var(--app-ink);font-size:24px;margin-bottom:14px;padding-right:30px;}
+.modal h3{font-family:var(--app-sans);font-weight:700;letter-spacing:-.02em;color:var(--app-ink);font-size:20px;margin-bottom:14px;padding-right:30px;}
 .modal p, .modal li{font-size:13.3px;line-height:1.7;color:var(--ink);margin-bottom:10px;}
 .modal ul{padding-left:18px;list-style:disc;}
 .modal h4{font-size:13px;color:var(--brown-heading);margin:14px 0 6px;}
@@ -514,9 +515,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 
 /* ---------------- portada ---------------- */
 .hero-app{padding-top:16px;padding-bottom:6px;}
-/* El titular del hero va en Archivo 800, no en el serif editorial: es el
-   bloque que tiene que empujar a comprar. El serif sigue mandando en los
-   títulos de sección, la ficha y el pie. */
+/* El titular del hero, el más pesado de la página. */
 .hero-eyebrow{
   display:block;margin-bottom:9px;
   font:700 9.5px/1.3 var(--app-sans);letter-spacing:.12em;
@@ -613,7 +612,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   display:flex;align-items:baseline;justify-content:space-between;gap:12px;
 }
 .seccion-head h2,.seccion-titulo{
-  font:400 22px/1.1 var(--app-serif);color:var(--app-ink);
+  font:700 19px/1.2 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);
 }
 .seccion-titulo{margin-top:24px;}
 .seccion-head a{
@@ -689,7 +688,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 }
 .banda-titulo{
   display:block;margin-top:7px;
-  font:400 20px/1.15 var(--app-serif);color:var(--app-on-green);
+  font:700 17px/1.25 var(--app-sans);letter-spacing:-.02em;color:var(--app-on-green);
 }
 .banda-copy{
   display:block;margin-top:6px;
@@ -781,7 +780,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   border:1px dashed rgba(23,20,15,.18);
   text-align:center;
 }
-.cec-titulo{font:400 20px/1.2 var(--app-serif);color:var(--app-ink);}
+.cec-titulo{font:700 17px/1.25 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);}
 .catalogo-en-camino p{
   margin-top:8px;
   font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
@@ -844,7 +843,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .ficha-cuerpo{padding-top:18px;}
 .ficha-nombre{
   margin-top:9px;
-  font:400 26px/1.14 var(--app-serif);color:var(--app-ink);
+  font:700 21px/1.25 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);
   text-wrap:pretty;
 }
 .ficha-precios{margin-top:12px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
@@ -1139,7 +1138,7 @@ footer.site .footer-bottom{
 .fila-chevron{flex:none;font:600 15px/1 var(--app-sans);color:#C0B6A8;}
 
 .buscar-vacio{margin-top:36px;text-align:center;}
-.vacio-titulo{font:400 20px/1.2 var(--app-serif);color:var(--app-ink);}
+.vacio-titulo{font:700 17px/1.25 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);}
 .buscar-vacio p{
   margin-top:8px;
   font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);text-wrap:pretty;
@@ -1323,7 +1322,7 @@ footer.site .footer-bottom{
 }
 .pedido-titulo{
   margin-top:20px;
-  font:400 28px/1.15 var(--app-serif);color:var(--app-ink);
+  font:800 23px/1.2 var(--app-sans);letter-spacing:-.025em;color:var(--app-ink);
 }
 .pedido-copy{
   margin-top:10px;
@@ -1474,7 +1473,7 @@ footer.site .footer-bottom{
 .nav-res-stock.agotado{color:var(--app-muted-3);}
 .nav-res-chevron{font:600 15px/1 var(--app-sans);color:#C0B6A8;flex:none;}
 .nav-buscar-vacio{padding:16px 10px;text-align:center;}
-.nav-buscar-vacio .nbv-titulo{font:400 17px/1.2 var(--app-serif);color:var(--app-ink);}
+.nav-buscar-vacio .nbv-titulo{font:700 15px/1.3 var(--app-sans);letter-spacing:-.015em;color:var(--app-ink);}
 .nav-buscar-vacio p{margin-top:6px;font:400 12px/1.45 var(--app-sans);color:var(--app-muted);}
 .nav-buscar-vacio a{
   margin:12px auto 0;max-width:220px;height:38px;border-radius:10px;
@@ -1559,7 +1558,7 @@ footer.site .footer-bottom{
 
   /* las cabeceras de pantalla dejan de ser pegajosas: ya lo es la de arriba */
   .app-head{position:static;background:none;border-bottom:none;padding-top:28px;}
-  .app-head.cat .app-head-nombre{font:400 34px/1.1 var(--app-serif);}
+  .app-head.cat .app-head-nombre{font:700 28px/1.15 var(--app-sans);letter-spacing:-.025em;}
   .app-head.cat .app-head-sub{font-size:13px;}
   /* el botón atrás es un gesto de teléfono; aquí está la barra superior */
   .app-head.cat .btn-volver{display:none;}
@@ -1620,10 +1619,7 @@ footer.site .footer-bottom{
     font:700 11px/1 var(--app-sans);letter-spacing:.14em;
     text-transform:uppercase;color:var(--app-ink);
   }
-  /* El titular del hero rompe con el serif editorial del resto del sitio y se
-     va a Archivo en peso 800: es el bloque que tiene que empujar a comprar, y
-     la sans pesada lee como tienda. Instrument Serif sigue mandando en los
-     títulos de sección, la ficha y el pie. */
+  /* El titular más grande de la página: Archivo en peso 800. */
   .hero-editorial h1{
     font-family:var(--app-sans);font-weight:800;
     font-size:54px;line-height:1.02;letter-spacing:-.035em;margin-top:16px;
@@ -1730,7 +1726,7 @@ footer.site .footer-bottom{
     display:block;font:600 10px/1 var(--app-sans);letter-spacing:.09em;
     text-transform:uppercase;color:rgba(15,46,27,.72);
   }
-  .tile-escolar-titulo{display:block;margin-top:10px;font:400 30px/1.12 var(--app-serif);color:var(--app-on-green);}
+  .tile-escolar-titulo{display:block;margin-top:10px;font:800 26px/1.18 var(--app-sans);letter-spacing:-.025em;color:var(--app-on-green);}
   .tile-escolar-copy{
     display:block;margin-top:10px;max-width:52ch;
     font:400 13.5px/1.55 var(--app-sans);color:rgba(15,46,27,.74);
@@ -1767,7 +1763,7 @@ footer.site .footer-bottom{
   .pcard-antes{font-size:12.5px;}
   .pcard-stock{margin-top:8px;font-size:11.5px;}
   .seccion-head{margin-top:48px;}
-  .seccion-head h2,.seccion-titulo{font-size:30px;}
+  .seccion-head h2,.seccion-titulo{font-size:28px;}
   .seccion-titulo{margin-top:48px;}
 
   /* ---------------- visítanos ----------------
@@ -1787,7 +1783,7 @@ footer.site .footer-bottom{
   .visitanos-mapa iframe{width:100%;height:100%;border:0;display:block;}
   /* El título serif hace de cabecera; el eyebrow sobraría encima. */
   .tarjeta-visitanos .eyebrow-terracota{display:none;}
-  .visitanos-titulo{font-size:32px;line-height:1.14;margin-top:28px;}
+  .visitanos-titulo{font-size:27px;line-height:1.2;margin-top:28px;}
   .visitanos-dir{margin-top:14px;font-size:15px;}
   .visitanos-horario{margin-top:6px;font-size:13.5px;}
   .visitanos-botones{margin-top:20px;margin-bottom:28px;}
@@ -1809,7 +1805,7 @@ footer.site .footer-bottom{
     margin-top:14px;
     display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
   }
-  .cat-titulo{font:400 40px/1.08 var(--app-serif);color:var(--app-ink);}
+  .cat-titulo{font:800 34px/1.1 var(--app-sans);letter-spacing:-.03em;color:var(--app-ink);}
   .cat-conteo{margin-top:8px;font:400 13px/1.4 var(--app-sans);color:var(--app-muted);}
   .cat-orden{display:flex;gap:8px;flex:none;}
   .chip-orden{
@@ -1870,7 +1866,7 @@ footer.site .footer-bottom{
     background:var(--app-green-soft);border-radius:var(--app-r-card);
     padding:18px;
   }
-  .side-asesor-titulo{font:400 18px/1.15 var(--app-serif);color:var(--app-green-ink);}
+  .side-asesor-titulo{font:700 15px/1.3 var(--app-sans);letter-spacing:-.015em;color:var(--app-green-ink);}
   .side-asesor p{margin-top:8px;font:400 12.5px/1.5 var(--app-sans);color:var(--app-ink-70);}
   .side-asesor .btn-app{margin-top:14px;height:42px;font-size:12.5px;gap:8px;}
   .side-asesor .ico-wa svg{width:16px;height:16px;}
@@ -1943,7 +1939,7 @@ footer.site .footer-bottom{
     display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
     gap:36px;align-items:start;
   }
-  .fe-h2{font:400 24px/1.15 var(--app-serif);color:var(--app-ink);}
+  .fe-h2{font:700 20px/1.25 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);}
   .fe-desc{margin-top:14px;}
   .fe-desc p{font:400 14px/1.65 var(--app-sans);color:var(--app-ink-70);text-wrap:pretty;}
   .fe-desc p + p{margin-top:12px;}
@@ -1956,7 +1952,7 @@ footer.site .footer-bottom{
     background:var(--app-surface);border:1px solid var(--app-line);
     border-radius:18px;padding:24px;
   }
-  .fe-panel .ficha-nombre{margin-top:10px;font-size:32px;line-height:1.14;}
+  .fe-panel .ficha-nombre{margin-top:10px;font-size:26px;line-height:1.2;}
   .fe-panel .ficha-precio{font-size:38px;}
   .fe-panel .ficha-antes{font-size:16px;}
   .fe-panel .ficha-ahorras{font-size:12px;padding:5px 9px;}
@@ -1994,7 +1990,7 @@ footer.site .footer-bottom{
      Las dos pantallas comparten esqueleto: contenido a la izquierda y panel
      de resumen pegado a la derecha, con el CTA dentro del panel en vez de en
      una barra fija abajo (que es cosa del teléfono). */
-  .ped-titulo{margin-top:14px;font:400 40px/1.08 var(--app-serif);color:var(--app-ink);}
+  .ped-titulo{margin-top:14px;font:800 34px/1.1 var(--app-sans);letter-spacing:-.03em;color:var(--app-ink);}
   .ped-layout{
     margin-top:26px;padding-bottom:48px;
     display:grid;grid-template-columns:minmax(0,1fr) 420px;
@@ -2142,7 +2138,7 @@ footer.site .footer-bottom{
   .fe-layout{grid-template-columns:minmax(0,1fr) 380px;gap:28px;}
   .fe-texto{grid-template-columns:minmax(0,1fr);gap:28px;}
   .fe-panel{padding:20px;}
-  .fe-panel .ficha-nombre{font-size:27px;}
+  .fe-panel .ficha-nombre{font-size:22px;}
   .fe-panel .ficha-precio{font-size:32px;}
 
   .ped-layout{grid-template-columns:minmax(0,1fr) 360px;gap:24px;}
