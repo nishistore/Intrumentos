@@ -1830,21 +1830,31 @@ footer.site .footer-bottom{
 }
 
 /* ---------------- barra de categorías ---------------- */
+/* Cada categoría es una píldora: al pasar el ratón aparece el fondo gris
+   detrás de la palabra. El gutter se descuenta el padding de la píldora para
+   que "Cuerda" siga alineado con el logo de arriba, y el gap baja a 4px
+   porque los 22px de padding ya separan visualmente. */
 .nav-esc-cats{
   max-width:var(--app-max);margin:0 auto;height:48px;
-  display:flex;align-items:center;gap:26px;
-  padding:0 var(--app-gutter);
+  display:flex;align-items:center;gap:4px;
+  padding:0 calc(var(--app-gutter) - 11px);
   border-top:1px solid rgba(23,20,15,.07);
 }
 .nav-esc-cats a{
-  height:47px;display:flex;align-items:center;flex:none;
+  height:32px;padding:0 11px;border-radius:999px;
+  display:flex;align-items:center;flex:none;
   font:600 13px/1 var(--app-sans);color:var(--app-ink-70);
-  text-decoration:none;border-bottom:2px solid transparent;
+  text-decoration:none;
+  transition:background-color .18s ease, color .18s ease;
 }
-.nav-esc-cats a:hover{color:var(--app-ink);}
-.nav-esc-cats a.activo{color:var(--app-ink);border-bottom-color:var(--app-ink);}
-.nav-esc-cats .nav-ofertas{
-  margin-left:auto;height:auto;border-bottom:none;color:var(--app-ink);
+.nav-esc-cats a:hover{background:var(--app-sunken);color:var(--app-ink);}
+/* La categoría abierta es la píldora llena. Antes era un subrayado, que
+   debajo de una píldora no encajaba. */
+.nav-esc-cats a.activo{background:var(--app-ink);color:#fff;}
+.nav-esc-cats a.activo:hover{background:#000;color:#fff;}
+.nav-esc-cats .nav-ofertas{margin-left:auto;color:var(--app-ink);}
+@media (prefers-reduced-motion: reduce){
+  .nav-esc-cats a{transition:none;}
 }
 
 /* ======================================================================
@@ -2386,7 +2396,7 @@ footer.site .footer-bottom{
    se estrechan. Ni una pantalla cambia de estructura, solo de anchos.
    ====================================================================== */
 @media (min-width:900px) and (max-width:1199px){
-  .nav-esc-cats{gap:18px;}
+  .nav-esc-cats{gap:0;}
 
   nav.carrusel,div.carrusel,.grid-app{grid-template-columns:repeat(3,minmax(0,1fr));}
 
