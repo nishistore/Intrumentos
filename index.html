@@ -1684,18 +1684,30 @@ footer.site .footer-bottom{
      Aquí sí caben las siete en una fila, con los iconos grandes. */
   /* Aquí caben las siete: se juntan en un solo panel con líneas de 1px, y no
      hay nada que desplazar ni que insinuar. */
-  .cat-barra{
+  /* Gana a la regla de los carruseles, que le metía el margen lateral de
+     pantalla como relleno: ".app-shell > .carrusel" pesa más que ".cat-barra"
+     a secas, y el panel acababa con 40px a los lados y 8 arriba. */
+  .app-shell > .cat-barra{
     background:var(--app-ink);border-radius:16px;overflow:hidden;
-    gap:0;margin-top:40px;
+    gap:0;margin-top:40px;padding:8px;
   }
   .cat-barra::after{display:none;}
   .cat-item{
-    flex:1;width:auto;min-width:0;padding:22px 14px 20px;
-    background:none;border-radius:0;
-    border-left:1px solid rgba(255,255,255,.1);
+    flex:1;width:auto;min-width:0;padding:26px 16px 24px;
+    position:relative;
+    background:none;border-radius:10px;border-left:none;
     transition:background .18s ease;
   }
-  .cat-item:first-child{border-left:none;}
+  /* El separador no llega a los bordes: una línea corta y centrada deja
+     respirar al bloque sin partirlo en siete cajas. Va en ::before de la
+     siguiente celda, así la primera no lleva ninguno. */
+  .cat-item + .cat-item::before{
+    content:'';position:absolute;left:0;top:24%;bottom:24%;
+    width:1px;background:rgba(255,255,255,.14);
+  }
+  /* Al iluminar una celda, sus dos líneas estorban: el resalte ya la separa. */
+  .cat-item:hover::before,
+  .cat-item:hover + .cat-item::before{background:transparent;}
   .cat-item:hover{background:rgba(255,255,255,.06);}
   .cat-item-ico{height:40px;}
   .cat-item-ico svg{width:38px;height:38px;}
