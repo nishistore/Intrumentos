@@ -1185,6 +1185,18 @@ body:has(.barra-compra){padding-bottom:calc(var(--app-tabbar-h) + 77px + env(saf
   background:var(--app-stripe);
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;
+  /* pan-y deja el scroll vertical al navegador y nos entrega el gesto
+     horizontal: sin esto, deslizar de lado arrastra la página. */
+  touch-action:pan-y;
+}
+/* La foto nueva entra por el lado hacia el que se deslizó, para que el gesto
+   se sienta como pasar una página y no como un parpadeo. */
+@keyframes fichaEntraDer{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+@keyframes fichaEntraIzq{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:none;}}
+.ficha-galeria .entra-der{animation:fichaEntraDer .22s ease-out;}
+.ficha-galeria .entra-izq{animation:fichaEntraIzq .22s ease-out;}
+@media (prefers-reduced-motion: reduce){
+  .ficha-galeria .entra-der,.ficha-galeria .entra-izq{animation:none;}
 }
 .ficha-galeria img,
 .ficha-galeria video,
@@ -4267,6 +4279,48 @@ function setActiveSlide(i){
   pdState.activeIndex = i;
   render();
 }
+
+/* Deslizar sobre la foto para cambiar de color en el teléfono. Los swatches
+   siguen ahí: esto es un atajo, no un reemplazo, porque un gesto no se ve y
+   nadie lo descubre si no lo prueba.
+
+   Da la vuelta al llegar al final: con cuatro o cinco colores, volver al
+   primero es más cómodo que chocar contra un tope.
+
+   El listener va en el documento y no en la galería porque render() rehace
+   el HTML entero en cada cambio: uno puesto sobre el elemento moriría con la
+   primera foto. */
+let gestoFicha = null;
+
+function cambiarSlideFicha(paso){
+  const p = PRODUCTS.find(x => x.id === pdState.productId);
+  if(!p) return;
+  const total = (p.images || []).length + (p.video ? 1 : 0);
+  if(total < 2) return;
+  setActiveSlide((pdState.activeIndex + paso + total) % total);
+  const el = document.querySelector('.ficha-galeria img, .ficha-galeria video');
+  if(el) el.classList.add(paso > 0 ? 'entra-der' : 'entra-izq');
+}
+
+document.addEventListener('touchstart', (e) => {
+  const g = e.target.closest && e.target.closest('.ficha-galeria');
+  if(!g || e.touches.length !== 1){ gestoFicha = null; return; }
+  gestoFicha = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+  const g = gestoFicha;
+  gestoFicha = null;
+  if(!g || !e.changedTouches.length) return;
+  const dx = e.changedTouches[0].clientX - g.x;
+  const dy = e.changedTouches[0].clientY - g.y;
+  /* Tres filtros: que haya recorrido, que sea claramente horizontal -si no,
+     robaríamos el scroll de la página- y que no sea un arrastre lento. */
+  if(Math.abs(dx) < 45) return;
+  if(Math.abs(dx) < Math.abs(dy) * 1.6) return;
+  if(Date.now() - g.t > 700) return;
+  cambiarSlideFicha(dx < 0 ? 1 : -1);
+}, { passive: true });
 
 /* Stepper de cantidad del panel de compra de escritorio. En el teléfono la
    barra fija solo tiene el CTA y se agrega de uno en uno, así que pdState.qty
