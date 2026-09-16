@@ -966,35 +966,71 @@ body.en-ficha footer.site{display:none;}
 
 
 /* ---------------- pie ----------------
-   El handoff no diseña pie de página. Se conserva porque es donde viven las
-   políticas (envíos, cambios, garantía) y los enlaces internos a cada
-   categoría, que valen para el buscador de Google. Repintado con la paleta
-   nueva para que no cante debajo del rediseño. */
+   Mismo pie negro en las dos versiones. Antes el teléfono se quedaba con el
+   pie claro del sitio viejo: debajo de un sitio blanco y negro parecía otra
+   página, y medía 986px, media pantalla y media de scroll.
+
+   Aquí va la versión corta. Lo que se recorta en el móvil se recorta porque
+   se repite en otro sitio, no porque estorbe: el párrafo de marca dice lo
+   mismo que la descripción de la portada, y el mapa ya está grande en el
+   bloque "Visítanos". Los enlaces de categoría y las políticas se quedan:
+   son los que valen para Google y los que la gente busca de verdad. */
 footer.site{
-  background:var(--app-surface);
-  border-top:1px solid var(--app-line);
-  color:var(--app-muted);
+  background:var(--app-ink);
+  color:rgba(255,255,255,.72);
   font-family:var(--app-sans);
 }
-footer.site .footer-grid{max-width:var(--app-max);margin:0 auto;padding:26px var(--app-gutter);}
-footer.site h4{font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--app-ink);}
-footer.site p,footer.site .link{font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);}
-footer.site .link{background:none;border:none;padding:0;text-align:left;display:block;}
-footer.site .logo-mark{height:40px;}
-footer.site .footer-social a svg{stroke:var(--app-muted);fill:var(--app-muted);}
-footer.site .footer-bottom{
-  border-top:1px solid var(--app-line);
-  padding:14px var(--app-gutter);text-align:center;
-  font:400 11px/1.4 var(--app-sans);color:var(--app-muted-3);
+footer.site .footer-grid{
+  max-width:var(--app-max);margin:0 auto;
+  padding:26px var(--app-gutter) 0;
+  gap:20px;
 }
-/* Piezas que solo existen en el pie de escritorio (ver el @media): el
-   teléfono suelto y la columna de pagos y envíos. En el móvil esa
-   información ya vive en la portada y en el carrito. */
-.footer-solo-esc{display:none;}
+footer.site h4{
+  font:600 10px/1 var(--app-sans);letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(255,255,255,.45);
+  margin-bottom:12px;
+}
+footer.site p,
+footer.site .link,
+footer.site .store-address,
+footer.site .store-hours{font:400 12.5px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
+footer.site .link{background:none;border:none;padding:0;text-align:left;display:block;}
+footer.site .logo-mark{height:36px;}
+footer.site .footer-social{gap:8px;margin-top:14px;}
+footer.site .footer-social a{background:rgba(255,255,255,.08);}
+footer.site .footer-social a svg{stroke:rgba(255,255,255,.8);fill:rgba(255,255,255,.8);}
+footer.site .store-address svg{stroke:rgba(255,255,255,.5);}
+
+/* El párrafo de marca y el mapa salen del teléfono: repiten lo que ya dicen
+   la portada y el bloque "Visítanos". */
+footer.site .footer-brand p{display:none;}
+footer.site .store-map-embed{display:none;}
+footer.site .store-maps-btn{
+  border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.72);
+  margin-bottom:0;
+}
+/* Las siete categorías en dos columnas: en una sola eran siete renglones. */
+footer.site #footerCats{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}
+footer.site #footerCats .link{margin:0;}
+.footer-telefono{color:var(--app-green-mint) !important;margin-top:10px;}
+.footer-solo-esc{display:block;}
 footer.site .footer-pagos{display:none;}
-/* Ayuda y Legal van envueltas para poder tumbarlas en una fila en
-   escritorio. Aquí replican el hueco que tenían como celdas sueltas. */
-footer.site .footer-legal{display:grid;gap:30px;}
+
+/* Ayuda y Legal se tumban en una fila de enlaces, sin sus títulos: como
+   apartados ocupaban dos bloques con cabecera cada uno. */
+footer.site .footer-legal{
+  display:flex;flex-wrap:wrap;gap:8px 16px;
+  padding-top:18px;border-top:1px solid rgba(255,255,255,.12);
+}
+footer.site .footer-legal .footer-col{display:contents;}
+footer.site .footer-legal h4{display:none;}
+footer.site .footer-legal .link{font-size:11.5px;color:rgba(255,255,255,.55);}
+footer.site .footer-bottom{
+  border-top:none;
+  padding:18px var(--app-gutter) 20px;text-align:left;
+  max-width:var(--app-max);margin:0 auto;
+  font:400 11px/1.4 var(--app-sans);color:rgba(255,255,255,.4);
+}
 
 /* ---------------- /buscar ---------------- */
 .app-head.buscar{padding-bottom:12px;}
@@ -2052,71 +2088,34 @@ footer.site .footer-legal{display:grid;gap:30px;}
   .pedido-ok .btn-app{width:100%;max-width:280px;margin-left:auto;margin-right:auto;height:50px;}
 
   /* ---------------- pie ----------------
-     En escritorio el pie es el bloque oscuro del handoff: cuatro columnas
-     (marca · catálogo · tienda · pagos y envíos) sobre --app-ink. Las
-     políticas y lo legal, que el diseño no contempla pero aquí no se pueden
-     perder, bajan a una fila de enlaces encima del copyright. */
-  footer.site{
-    background:var(--app-ink);
-    border-top:none;
-    color:rgba(255,255,255,.72);
-  }
-  /* El pie se enseña también en ficha, carrito y pago: la barra fija que lo
-     escondía en el teléfono no existe de 900px para arriba. */
+     Mismo pie, en cuatro columnas y con las piezas que en el teléfono se
+     recortan: el párrafo de marca, el mapa y la columna de pagos y envíos. */
   body.en-ficha footer.site{display:block;}
   footer.site .footer-grid{
-    max-width:var(--app-max);
     grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));
     gap:36px;padding:48px var(--app-gutter) 40px;
   }
-  footer.site h4{
-    font:600 11px/1 var(--app-sans);letter-spacing:.08em;
-    text-transform:uppercase;color:rgba(255,255,255,.45);
-    margin-bottom:14px;
-  }
-  footer.site p,
-  footer.site .link,
-  footer.site .store-address,
-  footer.site .store-hours{font:400 13px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
-  footer.site .link:hover,footer.site a:hover{color:#FFFFFF;}
-  footer.site #footerCats .link,
-  footer.site .footer-col .link{margin-bottom:9px;}
+  footer.site h4{font-size:11px;letter-spacing:.08em;margin-bottom:14px;}
+  footer.site p,footer.site .link,
+  footer.site .store-address,footer.site .store-hours{font-size:13px;line-height:1.5;}
+  footer.site .footer-brand{display:block;}
+  footer.site .footer-brand p{display:block;max-width:320px;color:rgba(255,255,255,.6);margin-top:14px;}
   footer.site .footer-brand .logo-mark{height:40px;}
-  footer.site .footer-brand p{max-width:320px;color:rgba(255,255,255,.6);margin-top:14px;}
-  footer.site .footer-social a{background:rgba(255,255,255,.08);}
-  footer.site .footer-social a:hover{background:rgba(255,255,255,.18);}
-  footer.site .footer-social a svg{stroke:rgba(255,255,255,.8);fill:rgba(255,255,255,.8);}
-  footer.site .store-address svg{stroke:rgba(255,255,255,.5);}
-  footer.site .store-maps-btn{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.72);}
+  footer.site .footer-col .link{margin-bottom:9px;}
+  footer.site #footerCats{display:block;}
   footer.site .store-maps-btn:hover{border-color:var(--app-green-mint);color:var(--app-green-mint);}
-  footer.site .store-map-embed{border-color:rgba(255,255,255,.14);}
-  /* El teléfono va pegado al horario, como en el diseño, y el mapa cae al
-     final de la columna. Aplanando los dos envoltorios con display:contents
-     ambos quedan como hermanos y basta un `order` para bajar el mapa. */
+  footer.site .footer-pagos{display:block;}
+  .footer-pagos span{display:block;margin-bottom:9px;font:400 13px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
+  /* El teléfono va pegado al horario y el mapa no vuelve: la portada ya
+     tiene uno grande en "Visítanos". */
   footer.site .footer-tienda{display:flex;flex-direction:column;}
   footer.site .footer-tienda #footerLocation,
   footer.site .footer-tienda .store-location{display:contents;}
-  /* El mapa del pie sobra en escritorio: la portada ya trae uno grande en el
-     bloque "Visítanos" y dos mapas en la misma pantalla es ruido. Queda el
-     enlace a Google Maps, que es lo que el diseño pone en esta columna. */
-  footer.site .footer-tienda .store-map-embed{display:none;}
-  .footer-solo-esc{display:block;}
-  .footer-telefono{color:var(--app-green-mint) !important;margin-top:9px;}
-  footer.site .footer-pagos{display:block;}
-  .footer-pagos span{display:block;margin-bottom:9px;font:400 13px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
-  /* Ayuda y Legal dejan de ser columnas: se estiran en una fila de enlaces */
   footer.site .footer-legal{
-    grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px 26px;
-    padding-top:28px;border-top:1px solid rgba(255,255,255,.12);
+    grid-column:1 / -1;gap:8px 26px;padding-top:28px;
   }
-  footer.site .footer-legal .footer-col{display:contents;}
-  footer.site .footer-legal h4{display:none;}
-  footer.site .footer-legal .link{margin-bottom:0;font-size:12.5px;color:rgba(255,255,255,.55);}
-  footer.site .footer-bottom{
-    border-top:none;padding:0 var(--app-gutter) 32px;text-align:left;
-    max-width:var(--app-max);margin:0 auto;
-    font-size:12px;color:rgba(255,255,255,.4);
-  }
+  footer.site .footer-legal .link{font-size:12.5px;}
+  footer.site .footer-bottom{padding:0 var(--app-gutter) 32px;font-size:12px;}
 }
 
 /* ======================================================================
