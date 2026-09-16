@@ -1,2 +1,5 @@
 .wrangler/
 node_modules/
+# Herramientas locales de Claude Code (servidor de previsualización, etc.).
+# No se despliegan: .assetsignore ya las excluye de los assets del Worker.
+.claude/
