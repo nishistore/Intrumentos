@@ -572,10 +572,18 @@ export default {
     agregaListaDeProductos(route, products);
     const salida = rewrite(response, route, bodyFor(route, products), url.pathname);
 
-    /* Un producto que ya no está devuelve 404 de verdad. El cuerpo sigue siendo
-       el del sitio, así que el visitante ve la tienda igual en cuanto carga el
-       JS; el estado es solo para los buscadores. */
-    if (route && route.noEncontrado) {
+    /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
+       una categoría inventada o una ruta que no es ninguna pantalla (route en
+       null). Antes salían con estado 200 y Google las trata como "soft 404":
+       basura indexable que diluye el sitio. El cuerpo sigue siendo el del
+       sitio, así que el visitante ve la tienda igual en cuanto carga el JS; el
+       estado es solo para los buscadores.
+
+       Todas las pantallas reales tienen ruta aquí -/, /tienda, /ofertas,
+       /buscar, /carrito, /checkout, /pedido/<id>, /categoria/<key> y
+       /producto/<id>-, y /testeo sale antes sin pasar por aquí, así que no hay
+       nada legítimo que pueda caer en este 404. */
+    if (!route || route.noEncontrado) {
       return new Response(salida.body, { status: 404, headers: salida.headers });
     }
     return salida;
