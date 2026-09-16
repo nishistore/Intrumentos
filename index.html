@@ -156,6 +156,9 @@
   --app-green-soft:#EDF9EF;       /* fondo del bloque stock / asesor */
   --app-green-mint:#B9F5D6;       /* solo sobre tinta oscura (franja, pie) */
   --peru-rojo:#D91023;            /* rojo de la bandera: banda y descuentos */
+  /* Rojo hundido: las cajas del contador y los chips dentro de la barra roja.
+     Blanco encima da 7,6:1, de sobra. */
+  --peru-rojo-hondo:#A8101F;
   /* Verde de WhatsApp: es su color de marca, no el de la tienda. Va aparte
      para que un botón de WhatsApp nunca se confunda con uno de compra. */
   --wa:#25D366;
@@ -623,22 +626,25 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .stock-linea.bien{color:var(--app-green-ink);}
 
 /* ---- barra de urgencia ---- */
-.urgencia{background:#1a1a18;color:#fff;}
+/* Roja, no negra: es la barra de oferta y tiene que gritar. Blanco sobre
+   este rojo da 5,2:1, así que todo el texto de dentro va en blanco puro; los
+   grises del diseño original se quedaban en 4:1 y no llegan. */
+.urgencia{background:var(--peru-rojo);color:#fff;}
 .urg-inner{
   max-width:var(--app-max);margin:0 auto;
   padding:10px var(--app-gutter);
   display:flex;align-items:center;gap:10px;
 }
-.urg-label-movil{flex:1;min-width:0;font:400 12.5px/1 var(--app-sans);color:#b9b9b2;}
+.urg-label-movil{flex:1;min-width:0;font:400 12.5px/1 var(--app-sans);color:#fff;}
 .urg-reloj{display:flex;align-items:center;gap:5px;flex:none;}
 .urg-cel{
-  background:#2e2e2a;padding:4px 8px;border-radius:5px;
+  background:var(--peru-rojo-hondo);padding:4px 8px;border-radius:5px;
   font:500 14px/1 var(--app-mono2);color:#fff;font-variant-numeric:tabular-nums;
 }
-.urg-reloj i{font-style:normal;color:#6e6e68;}
+.urg-reloj i{font-style:normal;color:rgba(255,255,255,.55);}
 .urg-ver{
   flex:none;font:700 12.5px/1 var(--app-sans);color:#fff;text-decoration:none;
-  border-bottom:1.5px solid #6e6e68;padding-bottom:1px;
+  border-bottom:1.5px solid rgba(255,255,255,.55);padding-bottom:1px;
 }
 
 /* ---- hero ---- */
@@ -917,8 +923,10 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   color:#3a3a36;font:600 12.5px/1 var(--app-sans);
   padding:7px 13px;border-radius:999px;text-decoration:none;
 }
+/* El chip de ofertas es el único rojo de la fila: es el que tiene que
+   llamar, los demás son navegación. */
 .cab-chip.activo{
-  background:var(--app-ink);border-color:var(--app-ink);color:#fff;font-weight:700;
+  background:var(--peru-rojo);border-color:var(--peru-rojo);color:#fff;font-weight:700;
 }
 .cab-chips > :last-child{margin-right:var(--app-gutter);}
 
@@ -1881,19 +1889,19 @@ footer.site .footer-bottom{
   .urg-inner{padding:11px var(--app-gutter);gap:24px;}
   .urg-label{
     flex:none;font:400 11px/1 var(--app-mono2);letter-spacing:.12em;
-    text-transform:uppercase;color:#9d9d96;
+    text-transform:uppercase;color:#fff;
   }
   .urg-cel{font-size:15px;padding:4px 9px;}
-  .urg-divisor{flex:none;width:1px;height:22px;background:#3a3a36;}
-  .urg-chips-label{flex:none;font:400 13px/1 var(--app-sans);color:#b9b9b2;}
+  .urg-divisor{flex:none;width:1px;height:22px;background:rgba(255,255,255,.3);}
+  .urg-chips-label{flex:none;font:400 13px/1 var(--app-sans);color:#fff;}
   .urg-chips{flex:1;min-width:0;display:flex;gap:10px;align-items:center;overflow:hidden;}
   .urg-chip{
     flex:none;display:flex;align-items:center;gap:9px;
-    background:#2b2b27;border:1px solid #3d3d38;
+    background:var(--peru-rojo-hondo);border:1px solid rgba(255,255,255,.28);
     padding:5px 11px 5px 6px;border-radius:999px;
     font:600 13px/1 var(--app-sans);color:#fff;text-decoration:none;
   }
-  .urg-chip:hover{background:#35352f;}
+  .urg-chip:hover{background:#8E0B18;}
   .urg-chip-foto{
     width:22px;height:22px;flex:none;border-radius:50%;
     overflow:hidden;background:#fff;display:block;
@@ -1902,7 +1910,7 @@ footer.site .footer-bottom{
   .urg-chip-nombre{
     max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
-  .urg-chip-precio{color:#7fd48e;}
+  .urg-chip-precio{color:#fff;}
   .urg-chip-dto{
     background:#fff;color:var(--peru-rojo);
     font:800 11px/1 var(--app-sans);padding:2px 5px;border-radius:3px;
