@@ -781,6 +781,19 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .vitrina-head p{margin-top:4px;font:400 13px/1.45 var(--app-sans);color:var(--app-muted);}
 .vitrina-head .enlace-sub{display:none;}
 .vitrina-grid{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ---- recomendados del final de la ficha ----
+   La tarjeta es la misma .tv de la vitrina; aquí solo va el contenedor. La
+   raya de arriba separa el producto de lo que se le ofrece después, para que
+   no parezca que sigue hablando del mismo. */
+.reco{margin-top:26px;padding-top:20px;border-top:1px solid var(--app-line);}
+.reco-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.reco h2{font:400 20px/1.15 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+.reco-grid{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+/* En el teléfono la barra de compra va fija abajo y tapaba la última fila de
+   recomendados. La mide el JS igual que hace con --nav-real, porque su alto
+   depende del botón, del gutter y de la franja de gestos del teléfono. */
+.app-shell.ficha > .reco{margin-bottom:calc(var(--ficha-barra-real, 96px) + 24px);}
 .tv{
   display:flex;flex-direction:column;
   background:#fff;border:1px solid var(--app-line);
@@ -2092,6 +2105,11 @@ footer.site .footer-bottom{
   .vitrina-head p{margin-top:5px;font-size:14.5px;}
   .vitrina-head .enlace-sub{display:block;flex:none;font-size:14.5px;}
   .vitrina-grid{margin-top:22px;grid-template-columns:repeat(4,1fr);gap:18px;}
+
+  /* ---- recomendados de la ficha ---- */
+  .reco{margin-top:44px;padding-top:34px;}
+  .reco h2{font-size:26px;}
+  .reco-grid{margin-top:20px;grid-template-columns:repeat(4,1fr);gap:18px;}
   .tv{border-radius:14px;padding:14px;transition:transform .15s ease-out,box-shadow .15s ease-out;}
   .tv-foto{border-radius:10px;}
   .tv .badge-dto.esquina{top:9px;left:9px;font-size:11.5px;padding:4px 8px;}
@@ -3766,6 +3784,59 @@ function tarjetaVentaHtml(x){
   </article>`;
 }
 
+/* ---------------- recomendados de la ficha ----------------
+   Lo que hay al lado en la misma balda. Primero la subcategoría, que es lo
+   que de verdad se parece: quien está mirando unas cuerdas de nylon quiere
+   ver otras cuerdas, no un atril. Si no llega a cuatro, se completa con el
+   resto de la categoría.
+
+   Dentro de cada grupo mandan los precios cercanos al que se está mirando.
+   Unas cuerdas de S/ 18 tienen al lado otras de S/ 16 y S/ 20, no las de
+   S/ 900: se trata de enseñar alternativas comparables, no el catálogo.
+
+   Solo productos con stock: recomendar algo agotado es mandar al cliente
+   contra una pared. */
+const RECO_MAX = 4;
+function recomendadosDeFicha(p){
+  const cerca = (a,b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price);
+  const vivos = PRODUCTS.filter(x => x.id !== p.id && (x.stock||0) > 0);
+  const deSub = p.sub ? vivos.filter(x => x.sub === p.sub).sort(cerca) : [];
+  const yaEsta = new Set(deSub.map(x => x.id));
+  const deCat  = vivos.filter(x => x.cat === p.cat && !yaEsta.has(x.id)).sort(cerca);
+  return [...deSub, ...deCat].slice(0, RECO_MAX);
+}
+
+/* "Cuerdas (Acústica/Clásica)" da "Más cuerdas en la tienda": el paréntesis
+   sobra en un título y en minúscula entra en la frase.
+
+   Pero solo si TODO lo que se enseña es de esa subcategoría. Cuando no hay
+   cuatro y hay que rellenar con el resto de la categoría, el título baja a
+   ella: "Más bombos en la tienda" encima de dos kalimbas es mentira, y quien
+   la lea deja de fiarse del resto de la página. */
+function recoTituloHtml(p, lista){
+  const cat = CATEGORIES.find(c=>c.key===p.cat);
+  const sub = cat && cat.subs.find(s=>s.key===p.sub);
+  if(sub && lista.every(x => x.sub === p.sub)){
+    return `Más ${sub.label.split('(')[0].trim().toLowerCase()} en la tienda`;
+  }
+  return cat ? `Más en ${cat.label}` : 'También te puede interesar';
+}
+
+function recomendadosHtml(p){
+  const lista = recomendadosDeFicha(p);
+  if(!lista.length) return '';
+  const cat = CATEGORIES.find(c=>c.key===p.cat);
+  return `
+  <section class="reco">
+    <div class="reco-head">
+      <h2>${escapeHtml(recoTituloHtml(p, lista))}</h2>
+      ${cat ? `<a class="enlace-sub" href="/categoria/${cat.key}"
+           onclick="goShop('${cat.key}');return false;">Ver todo en ${escapeHtml(cat.label)} ›</a>` : ''}
+    </div>
+    <div class="reco-grid">${lista.map(tarjetaVentaHtml).join('')}</div>
+  </section>`;
+}
+
 function vitrinaHtml(){
   const lista = vitrinaDestacados();
   if(!lista.length) return '';
@@ -4620,6 +4691,7 @@ function renderProductDetail(){
           ${asesorHtml}
         </div>
       </div>
+      ${recomendadosHtml(p)}
     </div>`;
   }
 
@@ -4675,6 +4747,8 @@ function renderProductDetail(){
 
       ${asesorHtml}
     </div>
+
+    ${recomendadosHtml(p)}
 
     <div class="ficha-barra">
       ${stock > 0
@@ -6354,6 +6428,10 @@ function render(){
   renderBandaOferta();
   renderWaFlotante();
   prepararBarraCompra();
+  /* El alto real de la barra fija de la ficha, para que los recomendados
+     puedan dejarle sitio y no queden por debajo. */
+  const barraFicha = document.querySelector('.ficha-barra');
+  if(barraFicha) document.documentElement.style.setProperty('--ficha-barra-real', barraFicha.offsetHeight + 'px');
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
