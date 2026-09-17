@@ -3258,12 +3258,30 @@ function nuevoNumeroPedido(){
 function sinTildes(str){
   return String(str).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 }
+/* Busca por nombre, por categoría y por subcategoría. Lo tercero es lo que
+   hace que "cuerda" encuentre las Ernie Ball y las D'Addario: sus nombres
+   reales —"Super Slinky", "Nickel Wound EXL120", "XS Acustica 11-52"— no
+   llevan esa palabra por ningún lado, pero todas están clasificadas en
+   "Cuerdas (Eléctrica)" o "Cuerdas (Acústica/Clásica)".
+
+   No se añade un campo de etiquetas al producto a propósito: la
+   subcategoría ya dice lo mismo, se elige en el panel al dar de alta y no
+   hay que acordarse de nada. Una etiqueta aparte sería un segundo sitio que
+   mantener, y el día que se olvide, el producto desaparece del buscador sin
+   que nadie lo note. Mismo motivo para no meter aquí la descripción: es
+   texto libre y largo, y mete resultados que no vienen a cuento.
+
+   De regalo, esto arregla búsquedas que antes no devolvían NADA aunque el
+   producto estuviera en tienda: "capotraste", "metrónomo" y "caña". */
 function buscarProductos(q){
   const t = sinTildes(q).trim();
   if(!t) return [];
   return PRODUCTS.filter(p=>{
     const cat = CATEGORIES.find(c=>c.key===p.cat);
-    return sinTildes(p.name).includes(t) || (cat && sinTildes(cat.label).includes(t));
+    const sub = cat && cat.subs.find(s=>s.key===p.sub);
+    return sinTildes(p.name).includes(t)
+        || (cat && sinTildes(cat.label).includes(t))
+        || (sub && sinTildes(sub.label).includes(t));
   });
 }
 
