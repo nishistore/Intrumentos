@@ -571,12 +571,14 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    Móvil primero: lo de escritorio va en el @media de más abajo.
    ====================================================================== */
 .app-shell.portada{padding-bottom:0;}
-.app-shell.portada > *{padding-left:0;padding-right:0;}
-/* Menos el hero y la vitrina, que sí llevan el gutter y lo declaran con
-   padding: la regla de arriba pesa más y se lo estaba comiendo, así que sus
-   tarjetas llegaban pegadas al borde de la pantalla. */
-.app-shell.portada > .hero-venta,
-.app-shell.portada > .vitrina{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
+/* El gutter lateral de la portada lo pone cada bloque por su cuenta: el hero
+   y la vitrina con padding, y los paneles de color (confianza, prueba, kit,
+   cierre) con margin, para despegarse del borde de la pantalla.
+   Aquí solo se le quita al shell el padding que le sobra a la franja de
+   confianza, que es la única sin relleno propio. Nada de `> *`: esa regla
+   pesa más que `.prueba`, `.kit` y `.cierre` y les borraba SU relleno, así
+   que las reseñas y el kit salían con el texto pegado al borde del panel. */
+.app-shell.portada > .confianza{padding-left:0;padding-right:0;}
 
 /* ---- piezas compartidas ---- */
 .btn-comprar{
@@ -802,15 +804,19 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 /* Las tres reseñas. En el teléfono van apiladas: una fila con scroll lateral
    esconde dos de las tres y aquí el que las lea entero es el que compra. */
 .prueba-citas{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+/* Columna con la firma empujada al fondo (margin-top:auto en el
+   figcaption): en escritorio las tres citas miden lo mismo y una reseña de
+   cuatro líneas dejaba su firma más abajo que las otras dos. */
 .cita{
   margin:0;background:#232320;border:1px solid #3a3a36;
   border-radius:11px;padding:14px;
+  display:flex;flex-direction:column;
 }
 .cita blockquote{
   margin:0;font:400 13px/1.55 var(--app-sans);color:#e6e6e0;
 }
 .cita figcaption{
-  margin-top:9px;font:400 11.5px/1 var(--app-sans);color:#9d9d96;
+  margin-top:auto;padding-top:9px;font:400 11.5px/1 var(--app-sans);color:#9d9d96;
 }
 .cita figcaption b{color:#fff;font-weight:700;}
 .prueba-texto strong{color:#fff;font-weight:700;}
@@ -2063,7 +2069,7 @@ footer.site .footer-bottom{
   .prueba-citas{margin-top:20px;flex-direction:row;gap:16px;}
   .cita{flex:1;padding:18px;}
   .cita blockquote{font-size:14px;line-height:1.6;}
-  .cita figcaption{margin-top:12px;font-size:12.5px;}
+  .cita figcaption{padding-top:12px;font-size:12.5px;}
 
   /* ---- kit escolar ---- */
   .kit{
