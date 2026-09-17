@@ -5410,7 +5410,7 @@ const MP_API_URL = 'https://script.google.com/macros/s/AKfycbxyrzUjXsG2wiE-gA2oW
    mientras digan "PEGA_AQUI", el seguimiento queda apagado y no se
    carga ningún script de Google, así que no rompe nada dejarlo así.
    ====================================================================== */
-const GOOGLE_ADS_CONVERSION_ID = 'AW-PEGA_AQUI_TU_ID'; // ej. 'AW-123456789'
+const GOOGLE_ADS_CONVERSION_ID = 'AW-18411812687';   // cuenta 169-728-8841
 
 /* Cuatro acciones, no tres. La diferencia entre las dos últimas es la que
    decide si Google optimiza con datos reales o con humo:
@@ -5425,11 +5425,14 @@ const GOOGLE_ADS_CONVERSION_ID = 'AW-PEGA_AQUI_TU_ID'; // ej. 'AW-123456789'
    Si las dos van juntas con el monto completo, Google cree que rindes más de
    lo que rindes y te gasta el presupuesto donde no toca. */
 const GOOGLE_ADS_LABELS = {
-  whatsapp:        'PEGA_AQUI_ETIQUETA_WHATSAPP',  // clic en cualquier botón de WhatsApp
-  addToCart:       'PEGA_AQUI_ETIQUETA_CARRITO',   // clic en "Agregar al carrito"
+  whatsapp:        'WilLCMHrrvscEM_ut8tE',        // clic en WhatsApp — categoría "Contacto"
+  addToCart:       'rzkjCL7rrvscEM_ut8tE',        // "Agregar al carrito" — "Inclusión en el carrito"
+  /* Estas dos siguen apagadas: falta crearles su acción en Google Ads.
+     Mientras digan PEGA_AQUI no se envía nada, que es justo lo que se quiere
+     (ver la guarda de trackAdsConversion). */
   inicioPago:      'PEGA_AQUI_ETIQUETA_PAGO',      // llegó a /checkout con carrito
   pedidoWhatsapp:  'PEGA_AQUI_ETIQUETA_PEDIDO',    // pedido enviado al chat, sin cobrar
-  compraPagada:    'PEGA_AQUI_ETIQUETA_COMPRA'     // pago aprobado en Mercado Pago
+  compraPagada:    'KhewCIybrvscEM_ut8tE'          // pago aprobado en Mercado Pago
 };
 
 function googleAdsConfigured(){
