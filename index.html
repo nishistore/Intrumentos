@@ -5877,15 +5877,6 @@ function esEscritorio(){
   return window.matchMedia('(min-width:' + ANCHO_ESCRITORIO + 'px)').matches;
 }
 
-/* Nombre corto para la barra de categorías: ahí hay 48px de alto y siete
-   pestañas que tienen que caber en una fila, así que "Instrumentos de Cuerda"
-   se queda en "Cuerda". El nombre largo sigue mandando en la ficha, el pie y
-   el <title> de la página, que es donde lo lee Google. */
-const CAT_CORTO = {
-  cuerda:'Cuerda', teclados:'Teclados', percusion:'Percusión', viento:'Viento',
-  audio:'Micro y Audio', colegio:'Para Colegio', accesorios:'Accesorios',
-};
-
 /* ---------------- buscador en vivo de la cabecera ----------------
    En el teléfono buscar es una pantalla (/buscar). En escritorio sobra el
    salto: hay sitio para enseñar los resultados colgando del input. La ruta
@@ -6076,11 +6067,19 @@ function renderNavEscritorio(){
          aria-label="Ver el carrito">${navCarritoHtml()}</a>
     </div>
 
+    <!-- Las pestañas llevan el nombre completo, el mismo del <h1> y del
+         <title>. Antes se acortaban ("Cuerda", "Micro y Audio") por miedo a
+         que las siete no cupieran en una fila, pero no hacía falta: en la
+         pantalla más estrecha en la que sale esta barra (900px) la fila pide
+         772px de los 885 que tiene. "Cuerda" a secas es jerga de tienda de
+         música y quien no la conoce no sabe qué hay detrás. Si algún día se
+         añade una categoría y la fila deja de caber, el sitio para acortar es
+         aquí, no el nombre de la categoría, que es lo que lee Google. -->
     <nav class="nav-esc-cats" aria-label="Categorías">
       ${CATEGORIES.map(c=>`
         <a class="${state.view==='shop' && state.activeCat===c.key ? 'activo':''}"
            href="/categoria/${c.key}"
-           onclick="cerrarNavBuscar();goShop('${c.key}');return false;">${escapeHtml(CAT_CORTO[c.key] || c.label)}</a>`).join('')}
+           onclick="cerrarNavBuscar();goShop('${c.key}');return false;">${escapeHtml(c.label)}</a>`).join('')}
       <a class="nav-ofertas" href="/ofertas"
          onclick="cerrarNavBuscar();goOffers();return false;">Ofertas</a>
     </nav>`;
