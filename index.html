@@ -493,9 +493,11 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 
    La de escritorio se pinta en todas las pantallas, así que su reserva no
    lleva condición. La del teléfono solo existe en la portada, y por eso la
-   suya cuelga de .ruta-portada, que pone un script al principio del <body>:
-   reservarla en una ficha dejaría 203px de hueco en blanco. Si se cambia el
-   alto de cualquiera de las dos, hay que cambiarlo aquí. */
+   suya cuelga de .ruta-portada, que pone un script al principio del <body>
+   y QUITA el primer render: reservarla donde no va deja 203px de blanco, y
+   dentro de la web se cambia de pantalla sin recargar, así que la clase no
+   puede quedarse puesta. Si se cambia el alto de cualquiera de las dos, hay
+   que cambiarlo aquí. */
 @media (min-width:900px){
   #navEscritorio:empty{min-height:127px;}
 }
@@ -6475,6 +6477,12 @@ window.addEventListener('resize', () => {
 
 function render(){
   document.getElementById('app').classList.remove('cargando');
+  /* La reserva de hueco para la cabecera del teléfono solo vale hasta que el
+     JS pinta por primera vez. A partir de aquí él decide si hay cabecera o
+     no, y dejarla puesta abría 203px de blanco en cuanto se salía de la
+     portada sin recargar: se tocaba la lupa y el buscador aparecía a media
+     pantalla. */
+  document.documentElement.classList.remove('ruta-portada');
   document.getElementById('app').innerHTML =
       state.view==='home'     ? renderHome()
     : state.view==='search'   ? renderSearch()
