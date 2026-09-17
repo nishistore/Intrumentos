@@ -1457,15 +1457,20 @@ footer.site .footer-bottom{
   border:1px solid var(--app-line-strong);
 }
 .buscar-caja svg{width:15px;height:15px;flex:none;stroke:var(--app-faint);stroke-width:2;}
+/* 16px justos. Safari en iPhone hace zoom al enfocar cualquier campo con
+   letra de menos de 16px, y a esta pantalla se entra con el campo ya
+   enfocado (goSearch), así que el zoom saltaba solo con tocar la lupa.
+   -webkit-text-size-adjust NO lo evita — eso solo controla el reajuste del
+   texto al girar el teléfono — y bloquear el zoom con user-scalable=no
+   tampoco vale: dejaría sin ampliar la página a quien lo necesita.
+   El placeholder sí puede ir más pequeño: el zoom lo decide la letra del
+   input, no la del placeholder, y así el texto de ejemplo sigue cabiendo. */
 .buscar-caja input{
   flex:1;min-width:0;
   border:0;outline:0;background:transparent;
-  font:400 14px/1 var(--app-sans);color:var(--app-ink);
-  /* Menos de 16px y Safari en iPhone hace zoom al enfocar el campo; el
-     tamaño se compensa con -apple-text-size-adjust para no verlo más grande. */
-  -webkit-text-size-adjust:100%;
+  font:400 16px/1 var(--app-sans);color:var(--app-ink);
 }
-.buscar-caja input::placeholder{color:var(--app-muted-3);}
+.buscar-caja input::placeholder{color:var(--app-muted-3);font-size:14px;}
 /* La cruz nativa de type="search" no existe en todos los navegadores y donde
    existe no encaja con la paleta; se quita y se deja el borrado al teclado. */
 .buscar-caja input::-webkit-search-cancel-button{-webkit-appearance:none;}
@@ -1807,6 +1812,13 @@ footer.site .footer-bottom{
 .nav-buscar-caja input{
   flex:1;min-width:0;border:0;outline:0;background:transparent;
   font:400 14px/1 var(--app-sans);color:var(--app-ink);
+}
+/* Este buscador es el de escritorio, pero a un iPad en horizontal le entra
+   igual (mide más de 900px) y ahí Safari hace el mismo zoom. Con ratón se
+   queda en 14px, que es como está dibujado. */
+@media (pointer:coarse){
+  .nav-buscar-caja input{font-size:16px;}
+  .nav-buscar-caja input::placeholder{font-size:14px;}
 }
 .nav-buscar-caja input::-webkit-search-cancel-button{display:none;}
 .nav-buscar-limpiar{
