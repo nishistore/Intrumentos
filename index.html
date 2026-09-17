@@ -393,6 +393,26 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 }
 .admin-row textarea:focus{outline:none;border-color:var(--gold);}
 .admin-row .media-field input[id^="vid-"]{width:100%;}
+/* Este panel esta dibujado para el escritorio y por eso lleva la letra
+   pequena, pero en el telefono eso hace que Safari haga zoom al enfocar
+   cualquier campo de menos de 16px — y al entrar salta solo, porque la
+   contrasena se enfoca sola. En pantallas tactiles todos los campos suben a
+   16px; con raton se quedan como estaban. */
+@media (pointer:coarse){
+  .admin-login input,
+  .aname-input,
+  .admin-row .aname-input,
+  .admin-row input,
+  .admin-row select,
+  .admin-row textarea,
+  .admin-row .media-input-row input{font-size:16px;}
+  /* Con la letra mas grande, 72px se comen un precio de cuatro cifras. */
+  .admin-row input{width:88px;}
+  /* Y de paso: los botones de "Descripcion" y "Fotos y video" no caben al
+     lado del nombre en una pantalla de telefono y se salian por la derecha,
+     fuera de la vista. Aqui la cabecera de la fila se parte en dos lineas. */
+  .admin-row-top{flex-wrap:wrap;}
+}
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
 /* Hueco para la barra inferior: sus 78px más la franja de gestos del
