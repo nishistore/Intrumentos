@@ -809,13 +809,19 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   margin-top:9px;font:700 13.5px/1.3 var(--app-sans);color:var(--app-ink);text-decoration:none;
 }
-.tv-precios{margin-top:6px;display:flex;align-items:baseline;gap:6px;}
+/* margin-top:auto empuja el precio, el stock y el botón al fondo de la
+   tarjeta, para que los cuatro de la fila queden a la misma altura aunque un
+   nombre ocupe dos líneas y otro una. Sin esto, "Tarolita de Niño" —el único
+   que entra en una línea— llevaba su precio y su botón 20px más arriba que
+   los vecinos y la tarjeta parecía mal montada. El padding-top hace de
+   separación mínima, porque el margen automático se come a sí mismo cuando
+   no sobra sitio. Es el mismo recurso que ya usa .kit-foto-precio. */
+.tv-precios{margin-top:auto;padding-top:6px;display:flex;align-items:baseline;gap:6px;}
 .tv-precio{font:400 19px/1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
 .tv-precios s{font:400 12px/1 var(--app-sans);color:var(--app-faint);}
 .tv-cuotas{display:block;margin-top:2px;font:400 11.5px/1 var(--app-sans);color:var(--app-ink-70);}
 .tv .stock-linea{margin-top:5px;font-size:11.5px;}
-.tv-btn{margin-top:auto;padding-top:11px;padding-bottom:11px;min-height:44px;font-size:13.5px;border-radius:9px;}
-.tv-btn{margin-top:9px;}
+.tv-btn{margin-top:9px;padding-top:11px;padding-bottom:11px;min-height:44px;font-size:13.5px;border-radius:9px;}
 .vitrina-vertodo{
   display:block;margin-top:14px;padding:13px;text-align:center;
   border:1.5px solid var(--app-line-strong);border-radius:11px;
@@ -2114,7 +2120,10 @@ footer.site .footer-bottom{
   .tv-foto{border-radius:10px;}
   .tv .badge-dto.esquina{top:9px;left:9px;font-size:11.5px;padding:4px 8px;}
   .tv-titulo{margin-top:12px;font-size:15.5px;}
-  .tv-precios{margin-top:9px;gap:8px;}
+  /* padding, no margin: el margin-top:auto de arriba es lo que alinea el
+     precio y el botón con los de las tarjetas vecinas, y un margin aquí lo
+     borraría. */
+  .tv-precios{padding-top:9px;gap:8px;}
   .tv-precio{font-size:24px;}
   .tv-precios s{font-size:14px;}
   .tv .stock-linea{font-size:12.5px;}
