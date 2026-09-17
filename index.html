@@ -475,6 +475,37 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 }
 /* El shell no lleva padding lateral: cada bloque pone el suyo, porque las
    cabeceras y los carruseles tienen que llegar de borde a borde. */
+/* ---- hueco reservado para las cabeceras que pinta el JS ----
+   #navEscritorio y #cabeceraMovil salen vacíos en el HTML y los rellena el
+   JS. Con conexión rápida no se nota, pero en un teléfono con red lenta el
+   navegador ya pintó la página cuando llegan: la cabecera del teléfono mide
+   203px y la de escritorio 127px, así que TODO lo de abajo daba un salto de
+   golpe. Eso es lo que Cloudflare marca como CLS malo, con #app de culpable
+   (es #app lo que se mueve, pero la culpa es de lo que tiene encima).
+
+   Se reserva su alto exacto mientras están vacíos. En cuanto el JS los
+   rellena, :empty deja de aplicar y el contenido real ocupa ese mismo hueco,
+   así que no se mueve nada.
+
+   La de escritorio se pinta en todas las pantallas, así que su reserva no
+   lleva condición. La del teléfono solo existe en la portada, y por eso la
+   suya cuelga de .ruta-portada, que pone un script al principio del <body>:
+   reservarla en una ficha dejaría 203px de hueco en blanco. Si se cambia el
+   alto de cualquiera de las dos, hay que cambiarlo aquí. */
+@media (min-width:900px){
+  #navEscritorio:empty{min-height:127px;}
+}
+@media (max-width:899px){
+  html.ruta-portada #cabeceraMovil:empty{min-height:203px;}
+}
+/* Y lo mismo por abajo. El HTML trae dentro de #app un texto para Google que
+   es más alto que el "Cargando productos…" que lo sustituye, así que al
+   pintar el spinner #app encogía y el pie subía de golpe; cuando llegaban los
+   productos, bajaba otra vez. Dos saltos, y por eso el pie sale en el informe
+   de Cloudflare con su propio CLS. Ocupando la pantalla entera mientras
+   carga, el pie se queda por debajo del borde y ya no se le ve moverse. */
+#app.cargando{min-height:100vh;}
+
 .app-shell > *{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
 .app-shell > .carrusel{padding-left:0;padding-right:0;}
 .app-shell > .cat-barra{padding-left:0;padding-right:0;}
@@ -2588,6 +2619,11 @@ footer.site .footer-bottom{
 </style>
 </head>
 <body>
+
+<!-- Marca la portada antes de que se pinte nada, para que el CSS sepa si
+     tiene que reservarle hueco a la cabecera del teléfono. Va aquí, suelto y
+     sin async, porque tiene que correr antes del primer pintado. -->
+<script>if(location.pathname==='/')document.documentElement.classList.add('ruta-portada');</script>
 
 <!-- ============ BOTTOM MOBILE NAV ============ -->
 <nav class="bottom-nav" id="bottomNav"></nav>
@@ -6423,6 +6459,7 @@ window.addEventListener('resize', () => {
 });
 
 function render(){
+  document.getElementById('app').classList.remove('cargando');
   document.getElementById('app').innerHTML =
       state.view==='home'     ? renderHome()
     : state.view==='search'   ? renderSearch()
@@ -6451,6 +6488,7 @@ function render(){
      pantalla de decisión, termina en el CTA. */
   document.body.classList.toggle('en-ficha', conBarraFija);
 }
+document.getElementById('app').classList.add('cargando');
 document.getElementById('app').innerHTML = `
   <div class="empty-state" style="padding-top:140px;">
     <div style="width:36px;height:36px;border:3px solid var(--navy-line);border-top-color:var(--gold);border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite;"></div>
