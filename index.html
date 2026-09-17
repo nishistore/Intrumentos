@@ -3993,24 +3993,38 @@ function sidebarCategoriaHtml(){
   const limpiables = state.rangosPrecio.size || state.activeSubs.size
     || state.soloStock || state.soloOfertas || state.sort!=='relevancia';
 
-  return `
-  <aside class="cat-sidebar">
+  const bloqueCategorias = `
     <div class="side-bloque">
       <div class="side-titulo">Categorías</div>
       ${categorias}
-    </div>
+    </div>`;
 
+  const bloquePrecio = `
     <div class="side-bloque">
       <div class="side-titulo">Precio</div>
       ${rangos}
       ${casillaHtml('Solo lo que hay en tienda', state.soloStock, 'toggleSoloStock()')}
-    </div>
+    </div>`;
 
-    ${subs.length ? `
+  const bloqueSubs = subs.length ? `
     <div class="side-bloque">
       <div class="side-titulo">Dentro de ${escapeHtml(cat.label)}</div>
       ${subs.map(s=>casillaHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`)).join('')}
-    </div>` : ''}
+    </div>` : '';
+
+  /* El orden depende de dónde esté el visitante. Dentro de una categoría lo
+     primero es afinar lo que ya tiene delante (sus subcategorías y el
+     precio) y la lista de las otras siete baja: estando en Accesorios, que
+     lo primero fuera "Instrumentos de Cuerda, Teclados…" sobraba. En "Todo
+     el catálogo", en las ofertas o en una búsqueda no hay subcategorías y
+     esa lista sí es lo principal, así que ahí se queda arriba. */
+  const bloques = bloqueSubs
+    ? bloqueSubs + bloquePrecio + bloqueCategorias
+    : bloqueCategorias + bloquePrecio;
+
+  return `
+  <aside class="cat-sidebar">
+    ${bloques}
 
     ${limpiables ? `<button type="button" class="side-limpiar" onclick="clearFilters()">Limpiar filtros</button>` : ''}
 
