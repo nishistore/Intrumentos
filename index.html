@@ -5427,11 +5427,11 @@ const GOOGLE_ADS_CONVERSION_ID = 'AW-18411812687';   // cuenta 169-728-8841
 const GOOGLE_ADS_LABELS = {
   whatsapp:        'WilLCMHrrvscEM_ut8tE',        // clic en WhatsApp — categoría "Contacto"
   addToCart:       'rzkjCL7rrvscEM_ut8tE',        // "Agregar al carrito" — "Inclusión en el carrito"
-  /* Estas dos siguen apagadas: falta crearles su acción en Google Ads.
-     Mientras digan PEGA_AQUI no se envía nada, que es justo lo que se quiere
-     (ver la guarda de trackAdsConversion). */
-  inicioPago:      'PEGA_AQUI_ETIQUETA_PAGO',      // llegó a /checkout con carrito
-  pedidoWhatsapp:  'PEGA_AQUI_ETIQUETA_PEDIDO',    // pedido enviado al chat, sin cobrar
+  inicioPago:      '_423CLHRtPscEM_ut8tE',        // /checkout con carrito — "Inicio de la tramitación"
+  /* Secundaria a propósito en Google Ads, no principal: el pedido está
+     enviado pero NADIE ha pagado todavía. Si entrara como compra, Google
+     optimizaría hacia pedidos que luego no se cobran. */
+  pedidoWhatsapp:  'klWNCLTRtPscEM_ut8tE',        // pedido al chat, sin cobrar — "Cliente potencial"
   compraPagada:    'KhewCIybrvscEM_ut8tE'          // pago aprobado en Mercado Pago
 };
 
