@@ -6223,10 +6223,14 @@ function renderCabeceraMovil(){
   const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
   const maxDto = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
 
-  /* Categorías con catálogo de verdad, con el nombre corto: en un chip de
-     una línea "Instrumentos de Cuerda" no entra. */
-  const cortos = {cuerda:'Cuerda', teclados:'Teclados', percusion:'Percusión',
-                  viento:'Viento', audio:'Audio', colegio:'Colegio', accesorios:'Accesorios'};
+  /* Categorías con catálogo de verdad. Los nombres se acortan porque esta
+     fila se desliza de lado y cuanto más ancha, más lejos queda el último
+     chip. "Cuerda" es la excepción: a secas es jerga de tienda de música y
+     ahí va el producto que más se busca, así que lleva el nombre entero
+     aunque ocupe. */
+  const cortos = {cuerda:'Instrumentos de Cuerda', teclados:'Teclados',
+                  percusion:'Percusión', viento:'Viento', audio:'Audio',
+                  colegio:'Colegio', accesorios:'Accesorios'};
   const chipsCat = CATEGORIES
     .filter(c => productosDeCategoria(c.key).length)
     .map(c => `<a class="cab-chip" href="/categoria/${c.key}"
@@ -6252,9 +6256,12 @@ function renderCabeceraMovil(){
         ${iconSvg('search')}
         <span>Busca “cajón”, “ukelele”, “teclado”…</span>
       </a>
+      <!-- Las ofertas van al final: el chip rojo abría la fila y era lo
+           primero que se veía, por delante de las categorías, que son la
+           forma normal de entrar al catálogo. -->
       <div class="cab-chips">
-        ${maxDto > 0 ? `<a class="cab-chip activo" href="/ofertas" onclick="goOffers();return false;">Ofertas −${maxDto}%</a>` : ''}
         ${chipsCat}
+        ${maxDto > 0 ? `<a class="cab-chip activo" href="/ofertas" onclick="goOffers();return false;">Ofertas −${maxDto}%</a>` : ''}
       </div>
     </div>
   </div>`;
