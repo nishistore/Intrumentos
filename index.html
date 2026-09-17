@@ -1116,6 +1116,19 @@ body:has(.barra-compra){padding-bottom:calc(var(--app-tabbar-h) + 77px + env(saf
   font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;
   color:var(--app-ink);
 }
+/* De rótulo a enlace hacia la sección. El padding le da al dedo algo que
+   tocar —10px de letra dejan una franja de 14px, que es poco— y el margen
+   negativo se lo devuelve al layout, para que el texto no se mueva de donde
+   estaba. */
+a.eyebrow-terracota{
+  display:inline-block;text-decoration:none;
+  padding:7px 0;margin:-7px 0;
+  touch-action:manipulation;
+}
+a.eyebrow-terracota:active{opacity:.6;}
+@media (hover: hover){
+  a.eyebrow-terracota:hover{text-decoration:underline;text-underline-offset:3px;}
+}
 .visitanos-dir{margin-top:9px;font:500 14px/1.4 var(--app-sans);color:var(--app-ink);}
 .visitanos-horario{margin-top:5px;font:400 12.5px/1.45 var(--app-sans);color:var(--app-muted);}
 /* La valoración real de Google. Vivía en la portada anterior y se quedó sin
@@ -3981,6 +3994,17 @@ function chipsFiltroHtml(){
    Lo que en el teléfono es una fila de chips aquí es una columna fija: las
    siete categorías con su conteo, los rangos de precio, las subcategorías de
    la que esté abierta y la tarjeta verde del asesor. */
+/* La categoría de la ficha lleva a su sección. Quien cae aquí desde Google,
+   en un producto suelto, no tiene otra forma de seguir viendo lo demás que
+   darle a atrás. En el teléfono, además, no hay migas de pan arriba: esto es
+   lo único que le dice dónde está. El "›" es el mismo gesto que "Léelas ›" o
+   "Ver todo ›" del resto del sitio, para que se note que se puede tocar. */
+function fichaCategoriaHtml(cat){
+  if(!cat) return '<div class="eyebrow-terracota">Instrumentos</div>';
+  return `<a class="eyebrow-terracota" href="/categoria/${cat.key}"
+             onclick="goShop('${cat.key}');return false;">${escapeHtml(cat.label)} ›</a>`;
+}
+
 function casillaHtml(texto, marcada, accion, conteo){
   return `
   <button type="button" class="casilla${marcada?' marcada':''}"
@@ -4563,7 +4587,7 @@ function renderProductDetail(){
 
         <div class="fe-der">
           <div class="fe-panel">
-            <div class="eyebrow-terracota">${escapeHtml(cat ? cat.label : 'Instrumentos')}</div>
+            ${fichaCategoriaHtml(cat)}
             <h1 class="ficha-nombre">${escapeHtml(p.name)}</h1>
             ${preciosHtml}
             <div class="ficha-chips">
@@ -4613,7 +4637,7 @@ function renderProductDetail(){
     ${puntosHtml}
 
     <div class="ficha-cuerpo">
-      <div class="eyebrow-terracota">${escapeHtml(cat ? cat.label : 'Instrumentos')}</div>
+      ${fichaCategoriaHtml(cat)}
       <h1 class="ficha-nombre">${escapeHtml(p.name)}</h1>
 
       <div class="ficha-precios">
