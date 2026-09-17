@@ -208,7 +208,11 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;overflow-x:hidden;width:100%;}
+/* text-size-adjust:100% le dice a Safari que no reescale el texto por su
+   cuenta. Sin esto va en "auto" y el tamaño con el que compara su umbral de
+   zoom no tiene por qué ser el que pide el CSS. */
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%;
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;}
 body{
   font-family:var(--app-sans);
   background:var(--app-paper);
@@ -405,7 +409,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   .admin-row input,
   .admin-row select,
   .admin-row textarea,
-  .admin-row .media-input-row input{font-size:16px;}
+  .admin-row .media-input-row input{font-size:17px;}
   /* Con la letra mas grande, 72px se comen un precio de cuatro cifras. */
   .admin-row input{width:88px;}
   /* Y de paso: los botones de "Descripcion" y "Fotos y video" no caben al
@@ -1540,18 +1544,28 @@ footer.site .footer-bottom{
   border:1px solid var(--app-line-strong);
 }
 .buscar-caja svg{width:15px;height:15px;flex:none;stroke:var(--app-faint);stroke-width:2;}
-/* 16px justos. Safari en iPhone hace zoom al enfocar cualquier campo con
-   letra de menos de 16px, y a esta pantalla se entra con el campo ya
-   enfocado (goSearch), así que el zoom saltaba solo con tocar la lupa.
-   -webkit-text-size-adjust NO lo evita — eso solo controla el reajuste del
-   texto al girar el teléfono — y bloquear el zoom con user-scalable=no
-   tampoco vale: dejaría sin ampliar la página a quien lo necesita.
+/* 17px, uno por encima del umbral. Safari en iPhone hace zoom al enfocar
+   cualquier campo con letra de MENOS de 16px, y a esta pantalla se entra con
+   el campo ya enfocado (goSearch), así que saltaba con solo tocar la lupa.
+   Con 16px justos seguía pasando en un iPhone real, así que se sube a 17 y
+   se deja de depender de que el redondeo caiga del lado bueno. El
+   text-size-adjust:100% de <html> es la otra mitad: sin él Safari escala el
+   texto por su cuenta y compara contra un tamaño que no es el del CSS.
+
+   Lo que NO se hace es bloquear el zoom con user-scalable=no o
+   maximum-scale=1: arreglaría esto de paso, pero dejaría sin poder ampliar
+   la página a quien lo necesita para leer.
+
+   Ojo si esto reaparece: Safari guarda la escala POR SITIO. Si amplió una
+   vez, se la queda para las siguientes visitas aunque el CSS ya esté bien, y
+   hay que ponerla a 100% a mano desde el menú aA de la barra de direcciones.
+
    El placeholder sí puede ir más pequeño: el zoom lo decide la letra del
    input, no la del placeholder, y así el texto de ejemplo sigue cabiendo. */
 .buscar-caja input{
   flex:1;min-width:0;
   border:0;outline:0;background:transparent;
-  font:400 16px/1 var(--app-sans);color:var(--app-ink);
+  font:400 17px/1 var(--app-sans);color:var(--app-ink);
 }
 .buscar-caja input::placeholder{color:var(--app-muted-3);font-size:14px;}
 /* La cruz nativa de type="search" no existe en todos los navegadores y donde
@@ -1790,8 +1804,9 @@ footer.site .footer-bottom{
   border-radius:11px;
   background:var(--app-surface);
   border:1px solid rgba(23,20,15,.12);
-  /* 16px es el mínimo que evita que Safari en iPhone haga zoom al enfocar. */
-  font:400 16px/1.3 var(--app-sans);color:var(--app-ink);
+  /* 16px es el umbral de Safari; se va a 17 para no jugársela con el
+     redondeo. Ver la nota larga de .buscar-caja input. */
+  font:400 17px/1.3 var(--app-sans);color:var(--app-ink);
   resize:vertical;
 }
 .campo input::placeholder,.campo textarea::placeholder{color:var(--app-muted-3);font-size:14px;}
@@ -1900,7 +1915,7 @@ footer.site .footer-bottom{
    igual (mide más de 900px) y ahí Safari hace el mismo zoom. Con ratón se
    queda en 14px, que es como está dibujado. */
 @media (pointer:coarse){
-  .nav-buscar-caja input{font-size:16px;}
+  .nav-buscar-caja input{font-size:17px;}
   .nav-buscar-caja input::placeholder{font-size:14px;}
 }
 .nav-buscar-caja input::-webkit-search-cancel-button{display:none;}
