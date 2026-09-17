@@ -28,14 +28,21 @@ const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan d
 /* Copia de las categorías de index.html. Si agregas una categoría allá,
    agrégala también aquí para que su página tenga título propio. Los
    productos NO se duplican: se piden a la API en cada visita. */
+/* `intro` es el texto propio de cada categoria, y NO es el meta description.
+   Google marco /categoria/cuerda y /ofertas como duplicadas entre si: una vez
+   renderizadas compartian el 70% de su vocabulario, porque las guitarras y
+   los violines en oferta son justo los de cuerda, y todo lo que las rodea
+   -cabecera, filtros, pie- es igual en las dos. Esto le da a cada pagina algo
+   que solo dice ella. Si se cambia aqui hay que cambiarlo igual en
+   index.html: las dos copias de CATEGORIES tienen que decir lo mismo. */
 const CATEGORIES = [
-  { key: 'cuerda', label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: ['Guitarras', 'Bajos', 'Violines', 'Ukeleles', 'Charangos'] },
-  { key: 'teclados', label: 'Teclados', desc: 'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [] },
-  { key: 'percusion', label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: ['Tambores', 'Bombos', 'Tarolas', 'Cajones', 'Metalófono', 'Panderetas', 'Kalimbas'] },
-  { key: 'viento', label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Flautas', 'Melódicas', 'Quenas', 'Zampoñas'] },
-  { key: 'audio', label: 'Micrófono y Audio', desc: 'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Micrófonos', 'Interfaces', 'Amplificadores'] },
-  { key: 'colegio', label: 'Para Colegio', seo: 'Instrumentos para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [] },
-  { key: 'accesorios', label: 'Accesorios', desc: 'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Cuerdas (Acústica/Clásica)', 'Cuerdas (Eléctrica)', 'Capotrastes', 'Púas y pines', 'Afinadores y metrónomos', 'Atriles y parantes', 'Baquetas y parches', 'Cañas y boquillas', 'Violín (resina y puentes)', 'Limpieza y repuestos'] },
+  { key: 'cuerda', intro: "Guitarras acústicas y clásicas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: ['Guitarras', 'Bajos', 'Violines', 'Ukeleles', 'Charangos'] },
+  { key: 'teclados', intro: "Teclados y pianos digitales para empezar y para tocar en vivo. Ahora mismo no hay stock cargado en la web: escríbenos por WhatsApp y te decimos qué tenemos en tienda y qué podemos conseguir.", label: 'Teclados', desc: 'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [] },
+  { key: 'percusion', intro: "Bombos andinos de cuero hechos a mano, bombos de banda, tarolas, panderetas, kalimbas de 17 teclas y metalófonos, entre S/ 12 y S/ 250. Las baquetas y los parches de repuesto están en Accesorios.", label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: ['Tambores', 'Bombos', 'Tarolas', 'Cajones', 'Metalófono', 'Panderetas', 'Kalimbas'] },
+  { key: 'viento', intro: "Flautas dulces soprano, melódicas de 32 y 37 teclas, quenas y zampoñas, entre S/ 20 y S/ 80. Si es para la lista del colegio, en Para Colegio está todo junto.", label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Flautas', 'Melódicas', 'Quenas', 'Zampoñas'] },
+  { key: 'audio', intro: "Micrófonos dinámicos, sistemas inalámbricos para micrófono y para guitarra, y amplificadores, desde S/ 100. Para grabar en casa o para tocar en vivo; si no sabes cuál te sirve, escríbenos y lo vemos contigo.", label: 'Micrófono y Audio', desc: 'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Micrófonos', 'Interfaces', 'Amplificadores'] },
+  { key: 'colegio', intro: "Todo lo de la lista escolar en un sitio: flautas dulces, melódicas, xilófonos, metalófonos, claves y panderetas, desde S/ 10. Mándanos la lista por WhatsApp y te la cotizamos completa.", label: 'Para Colegio', seo: 'Instrumentos para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [] },
+  { key: 'accesorios', intro: "Cuerdas para acústica, clásica y eléctrica de D'Addario, Ernie Ball y Romeo, capotrastes, púas, afinadores, atriles, baquetas y repuestos, desde S/ 15. Si buscas un calibre concreto, pregúntanos antes de venir y te decimos si lo tenemos.", label: 'Accesorios', desc: 'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Cuerdas (Acústica/Clásica)', 'Cuerdas (Eléctrica)', 'Capotrastes', 'Púas y pines', 'Afinadores y metrónomos', 'Atriles y parantes', 'Baquetas y parches', 'Cañas y boquillas', 'Violín (resina y puentes)', 'Limpieza y repuestos'] },
 ];
 
 /* Copia de CROSS_LISTED_CATS de index.html: productos que se listan en una
@@ -334,6 +341,10 @@ function itemListSchema(products, nombre) {
   };
 }
 
+/* Texto propio de la pagina de ofertas. Mismo motivo que el `intro` de
+   cada categoria: ver la nota de CATEGORIES. */
+const INTRO_OFERTAS = "Instrumentos y accesorios con descuento sobre el precio de tienda. El precio tachado es el de antes y el rebajado es el que pagas: no hay cupón que meter ni nada que activar en el carrito.";
+
 /* ==================== CONTENIDO DE <main id="app"> ====================
 
    Esto es lo que ve Google (y cualquiera con JavaScript desactivado) antes
@@ -411,7 +422,7 @@ function bodyFor(route, products) {
     const suyos = products.filter(p => productInCat(p, route.cat.key));
     return listBody(
       `${catSeoLabel(route.cat)} en Lima`,
-      route.meta.description,
+      route.cat.intro || route.meta.description,
       suyos,
       'Estamos actualizando esta categoría, disculpa las molestias.'
     );
@@ -423,7 +434,7 @@ function bodyFor(route, products) {
   }
 
   if (route.meta.path === '/ofertas') {
-    return listBody('Ofertas en instrumentos musicales', route.meta.description, products.filter(isOffer),
+    return listBody('Ofertas en instrumentos musicales', INTRO_OFERTAS, products.filter(isOffer),
       'Ahora mismo no hay ofertas activas. Vuelve pronto.');
   }
 

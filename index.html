@@ -819,6 +819,15 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .vitrina-head .enlace-sub{display:none;}
 .vitrina-grid{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
+/* Texto propio de cada categoría, debajo del título. Además de servirle al
+   que llega buscando, es lo que le da a la página algo que no dice ninguna
+   otra: ver la nota de `intro` en CATEGORIES. */
+.cat-intro{
+  margin:12px var(--app-gutter) 0;
+  max-width:70ch;
+  font:400 13.5px/1.6 var(--app-sans);color:var(--app-muted);
+}
+
 /* ---- recomendados del final de la ficha ----
    La tarjeta es la misma .tv de la vitrina; aquí solo va el contenedor. La
    raya de arriba separa el producto de lo que se le ofrece después, para que
@@ -2160,6 +2169,8 @@ footer.site .footer-bottom{
   .vitrina-head .enlace-sub{display:block;flex:none;font-size:14.5px;}
   .vitrina-grid{margin-top:22px;grid-template-columns:repeat(4,1fr);gap:18px;}
 
+  .cat-intro{margin:14px 0 0;font-size:14.5px;}
+
   /* ---- recomendados de la ficha ---- */
   .reco{margin-top:44px;padding-top:34px;}
   .reco h2{font-size:26px;}
@@ -2761,20 +2772,32 @@ footer.site .footer-bottom{
 /* ======================================================================
    DATA
    ====================================================================== */
+/* `intro` es el texto propio que se enseña en la página de cada categoría,
+   distinto del `desc`, que va al meta description. Ver la nota larga en
+   src/index.js: existe porque Google daba /categoria/cuerda y /ofertas por
+   duplicadas entre sí. Las dos copias de CATEGORIES tienen que decir lo
+   mismo. */
 const CATEGORIES = [
-  {key:'cuerda', label:'Instrumentos de Cuerda', icon:'string', desc:'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.',
+  {key:'cuerda', label:'Instrumentos de Cuerda',
+    intro: "Guitarras acústicas y clásicas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", icon:'string', desc:'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.',
     subs:[{key:'guitarras',label:'Guitarras'},{key:'bajos',label:'Bajos'},{key:'violines',label:'Violines'},{key:'ukeleles',label:'Ukeleles'},{key:'charangos',label:'Charangos'}]},
-  {key:'teclados', label:'Teclados', icon:'keyboard', desc:'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
+  {key:'teclados', label:'Teclados',
+    intro: "Teclados y pianos digitales para empezar y para tocar en vivo. Ahora mismo no hay stock cargado en la web: escríbenos por WhatsApp y te decimos qué tenemos en tienda y qué podemos conseguir.", icon:'keyboard', desc:'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[]},
-  {key:'percusion', label:'Percusión', icon:'drum', desc:'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.',
+  {key:'percusion', label:'Percusión',
+    intro: "Bombos andinos de cuero hechos a mano, bombos de banda, tarolas, panderetas, kalimbas de 17 teclas y metalófonos, entre S/ 12 y S/ 250. Las baquetas y los parches de repuesto están en Accesorios.", icon:'drum', desc:'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.',
     subs:[{key:'tambores',label:'Tambores'},{key:'bombos',label:'Bombos'},{key:'tarolas',label:'Tarolas'},{key:'cajones',label:'Cajones'},{key:'metalofono',label:'Metalófono'},{key:'panderetas',label:'Panderetas'},{key:'kalimbas',label:'Kalimbas'}]},
-  {key:'viento', label:'Viento', icon:'wind', desc:'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
+  {key:'viento', label:'Viento',
+    intro: "Flautas dulces soprano, melódicas de 32 y 37 teclas, quenas y zampoñas, entre S/ 20 y S/ 80. Si es para la lista del colegio, en Para Colegio está todo junto.", icon:'wind', desc:'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[{key:'flautas',label:'Flautas'},{key:'melodicas',label:'Melódicas'},{key:'quenas',label:'Quenas'},{key:'zamponas',label:'Zampoñas'}]},
-  {key:'audio', label:'Micrófono y Audio', icon:'mic', desc:'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
+  {key:'audio', label:'Micrófono y Audio',
+    intro: "Micrófonos dinámicos, sistemas inalámbricos para micrófono y para guitarra, y amplificadores, desde S/ 100. Para grabar en casa o para tocar en vivo; si no sabes cuál te sirve, escríbenos y lo vemos contigo.", icon:'mic', desc:'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[{key:'microfonos',label:'Micrófonos'},{key:'interfaces',label:'Interfaces'},{key:'amplificadores',label:'Amplificadores'}]},
-  {key:'colegio', label:'Para Colegio', seo:'Instrumentos para Colegio', icon:'school', desc:'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.',
+  {key:'colegio', label:'Para Colegio', seo:'Instrumentos para Colegio',
+    intro: "Todo lo de la lista escolar en un sitio: flautas dulces, melódicas, xilófonos, metalófonos, claves y panderetas, desde S/ 10. Mándanos la lista por WhatsApp y te la cotizamos completa.", icon:'school', desc:'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.',
     subs:[]},
-  {key:'accesorios', label:'Accesorios', icon:'accessory', desc:'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
+  {key:'accesorios', label:'Accesorios',
+    intro: "Cuerdas para acústica, clásica y eléctrica de D'Addario, Ernie Ball y Romeo, capotrastes, púas, afinadores, atriles, baquetas y repuestos, desde S/ 15. Si buscas un calibre concreto, pregúntanos antes de venir y te decimos si lo tenemos.", icon:'accessory', desc:'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[
       {key:'accCuerdasAcustica',label:'Cuerdas (Acústica/Clásica)'},
       {key:'accCuerdasElectrica',label:'Cuerdas (Eléctrica)'},
@@ -3380,6 +3403,10 @@ function buscarProductos(q){
 
 /* Rangos de precio del handoff. Los conteos salen del catálogo en cada
    render, así que no se quedan viejos cuando cambian los precios. */
+/* Texto propio de la pantalla de ofertas, hermano del `intro` de cada
+   categoría. */
+const INTRO_OFERTAS = "Instrumentos y accesorios con descuento sobre el precio de tienda. El precio tachado es el de antes y el rebajado es el que pagas: no hay cupón que meter ni nada que activar en el carrito.";
+
 const RANGOS_PRECIO = [
   { key:'bajo',  label:'Menos de S/ 100', min:0,   max:100 },
   { key:'medio', label:'S/ 100 a S/ 300', min:100, max:300 },
@@ -4250,6 +4277,12 @@ function renderShop(){
   /* Un vacío por filtros no es lo mismo que una categoría sin catálogo
      cargado: el primero se arregla quitando un chip, el segundo solo
      escribiendo a la tienda. */
+  /* Solo en la categoría y en las ofertas: en una búsqueda o en el catálogo
+     entero no hay nada propio que contar, y un párrafo genérico repetido en
+     todas las pantallas sería justo lo contrario de lo que se busca. */
+  const intro = cat ? cat.intro : (state.offersOnly && !state.search ? INTRO_OFERTAS : '');
+  const introHtml = intro ? `<p class="cat-intro">${escapeHtml(intro)}</p>` : '';
+
   const sinCatalogo = Boolean(state.activeCat) && !productosDeCategoria(state.activeCat).length;
 
   let cuerpo;
@@ -4287,6 +4320,7 @@ function renderShop(){
         <div class="cat-head-texto">
           <h1 class="cat-titulo h-serif">${escapeHtml(titulo)}</h1>
           <div class="cat-conteo">${list.length} producto${list.length!==1?'s':''}${subtitulo?' · '+escapeHtml(subtitulo):''}</div>
+          ${introHtml}
         </div>
         ${sinCatalogo ? '' : chipsOrdenHtml()}
       </header>
@@ -4310,6 +4344,7 @@ function renderShop(){
       </div>
       ${sinCatalogo ? '' : chipsFiltroHtml()}
     </header>
+    ${introHtml}
     ${cuerpo}
   </div>`;
 }
