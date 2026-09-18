@@ -2,6 +2,10 @@
   "name": "intrumentos",
   "main": "./src/index.js",
   "compatibility_date": "2026-08-29",
+  "r2_buckets": [
+    // Las fotos, para servirlas desde /img/ en vez del dominio publico de R2.
+    { "binding": "FOTOS", "bucket_name": "chipao-fotos" }
+  ],
   "assets": {
     "directory": "./",
     "binding": "ASSETS",

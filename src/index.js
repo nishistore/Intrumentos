@@ -385,7 +385,7 @@ function productBody(p) {
   partes.push(`<p>${(p.stock || 0) > 0 ? 'Disponible en tienda y con envío a todo el Perú.' : 'Temporalmente agotado.'}</p>`);
 
   if (p.images && p.images[0]) {
-    partes.push(`<img src="${escapeHtml(p.images[0])}" alt="${escapeHtml(p.name)}" style="max-width:100%;height:auto;">`);
+    partes.push(`<img src="${escapeHtml(fotoUrl(p.images[0]))}" alt="${escapeHtml(p.name)}" style="max-width:100%;height:auto;">`);
   }
 
   if (p.description) {
@@ -463,6 +463,69 @@ function sitemapXml(products) {
   });
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${fijas.concat(fichas).join('\n')}\n</urlset>\n`;
+}
+
+/* ============================ LAS FOTOS ============================== */
+
+/* Las fotos viven en R2 y la base de datos guarda su URL pública de r2.dev.
+   Servirlas desde ahí le costaba al visitante un dominio entero de más
+   (DNS+TCP+TLS en serie, 200-400ms en un 4G) justo para el elemento que marca
+   el LCP, y encima r2.dev no manda ningún Cache-Control: quien volvía se
+   rebajaba las mismas fotos. Ahora las sirve este Worker desde /img/, en el
+   mismo origen que la página y con caché de verdad.
+
+   La URL solo se traduce al pintar. Los datos del catálogo se quedan con la
+   URL de r2.dev tal cual, porque el formulario de administración se llena con
+   ellos y los vuelve a guardar. */
+const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
+
+function fotoUrl(u) {
+  return (typeof u === 'string' && u.startsWith(R2_PUBLICO))
+    ? '/img/' + u.slice(R2_PUBLICO.length)
+    : u;
+}
+
+const TIPO_POR_EXTENSION = {
+  jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
+  gif: 'image/gif', avif: 'image/avif', svg: 'image/svg+xml',
+};
+
+async function sirveFoto(request, env, ctx) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return new Response('Método no permitido', { status: 405 });
+  }
+  const url = new URL(request.url);
+  let clave;
+  try {
+    clave = decodeURIComponent(url.pathname.slice('/img/'.length));
+  } catch {
+    return new Response('Nombre de foto inválido', { status: 400 });
+  }
+  if (!clave) return new Response('No encontrada', { status: 404 });
+
+  const cache = caches.default;
+  const guardada = await cache.match(request);
+  if (guardada) return guardada;
+
+  const objeto = await env.FOTOS.get(clave);
+  if (!objeto) return new Response('No encontrada', { status: 404 });
+
+  const cabeceras = new Headers();
+  objeto.writeHttpMetadata(cabeceras);
+  if (!cabeceras.get('content-type')) {
+    const ext = clave.split('.').pop().toLowerCase();
+    cabeceras.set('content-type', TIPO_POR_EXTENSION[ext] || 'application/octet-stream');
+  }
+  cabeceras.set('etag', objeto.httpEtag);
+  /* Un día en el navegador, y un mes sirviendo la copia vieja mientras se
+     refresca por detrás. Ni "immutable" ni un año: los nombres no llevan hash,
+     así que si desde el panel reemplazan una foto por otra con el mismo
+     nombre, con un año de caché no la vería nadie. */
+  cabeceras.set('cache-control', 'public, max-age=86400, stale-while-revalidate=2592000');
+
+  const respuesta = new Response(objeto.body, { headers: cabeceras });
+  ctx.waitUntil(cache.put(request, respuesta.clone()).catch(() => {}));
+  return respuesta;
 }
 
 /* ========================= REESCRITURA DEL HTML ====================== */
@@ -558,7 +621,7 @@ function agregaListaDeProductos(route, products) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname === '/sitemap.xml') {
@@ -575,6 +638,8 @@ export default {
         },
       });
     }
+
+    if (url.pathname.startsWith('/img/')) return sirveFoto(request, env, ctx);
 
     const response = await env.ASSETS.fetch(request);
 
