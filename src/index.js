@@ -517,6 +517,9 @@ async function sirveFoto(request, env, ctx) {
     cabeceras.set('content-type', TIPO_POR_EXTENSION[ext] || 'application/octet-stream');
   }
   cabeceras.set('etag', objeto.httpEtag);
+  /* Sin esto la respuesta sale troceada y el navegador no sabe cuánto pesa la
+     foto hasta que termina de bajarla. */
+  cabeceras.set('content-length', String(objeto.size));
   /* Un día en el navegador, y un mes sirviendo la copia vieja mientras se
      refresca por detrás. Ni "immutable" ni un año: los nombres no llevan hash,
      así que si desde el panel reemplazan una foto por otra con el mismo
