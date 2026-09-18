@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- El elemento LCP es siempre una foto de producto, y vive en otro dominio.
+     Sin esto el navegador no abre esa conexion hasta despues de renderizar, y
+     paga DNS+TCP+TLS en serie: ~50ms en fibra, 200-400ms en un 4G. -->
+<link rel="preconnect" href="https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev" crossorigin>
 <title>Instrumentos Musicales en Lima | Chipao Music</title>
 <meta name="description" content="Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Guitarras, teclados, percusión, viento y accesorios. Envíos a todo el Perú y recojo en tienda.">
 <link rel="canonical" href="https://chipaomusic.com/">
@@ -2868,6 +2872,34 @@ const ICON_BY_CAT = {
 };
 function iconFor(p){ return ICON_BY_CAT[p.cat] || 'accessory'; }
 
+/* Lee el <script type="application/json"> que incrusta el Worker. Devuelve null
+   si no esta o viene vacio, y entonces fetchProducts cae a la API como toda la
+   vida: si el borde no pudo traer el catalogo, preferimos pagar el viaje extra
+   antes que pintar una tienda vacia. */
+function leerCatalogoEmbebido(){
+  const bloque = document.getElementById('productos-iniciales');
+  if(!bloque) return null;
+  try{
+    const lista = JSON.parse(bloque.textContent);
+    return Array.isArray(lista) && lista.length ? lista : null;
+  }catch(err){
+    return null;
+  }
+}
+
+/* El arranque, compartido por las dos vias (catalogo incrustado o API). */
+function arrancarConProductos(lista){
+  PRODUCTS = lista;
+  PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
+  state.priceMax = PRICE_MAX;
+  loadCart();
+  loadEntrega();
+  render();
+  checkPaymentReturnStatus();
+  checkAdminUrlTrigger();
+  checkProductUrlTrigger();
+}
+
 async function fetchProducts(){
   if(!PRODUCTS_API_URL || PRODUCTS_API_URL.startsWith('PEGA_AQUI')){
     document.getElementById('app').innerHTML = `
@@ -2877,19 +2909,19 @@ async function fetchProducts(){
       </div>`;
     return;
   }
+  /* El Worker ya dejo el catalogo dentro del HTML (ver src/index.js). Si esta,
+     arrancamos sin tocar la red: ese viaje a un tercer dominio era lo que dejaba
+     la pantalla en blanco hasta el primer pixel. */
+  const embebidos = leerCatalogoEmbebido();
+  if(embebidos){
+    arrancarConProductos(embebidos);
+    return;
+  }
   try{
     const res = await fetch(`${PRODUCTS_API_URL}/products`);
     const data = await res.json();
     if(data.error) throw new Error(data.error);
-    PRODUCTS = data.products || [];
-    PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
-    state.priceMax = PRICE_MAX;
-    loadCart();
-    loadEntrega();
-    render();
-    checkPaymentReturnStatus();
-    checkAdminUrlTrigger();
-    checkProductUrlTrigger();
+    arrancarConProductos(data.products || []);
   }catch(err){
     document.getElementById('app').innerHTML = `
       <div class="empty-state" style="padding-top:120px;">

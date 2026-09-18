@@ -486,7 +486,11 @@ class SetHtml {
    es el mismo que usa setPageSchema() en index.html, así que cuando arranca
    el JS reutiliza este bloque en vez de duplicarlo. */
 class HeadExtras {
-  constructor(schema, noindex) { this.schema = schema; this.noindex = noindex; }
+  constructor(schema, noindex, products) {
+    this.schema = schema;
+    this.noindex = noindex;
+    this.products = products;
+  }
   element(el) {
     if (this.noindex) {
       el.append('<meta name="robots" content="noindex,follow">', { html: true });
@@ -495,10 +499,21 @@ class HeadExtras {
       const json = JSON.stringify(this.schema).replace(/</g, LT_ESCAPE);
       el.append('<script type="application/ld+json" id="pageSchema">' + json + '</scr' + 'ipt>', { html: true });
     }
+    /* El catálogo, ya listo, dentro del propio HTML. Antes el navegador tenía
+       que pedírselo a la API en otro dominio DESPUÉS de parsear la página, y
+       hasta que no llegaba no había nada que pintar: FCP y LCP caían en el
+       mismo milisegundo porque la pantalla seguía en blanco hasta entonces.
+       Sale del caché del borde (5 min, en fetchProducts), así que no encarece
+       esta respuesta. Si viene vacío no ponemos nada y el cliente cae a la
+       API: mejor el viaje extra que pintar una tienda vacía. */
+    if (this.products && this.products.length) {
+      const catalogo = JSON.stringify(this.products).replace(/</g, LT_ESCAPE);
+      el.append('<script type="application/json" id="productos-iniciales">' + catalogo + '</scr' + 'ipt>', { html: true });
+    }
   }
 }
 
-function rewrite(response, route, body, pathname) {
+function rewrite(response, route, body, pathname, products) {
   const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
@@ -516,7 +531,7 @@ function rewrite(response, route, body, pathname) {
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex));
+    .on('head', new HeadExtras(m.schema, noindex, products));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
 
@@ -540,15 +555,6 @@ function agregaListaDeProductos(route, products) {
   route.meta = Object.assign({}, route.meta, {
     schema: { '@context': 'https://schema.org', '@graph': [previo, lista] },
   });
-}
-
-/* Rutas cuyo contenido depende del catálogo. La home no lo necesita: su
-   bloque de portada ya está escrito en index.html. */
-function necesitaProductos(pathname) {
-  return pathname === '/tienda'
-    || pathname === '/ofertas'
-    || pathname.startsWith('/categoria/')
-    || pathname.startsWith('/producto/');
 }
 
 export default {
@@ -578,10 +584,14 @@ export default {
     if (!type.includes('text/html')) return response;
     if (url.pathname.startsWith('/testeo')) return response;
 
-    const products = necesitaProductos(url.pathname) ? await fetchProducts() : [];
+    /* Antes solo lo pedían las rutas que pintan listas. Ahora lo pide todo, la
+       home incluida, porque el catálogo va incrustado en el HTML de cualquier
+       ruta (ver HeadExtras) y así el navegador no tiene que ir a buscarlo a
+       otro dominio antes de pintar. Viene del caché del borde. */
+    const products = await fetchProducts();
     const route = routeFor(url.pathname, products);
     agregaListaDeProductos(route, products);
-    const salida = rewrite(response, route, bodyFor(route, products), url.pathname);
+    const salida = rewrite(response, route, bodyFor(route, products), url.pathname, products);
 
     /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
        una categoría inventada o una ruta que no es ninguna pantalla (route en
