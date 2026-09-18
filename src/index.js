@@ -385,7 +385,7 @@ function productBody(p) {
   partes.push(`<p>${(p.stock || 0) > 0 ? 'Disponible en tienda y con envío a todo el Perú.' : 'Temporalmente agotado.'}</p>`);
 
   if (p.images && p.images[0]) {
-    partes.push(`<img src="${escapeHtml(fotoUrl(p.images[0]))}" alt="${escapeHtml(p.name)}" style="max-width:100%;height:auto;">`);
+    partes.push(`<img src="${escapeHtml(fotoUrl(p.images[0], ANCHO_FICHA))}" alt="${escapeHtml(p.name)}" style="max-width:100%;height:auto;">`);
   }
 
   if (p.description) {
@@ -479,10 +479,18 @@ function sitemapXml(products) {
    ellos y los vuelve a guardar. */
 const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
 
-function fotoUrl(u) {
-  return (typeof u === 'string' && u.startsWith(R2_PUBLICO))
+/* Igual que en index.html: además de traer la foto a nuestro dominio, le
+   pedimos a Cloudflare que la reescale y la sirva en AVIF o WebP según lo que
+   acepte quien la pide. Ver el comentario largo de index.html para los anchos
+   y lo que cuesta cada uno. */
+const ANCHO_FICHA = 800;
+
+function fotoUrl(u, ancho) {
+  const ruta = (typeof u === 'string' && u.startsWith(R2_PUBLICO))
     ? '/img/' + u.slice(R2_PUBLICO.length)
     : u;
+  if (!ancho || typeof ruta !== 'string' || !ruta.startsWith('/img/')) return ruta;
+  return `/cdn-cgi/image/width=${ancho},format=auto,onerror=redirect${ruta}`;
 }
 
 const TIPO_POR_EXTENSION = {

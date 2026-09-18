@@ -2868,10 +2868,34 @@ const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
    en la base. Si normalizaramos los datos, editar un producto reescribiria sus
    URLs a rutas relativas sin que nadie lo pidiera. */
 const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
-function fotoUrl(u){
-  return (typeof u === 'string' && u.startsWith(R2_PUBLICO))
+/* Cloudflare reescala la foto al vuelo y la sirve en AVIF o WebP segun lo que
+   acepte el navegador. Medido sobre Yamaha.jpeg: 90 KB el original, 18 KB en
+   JPEG a 400px, 13 KB en AVIF.
+
+   El ancho se pide en cada sitio porque cada uno la muestra a un tamano
+   distinto, y no es gratis: cada par (foto, ancho) gasta una de las 5.000
+   transformaciones unicas del mes. Con tres anchos y 152 fotos son 456, asi
+   que sobra sitio; anadir un cuarto ancho cuesta otras 152.
+
+   Los anchos salen de medir la pagina de verdad, no de adivinar: las tarjetas
+   ocupan 272px en escritorio y 142 en movil, y la galeria de la ficha va a
+   ancho completo (375 en movil). 700 y 1200 los cubren de sobra: el heroe, que es el
+   elemento LCP, se muestra a 279px y con 700 sigue nitido a 2x en un movil.
+   Medido: a 800 la foto de portada pesaba 41 KB y a 700 pesa 34, contra los
+   88 del original.
+
+   onerror=redirect es el seguro: si la transformacion falla, Cloudflare sirve
+   la original en vez de devolver un error y dejar el hueco vacio. */
+const ANCHO_MINIATURA = 200;   // miniaturas del carrito, buscador y galeria
+const ANCHO_TARJETA   = 700;   // tarjetas del catalogo y portada
+const ANCHO_GALERIA   = 1200;  // la foto grande de la ficha
+
+function fotoUrl(u, ancho){
+  const ruta = (typeof u === 'string' && u.startsWith(R2_PUBLICO))
     ? '/img/' + u.slice(R2_PUBLICO.length)
     : u;
+  if(!ancho || typeof ruta !== 'string' || !ruta.startsWith('/img/')) return ruta;
+  return `/cdn-cgi/image/width=${ancho},format=auto,onerror=redirect${ruta}`;
 }
 
 let PRODUCTS = [];
@@ -3490,7 +3514,7 @@ function filaResultado(p){
   <a class="fila-res" href="${href}" onclick="openProductDetail(${p.id});return false;">
     <span class="fila-thumb">
       ${foto
-        ? `<img src="${fotoUrl(foto)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+        ? `<img src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
         : iconSvg(iconFor(p))}
     </span>
     <span class="fila-texto">
@@ -3682,7 +3706,7 @@ function appProductCard(p, altoFoto, conAgregar){
   <a class="pcard" href="${href}" onclick="openProductDetail(${p.id});return false;">
     <div class="pcard-foto" style="height:${altoFoto}px">
       ${foto
-        ? `<img src="${fotoUrl(foto)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+        ? `<img src="${fotoUrl(foto, ANCHO_TARJETA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
         : `<span class="pcard-sinfoto">${iconSvg(iconFor(p))}</span>`}
       ${enOferta(p) ? `<span class="pcard-off">-${pctDescuento(p)}%</span>` : ''}
     </div>
@@ -3789,7 +3813,7 @@ function waProducto(x){ return waHref(`Hola, me interesa ${x.name} (${fmt(x.pric
 function imgProducto(x, extra){
   const f = fotoDe(x);
   return f
-    ? `<img src="${fotoUrl(f)}" alt="${escapeHtml(x.name)}" ${extra||'loading="lazy"'} decoding="async">`
+    ? `<img src="${fotoUrl(f, ANCHO_TARJETA)}" alt="${escapeHtml(x.name)}" ${extra||'loading="lazy"'} decoding="async">`
     : `<span class="sinfoto">${escapeHtml(x.name)}</span>`;
 }
 
@@ -4684,7 +4708,7 @@ function renderProductDetail(){
   if(!activo){
     galeria = `<span class="ficha-sinfoto">${iconSvg(iconFor(p))}</span>`;
   }else if(activo.type === 'image'){
-    galeria = `<img src="${fotoUrl(activo.url)}" alt="${escapeHtml(p.name)}${colorActivo ? ' — ' + escapeHtml(colorActivo) : ''}" decoding="async">`;
+    galeria = `<img src="${fotoUrl(activo.url, ANCHO_GALERIA)}" alt="${escapeHtml(p.name)}${colorActivo ? ' — ' + escapeHtml(colorActivo) : ''}" decoding="async">`;
   }else{
     const embed = toEmbedUrl(activo.url);
     galeria = embed
@@ -4756,7 +4780,7 @@ function renderProductDetail(){
           <button type="button" class="fe-thumb${i === pdState.activeIndex ? ' sel' : ''}"
                   aria-label="Ver imagen ${i + 1}" onclick="setActiveSlide(${i})">
             ${s.type === 'image'
-              ? `<img src="${fotoUrl(s.url)}" alt="" loading="lazy" decoding="async">`
+              ? `<img src="${fotoUrl(s.url, ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">`
               : `<span class="fe-thumb-video">▶</span>`}
           </button>`).join('')}
       </div>` : '';
@@ -5208,7 +5232,7 @@ function renderCarrito(){
     return `
     <div class="linea">
       <span class="linea-thumb">
-        ${foto ? `<img src="${fotoUrl(foto)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
+        ${foto ? `<img src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
       </span>
       <span class="linea-texto">
         <span class="linea-nombre">${escapeHtml(p.name)}</span>
@@ -5325,7 +5349,7 @@ function renderCheckout(){
       return `
       <div class="res-item">
         <span class="res-item-thumb">
-          ${foto ? `<img src="${fotoUrl(foto)}" alt="" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
+          ${foto ? `<img src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
         </span>
         <span class="res-item-texto">
           <span class="res-item-nombre">${escapeHtml(p.name)}${c.color ? ` · ${escapeHtml(c.color)}` : ''}</span>
@@ -6163,7 +6187,7 @@ function navFilaHtml(p, i){
      onclick="abrirDesdeNavBuscar(${p.id});return false;">
     <span class="nav-res-thumb">
       ${foto
-        ? `<img src="${fotoUrl(foto)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+        ? `<img src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
         : iconSvg(iconFor(p))}
     </span>
     <span class="nav-res-texto">
