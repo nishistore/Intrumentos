@@ -2847,6 +2847,47 @@ const ACCESORIOS_FILTER_GROUPS = [
   {key:'accGrpGenerales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles','accCuidado']},
 ];
 
+/* ----------------------------------------------------------------------
+   SUBCATEGORÍAS CON URL PROPIA: /categoria/cuerda/ukeleles
+
+   Existen por los anuncios: quien busca "ukelele concierto" tiene que caer
+   entre ukeleles, no en una parrilla de cuerda que empieza por guitarras.
+   src/index.js tiene las mismas tres funciones — si tocas una, toca la otra,
+   porque esa es la versión que ve Google.
+   ---------------------------------------------------------------------- */
+
+/* Los filtros que se pueden recorrer dentro de una categoría. Accesorios es la
+   excepción: sus chips son los grupos por instrumento, no los subs crudos. */
+function subsNavegables(cat){
+  return cat.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs;
+}
+
+/* El trozo de URL sale de la ETIQUETA, no de la clave: las de Accesorios son
+   camelCase ('accCuerdasAcustica') y no sirven de URL, pero su etiqueta da
+   'cuerdas-acustica-clasica'. */
+function subSlug(sub){ return slugify(sub.label); }
+
+function findSubBySlug(cat, slug){
+  return subsNavegables(cat).find(x=>subSlug(x)===slug) || null;
+}
+function findSubByKey(cat, key){
+  return subsNavegables(cat).find(x=>x.key===key) || null;
+}
+
+/* La URL que le corresponde a lo que se está viendo ahora en el catálogo. El
+   tramo de subcategoría solo aparece con UN filtro puesto: con dos no hay una
+   sola página que nombrar, y con ninguno estamos en la categoría entera. */
+function rutaDeCatalogo(){
+  if(!state.activeCat) return '/tienda';
+  const cat = CATEGORIES.find(c=>c.key===state.activeCat);
+  if(!cat) return '/tienda';
+  if(state.activeSubs.size===1){
+    const sub = findSubByKey(cat, [...state.activeSubs][0]);
+    if(sub) return `/categoria/${cat.key}/${subSlug(sub)}`;
+  }
+  return `/categoria/${cat.key}`;
+}
+
 /* ======================================================================
    PRODUCTOS — se cargan automáticamente desde tu Google Sheet.
    Ya no viven escritos aquí: para cambiar precios, ofertas, stock,
@@ -3205,6 +3246,25 @@ function applyCurrentViewMeta(){
   if(state.activeCat){
     const c = CATEGORIES.find(x=>x.key===state.activeCat);
     if(c){
+      /* Con un solo filtro puesto la página es la de esa subcategoría y lleva
+         su propio título. Mismo texto que sirve el Worker. */
+      if(state.activeSubs.size===1){
+        const sub = findSubByKey(c, [...state.activeSubs][0]);
+        if(sub){
+          const conStock = productosDeCategoria(c.key)
+            .filter(x => subMatchesActiveFilter(x.sub) && (x.stock||0) > 0);
+          const desdeSub = conStock.length ? Math.min(...conStock.map(x=>x.price)) : 0;
+          const rutaSub = `/categoria/${c.key}/${subSlug(sub)}`;
+          setPageMeta(`${sub.label} en Lima | Chipao Music`,
+            `${sub.label} en Lima${desdeSub ? `, desde ${fmt(desdeSub)}` : ''}. ${c.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`);
+          setBreadcrumbSchema([
+            {name:'Inicio',path:'/'},
+            {name:c.label,path:`/categoria/${c.key}`},
+            {name:sub.label,path:rutaSub},
+          ]);
+          return;
+        }
+      }
       const subsList = c.subs.map(s=>s.label).join(', ');
       /* Misma descripción que sirve el Worker (ver src/index.js): la propia de
          la categoría, y la plantilla solo como respaldo. */
@@ -3251,6 +3311,12 @@ function routeFromPath(push){
   if(catMatch && CATEGORIES.some(c=>c.key===catMatch[1])){
     goShop(catMatch[1], null, push);
     return true;
+  }
+  const subMatch = path.match(/^\/categoria\/([a-z]+)\/([a-z0-9-]+)$/);
+  if(subMatch){
+    const catSub = CATEGORIES.find(c=>c.key===subMatch[1]);
+    const sub = catSub ? findSubBySlug(catSub, subMatch[2]) : null;
+    if(sub){ goShop(catSub.key, sub.key, push); return true; }
   }
   if(path === '/ofertas'){ goOffers(push); return true; }
   if(path === '/tienda'){ goShop(null, null, push); return true; }
@@ -3334,7 +3400,7 @@ function goShop(catKey, subKey, push){
   state.offersOnly = false;
   state.search='';
   const catObj = catKey ? CATEGORIES.find(c=>c.key===catKey) : null;
-  navigateTo(catObj ? `/categoria/${catObj.key}` : '/tienda', push);
+  navigateTo(rutaDeCatalogo(), push);
   applyCurrentViewMeta();
   render();
   if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
@@ -4325,6 +4391,13 @@ function chipsOrdenHtml(){
 function renderShop(){
   const list = getFilteredProducts();
   const cat = CATEGORIES.find(c=>c.key===state.activeCat);
+  /* Con UN solo filtro puesto la pantalla es la de esa subcategoría y lleva su
+     nombre, no el de la categoría: quien llega desde el anuncio de "ukelele
+     concierto" tiene que leer "Ukeleles" y no "Instrumentos de Cuerda", o no
+     sabe si ha llegado a donde quería. Es el mismo <h1> que sirve el Worker
+     en /categoria/cuerda/ukeleles. */
+  const subUnico = (cat && state.activeSubs.size===1)
+    ? findSubByKey(cat, [...state.activeSubs][0]) : null;
 
   let titulo, subtitulo;
   if(state.search){
@@ -4336,8 +4409,9 @@ function renderShop(){
     titulo = 'Ofertas en instrumentos musicales';
     subtitulo = 'Instrumentos con descuento';
   }else if(cat){
-    titulo = cat.seo || cat.label;
-    subtitulo = cat.subs.length ? cat.subs.map(s=>s.label).join(', ') : cat.desc;
+    titulo = subUnico ? subUnico.label : (cat.seo || cat.label);
+    subtitulo = subUnico ? cat.label
+      : (cat.subs.length ? cat.subs.map(s=>s.label).join(', ') : cat.desc);
   }else{
     titulo = 'Todo el catálogo';
     subtitulo = 'Cuerda, teclados, percusión, viento, audio y accesorios';
@@ -4349,7 +4423,10 @@ function renderShop(){
   /* Solo en la categoría y en las ofertas: en una búsqueda o en el catálogo
      entero no hay nada propio que contar, y un párrafo genérico repetido en
      todas las pantallas sería justo lo contrario de lo que se busca. */
-  const intro = cat ? cat.intro : (state.offersOnly && !state.search ? INTRO_OFERTAS : '');
+  /* El `intro` está escrito para la categoría entera —el de Cuerda empieza
+     hablando de guitarras—, así que en una subcategoría estorba más de lo que
+     ayuda y no se enseña. */
+  const intro = cat ? (subUnico ? '' : cat.intro) : (state.offersOnly && !state.search ? INTRO_OFERTAS : '');
   const introHtml = intro ? `<p class="cat-intro">${escapeHtml(intro)}</p>` : '';
 
   const sinCatalogo = Boolean(state.activeCat) && !productosDeCategoria(state.activeCat).length;
@@ -4426,6 +4503,13 @@ function renderShop(){
    Después de repintar se sube al principio de la lista, porque si no el
    filtro parece no haber hecho nada cuando estabas a medio scroll. */
 function trasFiltrar(){
+  /* Los chips cambian lo que se ve, así que también cambian la página: quitar
+     "Ukeleles" no puede dejar /categoria/cuerda/ukeleles en la barra. Va con
+     replace y no con push para no meter un paso de historial por cada chip. */
+  if(state.view==='shop' && !state.offersOnly){
+    navigateTo(rutaDeCatalogo(), false);
+    applyCurrentViewMeta();
+  }
   render();
   /* En el teléfono los chips van en la cabecera y la lista empieza debajo:
      sin este salto el filtro parece no haber hecho nada cuando estabas a

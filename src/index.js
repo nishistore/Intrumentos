@@ -36,13 +36,13 @@ const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan d
    que solo dice ella. Si se cambia aqui hay que cambiarlo igual en
    index.html: las dos copias de CATEGORIES tienen que decir lo mismo. */
 const CATEGORIES = [
-  { key: 'cuerda', intro: "Guitarras acústicas y clásicas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: ['Guitarras', 'Bajos', 'Violines', 'Ukeleles', 'Charangos'] },
+  { key: 'cuerda', intro: "Guitarras acústicas y clásicas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: [{ key: 'guitarras', label: 'Guitarras' }, { key: 'bajos', label: 'Bajos' }, { key: 'violines', label: 'Violines' }, { key: 'ukeleles', label: 'Ukeleles' }, { key: 'charangos', label: 'Charangos' }] },
   { key: 'teclados', intro: "Teclados y pianos digitales para empezar y para tocar en vivo. Ahora mismo no hay stock cargado en la web: escríbenos por WhatsApp y te decimos qué tenemos en tienda y qué podemos conseguir.", label: 'Teclados', desc: 'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [] },
-  { key: 'percusion', intro: "Bombos andinos de cuero hechos a mano, bombos de banda, tarolas, panderetas, kalimbas de 17 teclas y metalófonos, entre S/ 12 y S/ 250. Las baquetas y los parches de repuesto están en Accesorios.", label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: ['Tambores', 'Bombos', 'Tarolas', 'Cajones', 'Metalófono', 'Panderetas', 'Kalimbas'] },
-  { key: 'viento', intro: "Flautas dulces soprano, melódicas de 32 y 37 teclas, quenas y zampoñas, entre S/ 20 y S/ 80. Si es para la lista del colegio, en Para Colegio está todo junto.", label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Flautas', 'Melódicas', 'Quenas', 'Zampoñas'] },
-  { key: 'audio', intro: "Micrófonos dinámicos, sistemas inalámbricos para micrófono y para guitarra, y amplificadores, desde S/ 100. Para grabar en casa o para tocar en vivo; si no sabes cuál te sirve, escríbenos y lo vemos contigo.", label: 'Micrófono y Audio', desc: 'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Micrófonos', 'Interfaces', 'Amplificadores'] },
+  { key: 'percusion', intro: "Bombos andinos de cuero hechos a mano, bombos de banda, tarolas, panderetas, kalimbas de 17 teclas y metalófonos, entre S/ 12 y S/ 250. Las baquetas y los parches de repuesto están en Accesorios.", label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: [{ key: 'tambores', label: 'Tambores' }, { key: 'bombos', label: 'Bombos' }, { key: 'tarolas', label: 'Tarolas' }, { key: 'cajones', label: 'Cajones' }, { key: 'metalofono', label: 'Metalófono' }, { key: 'panderetas', label: 'Panderetas' }, { key: 'kalimbas', label: 'Kalimbas' }] },
+  { key: 'viento', intro: "Flautas dulces soprano, melódicas de 32 y 37 teclas, quenas y zampoñas, entre S/ 20 y S/ 80. Si es para la lista del colegio, en Para Colegio está todo junto.", label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'flautas', label: 'Flautas' }, { key: 'melodicas', label: 'Melódicas' }, { key: 'quenas', label: 'Quenas' }, { key: 'zamponas', label: 'Zampoñas' }] },
+  { key: 'audio', intro: "Micrófonos dinámicos, sistemas inalámbricos para micrófono y para guitarra, y amplificadores, desde S/ 100. Para grabar en casa o para tocar en vivo; si no sabes cuál te sirve, escríbenos y lo vemos contigo.", label: 'Micrófono y Audio', desc: 'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'microfonos', label: 'Micrófonos' }, { key: 'interfaces', label: 'Interfaces' }, { key: 'amplificadores', label: 'Amplificadores' }] },
   { key: 'colegio', intro: "Todo lo de la lista escolar en un sitio: flautas dulces, melódicas, xilófonos, metalófonos, claves y panderetas, desde S/ 10. Mándanos la lista por WhatsApp y te la cotizamos completa.", label: 'Para Colegio', seo: 'Instrumentos para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [] },
-  { key: 'accesorios', intro: "Cuerdas para acústica, clásica y eléctrica de D'Addario, Ernie Ball y Romeo, capotrastes, púas, afinadores, atriles, baquetas y repuestos, desde S/ 15. Si buscas un calibre concreto, pregúntanos antes de venir y te decimos si lo tenemos.", label: 'Accesorios', desc: 'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: ['Cuerdas (Acústica/Clásica)', 'Cuerdas (Eléctrica)', 'Capotrastes', 'Púas y pines', 'Afinadores y metrónomos', 'Atriles y parantes', 'Baquetas y parches', 'Cañas y boquillas', 'Violín (resina y puentes)', 'Limpieza y repuestos'] },
+  { key: 'accesorios', intro: "Cuerdas para acústica, clásica y eléctrica de D'Addario, Ernie Ball y Romeo, capotrastes, púas, afinadores, atriles, baquetas y repuestos, desde S/ 15. Si buscas un calibre concreto, pregúntanos antes de venir y te decimos si lo tenemos.", label: 'Accesorios', desc: 'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'accCuerdasAcustica', label: 'Cuerdas (Acústica/Clásica)' }, { key: 'accCuerdasElectrica', label: 'Cuerdas (Eléctrica)' }, { key: 'accCapotrastes', label: 'Capotrastes' }, { key: 'accPuas', label: 'Púas y pines' }, { key: 'accAfinadores', label: 'Afinadores y metrónomos' }, { key: 'accAtriles', label: 'Atriles y parantes' }, { key: 'accBaquetas', label: 'Baquetas y parches' }, { key: 'accCanas', label: 'Cañas y boquillas' }, { key: 'accViolin', label: 'Violín (resina y puentes)' }, { key: 'accCuidado', label: 'Limpieza y repuestos' }] },
 ];
 
 /* Copia de CROSS_LISTED_CATS de index.html: productos que se listan en una
@@ -62,6 +62,41 @@ const CROSS_LISTED_CATS = {
 };
 function productInCat(p, catKey) {
   return p.cat === catKey || (CROSS_LISTED_CATS[p.id] || []).includes(catKey);
+}
+
+/* Copia de ACCESORIOS_FILTER_GROUPS de index.html. En Accesorios los chips que
+   ve el visitante NO son los subs crudos ('accCapotrastes') sino grupos por
+   instrumento, porque un mismo capo sirve para acústica y para eléctrica. Si
+   cambias uno allá, cámbialo aquí: son las URLs que indexa Google. */
+const ACCESORIOS_FILTER_GROUPS = [
+  { key: 'accGrpGuitarraAcustica', label: 'Guitarra Acústica y Clásica', matches: ['accCuerdasAcustica', 'accCapotrastes', 'accPuas'] },
+  { key: 'accGrpGuitarraElectrica', label: 'Guitarra Eléctrica', matches: ['accCuerdasElectrica', 'accCapotrastes', 'accPuas'] },
+  { key: 'accGrpPercusion', label: 'Percusión', matches: ['accBaquetas'] },
+  { key: 'accGrpViento', label: 'Viento', matches: ['accCanas'] },
+  { key: 'accGrpViolin', label: 'Violín y cuerda frotada', matches: ['accViolin'] },
+  { key: 'accGrpGenerales', label: 'Generales (cualquier instrumento)', matches: ['accAfinadores', 'accAtriles', 'accCuidado'] },
+];
+
+/* Los filtros que se pueden recorrer dentro de una categoría y que por tanto
+   tienen URL propia, como /categoria/cuerda/ukeleles. */
+function subsNavegables(cat) {
+  return cat.key === 'accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs;
+}
+
+/* El trozo de URL de una subcategoría sale de su ETIQUETA, no de su clave: las
+   claves de Accesorios son camelCase ('accCuerdasAcustica') y no sirven de
+   URL, mientras que la etiqueta da 'cuerdas-acustica-clasica'. */
+function subSlug(sub) {
+  return slugify(sub.label);
+}
+
+function findSub(cat, slug) {
+  return subsNavegables(cat).find(s => subSlug(s) === slug) || null;
+}
+
+/* Un grupo de accesorios agrupa varios subs reales; el resto son uno a uno. */
+function productInSub(p, sub) {
+  return sub.matches ? sub.matches.includes(p.sub) : p.sub === sub.key;
 }
 
 /* La secuencia "<", escrita sin barra invertida literal. Sirve para
@@ -172,7 +207,7 @@ function catSeoLabel(cat) {
 }
 
 function categoryMeta(cat, products) {
-  const subsList = cat.subs.join(', ');
+  const subsList = cat.subs.map(s => s.label).join(', ');
   /* La descripción propia gana; la plantilla queda de respaldo para una
      categoría nueva a la que todavía no le hayan escrito la suya. */
   const description = cat.desc || (subsList
@@ -191,6 +226,29 @@ function categoryMeta(cat, products) {
     schema: withContext(breadcrumbSchema([
       { name: 'Inicio', path: '/' },
       { name: cat.label, path },
+    ])),
+  };
+}
+
+/* La página de una subcategoría. Existe sobre todo para los anuncios: quien
+   busca "ukelele concierto" tiene que aterrizar entre ukeleles, no en una
+   parrilla que empieza por guitarras. */
+function subcategoryMeta(cat, sub, products) {
+  const path = `/categoria/${cat.key}/${subSlug(sub)}`;
+  const suyos = (products || []).filter(p => productInCat(p, cat.key) && productInSub(p, sub));
+  const conStock = suyos.filter(p => (p.stock || 0) > 0);
+  const desde = conStock.length ? Math.min(...conStock.map(p => p.price)) : 0;
+  /* Mismo orden que en las categorías: el precio delante, porque Google corta
+     la descripción por el final. */
+  const description = `${sub.label} en Lima${desde ? `, desde S/ ${desde}` : ''}. ${cat.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`;
+  return {
+    title: `${sub.label} en Lima | Chipao Music`,
+    description,
+    path,
+    schema: withContext(breadcrumbSchema([
+      { name: 'Inicio', path: '/' },
+      { name: cat.label, path: `/categoria/${cat.key}` },
+      { name: sub.label, path },
     ])),
   };
 }
@@ -309,6 +367,13 @@ function routeFor(pathname, products) {
     return cat ? { meta: categoryMeta(cat, products), cat } : null;
   }
 
+  const subMatch = pathname.match(/^\/categoria\/([a-z]+)\/([a-z0-9-]+)$/);
+  if (subMatch) {
+    const cat = CATEGORIES.find(c => c.key === subMatch[1]);
+    const sub = cat ? findSub(cat, subMatch[2]) : null;
+    return sub ? { meta: subcategoryMeta(cat, sub, products), cat, sub } : null;
+  }
+
   const productMatch = pathname.match(/^\/producto\/(\d+)/);
   if (productMatch) {
     const p = products.find(x => String(x.id) === productMatch[1]);
@@ -419,10 +484,14 @@ function bodyFor(route, products) {
   if (route.product) return productBody(route.product);
 
   if (route.cat) {
-    const suyos = products.filter(p => productInCat(p, route.cat.key));
+    const suyos = products.filter(p => productInCat(p, route.cat.key)
+      && (!route.sub || productInSub(p, route.sub)));
     return listBody(
-      `${catSeoLabel(route.cat)} en Lima`,
-      route.cat.intro || route.meta.description,
+      route.sub ? `${route.sub.label} en Lima` : `${catSeoLabel(route.cat)} en Lima`,
+      /* El `intro` está escrito para la categoría entera y hablaría de
+         guitarras en la página de ukeleles: en una subcategoría manda su
+         propia descripción. */
+      route.sub ? route.meta.description : (route.cat.intro || route.meta.description),
       suyos,
       'Estamos actualizando esta categoría, disculpa las molestias.'
     );
@@ -449,7 +518,15 @@ function bodyFor(route, products) {
 
 function sitemapXml(products) {
   const rutas = ['/', '/tienda', '/ofertas'];
-  for (const c of CATEGORIES) rutas.push(`/categoria/${c.key}`);
+  for (const c of CATEGORIES) {
+    rutas.push(`/categoria/${c.key}`);
+    /* Una subcategoría vacía es una página delgada: solo entra en el sitemap
+       si de verdad tiene productos con stock. */
+    for (const s of subsNavegables(c)) {
+      const hay = products.some(p => (p.stock || 0) > 0 && productInCat(p, c.key) && productInSub(p, s));
+      if (hay) rutas.push(`/categoria/${c.key}/${subSlug(s)}`);
+    }
+  }
 
   const fijas = rutas.map(r => `  <url><loc>${escapeHtml(SITE_ORIGIN + r)}</loc></url>`);
 
@@ -618,7 +695,10 @@ function agregaListaDeProductos(route, products) {
   if (!route || !products.length) return;
   let lista = null;
   if (route.cat) {
-    lista = itemListSchema(products.filter(p => productInCat(p, route.cat.key)), route.cat.label);
+    lista = itemListSchema(
+      products.filter(p => productInCat(p, route.cat.key)
+        && (!route.sub || productInSub(p, route.sub))),
+      route.sub ? route.sub.label : route.cat.label);
   } else if (route.meta.path === '/tienda') {
     lista = itemListSchema(products, 'Catálogo de instrumentos musicales');
   } else if (route.meta.path === '/ofertas') {
