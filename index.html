@@ -1866,6 +1866,38 @@ footer.site .footer-bottom{
 .pedido-modo{font:600 12px/1.3 var(--app-sans);color:var(--app-ink);}
 .pedido-dir{margin-top:6px;font:400 11.5px/1.45 var(--app-sans);color:var(--app-muted-2);}
 .pedido-ok .btn-app{margin-top:12px;height:48px;font-size:13.5px;}
+
+/* ---------------- página de una política ----------------
+   Cambios y devoluciones dejó de ser un modal del pie y pasó a ser una
+   página con su propia URL. Los estilos no se heredan de .modal —esa es la
+   paleta vieja, crema sobre azul— así que el cuerpo lleva los suyos.
+
+   El texto se corta en 640px: en escritorio el shell mide 1280 y una línea
+   de veinte palabras no la lee nadie. */
+.app-shell.politica{padding-top:6px;padding-bottom:40px;}
+.politica-cuerpo{max-width:640px;}
+.politica-cuerpo p,
+.politica-cuerpo li{
+  margin-top:10px;
+  font:400 13.5px/1.7 var(--app-sans);color:var(--app-ink-70);text-wrap:pretty;
+}
+.politica-cuerpo ul{margin-top:2px;padding-left:20px;list-style:disc;}
+.politica-cuerpo li{margin-top:6px;}
+.politica-cuerpo h2{
+  margin-top:24px;
+  font:700 15px/1.3 var(--app-sans);letter-spacing:-.015em;color:var(--app-ink);
+}
+/* La salida al chat. La propia política dice "escríbenos indicando tu número
+   de pedido", así que la forma de hacerlo va en la misma pantalla y no dos
+   clics más allá, de vuelta en el pie. */
+.politica-ayuda{
+  max-width:640px;margin-top:28px;padding:16px;
+  border-radius:var(--app-r-card);
+  background:var(--app-green-soft);border:1px solid var(--app-line);
+}
+.politica-ayuda b{display:block;font:600 13px/1.4 var(--app-sans);color:var(--app-ink);}
+.politica-ayuda p{margin-top:5px;font:400 12.5px/1.5 var(--app-sans);color:var(--app-muted);}
+.politica-ayuda .btn-app{margin-top:13px;height:46px;font-size:13.5px;}
 /* Va ANTES del @media a propósito: las dos reglas tienen la misma
    especificidad y gana la última escrita. Con el display:none aquí, el
    display:block de dentro del @media manda en escritorio. */
@@ -2753,7 +2785,10 @@ footer.site .footer-bottom{
       <div class="footer-col">
         <h4>Ayuda</h4>
         <button class="link" onclick="openPolicy('envios')">Política de envíos</button>
-        <button class="link" onclick="openPolicy('cambios')">Cambios y devoluciones</button>
+        <!-- Enlace de verdad, no botón: esta política tiene página propia
+             (/cambios-y-devoluciones), así que se puede abrir en otra pestaña
+             y el rastreador ve a dónde lleva. -->
+        <a class="link" href="/cambios-y-devoluciones" onclick="goPolicy('cambios');return false;">Cambios y devoluciones</a>
         <button class="link" onclick="openPolicy('pagos')">Medios de pago</button>
         <button class="link" onclick="openPolicy('garantia')">Garantía de productos</button>
       </div>
@@ -3096,7 +3131,8 @@ const state = {
   orderId:null,      // número del último pedido enviado, para /pedido/<id>
   pedidoEnviado:null,// {total, entrega} congelado al cerrar, para la confirmación
   searchQuery:'',    // texto de la pantalla /buscar (independiente del filtro de la tienda)
-  searchRango:null   // rango de precio elegido en /buscar: 'bajo' | 'medio' | 'alto'
+  searchRango:null,  // rango de precio elegido en /buscar: 'bajo' | 'medio' | 'alto'
+  politica:null      // clave de POLICIES que se está viendo como página
 };
 
 const fmt = n => 'S/ ' + n.toLocaleString('es-PE',{minimumFractionDigits:0});
@@ -3302,6 +3338,11 @@ function routeFromPath(push){
   /* Pantallas de sesión. Van antes que las demás para que, al volver atrás
      desde una de ellas, se abra el panel en el estado correcto en vez de
      caer en el catálogo. */
+  /* La política vive fuera del catálogo: ni categoría, ni producto, ni
+     pantalla de sesión. Se resuelve aquí, antes que nada que filtre. */
+  const politica = politicaDeRuta(path);
+  if(politica){ goPolicy(politica, push); return true; }
+
   if(path === '/buscar'){ goSearch(push); return true; }
   if(path === '/carrito'){ goCart(push); return true; }
   if(path === '/checkout'){ goCheckout(push); return true; }
@@ -5801,9 +5842,17 @@ const POLICIES = {
     <ul><li>Envío gratuito en compras mayores a S/ 100.</li><li>Costo fijo de S/ 15 según destino para compras menores.</li><li>Recojo en tienda disponible sin costo adicional.</li></ul>
     <h4>Seguimiento</h4>
     <p>Una vez despachado tu pedido recibirás un código de seguimiento por correo electrónico o WhatsApp.</p>`},
-  cambios:{title:'Cambios y devoluciones', body:`
+  /* La única con `path`: no se abre en el modal, se abre como página. Quien
+     duda si puede devolver algo lo pregunta en Google antes de comprar, y un
+     texto encerrado en un modal no tiene dirección que dar ni que indexar.
+     Sus encabezados son <h2> y no <h4> porque van debajo del <h1> de la
+     página. El mismo texto lo sirve el Worker: ver PAGINAS_DE_AYUDA en
+     src/index.js, y las dos copias tienen que decir lo mismo. */
+  cambios:{title:'Cambios y devoluciones', path:'/cambios-y-devoluciones',
+    desc:'Tienes 7 días para cambiar o devolver lo que compraste en Chipao Music, con su embalaje y sin señales de uso. Cómo solicitarlo y en cuánto tiempo te devolvemos el dinero.',
+    body:`
     <p>Tienes hasta 7 días calendario desde la recepción del producto para solicitar un cambio o devolución, siempre que el producto conserve su embalaje original, accesorios y no presente signos de uso.</p>
-    <h4>¿Cómo solicitarlo?</h4>
+    <h2>¿Cómo solicitarlo?</h2>
     <ul><li>Escríbenos indicando tu número de pedido y motivo del cambio.</li><li>Coordinamos la recolección o el envío del producto.</li><li>Una vez verificado, procesamos el cambio o la devolución del dinero en un máximo de 10 días hábiles.</li></ul>
     <p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>`},
   pagos:{title:'Medios de pago', body:`
@@ -5830,8 +5879,48 @@ const POLICIES = {
 };
 function openPolicy(key){
   const p = POLICIES[key];
+  /* Las que tienen página no se abren en el modal, ni aunque las llamen por
+     aquí: dos sitios con el mismo texto y solo uno con dirección. */
+  if(p.path){ goPolicy(key); return; }
   document.getElementById('modalBody').innerHTML = `<h3 class="h-serif">${p.title}</h3>${p.body}`;
   document.getElementById('modalOverlay').classList.add('show');
+}
+
+/* Busca la política que vive en esta URL. Devuelve su clave o null. */
+function politicaDeRuta(path){
+  return Object.keys(POLICIES).find(k => POLICIES[k].path === path) || null;
+}
+
+/* Abre la política como pantalla propia: su URL, su título de pestaña y sus
+   migas. Es el único destino del sitio que no enseña productos. */
+function goPolicy(key, push){
+  const p = POLICIES[key];
+  if(!p || !p.path){ openPolicy(key); return; }
+  document.getElementById('modalOverlay').classList.remove('show');
+  state.view = 'politica';
+  state.politica = key;
+  navigateTo(p.path, push);
+  setPageMeta(`${p.title} | Chipao Music`, p.desc);
+  setBreadcrumbSchema([{name:'Inicio', path:'/'}, {name:p.title, path:p.path}]);
+  render();
+  if(push !== false) window.scrollTo({top:0});
+}
+
+function renderPolitica(){
+  const p = POLICIES[state.politica];
+  if(!p || !p.path){ state.view = 'home'; return renderHome(); }
+  const cuerpo = `
+    <div class="politica-cuerpo">${p.body}</div>
+    <div class="politica-ayuda">
+      <b>¿Tienes un pedido que cambiar?</b>
+      <p>Ten a mano tu número de pedido y te decimos en el momento si aplica.</p>
+      <a class="btn-app verde" target="_blank" rel="noopener"
+         href="${waHref('Hola, quiero solicitar un cambio o devolución de un pedido.')}"
+         onclick="trackAdsConversion('whatsapp')">Escríbenos por WhatsApp</a>
+    </div>`;
+  return esEscritorio()
+    ? `<div class="app-shell politica ped-esc">${cabeceraPedidoEscritorio(p.title, p.title)}${cuerpo}</div>`
+    : `<div class="app-shell politica">${cabeceraPedido(p.title, 'goHome()')}${cuerpo}</div>`;
 }
 function closeModal(){
   const wasProduct = !!pdState.productId;
@@ -6681,6 +6770,7 @@ function render(){
     : state.view==='carrito'  ? renderCarrito()
     : state.view==='checkout' ? renderCheckout()
     : state.view==='pedido'   ? renderPedido()
+    : state.view==='politica' ? renderPolitica()
     : renderShop();
   buildNavLists();
   renderNavEscritorio();

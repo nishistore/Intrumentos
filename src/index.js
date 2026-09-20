@@ -333,6 +333,51 @@ const RUTAS_DE_SESION = {
   },
 };
 
+/* Páginas de ayuda: texto fijo, con URL propia y sí indexables — al revés que
+   las de sesión de arriba. "Cambios y devoluciones" era un modal del pie, sin
+   dirección que dar ni que indexar, y es justo lo que alguien se pregunta
+   ANTES de comprar un instrumento por internet.
+
+   El texto está copiado de POLICIES en index.html, y las dos copias tienen que
+   decir lo mismo, igual que pasa con CATEGORIES. Aquí se sirve entero dentro
+   de <main id="app">: quien llega sin JavaScript —o el rastreador— lee la
+   política completa, no una pantalla de carga. */
+const PAGINAS_DE_AYUDA = {
+  '/cambios-y-devoluciones': {
+    title: 'Cambios y devoluciones | Chipao Music',
+    h1: 'Cambios y devoluciones',
+    description: 'Tienes 7 días para cambiar o devolver lo que compraste en Chipao Music, con su embalaje y sin señales de uso. Cómo solicitarlo y en cuánto tiempo te devolvemos el dinero.',
+    body: [
+      '<p>Tienes hasta 7 días calendario desde la recepción del producto para solicitar un cambio o devolución, siempre que el producto conserve su embalaje original, accesorios y no presente signos de uso.</p>',
+      '<h2>¿Cómo solicitarlo?</h2>',
+      '<ul><li>Escríbenos indicando tu número de pedido y motivo del cambio.</li><li>Coordinamos la recolección o el envío del producto.</li><li>Una vez verificado, procesamos el cambio o la devolución del dinero en un máximo de 10 días hábiles.</li></ul>',
+      '<p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>',
+    ].join(''),
+  },
+};
+
+function ayudaMeta(pathname) {
+  const pg = PAGINAS_DE_AYUDA[pathname];
+  if (!pg) return null;
+  return {
+    title: pg.title,
+    description: pg.description,
+    path: pathname,
+    schema: withContext(breadcrumbSchema([
+      { name: 'Inicio', path: '/' },
+      { name: pg.h1, path: pathname },
+    ])),
+  };
+}
+
+function ayudaBody(pathname) {
+  const pg = PAGINAS_DE_AYUDA[pathname];
+  return '<nav aria-label="Ruta"><a href="/">Inicio</a> &rsaquo; ' + escapeHtml(pg.h1) + '</nav>'
+    + '<h1>' + escapeHtml(pg.h1) + '</h1>'
+    + pg.body
+    + '<p><a href="/tienda">Ver todo el catálogo</a></p>';
+}
+
 /* Número de pedido tal como lo arma el sitio: CH- y cuatro dígitos. */
 const RUTA_PEDIDO = /^\/pedido\/[A-Za-z0-9-]{1,24}$/;
 
@@ -357,6 +402,9 @@ function routeFor(pathname, products) {
   if (pathname === '/') return { meta: homeMeta() };
   if (pathname === '/tienda') return { meta: shopMeta() };
   if (pathname === '/ofertas') return { meta: offersMeta(products) };
+
+  const ayuda = ayudaMeta(pathname);
+  if (ayuda) return { meta: ayuda, ayuda: pathname };
 
   const sesion = sesionMeta(pathname);
   if (sesion) return { meta: sesion, noIndex: true };
@@ -481,6 +529,8 @@ function bodyFor(route, products) {
 
   if (route.noEncontrado) return notFoundBody();
 
+  if (route.ayuda) return ayudaBody(route.ayuda);
+
   if (route.product) return productBody(route.product);
 
   if (route.cat) {
@@ -517,7 +567,7 @@ function bodyFor(route, products) {
    ================================================================= */
 
 function sitemapXml(products) {
-  const rutas = ['/', '/tienda', '/ofertas'];
+  const rutas = ['/', '/tienda', '/ofertas', ...Object.keys(PAGINAS_DE_AYUDA)];
   for (const c of CATEGORIES) {
     rutas.push(`/categoria/${c.key}`);
     /* Una subcategoría vacía es una página delgada: solo entra en el sitemap
@@ -757,9 +807,10 @@ export default {
        estado es solo para los buscadores.
 
        Todas las pantallas reales tienen ruta aquí -/, /tienda, /ofertas,
-       /buscar, /carrito, /checkout, /pedido/<id>, /categoria/<key> y
-       /producto/<id>-, y /testeo sale antes sin pasar por aquí, así que no hay
-       nada legítimo que pueda caer en este 404. */
+       /buscar, /carrito, /checkout, /pedido/<id>, /categoria/<key>,
+       /producto/<id>- y las de PAGINAS_DE_AYUDA-, y /testeo sale antes sin
+       pasar por aquí, así que no hay nada legítimo que pueda caer en este
+       404. */
     if (!route || route.noEncontrado) {
       return new Response(salida.body, { status: 404, headers: salida.headers });
     }
