@@ -1074,8 +1074,17 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .bc-wa svg{width:26px;height:26px;}
 /* Hueco para que la barra no tape el final del documento. Va en el body y no
    en la portada: debajo de la portada está el pie, y ahí es donde la barra se
-   apoya de verdad. */
-body:has(.barra-compra){padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-area-inset-bottom));}
+   apoya de verdad.
+
+   La clase la pone el JS (ver prepararBarraCompra). Antes esto era
+   `body:has(.barra-compra)`, y :has() no existe hasta Safari 15.4: en un
+   iPhone que no haya pasado de iOS 15.3 el selector es inválido, Safari tira
+   la regla entera y el body se queda con los 78px del pie de pestañas. Como
+   la barra mide 77, los últimos 77px del documento quedaban debajo de ella
+   para siempre — no es que taparan algo mientras bajas, es que ya no hay
+   más scroll que dar. En pantalla se ve como una página cortada a media
+   frase. Una clase normal la entiende cualquier navegador. */
+body.con-barra-compra{padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-area-inset-bottom));}
 
 /* ---- CTA flotante de WhatsApp (solo escritorio, ver @media) ---- */
 .wa-flotante{display:none;}
@@ -4232,6 +4241,11 @@ function prepararBarraCompra(){
   if(nav) document.documentElement.style.setProperty('--nav-real', nav.offsetHeight + 'px');
   const barra = document.querySelector('.barra-compra');
   const ctas  = document.querySelector('.hv-ctas');
+  /* Marca el body para que reserve el hueco de la barra (ver
+     .con-barra-compra). Se pone antes del return: cuando la barra no está
+     —cualquier pantalla que no sea la portada en teléfono— hay que quitarla,
+     o el hueco se queda puesto donde no hace falta. */
+  document.body.classList.toggle('con-barra-compra', Boolean(barra));
   if(!barra || !ctas) return;
   vigiaBarraCompra = new IntersectionObserver(([e]) => {
     barra.classList.toggle('visible', !e.isIntersecting && e.boundingClientRect.top < 0);
