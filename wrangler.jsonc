@@ -6,6 +6,12 @@
     // Las fotos, para servirlas desde /img/ en vez del dominio publico de R2.
     { "binding": "FOTOS", "bucket_name": "chipao-fotos" }
   ],
+  // El interruptor del banner de promocion (tabla settings, clave
+  // banner_promo). Es la misma base del catalogo, que sirve la API de
+  // productos: aqui solo se lee ese ajuste y se escribe desde el panel.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "chipao-productos", "database_id": "e5a36b0a-58ea-4461-a7bd-780ac5e6c000" }
+  ],
   "assets": {
     "directory": "./",
     "binding": "ASSETS",

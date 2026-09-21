@@ -418,6 +418,15 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   .admin-row-top{flex-wrap:wrap;}
 }
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
+/* Interruptor del banner de promocion. Va del rojo de la bandera -el mismo de
+   la barra que enciende- para que se vea de un golpe en cual de los dos
+   estados esta: relleno = puesta, contorno = quitada. */
+.banner-btn{width:100%;border-color:var(--peru-rojo);color:var(--peru-rojo);}
+.banner-btn:hover{background:var(--peru-rojo);color:#fff;}
+.banner-btn.puesto{background:var(--peru-rojo);color:#fff;}
+.banner-btn.puesto:hover{background:#8E0B18;border-color:#8E0B18;}
+.banner-btn[disabled]{opacity:.6;}
+.banner-nota{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 2px 16px;}
 
 /* Hueco para la barra inferior: sus 78px más la franja de gestos del
    teléfono, si la hay. Sin esto el último producto de la lista queda
@@ -3009,8 +3018,29 @@ function leerCatalogoEmbebido(){
   }
 }
 
+/* ¿Va puesta la barra roja de ofertas? Se enciende y se apaga con un boton del
+   panel de productos; el estado vive en la base (tabla settings, clave
+   banner_promo) y el Worker lo incrusta aqui, igual que el catalogo, para que
+   la barra no aparezca y desaparezca a medio cargar.
+
+   Por defecto puesta: es como ha estado desde que existe, y sin bloque que
+   leer -en el servidor local, o si el Worker no pudo leer la base- preferimos
+   dejarla como estaba antes de que esto se pudiera apagar. */
+let BANNER_PROMO = true;
+
+function leerBannerPromo(){
+  const bloque = document.getElementById('banner-promo');
+  if(!bloque) return true;
+  try{
+    return JSON.parse(bloque.textContent).activo !== false;
+  }catch(err){
+    return true;
+  }
+}
+
 /* El arranque, compartido por las dos vias (catalogo incrustado o API). */
 function arrancarConProductos(lista){
+  BANNER_PROMO = leerBannerPromo();
   PRODUCTS = lista;
   PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
   state.priceMax = PRICE_MAX;
@@ -6168,6 +6198,10 @@ function renderAdminPanel(){
   document.getElementById('modalBody').innerHTML = `
     <h3 class="h-serif">Panel de productos</h3>
     <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
+    <div class="admin-actions">
+      <button class="btn-outline banner-btn${BANNER_PROMO ? ' puesto' : ''}" id="banner-btn" onclick="toggleBannerPromo(this)">${BANNER_PROMO ? 'Desactivar' : 'Activar'} banner de promoción</button>
+    </div>
+    <p class="banner-nota">Es la barra roja con el contador y los tres mayores descuentos, arriba de la portada y del catálogo. Un clic y cambia para todos.</p>
     <div class="admin-actions" style="margin-bottom:14px;">
       <button class="btn-outline" style="width:100%;" onclick="toggleNewProductForm()">➕ Agregar producto nuevo</button>
     </div>
@@ -6180,6 +6214,46 @@ function renderAdminPanel(){
       <button class="btn-outline" style="width:100%;" onclick="closeModal()">Listo</button>
     </div>
   `;
+}
+
+/* Un clic enciende o apaga la barra roja para todos los visitantes. No hay
+   formulario ni confirmacion a proposito: es un interruptor, y equivocarse
+   cuesta otro clic.
+
+   Quien autoriza el cambio es la API de productos, no el navegador: aqui solo
+   viaja la clave que ya se uso para entrar al panel. Desde el servidor local
+   (localhost:8788) no hay Worker que atienda /api/banner-promo y esto falla:
+   el interruptor solo funciona en el sitio de verdad. */
+async function toggleBannerPromo(btn){
+  const nuevo = !BANNER_PROMO;
+  btn.textContent = nuevo ? 'Activando...' : 'Desactivando...';
+  btn.disabled = true;
+  try{
+    const res = await fetch('/api/banner-promo', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
+      body: JSON.stringify({ activo: nuevo })
+    });
+    const data = await res.json();
+    if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
+    BANNER_PROMO = Boolean(data.activo);
+    pintarBotonBanner(btn);
+    renderBandaOferta();
+    showToast(BANNER_PROMO ? 'Banner de promoción activado' : 'Banner de promoción desactivado');
+  }catch(err){
+    btn.textContent = 'Error, reintentar';
+    btn.disabled = false;
+    showToast('No se pudo cambiar el banner. Revisa tu clave de administrador.');
+    setTimeout(()=>pintarBotonBanner(btn), 1600);
+  }
+}
+
+function pintarBotonBanner(btn){
+  btn = btn || document.getElementById('banner-btn');
+  if(!btn) return;
+  btn.textContent = (BANNER_PROMO ? 'Desactivar' : 'Activar') + ' banner de promoción';
+  btn.classList.toggle('puesto', BANNER_PROMO);
+  btn.disabled = false;
 }
 
 function onAdminCatChange(id){
@@ -6646,7 +6720,7 @@ function renderBandaOferta(){
   if(previa) previa.remove();
 
   const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
-  if(!ofertas.length || !VISTAS_CON_BANDA.includes(state.view)){
+  if(!BANNER_PROMO || !ofertas.length || !VISTAS_CON_BANDA.includes(state.view)){
     if(relojBanda){ clearInterval(relojBanda); relojBanda = null; }
     return;
   }

@@ -142,6 +142,115 @@ async function fetchProducts() {
   }
 }
 
+/* ====================== BANNER DE PROMOCIÓN =========================
+
+   La barra roja con el contador y los tres mayores descuentos se enciende y
+   se apaga desde el panel de productos, con un botón. El interruptor vive en
+   la tabla `settings` de D1 (clave `banner_promo`, '1' o '0') y no aquí, para
+   que cambiarlo no obligue a desplegar.
+
+   El estado viaja DENTRO del HTML, igual que el catálogo (ver HeadExtras):
+   así el visitante no paga un viaje extra y la barra no aparece para
+   desaparecer medio segundo después.
+
+   La escritura la autoriza la API de productos, no este Worker: el panel
+   manda la clave de administrador y aquí se comprueba contra su
+   /admin/login, que es el único que sabe cuál es. Este Worker no la guarda.
+   ==================================================================== */
+
+const CLAVE_BANNER = 'banner_promo';
+/* Petición ficticia que solo sirve de llave en el caché del borde: no se
+   envía a ningún sitio, le da nombre a la entrada. */
+const CACHE_BANNER = new Request('https://chipaomusic.com/__banner-promo');
+const BANNER_TTL = 30;
+
+/* Por defecto encendido: es como ha estado la barra desde que existe, así que
+   si la base no contesta preferimos enseñarla a apagarla sin que nadie lo
+   haya pedido. */
+async function bannerActivo(env, ctx) {
+  try {
+    const cacheado = await caches.default.match(CACHE_BANNER);
+    if (cacheado) return (await cacheado.text()) === '1';
+  } catch { /* sin caché vamos a la base */ }
+
+  let activo = true;
+  try {
+    const fila = await env.DB.prepare(
+      'SELECT value FROM settings WHERE key = ?').bind(CLAVE_BANNER).first();
+    if (fila) activo = fila.value === '1';
+  } catch {
+    /* Sin guardar en caché: un fallo de un momento no debe congelar el
+       estado treinta segundos. */
+    return activo;
+  }
+
+  const guardar = caches.default.put(CACHE_BANNER, new Response(activo ? '1' : '0', {
+    headers: { 'cache-control': 'max-age=' + BANNER_TTL },
+  })).catch(() => {});
+  if (ctx) ctx.waitUntil(guardar); else await guardar;
+  return activo;
+}
+
+function respuestaJson(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+  });
+}
+
+/* La clave de administrador la valida su dueña, la API de productos:
+   /admin/login responde ok:true solo si coincide con su ADMIN_SECRET. Si esa
+   llamada falla por cualquier motivo, aquí se dice no. */
+async function claveDeAdminValida(clave) {
+  if (!clave) return false;
+  try {
+    const res = await fetch(PRODUCTS_API_URL + '/admin/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ password: clave }),
+    });
+    const data = await res.json();
+    return Boolean(data.ok);
+  } catch {
+    return false;
+  }
+}
+
+async function apiBanner(request, env, ctx) {
+  if (request.method === 'GET') {
+    return respuestaJson({ activo: await bannerActivo(env, ctx) });
+  }
+  if (request.method !== 'PUT') {
+    return respuestaJson({ error: 'Método no permitido' }, 405);
+  }
+  if (!await claveDeAdminValida(request.headers.get('X-Admin-Secret'))) {
+    return respuestaJson({ error: 'No autorizado' }, 401);
+  }
+
+  let activo;
+  try {
+    activo = Boolean((await request.json()).activo);
+  } catch {
+    return respuestaJson({ error: 'Falta el campo activo' }, 400);
+  }
+
+  try {
+    await env.DB.prepare(
+      "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, datetime('now')) " +
+      'ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at'
+    ).bind(CLAVE_BANNER, activo ? '1' : '0').run();
+  } catch (err) {
+    return respuestaJson({ error: String(err) }, 500);
+  }
+
+  /* Tira la copia del borde para que el cambio se vea en la siguiente
+     recarga. Solo vacía la del centro de datos que atendió esta petición: en
+     los demás la barra tarda hasta BANNER_TTL segundos en enterarse. */
+  try { await caches.default.delete(CACHE_BANNER); } catch { /* da igual */ }
+
+  return respuestaJson({ ok: true, activo });
+}
+
 /* ======================== METADATOS DEL <head> ======================== */
 
 function breadcrumbSchema(trail) {
@@ -687,10 +796,11 @@ class SetHtml {
    es el mismo que usa setPageSchema() en index.html, así que cuando arranca
    el JS reutiliza este bloque en vez de duplicarlo. */
 class HeadExtras {
-  constructor(schema, noindex, products) {
+  constructor(schema, noindex, products, bannerPromo) {
     this.schema = schema;
     this.noindex = noindex;
     this.products = products;
+    this.bannerPromo = bannerPromo;
   }
   element(el) {
     if (this.noindex) {
@@ -711,10 +821,16 @@ class HeadExtras {
       const catalogo = JSON.stringify(this.products).replace(/</g, LT_ESCAPE);
       el.append('<script type="application/json" id="productos-iniciales">' + catalogo + '</scr' + 'ipt>', { html: true });
     }
+    /* El interruptor de la barra roja de ofertas, que se maneja desde el
+       panel de productos. Va aquí y no en una llamada aparte para que el
+       cliente sepa a qué atenerse antes de la primera pintada: pedido por
+       separado, la barra se vería aparecer o desaparecer a medio camino. */
+    el.append('<script type="application/json" id="banner-promo">{"activo":'
+      + (this.bannerPromo === false ? 'false' : 'true') + '}</scr' + 'ipt>', { html: true });
   }
 }
 
-function rewrite(response, route, body, pathname, products) {
+function rewrite(response, route, body, pathname, products, bannerPromo) {
   const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
@@ -732,7 +848,7 @@ function rewrite(response, route, body, pathname, products) {
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex, products));
+    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
 
@@ -780,6 +896,10 @@ export default {
       });
     }
 
+    /* El interruptor del banner de promoción: lo lee cualquiera, lo cambia
+       solo el panel con la clave de administrador. */
+    if (url.pathname === '/api/banner-promo') return apiBanner(request, env, ctx);
+
     if (url.pathname.startsWith('/img/')) return sirveFoto(request, env, ctx);
 
     const response = await env.ASSETS.fetch(request);
@@ -794,10 +914,16 @@ export default {
        home incluida, porque el catálogo va incrustado en el HTML de cualquier
        ruta (ver HeadExtras) y así el navegador no tiene que ir a buscarlo a
        otro dominio antes de pintar. Viene del caché del borde. */
-    const products = await fetchProducts();
+    /* Las dos cosas que se incrustan en el HTML se piden a la vez -el
+       catálogo a la API, el interruptor del banner a la base-: en fila una
+       detrás de otra sumaban sus dos esperas al TTFB. */
+    const [products, bannerPromo] = await Promise.all([
+      fetchProducts(),
+      bannerActivo(env, ctx),
+    ]);
     const route = routeFor(url.pathname, products);
     agregaListaDeProductos(route, products);
-    const salida = rewrite(response, route, bodyFor(route, products), url.pathname, products);
+    const salida = rewrite(response, route, bodyFor(route, products), url.pathname, products, bannerPromo);
 
     /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
        una categoría inventada o una ruta que no es ninguna pantalla (route en
