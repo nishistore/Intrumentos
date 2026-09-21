@@ -2302,6 +2302,9 @@ footer.site .footer-bottom{
     .tv:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.09);}
     .btn-comprar:hover{background:#000;transform:translateY(-1px);}
     .enlace-sub:hover{border-bottom-color:var(--app-ink);}
+    /* Un gris más claro que --app-sunken: el hundido es el de la fila puesta,
+       y si el hover usara el mismo, pasar por encima parecería haberla puesto. */
+    .fila-filtro:not([disabled]):hover,.side-cat:hover{background:#faf9f8;color:var(--app-ink);}
   }
 
   /* ---------------- categoría ----------------
@@ -2341,38 +2344,53 @@ footer.site .footer-bottom{
   }
   .cat-sidebar{position:sticky;top:140px;display:flex;flex-direction:column;gap:22px;}
   .side-bloque{display:flex;flex-direction:column;}
+  /* El título va con line-height 1.35 y no 1: "Para qué instrumento" ocupa dos
+     líneas en 248px, y a 1 las versalitas de la segunda se pisaban con las de
+     la primera. La sangría de 15px son los 12 de padding de una fila más los 3
+     de su barra, para que el título caiga a plomo sobre los nombres. El gris
+     es --app-muted y no --app-muted-3: el otro se queda en 3,9:1 sobre papel,
+     y a 11px hay que llegar a 4,5:1. */
   .side-titulo{
-    font:600 11px/1 var(--app-sans);letter-spacing:.08em;
-    text-transform:uppercase;color:var(--app-muted-3);margin-bottom:12px;
-  }
-  .side-cat{
     display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-    padding:6px 0;text-decoration:none;
-    font:400 13px/1.35 var(--app-sans);color:var(--app-ink-70);
+    padding:0 12px 0 15px;margin-bottom:8px;
+    font:600 11px/1.35 var(--app-sans);letter-spacing:.08em;
+    text-transform:uppercase;color:var(--app-muted);
   }
-  .side-cat:hover{color:var(--app-ink);}
-  .side-cat i{font-style:normal;font-size:11.5px;color:var(--app-faint);}
-  .side-cat.activa{font-weight:600;color:var(--app-ink);}
-  .side-cat.activa i{color:var(--app-ink);}
+  .side-titulo button{
+    flex:none;background:none;border:0;padding:0;
+    font:600 10px/1.35 var(--app-sans);letter-spacing:.06em;
+    text-transform:uppercase;color:var(--app-ink);
+  }
+  .side-titulo button:hover{text-decoration:underline;}
 
-  .casilla{
-    display:flex;align-items:center;gap:10px;
-    background:none;border:0;padding:6px 0;text-align:left;width:100%;
+  /* Una fila de filtro y una de categoría son el mismo objeto: el nombre a la
+     izquierda, cuántos hay a la derecha y una barra de 3px que se enciende
+     cuando está puesto. Se pulsa la fila entera —38px de alto—, no un cuadrito
+     de 16px, que es lo que se intentaba tocar de todos modos.
+
+     La barra existe siempre, transparente, y solo cambia de color: si apareciera
+     al marcar, la fila se correría 3px justo debajo del dedo. */
+  .fila-filtro,.side-cat{
+    display:flex;align-items:center;gap:10px;width:100%;
+    min-height:38px;padding:8px 12px;text-align:left;text-decoration:none;
+    background:none;border:0;border-left:3px solid transparent;
+    border-radius:0 var(--app-r-step) var(--app-r-step) 0;
     font:400 13px/1.35 var(--app-sans);color:var(--app-ink-70);
   }
-  .casilla:hover{color:var(--app-ink);}
-  .casilla-cuadro{
-    flex:none;width:16px;height:16px;border-radius:4px;
-    border:1.5px solid var(--app-line-strong);background:var(--app-surface);
-    display:flex;align-items:center;justify-content:center;
-    font:700 10px/1 var(--app-sans);color:#fff;
+  .fila-filtro > span,.side-cat > span{flex:1;min-width:0;}
+  .fila-filtro i,.side-cat i{
+    flex:none;font-style:normal;font:400 11.5px/1 var(--app-sans);color:var(--app-faint);
   }
-  .casilla.marcada .casilla-cuadro{background:var(--app-ink);border-color:var(--app-ink);}
-  .casilla.marcada .casilla-label{color:var(--app-ink);font-weight:500;}
-  .casilla-label{flex:1;min-width:0;}
-  .casilla-n{font-size:11.5px;color:var(--app-faint);}
+  .fila-filtro.marcada,.side-cat.activa{
+    background:var(--app-sunken);border-left-color:var(--app-ink);
+    color:var(--app-ink);font-weight:600;
+  }
+  .fila-filtro.marcada i,.side-cat.activa i{color:var(--app-ink);}
+  /* Un filtro que no deja nada a la vista no se puede pulsar. Si YA está
+     puesto sí, o no habría manera de quitarlo (ver filaFiltroHtml). */
+  .fila-filtro[disabled]{opacity:.45;}
   .side-limpiar{
-    align-self:flex-start;background:none;border:0;padding:0;
+    align-self:flex-start;background:none;border:0;padding:0;margin-left:15px;
     font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
   }
   .side-limpiar:hover{text-decoration:underline;}
@@ -4309,21 +4327,35 @@ function subMatchesActiveFilter(sub){
   return false;
 }
 
+/* La condición de cada filtro vive AQUÍ y en ningún otro sitio: la grilla de
+   la derecha y los números del panel tienen que decir lo mismo, o el panel
+   promete ocho guitarras y la lista enseña tres.
+
+   'omitir' deja fuera una dimensión para poder contar DENTRO de ella: cuántos
+   ukeleles se verían es "todo lo demás puesto, menos las subcategorías". */
+function pasaFiltros(p, omitir){
+  if(state.activeCat && !productInCat(p, state.activeCat)) return false;
+  if(omitir!=='subs' && state.activeSubs.size && !subMatchesActiveFilter(p.sub)) return false;
+  if((state.offersOnly || state.soloOfertas) && !enOferta(p)) return false;
+  if(omitir!=='stock' && state.soloStock && (p.stock||0) <= 0) return false;
+  if(p.price < state.priceMin || p.price > state.priceMax) return false;
+  /* Rangos de precio del panel lateral de escritorio. Se suman entre sí:
+     marcar dos deja pasar lo que caiga en cualquiera de los dos. En el
+     teléfono el conjunto va siempre vacío y esta línea no filtra nada. */
+  if(omitir!=='precio' && state.rangosPrecio.size && !RANGOS_PRECIO.some(r =>
+      state.rangosPrecio.has(r.key) && p.price >= r.min && p.price < r.max)) return false;
+  if(state.search && !p.name.toLowerCase().includes(state.search.toLowerCase())) return false;
+  return true;
+}
+
+/* Cuántos productos quedarían a la vista si se pulsara ese filtro ahora
+   mismo, con todo lo demás como está. Es el número que va a su derecha. */
+function cuentaFiltro(omitir, cumple){
+  return PRODUCTS.filter(p => pasaFiltros(p, omitir) && cumple(p)).length;
+}
+
 function getFilteredProducts(){
-  return PRODUCTS.filter(p=>{
-    if(state.activeCat && !productInCat(p, state.activeCat)) return false;
-    if(state.activeSubs.size && !subMatchesActiveFilter(p.sub)) return false;
-    if((state.offersOnly || state.soloOfertas) && !enOferta(p)) return false;
-    if(state.soloStock && (p.stock||0) <= 0) return false;
-    if(p.price < state.priceMin || p.price > state.priceMax) return false;
-    /* Rangos de precio del panel lateral de escritorio. Se suman entre sí:
-       marcar dos deja pasar lo que caiga en cualquiera de los dos. En el
-       teléfono el conjunto va siempre vacío y esta línea no filtra nada. */
-    if(state.rangosPrecio.size && !RANGOS_PRECIO.some(r =>
-        state.rangosPrecio.has(r.key) && p.price >= r.min && p.price < r.max)) return false;
-    if(state.search && !p.name.toLowerCase().includes(state.search.toLowerCase())) return false;
-    return true;
-  }).sort((a,b)=>{
+  return PRODUCTS.filter(p => pasaFiltros(p)).sort((a,b)=>{
     if(state.sort==='price-asc') return a.price-b.price;
     if(state.sort==='price-desc') return b.price-a.price;
     return 0;
@@ -4385,14 +4417,32 @@ function fichaCategoriaHtml(cat){
              onclick="goShop('${cat.key}');return false;">${escapeHtml(cat.label)} ›</a>`;
 }
 
-function casillaHtml(texto, marcada, accion, conteo){
+/* Una fila del panel: el nombre, cuántos productos deja ver y la barra de la
+   izquierda cuando está puesta. Sigue siendo un <button aria-pressed> y no un
+   <input type="checkbox"> porque filtra al instante y no envía ningún
+   formulario.
+
+   Si el filtro no deja nada a la vista va apagado y no se puede pulsar, salvo
+   que YA esté puesto: entonces hay que poder quitarlo. */
+function filaFiltroHtml(texto, marcada, accion, conteo){
+  const muerta = !marcada && conteo === 0;
   return `
-  <button type="button" class="casilla${marcada?' marcada':''}"
-          aria-pressed="${marcada?'true':'false'}" onclick="${accion}">
-    <span class="casilla-cuadro">${marcada?'✓':''}</span>
-    <span class="casilla-label">${escapeHtml(texto)}</span>
-    ${conteo != null ? `<span class="casilla-n">${conteo}</span>` : ''}
+  <button type="button" class="fila-filtro${marcada?' marcada':''}"
+          aria-pressed="${marcada?'true':'false'}"${muerta?' disabled':''} onclick="${accion}">
+    <span>${escapeHtml(texto)}</span>
+    ${conteo != null ? `<i>${conteo}</i>` : ''}
   </button>`;
+}
+
+/* El título de un bloque dice QUÉ se elige, no dónde se está: el <h1> ya dijo
+   que esto es Instrumentos de Cuerda y repetirlo aquí no le servía a nadie.
+   "Quitar" solo sale cuando ese bloque tiene algo puesto. */
+function tituloBloqueHtml(texto, accionQuitar){
+  return `
+    <div class="side-titulo">
+      <span>${escapeHtml(texto)}</span>
+      ${accionQuitar ? `<button type="button" onclick="${accionQuitar}">Quitar</button>` : ''}
+    </div>`;
 }
 
 function sidebarCategoriaHtml(){
@@ -4409,7 +4459,8 @@ function sidebarCategoriaHtml(){
   }).join('');
 
   const rangos = RANGOS_PRECIO.map(r=>
-    casillaHtml(r.label, state.rangosPrecio.has(r.key), `toggleRangoPrecio('${r.key}')`)
+    filaFiltroHtml(r.label, state.rangosPrecio.has(r.key), `toggleRangoPrecio('${r.key}')`,
+      cuentaFiltro('precio', p => p.price >= r.min && p.price < r.max))
   ).join('');
 
   const limpiables = state.rangosPrecio.size || state.activeSubs.size
@@ -4417,21 +4468,27 @@ function sidebarCategoriaHtml(){
 
   const bloqueCategorias = `
     <div class="side-bloque">
-      <div class="side-titulo">Categorías</div>
+      ${tituloBloqueHtml('Categorías', '')}
       ${categorias}
     </div>`;
 
   const bloquePrecio = `
     <div class="side-bloque">
-      <div class="side-titulo">Precio</div>
+      ${tituloBloqueHtml('Precio', (state.rangosPrecio.size || state.soloStock) ? 'limpiarPrecio()' : '')}
       ${rangos}
-      ${casillaHtml('Solo lo que hay en tienda', state.soloStock, 'toggleSoloStock()')}
+      ${filaFiltroHtml('Solo lo que hay en tienda', state.soloStock, 'toggleSoloStock()',
+          cuentaFiltro('stock', p => (p.stock||0) > 0))}
     </div>`;
 
+  /* En Accesorios las filas no son tipos de instrumento sino PARA qué
+     instrumento sirve el accesorio: unas cuerdas de acústica no son una
+     clase de accesorio, son las que le van a esa guitarra. */
   const bloqueSubs = subs.length ? `
     <div class="side-bloque">
-      <div class="side-titulo">Dentro de ${escapeHtml(cat.label)}</div>
-      ${subs.map(s=>casillaHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`)).join('')}
+      ${tituloBloqueHtml(cat.key==='accesorios' ? 'Para qué instrumento' : 'Tipo de instrumento',
+          state.activeSubs.size ? 'limpiarSubs()' : '')}
+      ${subs.map(s=>filaFiltroHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`,
+          cuentaFiltro('subs', p => cat.key==='accesorios' ? s.matches.includes(p.sub) : p.sub===s.key))).join('')}
     </div>` : '';
 
   /* El orden depende de dónde esté el visitante. Dentro de una categoría lo
@@ -4630,9 +4687,20 @@ function clearFilters(){
   trasFiltrar();
 }
 
+/* Quitar dentro de un bloque vacía SOLO ese bloque. El de subcategorías pasa
+   por trasFiltrar porque la subcategoría está en la URL
+   (/categoria/cuerda/ukeleles) y hay que devolverla a /categoria/cuerda; el
+   precio no vive en la URL y le basta con repintar. */
+function limpiarSubs(){ state.activeSubs = new Set(); trasFiltrar(); }
+function limpiarPrecio(){
+  state.rangosPrecio = new Set();
+  state.soloStock = false;
+  render();
+}
+
 /* ---------------- filtros del panel lateral (escritorio) ----------------
    Repintan sin subir al principio de la lista: el panel está a la vista y
-   quien marca una casilla quiere ver cómo cambia la grilla de al lado, no
+   quien pone un filtro quiere ver cómo cambia la grilla de al lado, no
    perder el sitio. */
 function toggleRangoPrecio(key){
   if(state.rangosPrecio.has(key)) state.rangosPrecio.delete(key);
