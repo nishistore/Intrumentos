@@ -2191,6 +2191,12 @@ footer.site .footer-bottom{
 .nav-res-stock{font:400 11px/1 var(--app-sans);color:var(--app-green-ink);}
 .nav-res-stock.agotado{color:var(--app-muted-3);}
 .nav-res-chevron{font:600 15px/1 var(--app-sans);color:#C0B6A8;flex:none;}
+.nav-res-todos{
+  display:block;width:100%;padding:12px 10px;
+  border:none;border-top:1px solid var(--app-line);background:none;
+  font:600 12.5px/1 var(--app-sans);color:var(--app-ink);text-align:center;
+}
+.nav-res-todos:hover{background:var(--app-sunken);}
 .nav-buscar-vacio{padding:16px 10px;text-align:center;}
 .nav-buscar-vacio .nbv-titulo{font:700 15px/1.3 var(--app-sans);letter-spacing:-.015em;color:var(--app-ink);}
 .nav-buscar-vacio p{margin-top:6px;font:400 12px/1.45 var(--app-sans);color:var(--app-muted);}
@@ -3785,16 +3791,49 @@ function sinTildes(str){
 
    De regalo, esto arregla búsquedas que antes no devolvían NADA aunque el
    producto estuviera en tienda: "capotraste", "metrónomo" y "caña". */
+/* Qué tan de lleno es el producto lo que se busca. Cuanto más bajo, más
+   arriba sale.
+
+   Existe porque "guitarra" devolvía veinte cosas en el orden del catálogo, y
+   ahí arriba caían la cejilla, dos juegos de cuerdas y un sistema inalámbrico
+   "para Guitarra": de las cinco filas del desplegable, una sola era una
+   guitarra. Un accesorio se llama "para X" y el instrumento ES X, y eso es
+   justo lo que se mide aquí. */
+function relevanciaBusqueda(p, t){
+  const cat = CATEGORIES.find(c=>c.key===p.cat);
+  const sub = cat && cat.subs.find(s=>s.key===p.sub);
+  /* 0 — ES eso: su subcategoría o su categoría se llama así. */
+  if((sub && sinTildes(sub.label).includes(t)) || (cat && sinTildes(cat.label).includes(t))) return 0;
+  const nombre = sinTildes(p.name);
+  const i = nombre.indexOf(t);
+  /* 1 — el nombre empieza por ahí ("Guitarra Acustica Vozzex"). */
+  if(i === 0) return 1;
+  /* 2 — lo lleva como palabra suelta, más adelante. Se mira el carácter de
+     antes en vez de usar una expresión regular porque el término lo escribe
+     el cliente y puede traer barras, puntos o paréntesis. */
+  if(i > 0 && /[^a-z0-9]/.test(nombre[i-1])) return 2;
+  /* 3 — solo aparece dentro de otra palabra. */
+  return 3;
+}
+
 function buscarProductos(q){
   const t = sinTildes(q).trim();
   if(!t) return [];
-  return PRODUCTS.filter(p=>{
+  const encontrados = PRODUCTS.filter(p=>{
     const cat = CATEGORIES.find(c=>c.key===p.cat);
     const sub = cat && cat.subs.find(s=>s.key===p.sub);
     return sinTildes(p.name).includes(t)
         || (cat && sinTildes(cat.label).includes(t))
         || (sub && sinTildes(sub.label).includes(t));
   });
+  /* A igual relevancia, lo que hay en tienda antes que lo agotado, y a igual
+     stock se respeta el orden del catálogo. */
+  return encontrados
+    .map((p, orden) => ({ p, orden, r: relevanciaBusqueda(p, t) }))
+    .sort((a, b) => a.r - b.r
+                 || ((b.p.stock||0) > 0) - ((a.p.stock||0) > 0)
+                 || a.orden - b.orden)
+    .map(x => x.p);
 }
 
 /* Rangos de precio del handoff. Los conteos salen del catálogo en cada
@@ -6818,7 +6857,7 @@ function esEscritorio(){
 
    Vive fuera de `state` a propósito: es estado de un widget, no del sitio.
    Nada de lo que hay aquí cambia la URL ni lo que se pinta en #app. */
-const NAV_MAX_RESULTADOS = 5;
+const NAV_MAX_RESULTADOS = 8;
 let navQuery = '';
 let navMarcado = -1;   // fila resaltada con las flechas; -1 = ninguna
 
@@ -6870,7 +6909,12 @@ function navBuscarMenuHtml(){
   const conteo = todos.length === 1
     ? '1 resultado'
     : `${todos.length} resultados${todos.length > vistos.length ? ` · se enseñan ${vistos.length}` : ''}`;
-  return `<div class="nav-res-conteo">${conteo}</div>${vistos.map(navFilaHtml).join('')}`;
+  /* Cuando quedan fuera, la salida está aquí: antes el desplegable decía
+     "se enseñan 5" y no daba forma de ver los otros quince. */
+  const verTodos = todos.length > vistos.length
+    ? `<button type="button" class="nav-res-todos" onclick="verTodosLosResultados()">Ver los ${todos.length} resultados ›</button>`
+    : '';
+  return `<div class="nav-res-conteo">${conteo}</div>${vistos.map(navFilaHtml).join('')}${verTodos}`;
 }
 
 /* Solo se repinta el desplegable: repintar la cabecera entera le quitaría el
@@ -6904,6 +6948,15 @@ function cerrarNavBuscar(){
   const input = document.getElementById('navBuscarInput');
   if(input) input.value = '';
   pintarNavBuscar();
+}
+
+/* Pasa lo escrito a la pantalla de búsqueda, que sí los lista todos. */
+function verTodosLosResultados(){
+  const q = navQuery.trim();
+  cerrarNavBuscar();
+  state.searchQuery = q;
+  state.searchRango = null;
+  goSearch();
 }
 
 function abrirDesdeNavBuscar(id){
