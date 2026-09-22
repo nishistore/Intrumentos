@@ -3809,6 +3809,42 @@ function sinTildes(str){
 
    De regalo, esto arregla búsquedas que antes no devolvían NADA aunque el
    producto estuviera en tienda: "capotraste", "metrónomo" y "caña". */
+/* Palabras de unión. Se ignoran mientras quede algo más escrito, porque el
+   cliente escribe "ukelele de concierto" y el producto puede llamarse
+   "Ukelele Concierto" —o al revés— y un "de" de más no puede dejar la
+   búsqueda en cero. */
+const PALABRAS_VACIAS = new Set(['de','del','la','el','los','las','un','una','unos','unas','con','para','por','y','o','en','a','al']);
+
+function palabrasDeBusqueda(q){
+  const partes = sinTildes(q).trim().split(/\s+/).filter(Boolean);
+  const utiles = partes.filter(w => !PALABRAS_VACIAS.has(w));
+  /* Si alguien busca solo "para", se busca "para". */
+  return utiles.length ? utiles : partes;
+}
+
+/* Todo el texto por el que se puede llegar a un producto: su nombre, su
+   categoría, su subcategoría y los colores que traen sus fotos. Lo tercero es
+   lo que hace que "cuerda" encuentre las Ernie Ball, cuyo nombre real no
+   lleva esa palabra; lo último, que "guitarra roja" encuentre la que tiene
+   una foto en rojo. */
+function textoBuscable(p){
+  const cat = CATEGORIES.find(c=>c.key===p.cat);
+  const sub = cat && cat.subs.find(s=>s.key===p.sub);
+  return sinTildes([p.name, cat && cat.label, sub && sub.label, ...coloresDeProducto(p)]
+    .filter(Boolean).join(' '));
+}
+
+/* "roja" y "rojo" son el mismo color, y en el catálogo está guardado con una
+   sola de las dos formas. COLOR_WORDS ya conoce las dos. */
+function variantesDePalabra(w){
+  const color = COLOR_WORDS[w];
+  return color ? [w, sinTildes(color)] : [w];
+}
+
+function coincide(texto, w){
+  return variantesDePalabra(w).some(v => texto.includes(v));
+}
+
 /* Qué tan de lleno es el producto lo que se busca. Cuanto más bajo, más
    arriba sale.
 
@@ -3817,37 +3853,42 @@ function sinTildes(str){
    "para Guitarra": de las cinco filas del desplegable, una sola era una
    guitarra. Un accesorio se llama "para X" y el instrumento ES X, y eso es
    justo lo que se mide aquí. */
-function relevanciaBusqueda(p, t){
+function relevanciaBusqueda(p, palabras, frase){
   const cat = CATEGORIES.find(c=>c.key===p.cat);
   const sub = cat && cat.subs.find(s=>s.key===p.sub);
-  /* 0 — ES eso: su subcategoría o su categoría se llama así. */
-  if((sub && sinTildes(sub.label).includes(t)) || (cat && sinTildes(cat.label).includes(t))) return 0;
+  const etiquetas = sinTildes([cat && cat.label, sub && sub.label].filter(Boolean).join(' '));
+  /* 0 — ES eso: alguna de las palabras nombra su categoría o su subcategoría. */
+  if(palabras.some(w => coincide(etiquetas, w))) return 0;
   const nombre = sinTildes(p.name);
-  const i = nombre.indexOf(t);
-  /* 1 — el nombre empieza por ahí ("Guitarra Acustica Vozzex"). */
+  const i = nombre.indexOf(frase);
+  /* 1 — el nombre empieza por lo que se escribió ("Guitarra Acustica Vozzex"). */
   if(i === 0) return 1;
-  /* 2 — lo lleva como palabra suelta, más adelante. Se mira el carácter de
-     antes en vez de usar una expresión regular porque el término lo escribe
-     el cliente y puede traer barras, puntos o paréntesis. */
+  /* 2 — lo lleva entero más adelante, como palabra suelta. Se mira el
+     carácter de antes en vez de usar una expresión regular porque el término
+     lo escribe el cliente y puede traer barras, puntos o paréntesis. */
   if(i > 0 && /[^a-z0-9]/.test(nombre[i-1])) return 2;
-  /* 3 — solo aparece dentro de otra palabra. */
-  return 3;
+  /* 3 — están todas las palabras en el nombre, aunque separadas. */
+  if(palabras.every(w => coincide(nombre, w))) return 3;
+  /* 4 — coinciden, pero repartidas entre el nombre, la categoría y el color. */
+  return 4;
 }
 
+/* Se busca por palabras sueltas y tienen que estar TODAS, no la frase entera
+   de una pieza: escrito así, "ukelele concierto" no encontraba el "Ukelele de
+   Concierto con Funda" —sobraba un "de"— y cualquier búsqueda de dos palabras
+   caía en "Nada con eso" y en el botón de WhatsApp. */
 function buscarProductos(q){
-  const t = sinTildes(q).trim();
-  if(!t) return [];
+  const frase = sinTildes(q).trim();
+  if(!frase) return [];
+  const palabras = palabrasDeBusqueda(q);
   const encontrados = PRODUCTS.filter(p=>{
-    const cat = CATEGORIES.find(c=>c.key===p.cat);
-    const sub = cat && cat.subs.find(s=>s.key===p.sub);
-    return sinTildes(p.name).includes(t)
-        || (cat && sinTildes(cat.label).includes(t))
-        || (sub && sinTildes(sub.label).includes(t));
+    const texto = textoBuscable(p);
+    return palabras.every(w => coincide(texto, w));
   });
   /* A igual relevancia, lo que hay en tienda antes que lo agotado, y a igual
      stock se respeta el orden del catálogo. */
   return encontrados
-    .map((p, orden) => ({ p, orden, r: relevanciaBusqueda(p, t) }))
+    .map((p, orden) => ({ p, orden, r: relevanciaBusqueda(p, palabras, frase) }))
     .sort((a, b) => a.r - b.r
                  || ((b.p.stock||0) > 0) - ((a.p.stock||0) > 0)
                  || a.orden - b.orden)
