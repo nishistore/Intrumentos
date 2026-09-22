@@ -4535,7 +4535,7 @@ function heroVentasHtml(){
 function franjaConfianzaHtml(){
   const celdas = [
     ['Envío gratis', 'en compras desde ' + fmt(FREE_SHIPPING_THRESHOLD)],
-    ['Yape, Plin o tarjeta', 'y 5% menos sin pasarela'],
+    ['Yape, Plin o tarjeta', 'paga como te quede mejor'],
     ['Garantía de 6 meses', 'contra defectos de fábrica'],
     ['Recojo en 1 hora', 'Av. Los Héroes 382, S.J.M.'],
     ['+12 años atendiendo', 'a músicos y colegios de Lima'],
@@ -5777,14 +5777,11 @@ const SHIPPING_FEE = 15;
    Pago, así que la tarjeta sigue cobrándose en línea como hasta ahora y el
    resto cierra por WhatsApp.
 
-   El 5% es para los medios que no pasan por la pasarela, que es donde se va
-   la comisión. "Pago en tienda al recoger" existe solo si eligió recojo: en
+   "Pago en tienda al recoger" existe solo si eligió recojo: en
    el diseño recojo dejó de ser un medio de pago para ser una modalidad de
    entrega, y sin esta fila quien paga en efectivo al recoger se quedaba sin
    sitio donde decirlo.
    ================================================================ */
-const ALT_PAYMENT_DISCOUNT_RATE = 0.05;
-
 /* Fachada de banco: columnas y frontón. Es un dibujo generico a proposito,
    no la marca de ningun banco, porque la transferencia vale para varios. */
 const iconoBanco = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5"/><path d="M5 10v7M9.5 10v7M14.5 10v7M19 10v7"/><path d="M3.5 20h17"/></svg>`;
@@ -5798,11 +5795,11 @@ const iconoBanco = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
    La transferencia no lleva logo de marca a propósito: vale para BCP y para
    Interbank, así que enseña un dibujo genérico de banco. */
 const MEDIOS_PAGO = [
-  { key:'yape',     label:'Yape',                       nota:'Te enviamos el número por WhatsApp',                 descuento:true,  logo:'/pagos/yape.png' },
-  { key:'plin',     label:'Plin',                       nota:'Confirmación inmediata',                             descuento:true,  logo:'/pagos/plin.png' },
-  { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', descuento:false, logo:'/pagos/mercadopago.png' },
-  { key:'transfer', label:'Transferencia bancaria',      nota:'BCP o Interbank',                                    descuento:true,  marcador:{fondo:'#EDEDEA', tinta:'#57514A', icono:'banco'} },
-  { key:'tienda',   label:'Pago en tienda al recoger',   nota:'Pagas en efectivo o por Yape cuando lo recojas',     descuento:true, soloRecojo:true },
+  { key:'yape',     label:'Yape',                       nota:'Te enviamos el número por WhatsApp',                 logo:'/pagos/yape.png' },
+  { key:'plin',     label:'Plin',                       nota:'Confirmación inmediata',                             logo:'/pagos/plin.png' },
+  { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', logo:'/pagos/mercadopago.png' },
+  { key:'transfer', label:'Transferencia bancaria',      nota:'BCP o Interbank',                                    marcador:{fondo:'#EDEDEA', tinta:'#57514A', icono:'banco'} },
+  { key:'tienda',   label:'Pago en tienda al recoger',   nota:'Pagas en efectivo o por Yape cuando lo recojas',     soloRecojo:true },
 ];
 
 /* La caja del logo. Con archivo pinta la imagen; sin archivo, el marcador de
@@ -5821,8 +5818,7 @@ function logoPagoHtml(m){
   return '';
 }
 
-/* Arranca en Yape: no cobra comisión de pasarela y el cliente ve de entrada
-   el precio con el 5% menos. */
+/* Arranca en Yape, que es como paga la mayoría de la gente en Lima. */
 const PAGO_INICIAL = 'yape';
 
 function medioPago(key){
@@ -5849,17 +5845,10 @@ function shippingCost(subtotal, entrega){
   return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 }
 
-function altPaymentDiscount(subtotal, pagoKey){
-  return medioPago(pagoKey).descuento
-    ? Math.round(subtotal * ALT_PAYMENT_DISCOUNT_RATE)
-    : 0;
-}
-
 function computeOrderTotals(pagoKey, entrega){
   const subtotal = cartSubtotal();
   const ship = shippingCost(subtotal, entrega);
-  const discount = altPaymentDiscount(subtotal, pagoKey || state.pago);
-  return { subtotal, ship, discount, total: subtotal - discount + ship };
+  return { subtotal, ship, total: subtotal + ship };
 }
 
 function cartTotal(){
@@ -5935,13 +5924,11 @@ function filaRadio(sel, titulo, nota, coste, accion, logo){
 }
 
 function resumenTotalesHtml(etiquetaTotal){
-  const { subtotal, ship, discount, total } = computeOrderTotals();
+  const { subtotal, ship, total } = computeOrderTotals();
   const unidades = state.cart.reduce((s,c)=>s+c.qty, 0);
-  const medio = medioPago(state.pago);
   return `
   <div class="resumen">
     <div class="resumen-fila"><span>${unidades} producto${unidades!==1?'s':''}</span><span>${fmt(subtotal)}</span></div>
-    ${discount > 0 ? `<div class="resumen-fila descuento"><span>Descuento por ${escapeHtml(medio.label)} (5%)</span><span>−${fmt(discount)}</span></div>` : ''}
     <div class="resumen-fila">
       <span>${state.entrega==='tienda' ? 'Recojo en tienda' : 'Envío'}</span>
       <span>${ship > 0 ? fmt(ship) : 'Gratis'}</span>
@@ -6141,7 +6128,7 @@ function renderCheckout(){
             <div class="opciones rejilla">
               ${mediosDisponibles().map(m => filaRadio(
                   state.pago===m.key, m.label, m.nota,
-                  m.descuento ? '−5%' : '', `setPago('${m.key}')`, logoPagoHtml(m))).join('')}
+                  '', `setPago('${m.key}')`, logoPagoHtml(m))).join('')}
             </div>
           </div>
 
@@ -6176,7 +6163,7 @@ function renderCheckout(){
     <div class="opciones">
       ${mediosDisponibles().map(m => filaRadio(
           state.pago===m.key, m.label, m.nota,
-          m.descuento ? '−5%' : '', `setPago('${m.key}')`, logoPagoHtml(m))).join('')}
+          '', `setPago('${m.key}')`, logoPagoHtml(m))).join('')}
     </div>
 
     <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)">
@@ -6330,7 +6317,7 @@ async function submitOrder(e){
     return;
   }
 
-  const { subtotal, ship, discount, total } = computeOrderTotals();
+  const { subtotal, ship, total } = computeOrderTotals();
   const lineas = state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
     if(!p) return '';
@@ -6348,7 +6335,7 @@ async function submitOrder(e){
 ${lineas}
 
 Subtotal: ${fmt(subtotal)}
-${discount>0 ? `Descuento por ${medio.label} (5%): -${fmt(discount)}\n` : ''}${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fmt(ship):'Gratis'}`}
+${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fmt(ship):'Gratis'}`}
 Total: ${fmt(total)}
 
 Entrega: ${entregaTexto}
@@ -6409,7 +6396,6 @@ async function payWithMercadoPago(comprador){
   if(ship>0){
     items.push({ title: 'Costo de envío', quantity: 1, unit_price: ship });
   }
-  /* La tarjeta no lleva el 5%, así que no hay descuento que restar aquí. */
   const entrega = state.entrega === 'tienda' ? 'Recojo en tienda' : 'Envío a domicilio';
 
   try{
