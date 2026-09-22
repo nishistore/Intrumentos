@@ -222,6 +222,18 @@ body{
   overflow-x:hidden;
   width:100%;
 }
+/* Ese overflow-x:hidden recorta lo que se sale de lado, pero de paso
+   convierte a <body> en su propio contenedor de scroll, y entonces
+   position:sticky deja de enganchar: por eso la cabecera se iba con el dedo
+   aunque fuera sticky. `clip` recorta igual SIN crear contenedor.
+
+   Va detrás de un @supports porque en los Safari de los iPhone sin
+   actualizar no existe: ahí manda el `hidden` de arriba, la cabecera sube
+   con la página como hasta ahora y no se rompe nada. En escritorio esto ya
+   se hacía a pelo dentro del @media de 900px. */
+@supports (overflow-x: clip){
+  html,body{overflow-x:clip;}
+}
 img,svg{display:block;}
 a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:pointer;}
@@ -539,6 +551,27 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   margin-bottom:4px;
 }
 .app-head-fila{display:flex;align-items:center;gap:10px;}
+/* Ahora que sticky engancha de verdad en el teléfono, hay que decir quién se
+   queda arriba: solo la de la ficha, que es una barra de una fila. Las de
+   categoría llevan debajo los chips de filtro y las de pedido un titular
+   alto; pegadas se comerían media pantalla. */
+@media (max-width:899px){
+  .app-head:not(.ficha-head){position:static;}
+}
+/* Y para los iPhone que no llegan a overflow:clip (Safari 15 y anteriores,
+   que son muchos de los que entran a la tienda), la misma cabecera a pelo con
+   position:fixed, que funciona en todos. Sale del flujo, así que hay que
+   reservarle el hueco: lo mide el JS en --ficha-head-real igual que hace con
+   la barra de compra. El valor de reserva es el alto real con 14px arriba,
+   por si se pinta antes de que el JS mida. */
+@media (max-width:899px){
+  @supports not (overflow-x: clip){
+    .ficha-head{position:fixed;top:0;left:0;right:0;}
+    .app-shell.ficha{
+      padding-top:var(--ficha-head-real, calc(69px + env(safe-area-inset-top, 0px)));
+    }
+  }
+}
 .app-head-logo{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;}
 .app-head-texto{flex:1;min-width:0;}
 .app-head-nombre{
@@ -6980,6 +7013,10 @@ function render(){
      puedan dejarle sitio y no queden por debajo. */
   const barraFicha = document.querySelector('.ficha-barra');
   if(barraFicha) document.documentElement.style.setProperty('--ficha-barra-real', barraFicha.offsetHeight + 'px');
+  /* Y el de la cabecera de la ficha, que en los Safari sin overflow:clip va
+     fija y necesita que el contenido le deje su hueco exacto. */
+  const cabFicha = document.querySelector('.ficha-head');
+  if(cabFicha) document.documentElement.style.setProperty('--ficha-head-real', cabFicha.offsetHeight + 'px');
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
