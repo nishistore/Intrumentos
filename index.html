@@ -3156,9 +3156,9 @@ function rutaDeCatalogo(){
   if(!cat) return '/tienda';
   if(state.activeSubs.size===1){
     const sub = findSubByKey(cat, [...state.activeSubs][0]);
-    if(sub) return `/categoria/${cat.key}/${subSlug(sub)}`;
+    if(sub) return hrefSubcategoria(cat.key, sub);
   }
-  return `/categoria/${cat.key}`;
+  return hrefCategoria(cat.key);
 }
 
 /* ======================================================================
@@ -3483,10 +3483,10 @@ function setBreadcrumbSchema(trail){
 }
 
 function productSchema(p){
-  const productPath = `/producto/${p.id}-${slugify(p.name)}`;
+  const productPath = hrefProducto(p);
   const cat = CATEGORIES.find(c=>c.key===p.cat);
   const trail = [{name:'Inicio', path:'/'}];
-  if(cat) trail.push({name:cat.label, path:`/categoria/${cat.key}`});
+  if(cat) trail.push({name:cat.label, path:hrefCategoria(cat.key)});
   trail.push({name:p.name, path:productPath});
   return {
     '@context': 'https://schema.org',
@@ -3520,7 +3520,7 @@ function currentViewPath(){
   if(state.offersOnly) return '/ofertas';
   if(state.activeCat){
     const c = CATEGORIES.find(x=>x.key===state.activeCat);
-    if(c) return `/categoria/${c.key}`;
+    if(c) return hrefCategoria(c.key);
   }
   return '/tienda';
 }
@@ -3549,12 +3549,12 @@ function applyCurrentViewMeta(){
           const conStock = productosDeCategoria(c.key)
             .filter(x => subMatchesActiveFilter(x.sub) && (x.stock||0) > 0);
           const desdeSub = conStock.length ? Math.min(...conStock.map(x=>x.price)) : 0;
-          const rutaSub = `/categoria/${c.key}/${subSlug(sub)}`;
+          const rutaSub = hrefSubcategoria(c.key, sub);
           setPageMeta(`${sub.label} en Lima | Chipao Music`,
             `${sub.label} en Lima${desdeSub ? `, desde ${fmt(desdeSub)}` : ''}. ${c.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`);
           setBreadcrumbSchema([
             {name:'Inicio',path:'/'},
-            {name:c.label,path:`/categoria/${c.key}`},
+            {name:c.label,path:hrefCategoria(c.key)},
             {name:sub.label,path:rutaSub},
           ]);
           return;
@@ -3572,7 +3572,7 @@ function applyCurrentViewMeta(){
       const desde = vendibles.length ? Math.min(...vendibles.map(x=>x.price)) : 0;
       setPageMeta(`${c.seo || c.label} en Lima | Chipao Music`,
         desde ? `Desde ${fmt(desde)}. ${desc}` : desc);
-      setBreadcrumbSchema([{name:'Inicio',path:'/'},{name:c.label,path:`/categoria/${c.key}`}]);
+      setBreadcrumbSchema([{name:'Inicio',path:'/'},{name:c.label,path:hrefCategoria(c.key)}]);
       return;
     }
   }
@@ -3637,7 +3637,7 @@ function routeFromPath(push){
    ====================================================================== */
 function buildNavLists(){
   document.getElementById('footerCats').innerHTML = CATEGORIES.map(c=>
-    `<a class="link" href="/categoria/${c.key}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
+    `<a class="link" href="${hrefCategoria(c.key)}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
   ).join('');
   buildBottomNav();
 }
@@ -4060,7 +4060,7 @@ function sugerenciasDeBusqueda(){
 
 /* Fila de resultado: 62px de alto, como pide el handoff. */
 function filaResultado(p){
-  const href = `/producto/${p.id}-${slugify(p.name)}`;
+  const href = hrefProducto(p);
   const foto = (p.images || [])[0];
   const stock = p.stock || 0;
   return `
@@ -4281,7 +4281,7 @@ function puntosColorHtml(p){
 }
 
 function appProductCard(p, altoFoto, conAgregar){
-  const href = `/producto/${p.id}-${slugify(p.name)}`;
+  const href = hrefProducto(p);
   const foto = (p.images || [])[0];
   const stock = p.stock || 0;
   const puntos = puntosColorHtml(p);
@@ -4390,7 +4390,25 @@ function topDescuentos(n){
     .slice(0, n);
 }
 
-function hrefProducto(x){ return `/producto/${x.id}-${slugify(x.name)}`; }
+/* Las rutas se arman sumando trozos y NO con una plantilla, aunque con
+   plantilla se lea mejor.
+
+   El motivo es de SEO: este sitio lleva su JavaScript dentro del HTML, y
+   Google se lee ese script buscando enlaces. Una plantilla como
+   "/producto/" + "${x.id}-${slugify(x.name)}" escrita de una pieza tiene
+   forma de URL completa, así que la copia tal cual y la intenta rastrear:
+   en Search Console aparecieron rastreadas rutas de ficha con la plantilla
+   sin ejecutar dentro (la de p.id y una vieja de destacado.id), que dan 404.
+   Ni siquiera se pueden escribir de ejemplo en este comentario: tendrian la
+   misma forma y Google las copiaria igual.
+
+   Partida en trozos, en el código no queda ninguna cadena con pinta de
+   dirección, y lo único rastreable es el prefijo /producto/, que es una ruta
+   de verdad. Si vuelves a escribir una ruta entera entre comillas, el error
+   vuelve. */
+function hrefProducto(x){ return '/producto/' + x.id + '-' + slugify(x.name); }
+function hrefCategoria(key){ return '/categoria/' + key; }
+function hrefSubcategoria(key, sub){ return '/categoria/' + key + '/' + subSlug(sub); }
 function fotoDe(x){ return (x.images||[])[0] || ''; }
 function waProducto(x){ return waHref(`Hola, me interesa ${x.name} (${fmt(x.price)}). ¿Tienen stock?`); }
 
@@ -4574,7 +4592,7 @@ function recomendadosHtml(p){
   <section class="reco">
     <div class="reco-head">
       <h2>${escapeHtml(recoTituloHtml(p, lista))}</h2>
-      ${cat ? `<a class="enlace-sub" href="/categoria/${cat.key}"
+      ${cat ? `<a class="enlace-sub" href="${hrefCategoria(cat.key)}"
            onclick="goShop('${cat.key}');return false;">Ver todo en ${escapeHtml(cat.label)} ›</a>` : ''}
     </div>
     <div class="reco-grid">${lista.map(tarjetaVentaHtml).join('')}</div>
@@ -4835,7 +4853,7 @@ function chipsFiltroHtml(){
    "Ver todo ›" del resto del sitio, para que se note que se puede tocar. */
 function fichaCategoriaHtml(cat){
   if(!cat) return '<div class="eyebrow-terracota">Instrumentos</div>';
-  return `<a class="eyebrow-terracota" href="/categoria/${cat.key}"
+  return `<a class="eyebrow-terracota" href="${hrefCategoria(cat.key)}"
              onclick="goShop('${cat.key}');return false;">${escapeHtml(cat.label)} ›</a>`;
 }
 
@@ -4874,7 +4892,7 @@ function sidebarCategoriaHtml(){
   const categorias = CATEGORIES.map(c=>{
     const n = productosDeCategoria(c.key).length;
     return `
-      <a class="side-cat${state.activeCat===c.key?' activa':''}" href="/categoria/${c.key}"
+      <a class="side-cat${state.activeCat===c.key?' activa':''}" href="${hrefCategoria(c.key)}"
          onclick="goShop('${c.key}');return false;">
         <span>${escapeHtml(c.label)}</span><i>${n || '—'}</i>
       </a>`;
@@ -5151,7 +5169,7 @@ function openProductDetail(id, push){
   document.getElementById('modalOverlay').classList.remove('show');
   pdState = { productId: id, activeIndex: 0, qty: 1 };
   state.view = 'producto';
-  navigateTo(`/producto/${id}-${slugify(p.name)}`, push);
+  navigateTo(hrefProducto(p), push);
   render();
   if(push !== false) window.scrollTo({top:0});
   const priceLine = `S/ ${p.price}${p.old ? ` (antes S/ ${p.old})` : ''}`;
@@ -5448,7 +5466,7 @@ function renderProductDetail(){
     <div class="app-shell ficha-esc">
       <nav class="migas" aria-label="Ruta">
         <a href="/" onclick="goHome();return false;">Inicio</a><span>·</span>
-        ${cat ? `<a href="/categoria/${cat.key}" onclick="goShop('${cat.key}');return false;">${escapeHtml(cat.label)}</a><span>·</span>` : ''}
+        ${cat ? `<a href="${hrefCategoria(cat.key)}" onclick="goShop('${cat.key}');return false;">${escapeHtml(cat.label)}</a><span>·</span>` : ''}
         <b>${escapeHtml(p.name)}</b>
       </nav>
 
@@ -7120,7 +7138,7 @@ function navFilaHtml(p, i){
   const stock = p.stock || 0;
   return `
   <a class="nav-res${i===navMarcado?' marcado':''}" data-i="${i}"
-     href="/producto/${p.id}-${slugify(p.name)}"
+     href="${hrefProducto(p)}"
      onclick="abrirDesdeNavBuscar(${p.id});return false;">
     <span class="nav-res-thumb">
       ${foto
@@ -7319,7 +7337,7 @@ function renderNavEscritorio(){
     <nav class="nav-esc-cats" aria-label="Categorías">
       ${CATEGORIES.map(c=>`
         <a class="${state.view==='shop' && state.activeCat===c.key ? 'activo':''}"
-           href="/categoria/${c.key}"
+           href="${hrefCategoria(c.key)}"
            onclick="cerrarNavBuscar();goShop('${c.key}');return false;">${escapeHtml(c.label)}</a>`).join('')}
       <a class="nav-ofertas" href="/ofertas"
          onclick="cerrarNavBuscar();goOffers();return false;">Ofertas</a>
@@ -7474,7 +7492,7 @@ function renderCabeceraMovil(){
                   colegio:'Colegio', accesorios:'Accesorios'};
   const chipsCat = CATEGORIES
     .filter(c => productosDeCategoria(c.key).length)
-    .map(c => `<a class="cab-chip" href="/categoria/${c.key}"
+    .map(c => `<a class="cab-chip" href="${hrefCategoria(c.key)}"
         onclick="goShop('${c.key}');return false;">${escapeHtml(cortos[c.key] || c.label)}</a>`)
     .join('');
 
