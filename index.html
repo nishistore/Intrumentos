@@ -1808,6 +1808,21 @@ footer.site .footer-bottom{
 }
 .resumen-cifra{font:700 22px/1 var(--app-sans);color:var(--app-ink);}
 
+/* Con productos dentro, el carrito esconde la barra de pestañas (ver
+   render()), así que en el teléfono este enlace era la única forma de volver
+   al catálogo sin deshacer el camino con el botón de atrás. Discreto a
+   propósito: aquí el que manda es el CTA. */
+.seguir-catalogo{
+  display:block;padding:18px;text-align:center;
+  border:1px dashed rgba(23,20,15,.2);border-radius:var(--app-r-card);
+  font:600 13px/1 var(--app-sans);color:var(--app-muted);text-decoration:none;
+}
+.seguir-catalogo:hover{border-color:var(--app-ink);color:var(--app-ink);}
+.seguir-catalogo:active{opacity:.7;}
+/* En escritorio cuelga de la columna izquierda, que ya reparte su propio
+   espacio; en el teléfono va suelto entre las líneas y la entrega. */
+.seguir-catalogo.movil{margin-top:12px;padding:15px;}
+
 /* ---------------- carrito vacío ---------------- */
 .carrito-vacio{margin-top:56px;text-align:center;}
 .vacio-cuadro{
@@ -2567,13 +2582,6 @@ footer.site .footer-bottom{
     font:600 12px/1 var(--app-sans);color:var(--app-muted-3);
   }
   .linea-quitar:hover{color:var(--app-ink);text-decoration:underline;}
-  .seguir-catalogo{
-    display:block;padding:18px;text-align:center;
-    border:1px dashed rgba(23,20,15,.2);border-radius:var(--app-r-card);
-    font:600 13px/1 var(--app-sans);color:var(--app-muted);text-decoration:none;
-  }
-  .seguir-catalogo:hover{border-color:var(--app-ink);color:var(--app-ink);}
-
   /* medios de pago en rejilla de dos, como el handoff */
   .opciones.rejilla{
     display:grid;grid-template-columns:1fr 1fr;gap:10px;
@@ -5558,6 +5566,7 @@ function renderCarrito(){
   <div class="app-shell con-barra">
     ${cabeceraPedido('Tu carrito', 'goHome()')}
     <div class="lineas">${lineas}</div>
+    <a class="seguir-catalogo movil" href="/tienda" onclick="goShop(null);return false;">+ Seguir viendo el catálogo</a>
 
     ${entregaHtml}
 
