@@ -883,6 +883,11 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   font:500 10.5px/1 var(--app-mono2);letter-spacing:.12em;
   text-transform:uppercase;color:var(--app-green-ink);
 }
+/* El titulo es enlace al producto, igual que la foto y que el titulo de las
+   dos tarjetas de al lado: era lo unico del gancho que no llevaba a ningun
+   sitio al tocarlo. El <a> no debe cambiar nada de como se ve. */
+.hv-titulo a{color:inherit;font:inherit;letter-spacing:inherit;text-decoration:none;}
+.hv-titulo a:active{opacity:.7;}
 .hv-titulo{
   margin-top:6px;
   /* El handoff pone 26px contando con un nombre corto tipo "Guitarra
@@ -4234,7 +4239,7 @@ function heroVentasHtml(){
       </a>
       <div class="hv-detalle">
         <span class="hv-eyebrow">${escapeHtml(catLabel(x))}</span>
-        <h1 class="hv-titulo">${escapeHtml(x.name)}</h1>
+        <h1 class="hv-titulo"><a href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">${escapeHtml(x.name)}</a></h1>
         <div class="hv-precios">
           <span class="hv-precio">${fmt(x.price)}</span>
           ${enOferta(x) ? `<s class="hv-antes">${fmt(x.old)}</s>` : ''}
