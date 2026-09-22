@@ -1439,6 +1439,20 @@ a.eyebrow-terracota:active{opacity:.6;}
 .chip.limpiar{border-style:dashed;color:var(--app-muted);}
 
 /* ---------------- estados vacíos ---------------- */
+/* Aviso de producto retirado. Va en el amarillo de los avisos, no en el rojo
+   de los errores: no ha fallado nada, solo se le fue de las manos al cliente. */
+.aviso-retirado{
+  margin:14px 0 4px;padding:13px 15px;
+  background:#FFF6E8;border:1px solid rgba(214,161,60,.45);
+  border-radius:var(--app-r-card);
+  display:flex;flex-direction:column;gap:5px;
+}
+.aviso-retirado b{font:700 13.5px/1.35 var(--app-sans);color:var(--app-ink);}
+.aviso-retirado span{font:400 12.5px/1.5 var(--app-sans);color:var(--app-ink-70);}
+.aviso-retirado a{
+  margin-top:3px;font:600 12.5px/1 var(--app-sans);color:var(--app-green-ink);
+}
+
 .catalogo-en-camino{
   margin-top:40px;
   padding:22px;
@@ -3591,6 +3605,8 @@ function routeFromPath(push){
       openProductDetail(id, push);
       return true;
     }
+    /* El id es válido pero ya no está en el catálogo: lo retiraste. */
+    avisoProductoRetirado = true;
   }
   document.getElementById('modalOverlay').classList.remove('show');
 
@@ -3626,6 +3642,12 @@ function routeFromPath(push){
   goShop(null, null, push);
   return false;
 }
+
+/* Quien entra a la ficha de un producto retirado acababa en el catálogo
+   entero sin que nadie le dijera por qué: parece que la tienda le ignoró la
+   búsqueda. Se levanta la bandera al no encontrar la ficha y el catálogo la
+   baja en cuanto la enseña una vez. */
+let avisoProductoRetirado = false;
 
 /* ======================================================================
    NAVEGACIÓN
@@ -5011,6 +5033,17 @@ function renderShop(){
   const intro = cat ? (subUnico ? '' : cat.intro) : (state.offersOnly && !state.search ? INTRO_OFERTAS : '');
   const introHtml = intro ? `<p class="cat-intro">${escapeHtml(intro)}</p>` : '';
 
+  /* Se consume al pintarlo: al filtrar o al cambiar de categoría ya no tiene
+     sentido seguir avisando de algo que pasó dos pantallas atrás. */
+  const avisoHtml = avisoProductoRetirado ? `
+    <div class="aviso-retirado">
+      <b>Ese producto ya no está en el catálogo.</b>
+      <span>Lo retiramos de la tienda. Esto es todo lo que sí tenemos ahora; si buscabas algo puntual, pregúntanos por WhatsApp.</span>
+      <a target="_blank" rel="noopener" href="${waHref('Hola, entré a un producto que ya no está en la web. ¿Me ayudan a encontrar algo parecido?')}"
+         onclick="trackAdsConversion('whatsapp')">Preguntar por WhatsApp ›</a>
+    </div>` : '';
+  avisoProductoRetirado = false;
+
   const sinCatalogo = Boolean(state.activeCat) && !productosDeCategoria(state.activeCat).length;
 
   let cuerpo;
@@ -5048,6 +5081,7 @@ function renderShop(){
         <div class="cat-head-texto">
           <h1 class="cat-titulo h-serif">${escapeHtml(titulo)}</h1>
           <div class="cat-conteo">${list.length} producto${list.length!==1?'s':''}${subtitulo?' · '+escapeHtml(subtitulo):''}</div>
+          ${avisoHtml}
           ${introHtml}
         </div>
         ${sinCatalogo ? '' : chipsOrdenHtml()}
@@ -5072,6 +5106,7 @@ function renderShop(){
       </div>
       ${sinCatalogo ? '' : chipsFiltroHtml()}
     </header>
+    ${avisoHtml}
     ${introHtml}
     ${cuerpo}
   </div>`;

@@ -406,6 +406,21 @@ function productMeta(p) {
   };
 }
 
+/* Productos retirados que Google sigue visitando, con el sitio más parecido
+   que sí existe. Un 301 se lleva a quien llega desde Google o desde un enlace
+   viejo de WhatsApp a algo que puede comprar, en vez de a un 404, y le pasa a
+   esa página el crédito que tuviera la vieja.
+
+   Van a la categoría y no a un producto suelto: un teclado concreto puede
+   agotarse mañana y volveríamos a tener el mismo problema, y además así el
+   visitante compara. Solo se aplican cuando el id NO está en el catálogo, así
+   que si algún día se vuelve a dar de alta ese producto, el redirect se
+   aparta solo. */
+const PRODUCTOS_RETIRADOS = {
+  '14': '/categoria/teclados',          // órgano Casio CT-S200
+  '43': '/categoria/cuerda/guitarras',  // guitarra acústica Fever
+};
+
 /* <head> de un producto que ya no está en el catálogo. Va con noindex y la
    respuesta sale con estado 404, para que Google entienda que la página se
    retiró en vez de tomarla por una copia de la home. */
@@ -938,6 +953,10 @@ export default {
        pasar por aquí, así que no hay nada legítimo que pueda caer en este
        404. */
     if (!route || route.noEncontrado) {
+      /* Salvo que sea uno de los retirados a mano, que se manda a su sitio. */
+      const retirado = url.pathname.match(/^\/producto\/(\d+)/);
+      const destino = retirado && PRODUCTOS_RETIRADOS[retirado[1]];
+      if (destino) return Response.redirect(SITE_ORIGIN + destino, 301);
       return new Response(salida.body, { status: 404, headers: salida.headers });
     }
     return salida;
