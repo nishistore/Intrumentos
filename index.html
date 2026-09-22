@@ -1559,14 +1559,16 @@ a.eyebrow-terracota:active{opacity:.6;}
 
    Nada de :has(), dvh ni color-mix: hay clientes entrando con Safari 15.
    ====================================================================== */
+/* Con el icono solo, dentro de una foto de fondo blanco, no se veia: hay que
+   decirlo con palabras. Va en pastilla oscura para que despegue del blanco. */
 .lupa-btn{
-  position:absolute;right:var(--app-gutter);bottom:14px;z-index:3;
-  width:38px;height:38px;border-radius:50%;
-  border:1px solid var(--app-line);background:rgba(255,255,255,.94);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--app-ink);
+  position:absolute;right:var(--app-gutter);bottom:12px;z-index:3;
+  display:flex;align-items:center;gap:7px;
+  height:36px;padding:0 13px;border-radius:var(--app-r-pill);
+  border:none;background:rgba(23,20,15,.82);
+  color:#fff;font:600 12.5px/1 var(--app-sans);
 }
-.lupa-btn svg{width:19px;height:19px;stroke:currentColor;stroke-width:2;fill:none;}
+.lupa-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;}
 .lupa-btn:active{opacity:.75;}
 
 #visorZoom{
@@ -2733,6 +2735,9 @@ footer.site .footer-bottom{
     gap:40px;align-items:start;
   }
   .fe-foto{
+    /* La lupa va dentro, posicionada contra esta caja: sin esto se anclaba a
+       la pagina y aparecia flotando a la derecha, fuera de la foto. */
+    position:relative;
     aspect-ratio:1;max-height:520px;
     border-radius:18px;border:1px solid var(--app-line);
     background:var(--app-surface);overflow:hidden;
@@ -5482,8 +5487,8 @@ function cambiarQtyFicha(delta){
    nativo no funciona dentro de una capa fija.
    ====================================================================== */
 function lupaBotonHtml(){
-  return `<button type="button" class="lupa-btn" onclick="abrirVisorFoto()" aria-label="Ver la foto de cerca">
-    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5M11 8v6M8 11h6"/></svg>
+  return `<button type="button" class="lupa-btn" onclick="abrirVisorFoto()">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5M11 8v6M8 11h6"/></svg>Ampliar
   </button>`;
 }
 
