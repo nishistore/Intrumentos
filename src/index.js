@@ -937,6 +937,22 @@ export default {
       bannerActivo(env, ctx),
     ]);
     const route = routeFor(url.pathname, products);
+
+    /* Una ficha responde a CUALQUIER texto después del id: /producto/2-loquesea
+       daba 200 con el contenido de la guitarra. Son URLs duplicadas infinitas
+       del mismo producto, y de ahí salen las que Google rastrea y luego no
+       indexa. La etiqueta canónica ya apuntaba al bueno, pero un 301 es más
+       claro y le ahorra el viaje.
+
+       Importa desde que los nombres se corrigen: al renombrar un producto
+       cambia su slug, así que la dirección vieja sigue viva y compitiendo con
+       la nueva. Aquí se consolidan las dos en una. */
+    if (route && route.product) {
+      const canonico = productPath(route.product);
+      if (url.pathname !== canonico) {
+        return Response.redirect(SITE_ORIGIN + canonico + url.search, 301);
+      }
+    }
     agregaListaDeProductos(route, products);
     const salida = rewrite(response, route, bodyFor(route, products), url.pathname, products, bannerPromo);
 
