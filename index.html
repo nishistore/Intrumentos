@@ -1548,73 +1548,6 @@ a.eyebrow-terracota:active{opacity:.6;}
 }
 .ficha-lupa svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;}
 
-
-/* ======================================================================
-   LUPA — visor de la foto a pantalla completa
-
-   Las fotos vienen del proveedor con el producto a distinto tamaño dentro
-   del encuadre (el ampli Marshall ocupa el 47% de su foto y el genérico el
-   94%), así que en la rejilla unos se ven grandes y otros pequeños. Poder
-   acercar arregla lo que la foto no da.
-
-   Nada de :has(), dvh ni color-mix: hay clientes entrando con Safari 15.
-   ====================================================================== */
-/* Con el icono solo, dentro de una foto de fondo blanco, no se veia: hay que
-   decirlo con palabras. Va en pastilla oscura para que despegue del blanco. */
-.lupa-btn{
-  position:absolute;right:var(--app-gutter);bottom:12px;z-index:3;
-  display:flex;align-items:center;gap:7px;
-  height:36px;padding:0 13px;border-radius:var(--app-r-pill);
-  border:none;background:rgba(23,20,15,.82);
-  color:#fff;font:600 12.5px/1 var(--app-sans);
-}
-.lupa-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;}
-.lupa-btn:active{opacity:.75;}
-
-#visorZoom{
-  position:fixed;top:0;left:0;right:0;bottom:0;z-index:90;
-  /* Opaco del todo: con un 6% de transparencia se traslucian la cabecera
-     blanca y la barra negra del CTA, y parecia un fallo de pintado. */
-  background:#0C0A08;
-  display:none;align-items:center;justify-content:center;
-  overflow:hidden;
-  /* El navegador no se queda con el gesto: lo necesitamos para el pellizco. */
-  touch-action:none;
-  -webkit-user-select:none;user-select:none;
-}
-#visorZoom.abierto{display:flex;}
-#visorZoom img{
-  max-width:100%;max-height:100%;
-  transform-origin:0 0;
-  /* La foto se dibuja sobre blanco: casi todas vienen con fondo blanco y
-     sobre el gris oscuro del visor quedaría un recuadro sucio. */
-  background:#fff;
-  will-change:transform;
-  -webkit-user-drag:none;
-}
-#visorZoom img.suave{transition:transform .18s ease-out;}
-@media (prefers-reduced-motion: reduce){
-  #visorZoom img.suave{transition:none;}
-}
-.visor-cerrar{
-  position:absolute;right:14px;z-index:2;
-  top:max(14px, env(safe-area-inset-top));
-  width:40px;height:40px;border-radius:50%;border:none;
-  background:rgba(255,255,255,.16);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-}
-.visor-cerrar svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;}
-/* La pista va en una pastilla oscura: casi todas las fotos tienen fondo
-   blanco y el texto claro encima desaparecia. */
-.visor-pista{
-  position:absolute;left:50%;transform:translateX(-50%);z-index:2;
-  bottom:max(18px, env(safe-area-inset-bottom));
-  max-width:88%;text-align:center;
-  padding:7px 13px;border-radius:999px;background:rgba(12,10,8,.72);
-  font:500 12px/1.35 var(--app-sans);color:rgba(255,255,255,.92);
-  pointer-events:none;
-}
-
 .ficha-contador{
   position:absolute;left:var(--app-gutter);bottom:14px;
   font:500 10px/1 var(--app-mono);letter-spacing:.04em;color:var(--app-muted-3);
@@ -2735,9 +2668,6 @@ footer.site .footer-bottom{
     gap:40px;align-items:start;
   }
   .fe-foto{
-    /* La lupa va dentro, posicionada contra esta caja: sin esto se anclaba a
-       la pagina y aparecia flotando a la derecha, fuera de la foto. */
-    position:relative;
     aspect-ratio:1;max-height:520px;
     border-radius:18px;border:1px solid var(--app-line);
     background:var(--app-surface);overflow:hidden;
@@ -3287,7 +3217,6 @@ const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
 const ANCHO_MINIATURA = 200;   // miniaturas del carrito, buscador y galeria
 const ANCHO_TARJETA   = 700;   // tarjetas del catalogo y portada
 const ANCHO_GALERIA   = 1200;  // la foto grande de la ficha
-const ANCHO_VISOR     = 1600;  // la lupa: se mira de cerca y 1200 se pixela
 
 function fotoUrl(u, ancho){
   const ruta = (typeof u === 'string' && u.startsWith(R2_PUBLICO))
@@ -5448,13 +5377,6 @@ document.addEventListener('touchend', (e) => {
   const dy = e.changedTouches[0].clientY - g.y;
   /* Tres filtros: que haya recorrido, que sea claramente horizontal -si no,
      robaríamos el scroll de la página- y que no sea un arrastre lento. */
-  /* Un toque limpio sobre la foto la abre de cerca: es lo que todo el mundo
-     intenta primero, antes de buscar la lupa. */
-  if(Math.abs(dx) < 12 && Math.abs(dy) < 12 && Date.now() - g.t < 400){
-    const slide = e.target.closest('.ficha-galeria');
-    if(slide && slide.querySelector('img')) abrirVisorFoto();
-    return;
-  }
   if(Math.abs(dx) < 45) return;
   if(Math.abs(dx) < Math.abs(dy) * 1.6) return;
   if(Date.now() - g.t > 700) return;
@@ -5468,224 +5390,6 @@ function cambiarQtyFicha(delta){
   const tope = stockOf(pdState.productId) || 1;
   pdState.qty = Math.min(Math.max(1, pdState.qty + delta), tope);
   render();
-}
-
-
-/* ======================================================================
-   LUPA — acercar la foto del producto
-
-   Un visor a pantalla completa con pellizco en el teléfono y rueda o doble
-   clic en el escritorio. Existe porque las fotos del proveedor traen el
-   producto a tamaños muy distintos dentro del encuadre y en la tarjeta unos
-   salen diminutos; además, quien compra un instrumento quiere ver el clavijero
-   y el acabado de cerca.
-
-   El visor se crea una sola vez y vive fuera de #app: render() rehace el HTML
-   de la pantalla en cada cambio y se lo llevaría por delante.
-
-   Las cuentas van a mano y no con la lupa del navegador porque el pellizco
-   nativo no funciona dentro de una capa fija.
-   ====================================================================== */
-function lupaBotonHtml(){
-  return `<button type="button" class="lupa-btn" onclick="abrirVisorFoto()">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5M11 8v6M8 11h6"/></svg>Ampliar
-  </button>`;
-}
-
-const VISOR_MAX = 4;
-let visorEstado = { escala: 1, x: 0, y: 0 };
-let visorGesto = null;
-
-function visorEl(){
-  let el = document.getElementById('visorZoom');
-  if(el) return el;
-  el = document.createElement('div');
-  el.id = 'visorZoom';
-  el.setAttribute('role', 'dialog');
-  el.setAttribute('aria-label', 'Foto ampliada');
-  el.innerHTML = `
-    <img alt="">
-    <button type="button" class="visor-cerrar" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-    <p class="visor-pista"></p>`;
-  document.body.appendChild(el);
-  el.querySelector('.visor-cerrar').addEventListener('click', cerrarVisor);
-  /* Tocar el fondo cierra, pero solo sin acercar: con la foto ampliada ese
-     toque es para arrastrarla. */
-  el.addEventListener('click', (e) => {
-    if(e.target === el && visorEstado.escala <= 1.02) cerrarVisor();
-  });
-  prepararGestosVisor(el);
-  return el;
-}
-
-function aplicarVisor(suave){
-  const img = visorEl().querySelector('img');
-  img.classList.toggle('suave', Boolean(suave));
-  img.style.transform = `translate(${visorEstado.x}px, ${visorEstado.y}px) scale(${visorEstado.escala})`;
-}
-
-/* De dónde parte la foto: el visor ya la centra con flex, así que sin tocar
-   nada su sitio es x=0, y=0. El transform solo mueve DESDE ahí. Medirlo mal
-   fue el primer error: centrar con flex y otra vez con transform la mandaba
-   media pantalla abajo. */
-function cajaBaseVisor(){
-  const img = visorEl().querySelector('img');
-  const visor = visorEl().getBoundingClientRect();
-  return {
-    izq: (visor.width - img.clientWidth) / 2,
-    arriba: (visor.height - img.clientHeight) / 2,
-    ancho: img.clientWidth,
-    alto: img.clientHeight,
-    visor
-  };
-}
-
-/* Que la foto no se escape: mientras quepa entera se queda centrada, y en
-   cuanto no cabe se deja arrastrar justo hasta que su borde toca el del
-   visor, sin dejar franja vacía. */
-function encajarVisor(){
-  const b = cajaBaseVisor();
-  if(!b.ancho) return;
-  const anchoReal = b.ancho * visorEstado.escala;
-  const altoReal = b.alto * visorEstado.escala;
-  visorEstado.x = anchoReal <= b.visor.width
-    ? 0
-    : Math.min(-b.izq, Math.max(b.visor.width - b.izq - anchoReal, visorEstado.x));
-  visorEstado.y = altoReal <= b.visor.height
-    ? 0
-    : Math.min(-b.arriba, Math.max(b.visor.height - b.arriba - altoReal, visorEstado.y));
-}
-
-function centrarVisor(){
-  visorEstado = { escala: 1, x: 0, y: 0 };
-  aplicarVisor(false);
-}
-
-/* Acerca o aleja dejando quieto el punto que se tocó: si no, la foto se va
-   de la pantalla en cuanto se acerca a una esquina. */
-function zoomVisor(nuevaEscala, cx, cy, suave){
-  const escala = Math.min(VISOR_MAX, Math.max(1, nuevaEscala));
-  if(escala <= 1.02){ centrarVisor(); return; }
-  const b = cajaBaseVisor();
-  /* Dónde cae el punto tocado dentro de la foto, a tamaño 1. */
-  const dentroX = (cx - b.izq - visorEstado.x) / visorEstado.escala;
-  const dentroY = (cy - b.arriba - visorEstado.y) / visorEstado.escala;
-  visorEstado.x = cx - b.izq - dentroX * escala;
-  visorEstado.y = cy - b.arriba - dentroY * escala;
-  visorEstado.escala = escala;
-  encajarVisor();
-  aplicarVisor(suave);
-}
-
-function prepararGestosVisor(el){
-  const dist = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-  const medio = (t) => ({ x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 });
-
-  el.addEventListener('touchstart', (e) => {
-    if(e.touches.length === 2){
-      visorGesto = { tipo: 'pellizco', d: dist(e.touches), escala: visorEstado.escala, c: medio(e.touches) };
-    }else if(e.touches.length === 1){
-      const t = e.touches[0];
-      visorGesto = { tipo: 'arrastre', x: t.clientX, y: t.clientY, ox: visorEstado.x, oy: visorEstado.y, t: Date.now() };
-    }
-  }, { passive: true });
-
-  el.addEventListener('touchmove', (e) => {
-    if(!visorGesto) return;
-    if(visorGesto.tipo === 'pellizco' && e.touches.length === 2){
-      e.preventDefault();
-      const f = dist(e.touches) / visorGesto.d;
-      zoomVisor(visorGesto.escala * f, visorGesto.c.x, visorGesto.c.y, false);
-    }else if(visorGesto.tipo === 'arrastre' && e.touches.length === 1 && visorEstado.escala > 1.02){
-      e.preventDefault();
-      visorEstado.x = visorGesto.ox + (e.touches[0].clientX - visorGesto.x);
-      visorEstado.y = visorGesto.oy + (e.touches[0].clientY - visorGesto.y);
-      encajarVisor();
-      aplicarVisor(false);
-    }
-  }, { passive: false });
-
-  /* Doble toque: acerca donde se tocó, o vuelve al tamaño normal. */
-  let ultimoToque = 0;
-  el.addEventListener('touchend', (e) => {
-    const g = visorGesto;
-    visorGesto = null;
-    if(!g || g.tipo !== 'arrastre' || !e.changedTouches.length) return;
-    const t = e.changedTouches[0];
-    const quieto = Math.abs(t.clientX - g.x) < 12 && Math.abs(t.clientY - g.y) < 12;
-    if(!quieto) return;
-    const ahora = Date.now();
-    if(ahora - ultimoToque < 320){
-      ultimoToque = 0;
-      zoomVisor(visorEstado.escala > 1.02 ? 1 : 2.5, t.clientX, t.clientY, true);
-    }else{
-      ultimoToque = ahora;
-    }
-  }, { passive: true });
-
-  el.addEventListener('dblclick', (e) => {
-    zoomVisor(visorEstado.escala > 1.02 ? 1 : 2.5, e.clientX, e.clientY, true);
-  });
-
-  el.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    zoomVisor(visorEstado.escala * (e.deltaY < 0 ? 1.18 : 1 / 1.18), e.clientX, e.clientY, false);
-  }, { passive: false });
-
-  /* Arrastrar con el ratón cuando está acercada. */
-  let raton = null;
-  el.addEventListener('mousedown', (e) => {
-    if(visorEstado.escala <= 1.02) return;
-    raton = { x: e.clientX, y: e.clientY, ox: visorEstado.x, oy: visorEstado.y };
-    e.preventDefault();
-  });
-  window.addEventListener('mousemove', (e) => {
-    if(!raton) return;
-    visorEstado.x = raton.ox + (e.clientX - raton.x);
-    visorEstado.y = raton.oy + (e.clientY - raton.y);
-    encajarVisor();
-    aplicarVisor(false);
-  });
-  window.addEventListener('mouseup', () => { raton = null; });
-
-  window.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape' && el.classList.contains('abierto')) cerrarVisor();
-  });
-}
-
-/* Abre la foto que se está viendo. El vídeo no entra: ahí no hay nada que
-   acercar y el visor le quitaría los controles. */
-function abrirVisorFoto(){
-  const p = PRODUCTS.find(x => x.id === pdState.productId);
-  if(!p) return;
-  const fotos = p.images || [];
-  const url = fotos[pdState.activeIndex];
-  if(!url) return;
-  const el = visorEl();
-  const img = el.querySelector('img');
-  const color = coloresDeProducto(p).length ? colorFromImageUrl(url) : null;
-  img.alt = p.name + (color ? ' — ' + color : '');
-  el.querySelector('.visor-pista').textContent = esEscritorio()
-    ? 'Rueda del ratón o doble clic para acercar · Esc para cerrar'
-    : 'Pellizca o toca dos veces para acercar';
-  el.classList.add('abierto');
-  /* El fondo no se mueve mientras el visor está abierto. */
-  document.body.style.overflow = 'hidden';
-  const pintar = () => { centrarVisor(); };
-  if(img.getAttribute('src') === fotoUrl(url, ANCHO_VISOR)){ pintar(); }
-  else{
-    img.removeAttribute('src');
-    img.onload = pintar;
-    img.src = fotoUrl(url, ANCHO_VISOR);
-  }
-}
-
-function cerrarVisor(){
-  const el = document.getElementById('visorZoom');
-  if(!el) return;
-  el.classList.remove('abierto');
-  document.body.style.overflow = '';
-  visorEstado = { escala: 1, x: 0, y: 0 };
 }
 
 function renderProductDetail(){
@@ -5803,7 +5507,7 @@ function renderProductDetail(){
 
       <div class="fe-layout">
         <div class="fe-izq">
-          <div class="fe-foto">${galeria}${activo && activo.type === 'image' ? lupaBotonHtml() : ''}</div>
+          <div class="fe-foto">${galeria}</div>
           ${thumbs}
           <div class="fe-texto">
             <section>
@@ -5895,7 +5599,6 @@ function renderProductDetail(){
     <div class="ficha-galeria">
       ${galeria}
       ${(slides.length > 1 && slides.length > 8) ? `<span class="ficha-contador">${pdState.activeIndex + 1} de ${slides.length}</span>` : ''}
-      ${activo && activo.type === 'image' ? lupaBotonHtml() : ''}
     </div>
     ${puntosHtml}
 
