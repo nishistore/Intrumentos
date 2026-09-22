@@ -3849,11 +3849,36 @@ function textoBuscable(p){
     .filter(Boolean).join(' '));
 }
 
+/* Cómo lo escribe la gente → cómo se llama en el catálogo.
+
+   Cada línea existe porque la tienda TIENE eso con otro nombre. Mandar una
+   palabra a algo que no hay sería peor que devolver cero: el cero al menos
+   ofrece preguntar por WhatsApp, y un resultado equivocado hace quedar tonta
+   a la tienda. Por eso no están "batería", "cajón" ni "trompeta", que hoy no
+   hay: esas tienen que seguir dando cero.
+
+   - vossex/menphis: así estuvieron escritas en esta web durante meses, y
+     Google puede tenerlas indexadas así.
+   - ukulele: es la grafía inglesa y la usa muchísima gente.
+   - piano/órgano/keyboard: quien busca eso quiere el teclado.
+   - plumilla/pick: la púa, fuera de Perú.
+   - aceite: el limpiador de diapasón se llama "Lemon Oil" en la caja. */
+const EQUIVALENCIAS = {
+  vossex:'vozzex', menphis:'memphis', ukulele:'ukelele',
+  piano:'teclado', organo:'teclado', keyboard:'teclado',
+  plumilla:'pua', pick:'pua', aceite:'oil',
+  guitar:'guitarra', tuner:'afinador', strings:'cuerda',
+};
+
 /* "roja" y "rojo" son el mismo color, y en el catálogo está guardado con una
    sola de las dos formas. COLOR_WORDS ya conoce las dos. */
 function variantesDePalabra(w){
+  const salida = [w];
   const color = COLOR_WORDS[w];
-  return color ? [w, sinTildes(color)] : [w];
+  if(color) salida.push(sinTildes(color));
+  const equivalente = EQUIVALENCIAS[w];
+  if(equivalente) salida.push(equivalente);
+  return salida;
 }
 
 function coincide(texto, w){
@@ -3890,11 +3915,17 @@ function distanciaPalabra(a, b, max){
    guitarras de verdad no ganaban a los accesorios "para guitarra".
 
    Por debajo de cinco letras no se perdona nada: entre "mazo" y "bajo" hay un
-   solo retoque y son dos productos distintos. */
+   solo retoque y son dos productos distintos.
+
+   Y los dos retoques solo se dan a partir de nueve letras. Con ocho ya se
+   llegaba de una palabra a otra que no tiene nada que ver: buscar "parlante"
+   devolvía un soporte de pared, un atril y un pedestal, porque su
+   subcategoría se llama "parantes" y de una a otra hay exactamente dos
+   cambios. Cuanto más larga es la palabra, menos probable es ese salto. */
 function erratasPermitidas(a, b){
   const largo = Math.max(a.length, b.length);
   if(largo < 5) return 0;
-  return largo <= 7 ? 1 : 2;
+  return largo <= 8 ? 1 : 2;
 }
 
 /* La misma comparación, pero perdonando erratas. Se prueba palabra a palabra
