@@ -1299,6 +1299,19 @@ body.con-barra-compra{padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-
   margin-top:9px;height:32px;overflow:hidden;
   font:500 12.5px/1.3 var(--app-sans);color:var(--app-ink);
 }
+/* Los puntos de color van debajo del nombre, antes del precio: son parte de
+   qué es el producto, no de cuánto cuesta. */
+.pcard-colores{margin-top:7px;display:flex;align-items:center;gap:4px;}
+.pcolor{
+  width:12px;height:12px;border-radius:50%;flex:none;
+  border:1px solid rgba(23,20,15,.18);
+}
+.pcolor-texto{margin-left:3px;font:500 10.5px/1 var(--app-sans);color:var(--app-muted-2);}
+/* En el gancho de la portada todo es mas grande -titular de 30px, precio de
+   42- y los puntos de 12px se perdian debajo del nombre. */
+.hv-detalle .pcard-colores{margin-top:10px;gap:6px;}
+.hv-detalle .pcolor{width:16px;height:16px;}
+.hv-detalle .pcolor-texto{font-size:12px;}
 .pcard-precios{margin-top:4px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;}
 .pcard-precio{font:700 15px/1 var(--app-sans);color:var(--app-ink);}
 .pcard-antes{font:400 11px/1 var(--app-sans);color:var(--app-faint);text-decoration:line-through;}
@@ -4069,10 +4082,35 @@ function pillAsesorHtml(){
    Una sola tarjeta para las tres listas (ofertas, recién llegados y el grid
    del catálogo); lo único que cambia entre ellas es el alto de la foto, que
    el handoff fija en 124, 116 y 118px. */
+/* Los colores de un producto salen del nombre de archivo de sus fotos (ver
+   colorFromImageUrl), así que no hay nada que cargar a mano: el que tiene
+   seis fotos con color tiene seis colores. Se quitan los repetidos porque
+   algún producto sube dos veces el mismo color. */
+function coloresDeProducto(p){
+  return [...new Set((p.images || []).map(colorFromImageUrl).filter(Boolean))];
+}
+
+const MAX_PUNTOS_COLOR = 5;
+
+/* Que el producto viene en varios colores no se decía en ninguna parte de la
+   tarjeta: había que entrar a la ficha para enterarse, y ocho productos del
+   catálogo no lo dicen ni siquiera en el nombre. Con un solo color no se
+   pinta: un punto suelto no informa de nada. */
+function puntosColorHtml(p){
+  const colores = coloresDeProducto(p);
+  if(colores.length < 2) return '';
+  return `
+    <div class="pcard-colores">
+      ${colores.slice(0, MAX_PUNTOS_COLOR).map(c => `<span class="pcolor" style="background:${COLOR_HEX[c] || '#ccc'}" title="${escapeHtml(c)}"></span>`).join('')}
+      <span class="pcolor-texto">${colores.length} colores</span>
+    </div>`;
+}
+
 function appProductCard(p, altoFoto, conAgregar){
   const href = `/producto/${p.id}-${slugify(p.name)}`;
   const foto = (p.images || [])[0];
   const stock = p.stock || 0;
+  const puntos = puntosColorHtml(p);
   const tarjeta = `
   <a class="pcard" href="${href}" onclick="openProductDetail(${p.id});return false;">
     <div class="pcard-foto" style="height:${altoFoto}px">
@@ -4082,6 +4120,7 @@ function appProductCard(p, altoFoto, conAgregar){
       ${enOferta(p) ? `<span class="pcard-off">-${pctDescuento(p)}%</span>` : ''}
     </div>
     <div class="pcard-nombre">${escapeHtml(p.name)}</div>
+    ${puntos}
     <div class="pcard-precios">
       <span class="pcard-precio">${fmt(p.price)}</span>
       ${enOferta(p) ? `<span class="pcard-antes">${fmt(p.old)}</span>` : ''}
@@ -4240,6 +4279,7 @@ function heroVentasHtml(){
       <div class="hv-detalle">
         <span class="hv-eyebrow">${escapeHtml(catLabel(x))}</span>
         <h1 class="hv-titulo"><a href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">${escapeHtml(x.name)}</a></h1>
+        ${puntosColorHtml(x)}
         <div class="hv-precios">
           <span class="hv-precio">${fmt(x.price)}</span>
           ${enOferta(x) ? `<s class="hv-antes">${fmt(x.old)}</s>` : ''}
@@ -4303,6 +4343,7 @@ function tarjetaVentaHtml(x){
       ${imgProducto(x)}${badgeDescuento(x, 'esquina')}
     </a>
     <a class="tv-titulo" href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">${escapeHtml(x.name)}</a>
+    ${puntosColorHtml(x)}
     <div class="tv-precios">
       <span class="tv-precio">${fmt(x.price)}</span>
       ${enOferta(x) ? `<s>${fmt(x.old)}</s>` : ''}
