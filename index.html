@@ -634,7 +634,9 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    puede quedarse puesta. Si se cambia el alto de cualquiera de las dos, hay
    que cambiarlo aquí. */
 @media (min-width:900px){
-  #navEscritorio:empty{min-height:127px;}
+  /* Menos en el panel, donde la barra de la tienda no se pinta nunca: ahi el
+     hueco reservado es una franja blanca de 127px y nada mas. */
+  body:not(.en-panel) #navEscritorio:empty{min-height:127px;}
 }
 @media (max-width:899px){
   html.ruta-portada #cabeceraMovil:empty{min-height:203px;}
