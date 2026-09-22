@@ -359,77 +359,190 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   text-align:center;color:#aeb6cf;font-size:11.5px;
 }
 
-/* admin panel */
+/* ======================================================================
+   PANEL DE ADMINISTRACIÓN
+
+   Vive en su propia pantalla (state.view vale 'admin'), no dentro del modal:
+   con 35 productos y ocho campos por producto, la lista encerrada en 44vh
+   dejaba ver dos filas y media y obligaba a hacer scroll dentro de otro
+   scroll.
+
+   Va con los tokens --app-* como el resto de la tienda. Antes usaba la
+   paleta navy de la primera versión, con letra de 12.5px: legible en un
+   monitor, no en el teléfono desde el que se atiende la tienda.
+   ====================================================================== */
+.app-shell.admin{padding-bottom:40px;background:var(--app-sunken);min-height:100vh;}
+
+.admin-head{
+  position:sticky;top:0;z-index:40;
+  background:var(--app-surface);border-bottom:1px solid var(--app-line);
+  padding-top:max(14px, env(safe-area-inset-top));padding-bottom:14px;
+  margin-bottom:16px;
+}
+.admin-head-fila{display:flex;align-items:center;gap:12px;}
+.admin-head-texto{flex:1;min-width:0;}
+.admin-eyebrow{
+  display:block;font:700 10.5px/1 var(--app-sans);
+  letter-spacing:.09em;text-transform:uppercase;color:var(--app-terracota);
+}
+.admin-head h1{margin-top:5px;font:700 22px/1.15 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);}
+.admin-salir{
+  flex:none;padding:9px 14px;border-radius:var(--app-r-pill);
+  border:1.5px solid var(--app-line-strong);background:var(--app-surface);
+  font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
+}
+.admin-salir:hover{border-color:var(--app-ink);}
+
+/* Cuántos productos hay y en qué estado están: es lo primero que se mira al
+   entrar, y antes había que contarlo a ojo bajando por la lista. */
+.admin-resumen{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
+.admin-dato{
+  padding:5px 10px;border-radius:var(--app-r-pill);
+  background:var(--app-sunken);border:1px solid var(--app-line);
+  font:600 11.5px/1.3 var(--app-sans);color:var(--app-muted);
+}
+.admin-dato b{color:var(--app-ink);}
+.admin-dato.alerta{background:#FDECEC;border-color:rgba(190,30,45,.25);color:#8E0B18;}
+.admin-dato.alerta b{color:#8E0B18;}
+
 .admin-warn{
-  background:rgba(181,88,63,.1);border:1px solid var(--err);border-radius:10px;
-  padding:11px 14px;font-size:12px;color:var(--ink);line-height:1.55;margin-bottom:16px;
+  background:#FFF6E8;border:1px solid rgba(214,161,60,.45);border-radius:var(--app-r-card);
+  padding:12px 14px;font:400 12.5px/1.55 var(--app-sans);color:var(--app-ink-70);margin-bottom:14px;
 }
-.admin-login{display:flex;flex-direction:column;gap:12px;max-width:280px;}
-.admin-list{max-height:44vh;overflow-y:auto;border:1px solid var(--navy-line);border-radius:12px;margin-bottom:16px;}
+.admin-login{display:flex;flex-direction:column;gap:12px;max-width:320px;margin:0 auto;}
+.admin-login input{
+  padding:13px 14px;border-radius:var(--app-r-input);
+  border:1px solid var(--app-line-strong);background:var(--app-surface);
+  font:400 15px/1 var(--app-sans);color:var(--app-ink);
+}
+.admin-login input:focus{outline:none;border-color:var(--app-ink);}
+.admin-entrar{margin-top:56px;text-align:center;}
+.admin-entrar h1{font:700 21px/1.2 var(--app-sans);letter-spacing:-.02em;color:var(--app-ink);}
+.admin-entrar p{margin:8px auto 20px;max-width:330px;font:400 13px/1.5 var(--app-sans);color:var(--app-muted);}
+
+/* ---- herramientas de arriba ---- */
+.admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.admin-buscar{position:relative;margin-bottom:14px;}
+.admin-buscar input{
+  width:100%;padding:13px 14px;border-radius:var(--app-r-input);
+  border:1px solid var(--app-line-strong);background:var(--app-surface);
+  font:400 14px/1 var(--app-sans);color:var(--app-ink);
+}
+.admin-buscar input:focus{outline:none;border-color:var(--app-ink);}
+
+/* ---- la lista ---- */
+.admin-list{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.admin-vacio{padding:32px 0;text-align:center;font:400 13.5px/1.5 var(--app-sans);color:var(--app-muted);}
 .admin-row{
-  display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px;
-  border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px;
+  background:var(--app-surface);border:1px solid var(--app-line);
+  border-radius:var(--app-r-card);padding:14px;
+  display:flex;flex-direction:column;gap:11px;
 }
-.admin-row:last-child{border-bottom:none;}
-.admin-row .aname{flex:1;min-width:140px;}
+/* Sin stock: la tira roja de la izquierda se ve de refilón bajando por la
+   lista, que es cuando importa. */
+.admin-row.zero{border-left:4px solid var(--peru-rojo);background:#FFFAFA;}
+
+.admin-row-top{display:flex;align-items:center;gap:11px;}
+.admin-thumb{
+  width:46px;height:46px;flex:none;border-radius:10px;object-fit:contain;
+  background:var(--app-sunken);border:1px solid var(--app-line);
+}
+.admin-thumb.vacia{display:flex;align-items:center;justify-content:center;}
+.admin-thumb.vacia svg{width:20px;height:20px;stroke:var(--app-faint);}
+.admin-row .aname{flex:1;min-width:0;}
 .admin-row .aname-input{
-  display:block;width:100%;border:none;background:none;padding:0 0 2px;
-  font-size:12.8px;font-weight:600;color:var(--cream);font-family:inherit;
+  display:block;width:100%;border:none;background:none;padding:2px 0;
+  font:600 15px/1.3 var(--app-sans);color:var(--app-ink);
   border-bottom:1px dashed transparent;
 }
-.admin-row .aname-input:hover{border-bottom-color:var(--navy-line);}
-.admin-row .aname-input:focus{outline:none;border-bottom:1px solid var(--gold);}
-.admin-row .aname small{color:var(--muted);font-size:11px;}
-.admin-fields{display:flex;gap:8px;flex-wrap:wrap;}
-.admin-fields label{display:flex;flex-direction:column;gap:3px;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
-.admin-row input{
-  width:72px;padding:7px 8px;background:var(--navy-card);border:1px solid var(--navy-line);
-  border-radius:8px;color:var(--cream);font-family:inherit;font-size:12.5px;text-align:center;
-}
-.admin-row input:focus{outline:none;border-color:var(--gold);}
-.admin-row.zero{background:rgba(224,128,111,.05);}
-.admin-row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;width:100%;margin-bottom:4px;}
+.admin-row .aname-input:hover{border-bottom-color:var(--app-line-strong);}
+.admin-row .aname-input:focus{outline:none;border-bottom:1px solid var(--app-ink);}
+.admin-linea-meta{margin-top:3px;font:400 11.5px/1.3 var(--app-sans);color:var(--app-muted-2);}
+
+/* ---- botonera de la fila ---- */
+.admin-chips{display:flex;gap:7px;flex-wrap:wrap;}
 .media-toggle{
-  background:var(--navy-mid);border:1px solid var(--navy-line);color:var(--brown-heading);
-  font-size:10.5px;padding:5px 10px;border-radius:50px;white-space:nowrap;flex-shrink:0;
+  background:var(--app-sunken);border:1px solid var(--app-line);color:var(--app-ink);
+  font:600 12px/1 var(--app-sans);padding:9px 12px;border-radius:var(--app-r-pill);
+  white-space:nowrap;
 }
-.media-toggle:hover{border-color:var(--gold);}
-.media-editor{display:none;flex-direction:column;gap:10px;width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--navy-line);}
+.media-toggle:hover{border-color:var(--app-ink);}
+.media-toggle.borrar{color:#8E0B18;}
+.media-toggle.borrar:hover{border-color:#8E0B18;}
+
+/* El interruptor de "Más vendida". Encendido va en negro relleno, igual que
+   la chapa que pinta en la tienda, para que el panel enseñe lo mismo que va
+   a ver el cliente. Guarda solo, sin pasar por "Guardar cambios": es un
+   interruptor, y equivocarse cuesta otro toque. */
+.chip-vendida{
+  display:flex;align-items:center;gap:6px;
+  background:var(--app-surface);border:1.5px solid var(--app-line-strong);color:var(--app-muted);
+  font:600 12px/1 var(--app-sans);padding:8px 12px;border-radius:var(--app-r-pill);
+  white-space:nowrap;
+}
+.chip-vendida .estrella{font-size:13px;line-height:1;}
+.chip-vendida:hover{border-color:var(--app-ink);color:var(--app-ink);}
+.chip-vendida.puesta{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
+.chip-vendida[disabled]{opacity:.55;}
+
+/* ---- campos ---- */
+.admin-fields{
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(128px, 1fr));gap:10px;
+  padding-top:11px;border-top:1px solid var(--app-line);
+}
+.admin-fields label{
+  display:flex;flex-direction:column;gap:5px;
+  font:600 10px/1 var(--app-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--app-muted-3);
+}
+.admin-row input,
+.admin-row select{
+  width:100%;padding:10px;background:var(--app-surface);border:1px solid var(--app-line-strong);
+  border-radius:var(--app-r-input);color:var(--app-ink);
+  font:400 14px/1.2 var(--app-sans);text-align:left;
+}
+.admin-row input:focus,
+.admin-row select:focus,
+.admin-row textarea:focus{outline:none;border-color:var(--app-ink);}
+
+.media-editor{display:none;flex-direction:column;gap:11px;width:100%;padding-top:11px;border-top:1px solid var(--app-line);}
 .media-editor.open{display:flex;}
-.media-field label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
-.media-input-row{display:flex;gap:8px;align-items:center;}
-.admin-row .media-input-row input{
-  flex:1;width:100%;padding:8px 10px;background:var(--navy-mid);border:1px solid var(--navy-line);
-  border-radius:8px;color:var(--cream);font-family:inherit;font-size:11.5px;text-align:left;
+.media-field label{
+  display:block;font:600 10px/1 var(--app-sans);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--app-muted-3);margin-bottom:5px;
 }
-.media-preview{width:34px;height:34px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--navy-line);}
+.media-input-row{display:flex;gap:9px;align-items:center;}
+.media-preview{
+  width:40px;height:40px;border-radius:8px;object-fit:contain;flex-shrink:0;
+  background:var(--app-sunken);border:1px solid var(--app-line);
+}
 .admin-row textarea{
-  width:100%;padding:8px 10px;background:var(--navy-mid);border:1px solid var(--navy-line);
-  border-radius:8px;color:var(--cream);font-family:inherit;font-size:11.5px;text-align:left;resize:vertical;
+  width:100%;padding:10px;background:var(--app-surface);border:1px solid var(--app-line-strong);
+  border-radius:var(--app-r-input);color:var(--app-ink);
+  font:400 13.5px/1.5 var(--app-sans);font-family:var(--app-sans);resize:vertical;
 }
-.admin-row textarea:focus{outline:none;border-color:var(--gold);}
-.admin-row .media-field input[id^="vid-"]{width:100%;}
-/* Este panel esta dibujado para el escritorio y por eso lleva la letra
-   pequena, pero en el telefono eso hace que Safari haga zoom al enfocar
-   cualquier campo de menos de 16px — y al entrar salta solo, porque la
-   contrasena se enfoca sola. En pantallas tactiles todos los campos suben a
-   16px; con raton se quedan como estaban. */
+.admin-guardar{width:100%;margin-top:2px;}
+/* La casilla del formulario de producto nuevo: ahi no puede guardar sola,
+   porque el producto todavia no existe. Va con el resto de campos, pero con
+   una caja de verdad y su nombre entero. */
+.admin-check{
+  flex-direction:row !important;align-items:center;gap:8px;
+  text-transform:none !important;letter-spacing:0 !important;
+  font:600 12.5px/1.3 var(--app-sans) !important;color:var(--app-ink) !important;
+  grid-column:1 / -1;
+}
+.admin-check input{width:18px !important;height:18px;flex:none;padding:0 !important;}
+
+/* Safari hace zoom al enfocar un campo de menos de 16px, y al entrar la
+   contraseña se enfoca sola. En pantalla táctil todo sube a 16px. */
 @media (pointer:coarse){
   .admin-login input,
-  .aname-input,
+  .admin-buscar input,
   .admin-row .aname-input,
   .admin-row input,
   .admin-row select,
-  .admin-row textarea,
-  .admin-row .media-input-row input{font-size:17px;}
-  /* Con la letra mas grande, 72px se comen un precio de cuatro cifras. */
-  .admin-row input{width:88px;}
-  /* Y de paso: los botones de "Descripcion" y "Fotos y video" no caben al
-     lado del nombre en una pantalla de telefono y se salian por la derecha,
-     fuera de la vista. Aqui la cabecera de la fila se parte en dos lineas. */
-  .admin-row-top{flex-wrap:wrap;}
+  .admin-row textarea{font-size:16px;}
 }
-.admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
+
 /* Interruptor del banner de promocion. Va del rojo de la bandera -el mismo de
    la barra que enciende- para que se vea de un golpe en cual de los dos
    estados esta: relleno = puesta, contorno = quitada. */
@@ -438,6 +551,7 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 .banner-btn.puesto{background:var(--peru-rojo);color:#fff;}
 .banner-btn.puesto:hover{background:#8E0B18;border-color:#8E0B18;}
 .banner-btn[disabled]{opacity:.6;}
+.banner-nota{margin:8px 0 16px;font:400 12px/1.5 var(--app-sans);color:var(--app-muted);}
 .banner-nota{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 2px 16px;}
 
 /* Hueco para la barra inferior: sus 78px más la franja de gestos del
@@ -1528,6 +1642,9 @@ a.eyebrow-terracota:active{opacity:.6;}
 
 .bottom-nav.oculta{display:none;}
 body.en-ficha footer.site{display:none;}
+/* Y en el panel tampoco, ni en escritorio: no es una pantalla de tienda. */
+body.en-panel footer.site,
+body.en-panel .franja-util{display:none !important;}
 
 
 /* ---------------- pie ----------------
@@ -6142,23 +6259,40 @@ let sessionAdminSecret = null;
 
 function checkAdminUrlTrigger(){
   const params = new URLSearchParams(window.location.search);
-  if(params.get('panel') === ADMIN_URL_KEY){
-    if(sessionAdminSecret){ renderAdminPanel(); document.getElementById('modalOverlay').classList.add('show'); }
-    else{ openAdminLogin(); }
-  }
+  if(params.get('panel') !== ADMIN_URL_KEY) return;
+  abrirPanel();
 }
 
-function openAdminLogin(){
-  document.getElementById('modalBody').innerHTML = `
-    <h3 class="h-serif">Panel de stock</h3>
-    <div class="admin-warn">Tu contraseña se revisa en el servidor — ya no queda escrita en este archivo.</div>
-    <form class="admin-login" id="adminLoginForm" onsubmit="checkAdminPassword(event)">
-      <input type="password" id="adminPass" placeholder="Contraseña" autocomplete="off" required>
-      <button type="submit" class="btn-gold" id="adminLoginBtn">Entrar</button>
-    </form>
-  `;
-  document.getElementById('modalOverlay').classList.add('show');
-  setTimeout(()=>document.getElementById('adminPass')?.focus(), 50);
+/* El panel es una pantalla más, no un modal encima de la tienda: la lista
+   necesita el alto entero y quien entra aquí viene a trabajar un rato, no a
+   mirar una cosa y cerrar. */
+function abrirPanel(){
+  state.view = sessionAdminSecret ? 'admin' : 'adminLogin';
+  render();
+  if(!sessionAdminSecret) setTimeout(()=>document.getElementById('adminPass')?.focus(), 50);
+}
+
+/* Salir NO borra la clave de la sesión: volver a entrar por la URL secreta
+   mientras la pestaña siga abierta no debería pedirla otra vez. */
+function salirDelPanel(){
+  goHome();
+  /* Y fuera la palabra secreta de la barra de direcciones: se quedaba puesta
+     al volver a la tienda, a la vista de quien mire la pantalla. */
+  navigateTo('/', false);
+}
+
+function renderAdminLoginPage(){
+  return `
+  <div class="app-shell admin">
+    <div class="admin-entrar">
+      <h1>Panel de la tienda</h1>
+      <p>Tu contraseña se revisa en el servidor: no está escrita en esta página.</p>
+      <form class="admin-login" id="adminLoginForm" onsubmit="checkAdminPassword(event)">
+        <input type="password" id="adminPass" placeholder="Contraseña" autocomplete="off" required>
+        <button type="submit" class="btn-gold" id="adminLoginBtn">Entrar</button>
+      </form>
+    </div>
+  </div>`;
 }
 
 async function checkAdminPassword(e){
@@ -6177,7 +6311,8 @@ async function checkAdminPassword(e){
     const data = await res.json();
     if(data.ok){
       sessionAdminSecret = data.secret;
-      renderAdminPanel();
+      state.view = 'admin';
+      render();
     }else{
       showToast('Contraseña incorrecta');
       btn.textContent = original;
@@ -6250,9 +6385,9 @@ function renderNewProductForm(){
         <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" id="old-new"></label>
         <label>Etiqueta<input type="text" placeholder="—" id="badge-new" style="width:110px;"></label>
         <label>Stock<input type="number" min="0" value="0" id="stock-new"></label>
-        <label style="flex-direction:row;align-items:center;gap:5px;">
-          <input type="checkbox" id="featured-new" style="width:16px;height:16px;padding:0;background:none;border:none;border-radius:0;">
-          Destacado
+        <label class="admin-check">
+          <input type="checkbox" id="featured-new">
+          Marcarlo como más vendida
         </label>
       </div>
       <div class="media-editor open">
@@ -6272,16 +6407,42 @@ function renderNewProductForm(){
 
 let adminSearchQuery = '';
 
+/* El interruptor de "Más vendida". Es el mismo campo `featured` que ya
+   existía como casilla "Destacado" perdida entre los números, y que además de
+   pintar la chapa negra en las tarjetas decide qué producto encabeza la
+   portada y qué foto representa a su categoría. Aquí se dice por su nombre y
+   se ve encendido o apagado de un golpe. */
+function chipMasVendidaHtml(p){
+  const puesta = Boolean(p.featured);
+  return `<button type="button" class="chip-vendida${puesta ? ' puesta' : ''}" id="vendida-${p.id}"
+    aria-pressed="${puesta ? 'true' : 'false'}" onclick="toggleMasVendida(${p.id}, this)"
+    ><span class="estrella">${puesta ? '★' : '☆'}</span>Más vendida</button>`;
+}
+
 function adminRowHtml(p){
+  const foto = (p.images || [])[0];
+  /* Lo que se necesita saber de un vistazo sin abrir nada. */
+  const meta = [
+    fmt(p.price),
+    (p.stock || 0) > 0 ? `${p.stock} en stock` : 'sin stock',
+    enOferta(p) ? `antes ${fmt(p.old)}` : null
+  ].filter(Boolean).join(' · ');
   return `
     <div class="admin-row ${p.stock<=0?'zero':''}" data-row="${p.id}">
       <div class="admin-row-top">
+        ${foto
+          ? `<img class="admin-thumb" src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">`
+          : `<span class="admin-thumb vacia">${iconSvg(iconFor(p))}</span>`}
         <div class="aname">
           <input type="text" value="${escapeHtml(p.name)}" id="name-${p.id}" class="aname-input">
+          <div class="admin-linea-meta">${escapeHtml(meta)}</div>
         </div>
-        <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">📝 Descripción</button>
-        <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">🖼️ Fotos y video</button>
-        <button type="button" class="media-toggle" style="color:#c0392b;" onclick="deleteProduct(${p.id}, this)">🗑️ Eliminar</button>
+      </div>
+      <div class="admin-chips">
+        ${chipMasVendidaHtml(p)}
+        <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">Descripción</button>
+        <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">Fotos y video</button>
+        <button type="button" class="media-toggle borrar" onclick="deleteProduct(${p.id}, this)">Eliminar</button>
       </div>
       <div class="admin-fields">
         <label>Categoría
@@ -6298,10 +6459,6 @@ function adminRowHtml(p){
         <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
         <label>Etiqueta<input type="text" placeholder="—" value="${escapeHtml(p.badge ?? '')}" id="badge-${p.id}" style="width:110px;"></label>
         <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
-        <label style="flex-direction:row;align-items:center;gap:5px;">
-          <input type="checkbox" id="featured-${p.id}" ${p.featured?'checked':''} style="width:16px;height:16px;padding:0;background:none;border:none;border-radius:0;">
-          Destacado
-        </label>
       </div>
       <div class="media-editor" id="desc-editor-${p.id}">
         <div class="media-field">
@@ -6316,7 +6473,7 @@ function adminRowHtml(p){
           <input type="text" placeholder="https://..." value="${p.video||''}" id="vid-${p.id}" style="width:100%;">
         </div>
       </div>
-      <button class="btn-gold" style="width:100%;margin-top:10px;" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
+      <button class="btn-gold admin-guardar" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
     </div>`;
 }
 
@@ -6328,7 +6485,7 @@ function filteredAdminProducts(){
 
 function renderAdminListHtml(){
   const list = filteredAdminProducts();
-  if(!list.length) return `<p style="text-align:center;color:var(--muted);padding:20px 0;">Ningún producto coincide con "${escapeHtml(adminSearchQuery)}".</p>`;
+  if(!list.length) return `<p class="admin-vacio">Ningún producto coincide con "${escapeHtml(adminSearchQuery)}".</p>`;
   return list.map(adminRowHtml).join('');
 }
 
@@ -6338,25 +6495,109 @@ function onAdminSearchInput(val){
 }
 
 function renderAdminPanel(){
-  document.getElementById('modalBody').innerHTML = `
-    <h3 class="h-serif">Panel de productos</h3>
+  const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
+  const ofertas = PRODUCTS.filter(enOferta).length;
+  const vendidas = PRODUCTS.filter(x => x.featured).length;
+  return `
+  <div class="app-shell admin">
+    <header class="admin-head">
+      <div class="admin-head-fila">
+        <div class="admin-head-texto">
+          <span class="admin-eyebrow">Panel de la tienda</span>
+          <h1>Tus productos</h1>
+        </div>
+        <button type="button" class="admin-salir" onclick="salirDelPanel()">Salir</button>
+      </div>
+      <div class="admin-resumen">
+        <span class="admin-dato"><b>${PRODUCTS.length}</b> en catálogo</span>
+        <span class="admin-dato${sinStock ? ' alerta' : ''}"><b>${sinStock}</b> sin stock</span>
+        <span class="admin-dato"><b>${ofertas}</b> en oferta</span>
+        <span class="admin-dato"><b>${vendidas}</b> más vendida</span>
+      </div>
+    </header>
+
     <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
+
     <div class="admin-actions">
       <button class="btn-outline banner-btn${BANNER_PROMO ? ' puesto' : ''}" id="banner-btn" onclick="toggleBannerPromo(this)">${BANNER_PROMO ? 'Desactivar' : 'Activar'} banner de promoción</button>
     </div>
     <p class="banner-nota">Es la barra roja con el contador y los tres mayores descuentos, arriba de la portada y del catálogo. Un clic y cambia para todos.</p>
+
     <div class="admin-actions" style="margin-bottom:14px;">
-      <button class="btn-outline" style="width:100%;" onclick="toggleNewProductForm()">➕ Agregar producto nuevo</button>
+      <button class="btn-outline" style="width:100%;" onclick="toggleNewProductForm()">Agregar producto nuevo</button>
     </div>
     ${renderNewProductForm()}
-    <input type="text" id="admin-search" class="aname-input" style="margin-bottom:12px;" placeholder="🔍 Buscar producto por nombre..." value="${escapeHtml(adminSearchQuery)}" oninput="onAdminSearchInput(this.value)">
+
+    <div class="admin-buscar">
+      <input type="text" id="admin-search" placeholder="Buscar producto por nombre..." value="${escapeHtml(adminSearchQuery)}" oninput="onAdminSearchInput(this.value)">
+    </div>
     <div class="admin-list" id="admin-list">
       ${renderAdminListHtml()}
     </div>
-    <div class="admin-actions">
-      <button class="btn-outline" style="width:100%;" onclick="closeModal()">Listo</button>
-    </div>
-  `;
+  </div>`;
+}
+
+/* Guarda un producto con uno o varios campos cambiados, sin pasar por el
+   formulario. El cuerpo va completo porque la API de productos reemplaza la
+   fila entera; lo que no se toca viaja tal como está en PRODUCTS. */
+async function guardarProducto(p, cambios){
+  const fotos = [];
+  for(let i = 0; i < MAX_PRODUCT_IMAGES; i++) fotos.push((p.images || [])[i] || null);
+  const cuerpo = {
+    name: p.name, cat: p.cat, sub: p.sub,
+    price: p.price, old: p.old ?? null, badge: p.badge ?? null,
+    stock: p.stock, featured: Boolean(p.featured),
+    description: p.description ?? null, video: p.video || null,
+    ...imagesToBody(fotos),
+    ...cambios
+  };
+  const res = await fetch(`${PRODUCTS_API_URL}/products/${p.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
+    body: JSON.stringify(cuerpo)
+  });
+  const data = await res.json();
+  if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
+  return data;
+}
+
+/* Pone y quita la chapa "Más vendida". Escribe en el momento, como el
+   interruptor del banner: no tiene sentido pedir "Guardar cambios" para algo
+   que es un sí o un no. */
+async function toggleMasVendida(id, btn){
+  const p = PRODUCTS.find(x => x.id === id);
+  if(!p) return;
+  const puesta = !p.featured;
+  btn.disabled = true;
+  try{
+    await guardarProducto(p, { featured: puesta });
+    p.featured = puesta;
+    btn.classList.toggle('puesta', puesta);
+    btn.setAttribute('aria-pressed', puesta ? 'true' : 'false');
+    const estrella = btn.querySelector('.estrella');
+    if(estrella) estrella.textContent = puesta ? '★' : '☆';
+    pintarResumenAdmin();
+    showToast(puesta ? 'Ahora sale como más vendida' : 'Ya no sale como más vendida');
+  }catch(err){
+    showToast('No se pudo guardar. Revisa tu clave de administrador.');
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+/* El contador de arriba, al vuelo: repintar la pantalla entera perdería el
+   scroll y lo que estuvieras escribiendo en otra fila. */
+function pintarResumenAdmin(){
+  const caja = document.querySelector('.admin-resumen');
+  if(!caja) return;
+  const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
+  const ofertas = PRODUCTS.filter(enOferta).length;
+  const vendidas = PRODUCTS.filter(x => x.featured).length;
+  caja.innerHTML = `
+    <span class="admin-dato"><b>${PRODUCTS.length}</b> en catálogo</span>
+    <span class="admin-dato${sinStock ? ' alerta' : ''}"><b>${sinStock}</b> sin stock</span>
+    <span class="admin-dato"><b>${ofertas}</b> en oferta</span>
+    <span class="admin-dato"><b>${vendidas}</b> más vendida</span>`;
 }
 
 /* Un clic enciende o apaga la barra roja para todos los visitantes. No hay
@@ -6424,7 +6665,9 @@ async function saveProduct(id, btnEl){
   const badgeVal = document.getElementById(`badge-${id}`).value.trim();
   const badge = badgeVal === '' ? null : badgeVal;
   const stock = Math.max(0, parseInt(document.getElementById(`stock-${id}`).value) || 0);
-  const featured = document.getElementById(`featured-${id}`).checked;
+  /* "Más vendida" ya no se guarda aquí: tiene su propio interruptor, que
+     escribe al instante. Se manda tal como está para no pisarlo. */
+  const featured = Boolean(p.featured);
   const descVal = document.getElementById(`desc-${id}`).value.trim();
   const description = descVal === '' ? null : descVal;
   const imgs = readImageFields(n=>`img${n}-${id}`);
@@ -6510,7 +6753,7 @@ async function createProduct(btnEl){
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
     if(state.view==='shop') render();
     showToast('Producto creado');
-    renderAdminPanel();
+    render();
   }catch(err){
     btnEl.textContent = 'Error, reintentar';
     showToast('No se pudo crear. Revisa tu clave de administrador.');
@@ -6540,7 +6783,7 @@ async function deleteProduct(id, btnEl){
     if(state.priceMax > PRICE_MAX) state.priceMax = PRICE_MAX;
     if(state.view==='shop') render();
     showToast('Producto eliminado');
-    renderAdminPanel();
+    render();
   }catch(err){
     btnEl.textContent = 'Error, reintentar';
     showToast('No se pudo eliminar. Revisa tu clave de administrador.');
@@ -6719,6 +6962,9 @@ function pintarNavCarrito(){
 function renderNavEscritorio(){
   const el = document.getElementById('navEscritorio');
   if(!el) return;
+  /* En el panel no: ahi la cabecera es la suya, con el resumen y el boton de
+     salir, y la barra de la tienda solo roba alto. */
+  if(state.view==='admin' || state.view==='adminLogin'){ el.innerHTML = ''; return; }
   const enCarrito = ['carrito','checkout','pedido'].includes(state.view);
   el.innerHTML = `
     <div class="nav-esc-inner">
@@ -6964,6 +7210,7 @@ function renderWaFlotante(){
   const previo = document.getElementById('waFlotante');
   if(previo) previo.remove();
   if(!esEscritorio()) return;
+  if(state.view==='admin' || state.view==='adminLogin') return;
   const a = document.createElement('a');
   a.id = 'waFlotante';
   a.className = 'wa-flotante';
@@ -7002,6 +7249,8 @@ function render(){
     : state.view==='checkout' ? renderCheckout()
     : state.view==='pedido'   ? renderPedido()
     : state.view==='politica' ? renderPolitica()
+    : state.view==='admin'      ? renderAdminPanel()
+    : state.view==='adminLogin' ? renderAdminLoginPage()
     : renderShop();
   buildNavLists();
   renderNavEscritorio();
@@ -7022,7 +7271,11 @@ function render(){
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
   const conBarraFija = state.view==='producto' || state.view==='checkout' || state.view==='pedido'
     || (state.view==='carrito' && state.cart.length > 0);
-  document.getElementById('bottomNav').classList.toggle('oculta', conBarraFija);
+  /* El panel no es la tienda: las pestañas de abajo, el pie y el botón de
+     WhatsApp no pintan nada mientras se edita el catálogo. */
+  const enPanel = state.view==='admin' || state.view==='adminLogin';
+  document.body.classList.toggle('en-panel', enPanel);
+  document.getElementById('bottomNav').classList.toggle('oculta', conBarraFija || enPanel);
   /* Y tampoco el pie: la barra fija se le montaría encima. La ficha es una
      pantalla de decisión, termina en el CTA. */
   document.body.classList.toggle('en-ficha', conBarraFija);
