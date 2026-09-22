@@ -1347,23 +1347,26 @@ a.eyebrow-terracota:active{opacity:.6;}
 .ficha-sinfoto{display:flex;align-items:center;justify-content:center;}
 .ficha-sinfoto svg{width:56px;height:56px;stroke:var(--app-faint);}
 
-/* Los dos flotantes se apartan de la muesca del teléfono igual que las
-   cabeceras: 58px en el prototipo del iPhone, aquí el safe area real. */
-.ficha-flotante{
-  position:absolute;top:calc(14px + env(safe-area-inset-top));
-  height:36px;min-width:36px;
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  border:none;border-radius:var(--app-r-pill);
-  background:rgba(255,255,255,.92);
-  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-  color:var(--app-ink);text-decoration:none;
-  font:600 12px/1 var(--app-sans);
-  touch-action:manipulation;
+/* ---- cabecera de la ficha (teléfono) ----
+   La ficha era la única pantalla sin barra arriba. Lleva la marca porque
+   mucha de esta gente cae aquí directa desde Google Ads y la ficha era lo
+   primero y lo único que veía de la tienda. */
+.ficha-head .app-head-fila{gap:9px;}
+.ficha-marca{display:flex;align-items:center;gap:9px;flex:1;min-width:0;text-decoration:none;}
+.ficha-marca img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none;}
+.ficha-marca b{
+  display:block;font:400 15px/1.15 var(--app-black);
+  letter-spacing:-.01em;color:var(--app-ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.ficha-flotante:active{opacity:.88;}
-.ficha-flotante.volver{left:var(--app-gutter);width:36px;font-size:17px;padding-bottom:2px;}
-.ficha-flotante.carrito{right:var(--app-gutter);padding:0 13px;}
-.ficha-flotante.carrito svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;}
+.ficha-lupa{
+  flex:0 0 auto;width:40px;height:40px;border-radius:10px;
+  border:1.5px solid #dcdcd7;background:var(--app-surface);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--app-ink);text-decoration:none;
+}
+.ficha-lupa svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;}
+
 .ficha-contador{
   position:absolute;left:var(--app-gutter);bottom:14px;
   font:500 10px/1 var(--app-mono);letter-spacing:.04em;color:var(--app-muted-3);
@@ -5098,15 +5101,31 @@ function renderProductDetail(){
     </div>`;
   }
 
+  /* Cabecera de la ficha: la marca, el buscador y el carrito, para poder
+     seguir mirando sin tener que volver atrás dos veces. */
+  const cabeceraFicha = `
+    <header class="app-head ficha-head">
+      <div class="app-head-fila">
+        <button type="button" class="btn-volver" onclick="volverAtras()" aria-label="Volver">‹</button>
+        <a class="ficha-marca" href="/" onclick="goHome();return false;">
+          <img src="/img/logo-redondo.webp" alt="" width="32" height="32">
+          <b>Chipao Music</b>
+        </a>
+        <a class="ficha-lupa" href="/buscar" onclick="goSearch();return false;" aria-label="Buscar">
+          ${iconSvg('search')}
+        </a>
+        <a class="cab-carrito" href="/carrito" onclick="goCart();return false;" aria-label="Ver el carrito">
+          ${iconSvg('cart')}${enCarrito > 0 ? `<span class="cab-badge">${enCarrito}</span>` : ''}
+        </a>
+      </div>
+    </header>`;
+
   return `
   <div class="app-shell ficha">
+    ${cabeceraFicha}
 
     <div class="ficha-galeria">
       ${galeria}
-      <button type="button" class="ficha-flotante volver" onclick="volverAtras()" aria-label="Volver">‹</button>
-      <a class="ficha-flotante carrito" href="/carrito" onclick="goCart();return false;" aria-label="Ver carrito">
-        ${iconSvg('cart')}<span>${enCarrito}</span>
-      </a>
       ${(slides.length > 1 && slides.length > 8) ? `<span class="ficha-contador">${pdState.activeIndex + 1} de ${slides.length}</span>` : ''}
     </div>
     ${puntosHtml}
@@ -5249,11 +5268,26 @@ function loadCart(){
 function updateCartCount(){
   const total = state.cart.reduce((s,c)=>s+c.qty,0);
   /* Los dos contadores del carrito dicen lo mismo, así que se actualizan
-     desde el mismo sitio: el de la barra inferior y el del pill que flota
-     sobre la galería de la ficha. */
+     desde el mismo sitio: el de la barra inferior y el de la cabecera de la
+     ficha. */
   buildBottomNav();
-  const enFicha = document.querySelector('.ficha-flotante.carrito span');
-  if(enFicha) enFicha.textContent = total;
+  /* En la ficha la chapa solo existe cuando hay algo: agregar el primer
+     producto no tiene número que cambiar, hay que crearla. Y vaciar el
+     carrito desde otra pestaña tiene que quitarla. */
+  const carritoFicha = document.querySelector('.ficha-head .cab-carrito');
+  if(carritoFicha){
+    let chapa = carritoFicha.querySelector('.cab-badge');
+    if(total > 0){
+      if(!chapa){
+        chapa = document.createElement('span');
+        chapa.className = 'cab-badge';
+        carritoFicha.appendChild(chapa);
+      }
+      chapa.textContent = total;
+    }else if(chapa){
+      chapa.remove();
+    }
+  }
   /* Y el tercero, el pill de la cabecera de escritorio, que además del
      número enseña cuánto llevas. */
   pintarNavCarrito();
