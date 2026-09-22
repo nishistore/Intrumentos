@@ -3845,6 +3845,71 @@ function coincide(texto, w){
   return variantesDePalabra(w).some(v => texto.includes(v));
 }
 
+/* Cuántos retoques hacen falta para convertir una palabra en otra: cambiar
+   una letra, quitarla o añadirla cuenta uno. Se corta en cuanto pasa del
+   máximo, que es lo único que interesa saber. Es Levenshtein de toda la
+   vida, con una sola fila en memoria. */
+function distanciaPalabra(a, b, max){
+  if(Math.abs(a.length - b.length) > max) return max + 1;
+  let fila = Array.from({length: b.length + 1}, (_, i) => i);
+  for(let i = 1; i <= a.length; i++){
+    let anterior = fila[0];
+    fila[0] = i;
+    let mejorDeLaFila = fila[0];
+    for(let j = 1; j <= b.length; j++){
+      const guardado = fila[j];
+      fila[j] = a[i-1] === b[j-1]
+        ? anterior
+        : 1 + Math.min(anterior, fila[j], fila[j-1]);
+      anterior = guardado;
+      if(fila[j] < mejorDeLaFila) mejorDeLaFila = fila[j];
+    }
+    if(mejorDeLaFila > max) return max + 1;
+  }
+  return fila[b.length];
+}
+
+/* Cuánto se le perdona a un par de palabras, medido por la más larga de las
+   dos: "gitarra" contra "guitarras" son dos retoques -falta una letra y sobra
+   la del plural- y midiendo solo lo escrito se quedaba en uno, con lo que las
+   guitarras de verdad no ganaban a los accesorios "para guitarra".
+
+   Por debajo de cinco letras no se perdona nada: entre "mazo" y "bajo" hay un
+   solo retoque y son dos productos distintos. */
+function erratasPermitidas(a, b){
+  const largo = Math.max(a.length, b.length);
+  if(largo < 5) return 0;
+  return largo <= 7 ? 1 : 2;
+}
+
+/* La misma comparación, pero perdonando erratas. Se prueba palabra a palabra
+   del texto del producto, no contra el texto entero: "gitarra" tiene que
+   parecerse a "guitarra", no al párrafo completo. */
+/* Las etiquetas del catalogo van en plural -"Violines", "Guitarras"- y el
+   cliente escribe en singular. Con una errata encima, la distancia se dispara:
+   de "biolin" a "violines" hay tres retoques. Se prueba tambien la forma sin
+   la terminacion de plural. */
+function formasDePalabra(t){
+  const singular = t.replace(/(es|s)$/, "");
+  return singular !== t && singular.length >= 4 ? [t, singular] : [t];
+}
+
+function coincideConErratas(palabrasTexto, w){
+  return variantesDePalabra(w).some(v =>
+    palabrasTexto.some(t => formasDePalabra(t).some(f => {
+      const max = erratasPermitidas(v, f);
+      return max > 0 && distanciaPalabra(v, f, max) <= max;
+    })));
+}
+
+/* Si una búsqueda no encuentra NADA, se repite perdonando erratas: "gitarra",
+   "bonbo" o "ukulele" —que es como lo escribe media Lima— acababan en "Nada
+   con eso" y en el botón de WhatsApp.
+
+   Solo cuando no hay nada exacto, nunca antes: mezclar aproximados con
+   exactos ensucia una búsqueda que ya funcionaba. */
+let busquedaAproximada = false;
+
 /* Qué tan de lleno es el producto lo que se busca. Cuanto más bajo, más
    arriba sale.
 
@@ -3853,13 +3918,22 @@ function coincide(texto, w){
    "para Guitarra": de las cinco filas del desplegable, una sola era una
    guitarra. Un accesorio se llama "para X" y el instrumento ES X, y eso es
    justo lo que se mide aquí. */
-function relevanciaBusqueda(p, palabras, frase){
+function relevanciaBusqueda(p, palabras, frase, aprox){
   const cat = CATEGORIES.find(c=>c.key===p.cat);
   const sub = cat && cat.subs.find(s=>s.key===p.sub);
   const etiquetas = sinTildes([cat && cat.label, sub && sub.label].filter(Boolean).join(' '));
+  /* Con errata hay que comparar como se filtró, o el orden no aplica a nada:
+     "gitarra" no nombra exactamente la subcategoría "Guitarras" y todas las
+     guitarras caían al montón del final, con los accesorios por delante. */
+  const enTexto = (texto, w) => aprox
+    ? coincideConErratas(texto.split(/[^a-z0-9]+/).filter(Boolean), w)
+    : coincide(texto, w);
   /* 0 — ES eso: alguna de las palabras nombra su categoría o su subcategoría. */
-  if(palabras.some(w => coincide(etiquetas, w))) return 0;
+  if(palabras.some(w => enTexto(etiquetas, w))) return 0;
   const nombre = sinTildes(p.name);
+  /* Con errata no hay frase que buscar entera: se salta a mirar si están
+     todas las palabras en el nombre. */
+  if(aprox) return palabras.every(w => enTexto(nombre, w)) ? 3 : 4;
   const i = nombre.indexOf(frase);
   /* 1 — el nombre empieza por lo que se escribió ("Guitarra Acustica Vozzex"). */
   if(i === 0) return 1;
@@ -3879,16 +3953,24 @@ function relevanciaBusqueda(p, palabras, frase){
    caía en "Nada con eso" y en el botón de WhatsApp. */
 function buscarProductos(q){
   const frase = sinTildes(q).trim();
+  busquedaAproximada = false;
   if(!frase) return [];
   const palabras = palabrasDeBusqueda(q);
-  const encontrados = PRODUCTS.filter(p=>{
+  let encontrados = PRODUCTS.filter(p=>{
     const texto = textoBuscable(p);
     return palabras.every(w => coincide(texto, w));
   });
+  if(!encontrados.length){
+    encontrados = PRODUCTS.filter(p=>{
+      const palabrasTexto = textoBuscable(p).split(/[^a-z0-9]+/).filter(Boolean);
+      return palabras.every(w => coincideConErratas(palabrasTexto, w));
+    });
+    busquedaAproximada = encontrados.length > 0;
+  }
   /* A igual relevancia, lo que hay en tienda antes que lo agotado, y a igual
      stock se respeta el orden del catálogo. */
   return encontrados
-    .map((p, orden) => ({ p, orden, r: relevanciaBusqueda(p, palabras, frase) }))
+    .map((p, orden) => ({ p, orden, r: relevanciaBusqueda(p, palabras, frase, busquedaAproximada) }))
     .sort((a, b) => a.r - b.r
                  || ((b.p.stock||0) > 0) - ((a.p.stock||0) > 0)
                  || a.orden - b.orden)
@@ -4003,8 +4085,13 @@ function resultadosBusquedaHtml(){
       </div>`;
   }
 
+  /* Cuando lo que se enseña son parecidos y no coincidencias, hay que
+     decirlo: si no, parece que la tienda entendió otra cosa. */
+  const conteo = busquedaAproximada
+    ? `Nada exacto con "${escapeHtml(q)}" · ${res.length} parecido${res.length===1?'':'s'}`
+    : `${res.length} ${res.length===1?'resultado':'resultados'}`;
   return `
-    <span class="search-count">${res.length} ${res.length===1?'resultado':'resultados'}</span>
+    <span class="search-count">${conteo}</span>
     <div class="lista-res">${res.map(filaResultado).join('')}</div>`;
 }
 
@@ -6993,9 +7080,11 @@ function navBuscarMenuHtml(){
   }
 
   const vistos = todos.slice(0, NAV_MAX_RESULTADOS);
-  const conteo = todos.length === 1
-    ? '1 resultado'
-    : `${todos.length} resultados${todos.length > vistos.length ? ` · se enseñan ${vistos.length}` : ''}`;
+  const conteo = busquedaAproximada
+    ? `Nada exacto · ${todos.length} parecido${todos.length === 1 ? '' : 's'}`
+    : todos.length === 1
+      ? '1 resultado'
+      : `${todos.length} resultados${todos.length > vistos.length ? ` · se enseñan ${vistos.length}` : ''}`;
   /* Cuando quedan fuera, la salida está aquí: antes el desplegable decía
      "se enseñan 5" y no daba forma de ver los otros quince. */
   const verTodos = todos.length > vistos.length
