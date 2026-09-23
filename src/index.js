@@ -41,7 +41,7 @@ const CATEGORIES = [
   { key: 'percusion', intro: "Bombos andinos de cuero hechos a mano, bombos de banda, tarolas, panderetas, kalimbas de 17 teclas y metalófonos, entre S/ 12 y S/ 250. Las baquetas y los parches de repuesto están en Accesorios.", label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: [{ key: 'tambores', label: 'Tambores' }, { key: 'bombos', label: 'Bombos' }, { key: 'tarolas', label: 'Tarolas' }, { key: 'cajones', label: 'Cajones' }, { key: 'metalofono', label: 'Metalófono' }, { key: 'panderetas', label: 'Panderetas' }, { key: 'kalimbas', label: 'Kalimbas' }] },
   { key: 'viento', intro: "Flautas dulces soprano, melódicas de 32 y 37 teclas, quenas y zampoñas, entre S/ 20 y S/ 80. Si es para la lista del colegio, en Para Colegio está todo junto.", label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'flautas', label: 'Flautas' }, { key: 'melodicas', label: 'Melódicas' }, { key: 'quenas', label: 'Quenas' }, { key: 'zamponas', label: 'Zampoñas' }] },
   { key: 'audio', intro: "Micrófonos dinámicos, sistemas inalámbricos para micrófono y para guitarra, y amplificadores, desde S/ 100. Para grabar en casa o para tocar en vivo; si no sabes cuál te sirve, escríbenos y lo vemos contigo.", label: 'Micrófono y Audio', desc: 'Micrófonos, interfaces y amplificadores para grabar y para tocar en vivo. Tienda de audio en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'microfonos', label: 'Micrófonos' }, { key: 'interfaces', label: 'Interfaces' }, { key: 'amplificadores', label: 'Amplificadores' }] },
-  { key: 'colegio', intro: "Todo lo de la lista escolar en un sitio: flautas dulces, melódicas, xilófonos, metalófonos, claves y panderetas, desde S/ 10. Mándanos la lista por WhatsApp y te la cotizamos completa.", label: 'Para Colegio', seo: 'Instrumentos para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [] },
+  { key: 'colegio', intro: "Todo lo de la lista escolar en un sitio: flautas dulces, melódicas, xilófonos, metalófonos, claves y panderetas, desde S/ 10. Mándanos la lista por WhatsApp y te la cotizamos completa.", label: 'Para Colegio', seo: 'Instrumentos para Colegio', desc: 'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.', subs: [{ key: 'colXilofonos', label: 'Xilófonos y metalófonos' }, { key: 'colPercusion', label: 'Claves, baquetas y percusión' }] },
   { key: 'accesorios', intro: "Cuerdas para acústica, clásica y eléctrica de D'Addario, Ernie Ball y Romeo, capotrastes, púas, afinadores, atriles, baquetas y repuestos, desde S/ 15. Si buscas un calibre concreto, pregúntanos antes de venir y te decimos si lo tenemos.", label: 'Accesorios', desc: 'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'accCuerdasAcustica', label: 'Cuerdas (Acústica/Clásica)' }, { key: 'accCuerdasElectrica', label: 'Cuerdas (Eléctrica)' }, { key: 'accCapotrastes', label: 'Capotrastes' }, { key: 'accPuas', label: 'Púas y pines' }, { key: 'accAfinadores', label: 'Afinadores y metrónomos' }, { key: 'accAtriles', label: 'Atriles y parantes' }, { key: 'accBaquetas', label: 'Baquetas y parches' }, { key: 'accCanas', label: 'Cañas y boquillas' }, { key: 'accTeclados', label: 'Teclados' }, { key: 'accViolin', label: 'Violín (resina y puentes)' }, { key: 'accCuidado', label: 'Limpieza y repuestos' }] },
 ];
 
@@ -78,10 +78,22 @@ const ACCESORIOS_FILTER_GROUPS = [
   { key: 'accGrpGenerales', label: 'Generales (cualquier instrumento)', matches: ['accAfinadores', 'accAtriles', 'accCuidado'] },
 ];
 
+/* Copia de COLEGIO_FILTER_GROUPS de index.html: Para Colegio agrupa subs de
+   varias categorías, porque casi todo lo que muestra vive en otra. */
+const COLEGIO_FILTER_GROUPS = [
+  { key: 'colGrpFlautas', label: 'Flautas dulces', matches: ['flautas'] },
+  { key: 'colGrpMelodicas', label: 'Melódicas', matches: ['melodicas'] },
+  { key: 'colGrpXilofonos', label: 'Xilófonos y metalófonos', matches: ['metalofono', 'colXilofonos'] },
+  { key: 'colGrpPercusion', label: 'Claves, panderetas y percusión', matches: ['panderetas', 'tarolas', 'colPercusion'] },
+  { key: 'colGrpAndinos', label: 'Quenas y zampoñas', matches: ['quenas', 'zamponas'] },
+];
+
+const FILTER_GROUPS = { accesorios: ACCESORIOS_FILTER_GROUPS, colegio: COLEGIO_FILTER_GROUPS };
+
 /* Los filtros que se pueden recorrer dentro de una categoría y que por tanto
    tienen URL propia, como /categoria/cuerda/ukeleles. */
 function subsNavegables(cat) {
-  return cat.key === 'accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs;
+  return FILTER_GROUPS[cat.key] || cat.subs;
 }
 
 /* El trozo de URL de una subcategoría sale de su ETIQUETA, no de su clave: las
@@ -95,7 +107,7 @@ function findSub(cat, slug) {
   return subsNavegables(cat).find(s => subSlug(s) === slug) || null;
 }
 
-/* Un grupo de accesorios agrupa varios subs reales; el resto son uno a uno. */
+/* Un grupo (de accesorios o de Para Colegio) agrupa varios subs reales; el resto son uno a uno. */
 function productInSub(p, sub) {
   return sub.matches ? sub.matches.includes(p.sub) : p.sub === sub.key;
 }

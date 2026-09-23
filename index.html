@@ -3082,7 +3082,10 @@ const CATEGORIES = [
     subs:[{key:'microfonos',label:'Micrófonos'},{key:'interfaces',label:'Interfaces'},{key:'amplificadores',label:'Amplificadores'}]},
   {key:'colegio', label:'Para Colegio', seo:'Instrumentos para Colegio',
     intro: "Todo lo de la lista escolar en un sitio: flautas dulces, melódicas, xilófonos, metalófonos, claves y panderetas, desde S/ 10. Mándanos la lista por WhatsApp y te la cotizamos completa.", icon:'school', desc:'Instrumentos para la lista del colegio: flautas dulces, melódicas, xilófonos, liras, claves y panderetas. Tienda en Lima con envíos a todo el Perú.',
-    subs:[]},
+    subs:[
+      {key:'colXilofonos',label:'Xilófonos y metalófonos'},
+      {key:'colPercusion',label:'Claves, baquetas y percusión'},
+    ]},
   {key:'accesorios', label:'Accesorios',
     intro: "Cuerdas para acústica, clásica y eléctrica de D'Addario, Ernie Ball y Romeo, capotrastes, púas, afinadores, atriles, baquetas y repuestos, desde S/ 15. Si buscas un calibre concreto, pregúntanos antes de venir y te decimos si lo tenemos.", icon:'accessory', desc:'Cuerdas, púas, capotrastes, afinadores, atriles, baquetas y repuestos para tu instrumento. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[
@@ -3136,6 +3139,21 @@ const ACCESORIOS_FILTER_GROUPS = [
   {key:'accGrpGenerales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles','accCuidado']},
 ];
 
+/* Para Colegio funciona igual: casi todo lo que muestra es de otra categoría
+   (la flauta Yamaha es de Viento › Flautas, ver CROSS_LISTED_CATS), así que
+   sus filtros agrupan subs reales de varias categorías, más los dos propios
+   de Para Colegio para lo que solo vive aquí (xilófonos, claves). */
+const COLEGIO_FILTER_GROUPS = [
+  {key:'colGrpFlautas', label:'Flautas dulces', matches:['flautas']},
+  {key:'colGrpMelodicas', label:'Melódicas', matches:['melodicas']},
+  {key:'colGrpXilofonos', label:'Xilófonos y metalófonos', matches:['metalofono','colXilofonos']},
+  {key:'colGrpPercusion', label:'Claves, panderetas y percusión', matches:['panderetas','tarolas','colPercusion']},
+  {key:'colGrpAndinos', label:'Quenas y zampoñas', matches:['quenas','zamponas']},
+];
+
+/* Las categorías cuyos filtros son grupos en vez de sus subs crudos. */
+const FILTER_GROUPS = {accesorios: ACCESORIOS_FILTER_GROUPS, colegio: COLEGIO_FILTER_GROUPS};
+
 /* ----------------------------------------------------------------------
    SUBCATEGORÍAS CON URL PROPIA: /categoria/cuerda/ukeleles
 
@@ -3148,7 +3166,7 @@ const ACCESORIOS_FILTER_GROUPS = [
 /* Los filtros que se pueden recorrer dentro de una categoría. Accesorios es la
    excepción: sus chips son los grupos por instrumento, no los subs crudos. */
 function subsNavegables(cat){
-  return cat.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs;
+  return FILTER_GROUPS[cat.key] || cat.subs;
 }
 
 /* El trozo de URL sale de la ETIQUETA, no de la clave: las de Accesorios son
@@ -4778,14 +4796,14 @@ function renderHome(){
   ${esEscritorio() ? '' : barraCompraHtml()}`;
 }
 
-/* Un producto de accesorios cae bajo un grupo por instrumento si su sub real
+/* Un producto de accesorios (o de Para Colegio) cae bajo un grupo por instrumento si su sub real
    (el que edita el panel de administrador) aparece en la lista 'matches' del
    grupo — así un mismo capo puede listarse en Guitarra Acústica y Eléctrica
    sin necesidad de que el producto tenga dos subcategorías. */
 function subMatchesActiveFilter(sub){
   for(const activeKey of state.activeSubs){
     if(activeKey === sub) return true;
-    const grp = ACCESORIOS_FILTER_GROUPS.find(g=>g.key===activeKey);
+    const grp = (FILTER_GROUPS[state.activeCat] || []).find(g=>g.key===activeKey);
     if(grp && grp.matches.includes(sub)) return true;
   }
   return false;
@@ -4855,7 +4873,7 @@ function chipsFiltroHtml(){
   ];
   const cat = CATEGORIES.find(c=>c.key===state.activeCat);
   if(cat){
-    const subs = cat.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs;
+    const subs = subsNavegables(cat);
     for(const s of subs){
       chips.push(chipHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`));
     }
@@ -4911,7 +4929,7 @@ function tituloBloqueHtml(texto, accionQuitar){
 
 function sidebarCategoriaHtml(){
   const cat = CATEGORIES.find(c=>c.key===state.activeCat);
-  const subs = cat ? (cat.key==='accesorios' ? ACCESORIOS_FILTER_GROUPS : cat.subs) : [];
+  const subs = cat ? subsNavegables(cat) : [];
 
   const categorias = CATEGORIES.map(c=>{
     const n = productosDeCategoria(c.key).length;
@@ -4952,17 +4970,16 @@ function sidebarCategoriaHtml(){
       ${tituloBloqueHtml(cat.key==='accesorios' ? 'Para qué instrumento' : 'Tipo de instrumento',
           state.activeSubs.size ? 'limpiarSubs()' : '')}
       ${subs.map(s=>filaFiltroHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`,
-          cuentaFiltro('subs', p => cat.key==='accesorios' ? s.matches.includes(p.sub) : p.sub===s.key))).join('')}
+          cuentaFiltro('subs', p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key))).join('')}
     </div>` : '';
 
-  /* El orden depende de dónde esté el visitante. Dentro de una categoría lo
-     primero es afinar lo que ya tiene delante (sus subcategorías y el
-     precio) y la lista de las otras siete baja: estando en Accesorios, que
-     lo primero fuera "Instrumentos de Cuerda, Teclados…" sobraba. En "Todo
-     el catálogo", en las ofertas o en una búsqueda no hay subcategorías y
-     esa lista sí es lo principal, así que ahí se queda arriba. */
+  /* Dentro de una categoría con subcategorías la lista de categorías no va:
+     la barra de arriba ya las muestra todas y repetirla debajo del precio
+     se veía redundante. En "Todo el catálogo", en las ofertas o en una
+     búsqueda no hay subcategorías y esa lista sí es lo principal, así que
+     ahí se queda arriba. */
   const bloques = bloqueSubs
-    ? bloqueSubs + bloquePrecio + bloqueCategorias
+    ? bloqueSubs + bloquePrecio
     : bloqueCategorias + bloquePrecio;
 
   return `
@@ -5017,7 +5034,7 @@ function renderShop(){
   }else if(cat){
     titulo = subUnico ? subUnico.label : (cat.seo || cat.label);
     subtitulo = subUnico ? cat.label
-      : (cat.subs.length ? cat.subs.map(s=>s.label).join(', ') : cat.desc);
+      : (cat.subs.length && cat.key!=='colegio' ? cat.subs.map(s=>s.label).join(', ') : cat.desc);
   }else{
     titulo = 'Todo el catálogo';
     subtitulo = 'Cuerda, teclados, percusión, viento, audio y accesorios';
