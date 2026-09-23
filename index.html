@@ -877,6 +877,16 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   border-radius:12px;overflow:hidden;background:#fff;
 }
 .hv-foto img{width:100%;height:100%;object-fit:contain;}
+/* Vitrina: el fundido al cambiar de producto y la línea que se va llenando
+   hasta el siguiente. */
+.hv-gancho{overflow:hidden;}
+.hv-gancho > *{transition:opacity .25s ease;}
+.hv-gancho.cambiando > *{opacity:0;}
+.hv-progreso{
+  position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:var(--app-line);
+}
+.hv-progreso span{display:block;height:100%;width:0;background:var(--app-ink);transition:width .1s linear;}
 .hv-detalle{display:block;}
 .hv-eyebrow{
   display:block;margin-top:13px;
@@ -4537,23 +4547,144 @@ function chipsUrgenciaHtml(){
 }
 
 /* ---------------- hero de producto ---------------- */
+/* ---------------- vitrina: la caja grande de la portada rota ----------------
+   Arranca siempre en heroProducto() -el destacado en oferta-, que es lo que
+   pinta la primera carga y lo que ve Google. Después, cada VITRINA_MS, pasa a
+   otro instrumento con stock y foto, barajados y sin repetir hasta dar la
+   vuelta. Las dos ofertas de al lado no se mueven y no entran en la ronda.
+
+   Se para mientras el ratón está encima, un rato después de tocarla en el
+   teléfono (para no cambiarle el producto justo cuando va a pulsar
+   "Agregar"), cuando no se ve en pantalla o la pestaña está oculta, y no
+   arranca con "reducir movimiento" activado. Solo cambia la caja, no
+   repinta la página. */
+const VITRINA_MS = 8000;
+const VITRINA_TICK = 100;
+const VITRINA_PAUSA_TOQUE = 8000;
+const vitrina = { id:null, cola:[], transcurrido:0, encima:false, tocadaHasta:0, visible:true, timer:null, observador:null, precargada:null };
+
+function vitrinaActual(){
+  const c = candidatosPortada();
+  return (vitrina.id && c.find(x => x.id === vitrina.id)) || heroProducto();
+}
+
+function colaVitrina(){
+  const fijas = new Set(ofertasSecundarias().map(x => x.id));
+  const actual = vitrinaActual();
+  const lista = candidatosPortada().filter(x => !fijas.has(x.id) && (!actual || x.id !== actual.id));
+  for(let i = lista.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [lista[i], lista[j]] = [lista[j], lista[i]];
+  }
+  return lista.map(x => x.id);
+}
+
+function siguienteVitrina(){
+  if(!vitrina.cola.length) vitrina.cola = colaVitrina();
+  const c = candidatosPortada();
+  while(vitrina.cola.length){
+    const x = c.find(p => p.id === vitrina.cola[0]);
+    if(x) return x;
+    vitrina.cola.shift();
+  }
+  return null;
+}
+
+function pausarVitrina(encima){ vitrina.encima = encima; }
+function tocarVitrina(){ vitrina.tocadaHasta = Date.now() + VITRINA_PAUSA_TOQUE; }
+
+function vitrinaPausada(){
+  return vitrina.encima || Date.now() < vitrina.tocadaHasta || !vitrina.visible || document.hidden;
+}
+
+/* Se llama después de cada render(). Si la portada no está a la vista
+   para el reloj; si está, lo arranca (una sola vez) y vigila si la caja se
+   ve en pantalla. */
+function montarVitrina(){
+  const caja = document.getElementById('vitrina');
+  if(!caja){
+    clearInterval(vitrina.timer); vitrina.timer = null;
+    return;
+  }
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(candidatosPortada().length < 4) return;
+  if('IntersectionObserver' in window){
+    if(vitrina.observador) vitrina.observador.disconnect();
+    vitrina.observador = new IntersectionObserver(e => { vitrina.visible = e[0].isIntersecting; }, { threshold:0.3 });
+    vitrina.observador.observe(caja);
+  }
+  pintarBarraVitrina();
+  if(!vitrina.timer) vitrina.timer = setInterval(tickVitrina, VITRINA_TICK);
+}
+
+function pintarBarraVitrina(){
+  const barra = document.getElementById('vitrinaBarra');
+  if(barra) barra.style.width = Math.min(100, vitrina.transcurrido / VITRINA_MS * 100) + '%';
+}
+
+function tickVitrina(){
+  if(vitrinaPausada()) return;
+  vitrina.transcurrido += VITRINA_TICK;
+  pintarBarraVitrina();
+  /* La foto siguiente se baja un poco antes de su turno, para que aparezca
+     de golpe y no con un hueco en blanco. */
+  const falta = VITRINA_MS - vitrina.transcurrido;
+  const sig = siguienteVitrina();
+  if(sig && falta <= 2000 && vitrina.precargada !== sig.id){
+    const f = fotoDe(sig);
+    if(f){ const im = new Image(); im.src = fotoUrl(f, ANCHO_TARJETA); }
+    vitrina.precargada = sig.id;
+  }
+  if(vitrina.transcurrido >= VITRINA_MS) cambiarVitrina();
+}
+
+function cambiarVitrina(){
+  const caja = document.getElementById('vitrina');
+  const sig = siguienteVitrina();
+  vitrina.transcurrido = 0;
+  if(!caja || !sig) return;
+  vitrina.cola.shift();
+  caja.classList.add('cambiando');
+  setTimeout(() => {
+    /* Cada producto ocupa un alto distinto (título de una o dos líneas,
+       con o sin colores). La caja se queda con el mayor que ha tenido, para
+       que lo de abajo no salte cada vez que cambia. */
+    caja.style.minHeight = Math.max(caja.offsetHeight, parseFloat(caja.style.minHeight) || 0) + 'px';
+    vitrina.id = sig.id;
+    caja.innerHTML = ganchoHtml(sig, false);
+    pintarBarraVitrina();
+    caja.classList.remove('cambiando');
+  }, 250);
+}
+
 function heroVentasHtml(){
-  const x = heroProducto();
+  const x = vitrinaActual();
   if(!x) return '';
+  return `
+  <section class="hero-venta">
+    <div class="hv-gancho" id="vitrina" onmouseenter="pausarVitrina(true)" onmouseleave="pausarVitrina(false)"
+         ontouchstart="tocarVitrina()">
+      ${ganchoHtml(x, true)}
+    </div>
+${secundariasHtml()}`;
+}
+
+/* El contenido de la caja grande. 'primera' solo en la carga: esa foto es
+   la más grande de la portada y va con prioridad alta; las que llegan
+   después rotando ya están precargadas. */
+function ganchoHtml(x, primera){
   const cuotas = FLAGS.showCuotas
     ? `<p class="hv-cuotas">o 3 cuotas sin interés de <strong>${fmt(Math.round(x.price/3))}</strong></p>` : '';
   const alerta = (FLAGS.showStock && (x.stock||0) > 0 && (x.stock||0) <= 5)
     ? `<p class="hv-alerta"><span class="punto-alerta"></span>Últimas ${x.stock} unidades en tienda</p>` : '';
 
   return `
-  <section class="hero-venta">
-    <div class="hv-gancho">
       <span class="hv-badges">
         ${badgeDescuento(x)}
         ${x.featured ? '<span class="badge-negro">Más vendida</span>' : ''}
       </span>
       <a class="hv-foto" href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">
-        ${imgProducto(x, 'fetchpriority="high"')}
+        ${imgProducto(x, primera ? 'fetchpriority="high"' : '')}
       </a>
       <div class="hv-detalle">
         <span class="hv-eyebrow">${escapeHtml(catLabel(x))}</span>
@@ -4572,8 +4703,11 @@ function heroVentasHtml(){
         </div>
         <p class="hv-micro">Pedidos antes de las 4:00 p.m. salen hoy · Recojo en San Juan de Miraflores en 1 hora</p>
       </div>
-    </div>
+      <span class="hv-progreso" aria-hidden="true"><span id="vitrinaBarra"></span></span>`;
+}
 
+function secundariasHtml(){
+  return `
     <div class="hv-secundarias">
       ${ofertasSecundarias().map((o,i) => `
       <article class="hv-of ${i===0 ? 'oscura' : 'verde'}">
@@ -7788,6 +7922,7 @@ function render(){
   renderBandaOferta();
   renderWaFlotante();
   prepararBarraCompra();
+  montarVitrina();
   /* El alto real de la barra fija de la ficha, para que los recomendados
      puedan dejarle sitio y no queden por debajo. */
   const barraFicha = document.querySelector('.ficha-barra');
