@@ -1984,6 +1984,10 @@ footer.site .footer-bottom{
 .opcion-texto{flex:1;min-width:0;}
 .opcion-titulo{display:block;font:600 12.5px/1.25 var(--app-sans);color:var(--app-ink);}
 .opcion-nota{display:block;margin-top:3px;font:400 11.5px/1.35 var(--app-sans);color:var(--app-muted-2);}
+.opcion-regalo{
+  display:inline-block;margin-top:6px;padding:3px 7px;border-radius:6px;
+  background:var(--peru-rojo);font:700 10.5px/1.2 var(--app-sans);color:#fff;
+}
 .opcion-coste{flex:none;font:600 12.5px/1 var(--app-sans);color:var(--app-ink);}
 
 /* ---------------- resumen de totales ---------------- */
@@ -5812,12 +5816,16 @@ const iconoBanco = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
    src/index.js, sirveFoto).
 
    La transferencia no lleva logo de marca a propósito: vale para BCP y para
-   Interbank, así que enseña un dibujo genérico de banco. */
+   Interbank, así que enseña un dibujo genérico de banco.
+
+   'regalo' pinta la etiqueta roja "Incluye regalo sorpresa": va en los
+   medios que se cobran sin pasarela, para que se elijan antes que Mercado
+   Pago, que se lleva comisión. */
 const MEDIOS_PAGO = [
-  { key:'yape',     label:'Yape',                       nota:'Te enviamos el número por WhatsApp',                 logo:'/pagos/yape.png' },
-  { key:'plin',     label:'Plin',                       nota:'Confirmación inmediata',                             logo:'/pagos/plin.png' },
+  { key:'yape',     label:'Yape',                       nota:'Te enviamos el número por WhatsApp',                 logo:'/pagos/yape.png', regalo:true },
+  { key:'plin',     label:'Plin',                       nota:'Confirmación inmediata',                             logo:'/pagos/plin.png', regalo:true },
   { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', logo:'/pagos/mercadopago.png' },
-  { key:'transfer', label:'Transferencia bancaria',      nota:'BCP o Interbank',                                    marcador:{fondo:'#EDEDEA', tinta:'#57514A', icono:'banco'} },
+  { key:'transfer', label:'Transferencia bancaria',      nota:'BCP o Interbank',                                    marcador:{fondo:'#EDEDEA', tinta:'#57514A', icono:'banco'}, regalo:true },
   { key:'tienda',   label:'Pago en tienda al recoger',   nota:'Pagas en efectivo o por Yape cuando lo recojas',     soloRecojo:true },
 ];
 
@@ -5929,7 +5937,7 @@ function notaEnvio(subtotal){
     : `Ya tienes envío gratis · 1 a 4 días útiles`;
 }
 
-function filaRadio(sel, titulo, nota, coste, accion, logo){
+function filaRadio(sel, titulo, nota, coste, accion, logo, regalo){
   return `
   <button type="button" class="opcion${sel?' sel':''}" aria-pressed="${sel?'true':'false'}" onclick="${accion}">
     <span class="opcion-radio">${sel?'<span class="opcion-punto"></span>':''}</span>
@@ -5937,6 +5945,7 @@ function filaRadio(sel, titulo, nota, coste, accion, logo){
     <span class="opcion-texto">
       <span class="opcion-titulo">${escapeHtml(titulo)}</span>
       ${nota?`<span class="opcion-nota">${escapeHtml(nota)}</span>`:''}
+      ${regalo?'<span class="opcion-regalo">Incluye regalo sorpresa</span>':''}
     </span>
     ${coste?`<span class="opcion-coste">${escapeHtml(coste)}</span>`:''}
   </button>`;
@@ -6147,7 +6156,7 @@ function renderCheckout(){
             <div class="opciones rejilla">
               ${mediosDisponibles().map(m => filaRadio(
                   state.pago===m.key, m.label, m.nota,
-                  '', `setPago('${m.key}')`, logoPagoHtml(m))).join('')}
+                  '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo)).join('')}
             </div>
           </div>
 
@@ -6182,7 +6191,7 @@ function renderCheckout(){
     <div class="opciones">
       ${mediosDisponibles().map(m => filaRadio(
           state.pago===m.key, m.label, m.nota,
-          '', `setPago('${m.key}')`, logoPagoHtml(m))).join('')}
+          '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo)).join('')}
     </div>
 
     <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)">
@@ -6358,7 +6367,7 @@ ${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fm
 Total: ${fmt(total)}
 
 Entrega: ${entregaTexto}
-Medio de pago: ${medio.label}
+Medio de pago: ${medio.label}${medio.regalo ? ' (incluye regalo sorpresa)' : ''}
 
 Cliente: ${datos.nombre}
 Teléfono: ${datos.telefono}
