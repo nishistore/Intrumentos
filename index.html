@@ -3462,7 +3462,7 @@ const state = {
   /* Literal a propósito: MEDIOS_PAGO y PAGO_INICIAL se declaran más abajo
      con const, y leerlos aquí reventaría con ReferenceError al cargar. */
   pago:'yape',       // clave de MEDIOS_PAGO
-  datos:{nombre:'', telefono:'', correo:'', direccion:''},
+  datos:{nombre:'', telefono:'', direccion:''},
   agencia:null,      // agencia Shalom elegida para envío a provincia: [departamento, nombre, dirección]
   buscandoAgencia:false,
   orderPlaced:false,
@@ -6269,10 +6269,6 @@ function renderCheckout(){
                placeholder="Ej. 987654321" pattern="[0-9]{9}" maxlength="9" required
                title="Nueve dígitos, como 987654321" value="${escapeHtml(state.datos.telefono)}">
       </label>
-      <label class="campo">
-        <span>Correo electrónico</span>
-        <input id="coCorreo" type="email" autocomplete="email" placeholder="Ej. maria@correo.com" required value="${escapeHtml(state.datos.correo)}">
-      </label>
       ${state.entrega==='envio' ? agenciaShalomHtml() : ''}
       <label class="campo">
         <span>${state.entrega==='tienda' ? 'Quién lo recoge y cuándo'
@@ -6491,7 +6487,6 @@ function leerDatosDelFormulario(){
   state.datos = {
     nombre: v('coNombre').trim(),
     telefono: v('coTelefono').trim(),
-    correo: v('coCorreo').trim(),
     direccion: v('coDireccion').trim(),
   };
   return state.datos;
@@ -6500,7 +6495,7 @@ function leerDatosDelFormulario(){
 async function submitOrder(e){
   e.preventDefault();
   const datos = leerDatosDelFormulario();
-  if(!datos.nombre || !datos.telefono || !datos.correo || !datos.direccion) return;
+  if(!datos.nombre || !datos.telefono || !datos.direccion) return;
 
   const medio = medioPago(state.pago);
 
@@ -6534,7 +6529,6 @@ Medio de pago: ${medio.label}${medio.regalo ? ' (incluye regalo sorpresa)' : ''}
 
 Cliente: ${datos.nombre}
 Teléfono: ${datos.telefono}
-Correo: ${datos.correo}
 ${state.entrega === 'tienda' || agenciaActiva() ? 'Recoge' : 'Dirección'}: ${datos.direccion}`;
 
   window.open(`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank', 'noopener');
@@ -6665,7 +6659,7 @@ const POLICIES = {
     <h4>Costos de envío</h4>
     <ul><li>Envío gratuito en compras mayores a S/ 100.</li><li>Costo fijo de S/ 15 según destino para compras menores.</li><li>Recojo en tienda disponible sin costo adicional.</li></ul>
     <h4>Seguimiento</h4>
-    <p>Una vez despachado tu pedido recibirás un código de seguimiento por correo electrónico o WhatsApp.</p>`},
+    <p>Una vez despachado tu pedido recibirás un código de seguimiento por WhatsApp.</p>`},
   /* La única con `path`: no se abre en el modal, se abre como página. Quien
      duda si puede devolver algo lo pregunta en Google antes de comprar, y un
      texto encerrado en un modal no tiene dirección que dar ni que indexar.
@@ -6692,7 +6686,7 @@ const POLICIES = {
     <p>Las imágenes de los productos son referenciales; el color o acabado real puede presentar ligeras variaciones respecto a la imagen mostrada.</p>
     <p>Nos reservamos el derecho de cancelar pedidos ante indicios de fraude o error evidente en el precio publicado.</p>`},
   privacidad:{title:'Política de privacidad', body:`
-    <p>La información personal que nos proporcionas (nombre, teléfono, dirección, correo) se utiliza únicamente para procesar tus pedidos, brindarte soporte y, si lo autorizas, enviarte promociones.</p>
+    <p>La información personal que nos proporcionas (nombre, teléfono y dirección) se utiliza únicamente para procesar tus pedidos, brindarte soporte y, si lo autorizas, enviarte promociones.</p>
     <p>No compartimos tus datos con terceros salvo lo necesario para la entrega del pedido (courier) o por requerimiento legal.</p>
     <p>Puedes solicitar la actualización o eliminación de tus datos escribiéndonos a nuestro correo de contacto.</p>`},
   contacto:{title:'Contáctanos', body:`
