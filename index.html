@@ -2070,6 +2070,45 @@ footer.site .footer-bottom{
   border:1px solid var(--app-line);
   font:400 13px/1.3 var(--app-sans);color:var(--app-muted);
 }
+/* Agencia Shalom: la invitación, el buscador y la agencia ya elegida. */
+.agencia-invita{
+  margin-top:12px;padding:12px 13px;border-radius:11px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--app-sunken);border:1px solid var(--app-line);
+  font:400 13px/1.35 var(--app-sans);color:var(--app-ink-70);
+}
+.agencia-invita span{flex:1 1 180px;}
+.agencia-invita b{font-weight:600;color:var(--app-ink);}
+.agencia-invita button,.agencia-acciones button,.agencia-cerrar{
+  flex:none;padding:9px 13px;border-radius:10px;cursor:pointer;
+  background:var(--app-surface);border:1px solid var(--app-line-strong);
+  font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
+}
+.agencia-buscador{margin-top:3px;}
+.agencia-resultados{
+  margin-top:8px;max-height:320px;overflow-y:auto;
+  border:1px solid var(--app-line);border-radius:11px;background:var(--app-surface);
+}
+.agencia-fila{
+  display:block;width:100%;text-align:left;cursor:pointer;
+  padding:11px 13px;background:none;border:0;border-bottom:1px solid var(--app-line);
+}
+.agencia-fila:last-child{border-bottom:0;}
+.agencia-fila:active{background:var(--app-sunken);}
+.agencia-nombre{display:block;font:600 13px/1.3 var(--app-sans);color:var(--app-ink);}
+.agencia-nombre i{font-style:normal;font-weight:400;color:var(--app-muted-2);margin-left:4px;}
+.agencia-dir{display:block;margin-top:3px;font:400 12px/1.4 var(--app-sans);color:var(--app-muted);}
+.agencia-vacio{margin:0;padding:12px 13px;font:400 12.5px/1.4 var(--app-sans);color:var(--app-muted);}
+.agencia-cerrar{margin-top:8px;}
+.agencia-elegida{
+  margin-top:12px;padding:12px 13px;border-radius:11px;
+  background:var(--app-green-soft);border:1px solid var(--app-line);
+}
+.agencia-eyebrow{
+  display:block;margin-bottom:4px;
+  font:600 11px/1 var(--app-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--app-green-ink);
+}
+.agencia-acciones{display:flex;gap:8px;margin-top:10px;}
 .nota-cierre{
   margin-top:12px;
   font:400 11.5px/1.5 var(--app-sans);color:var(--app-muted-3);
@@ -3424,6 +3463,8 @@ const state = {
      con const, y leerlos aquí reventaría con ReferenceError al cargar. */
   pago:'yape',       // clave de MEDIOS_PAGO
   datos:{nombre:'', telefono:'', correo:'', direccion:''},
+  agencia:null,      // agencia Shalom elegida para envío a provincia: [departamento, nombre, dirección]
+  buscandoAgencia:false,
   orderPlaced:false,
   orderId:null,      // número del último pedido enviado, para /pedido/<id>
   pedidoEnviado:null,// {total, entrega} congelado al cerrar, para la confirmación
@@ -5903,6 +5944,125 @@ function setEntrega(valor){
   if(valor !== 'tienda' && state.pago === 'tienda') state.pago = PAGO_INICIAL;
   render();
 }
+/* ---------------- agencia Shalom (envío a provincia) ----------------
+   La lista sale de shalom.com.pe/agencias y vive en /shalom-agencias.json:
+   solo las de provincia (sin Lima Metropolitana ni Callao), cada una como
+   [departamento, nombre, dirección]. Es una foto fija: si Shalom abre o
+   cierra agencias hay que volver a sacarla. Se pide solo cuando alguien abre
+   el buscador, así no pesa en la carga de ninguna otra página. */
+let AGENCIAS_SHALOM = null;
+const MAX_AGENCIAS_VISIBLES = 40;
+
+function agenciaActiva(){
+  return state.entrega === 'envio' && state.agencia ? state.agencia : null;
+}
+function textoEntrega(){
+  if(state.entrega === 'tienda') return 'Recojo en tienda (Av. Los Héroes 382)';
+  const a = agenciaActiva();
+  return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a domicilio';
+}
+
+function agenciaShalomHtml(){
+  const a = state.agencia;
+  if(a && !state.buscandoAgencia){
+    return `
+      <div class="agencia-elegida">
+        <span class="agencia-eyebrow">Agencia Shalom · ${escapeHtml(a[0])}</span>
+        <span class="agencia-nombre">${escapeHtml(a[1])}</span>
+        <span class="agencia-dir">${escapeHtml(a[2])}</span>
+        <span class="agencia-acciones">
+          <button type="button" onclick="abrirBuscadorAgencia()">Cambiar</button>
+          <button type="button" onclick="quitarAgencia()">Quitar</button>
+        </span>
+      </div>`;
+  }
+  if(state.buscandoAgencia){
+    return `
+      <div class="agencia-buscador">
+        <label class="campo">
+          <span>Busca tu agencia Shalom</span>
+          <input id="agBuscar" type="search" autocomplete="off" placeholder="Tu ciudad, provincia o departamento"
+                 oninput="filtrarAgencias(this.value)"
+                 onkeydown="if(event.key==='Enter') event.preventDefault()">
+        </label>
+        <div id="agResultados" class="agencia-resultados"><p class="agencia-vacio">Cargando agencias…</p></div>
+        <button type="button" class="agencia-cerrar" onclick="cerrarBuscadorAgencia()">${a ? 'Volver' : 'Cancelar'}</button>
+      </div>`;
+  }
+  return `
+    <div class="agencia-invita">
+      <span><b>¿Eres de provincia?</b> Recíbelo en la agencia Shalom más cercana.</span>
+      <button type="button" onclick="abrirBuscadorAgencia()">Buscar agencia</button>
+    </div>`;
+}
+
+async function abrirBuscadorAgencia(){
+  leerDatosDelFormulario();
+  state.buscandoAgencia = true;
+  render();
+  document.getElementById('agBuscar')?.focus();
+  if(!AGENCIAS_SHALOM){
+    try{
+      AGENCIAS_SHALOM = await fetch('/shalom-agencias.json').then(r => r.json());
+    }catch(e){
+      const cont = document.getElementById('agResultados');
+      if(cont) cont.innerHTML = '<p class="agencia-vacio">No se pudo cargar la lista. Escribe tu ciudad en la dirección y te ayudamos por WhatsApp.</p>';
+      return;
+    }
+  }
+  filtrarAgencias(document.getElementById('agBuscar')?.value || '');
+}
+
+function cerrarBuscadorAgencia(){
+  leerDatosDelFormulario();
+  state.buscandoAgencia = false;
+  render();
+}
+function quitarAgencia(){
+  leerDatosDelFormulario();
+  state.agencia = null;
+  render();
+}
+function elegirAgencia(i){
+  leerDatosDelFormulario();
+  state.agencia = AGENCIAS_SHALOM[i];
+  state.buscandoAgencia = false;
+  render();
+  document.getElementById('coDireccion')?.focus();
+}
+
+/* Sin tildes ni mayúsculas: quien escribe "junin" o "cañete" desde el
+   teléfono tiene que encontrar "Junín" y "Cañete". Cada palabra tiene que
+   aparecer en algún sitio (departamento, nombre o dirección). */
+function sinTildes(t){
+  return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function filtrarAgencias(q){
+  const cont = document.getElementById('agResultados');
+  if(!cont || !AGENCIAS_SHALOM) return;
+  const palabras = sinTildes(q).split(/\s+/).filter(Boolean);
+  const hallados = [];
+  AGENCIAS_SHALOM.forEach((a, i) => {
+    const texto = sinTildes(a.join(' '));
+    if(palabras.every(w => texto.includes(w))) hallados.push(i);
+  });
+  if(!hallados.length){
+    cont.innerHTML = '<p class="agencia-vacio">No encontramos una agencia con ese nombre. Prueba con tu provincia o departamento.</p>';
+    return;
+  }
+  const filas = hallados.slice(0, MAX_AGENCIAS_VISIBLES).map(i => {
+    const a = AGENCIAS_SHALOM[i];
+    return `
+      <button type="button" class="agencia-fila" onclick="elegirAgencia(${i})">
+        <span class="agencia-nombre">${escapeHtml(a[1])} <i>${escapeHtml(a[0])}</i></span>
+        <span class="agencia-dir">${escapeHtml(a[2])}</span>
+      </button>`;
+  }).join('');
+  const resto = hallados.length - MAX_AGENCIAS_VISIBLES;
+  cont.innerHTML = filas + (resto > 0
+    ? `<p class="agencia-vacio">Y ${resto} más. Escribe tu ciudad para encontrar la tuya.</p>` : '');
+}
+
 function setPago(valor){
   state.pago = valor;
   render();
@@ -6092,8 +6252,10 @@ function renderCheckout(){
   if(!state.cart.length) return renderCarrito();
 
   const medio = medioPago(state.pago);
+  const conAgencia = state.entrega==='envio' && !!state.agencia;
   const entregaResumen = state.entrega==='tienda'
     ? 'Recojo en tienda · Av. Los Héroes 382'
+    : conAgencia ? `Envío a agencia Shalom · ${state.agencia[1]}`
     : 'Envío a domicilio · Lima y provincias';
 
   const camposHtml = `
@@ -6111,9 +6273,12 @@ function renderCheckout(){
         <span>Correo electrónico</span>
         <input id="coCorreo" type="email" autocomplete="email" placeholder="Ej. maria@correo.com" required value="${escapeHtml(state.datos.correo)}">
       </label>
+      ${state.entrega==='envio' ? agenciaShalomHtml() : ''}
       <label class="campo">
-        <span>${state.entrega==='tienda' ? 'Quién lo recoge y cuándo' : 'Dirección de entrega'}</span>
-        <textarea id="coDireccion" rows="2" placeholder="${state.entrega==='tienda' ? 'Ej. Paso yo mañana por la tarde' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
+        <span>${state.entrega==='tienda' ? 'Quién lo recoge y cuándo'
+              : conAgencia ? 'Quién recoge en la agencia' : 'Dirección de entrega'}</span>
+        <textarea id="coDireccion" rows="2" placeholder="${state.entrega==='tienda' ? 'Ej. Paso yo mañana por la tarde'
+              : conAgencia ? 'Nombre y DNI, como figura en el documento' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
       </label>`;
 
   const notaCierre = medio.key === 'tarjeta'
@@ -6353,9 +6518,7 @@ async function submitOrder(e){
   }).filter(Boolean).join('\n');
 
   const numero = nuevoNumeroPedido();
-  const entregaTexto = state.entrega === 'tienda'
-    ? 'Recojo en tienda (Av. Los Héroes 382)'
-    : 'Envío a domicilio';
+  const entregaTexto = textoEntrega();
 
   const mensaje =
 `🎵 Pedido #${numero} — Chipao Music
@@ -6372,7 +6535,7 @@ Medio de pago: ${medio.label}${medio.regalo ? ' (incluye regalo sorpresa)' : ''}
 Cliente: ${datos.nombre}
 Teléfono: ${datos.telefono}
 Correo: ${datos.correo}
-${state.entrega === 'tienda' ? 'Recojo' : 'Dirección'}: ${datos.direccion}`;
+${state.entrega === 'tienda' || agenciaActiva() ? 'Recoge' : 'Dirección'}: ${datos.direccion}`;
 
   window.open(`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank', 'noopener');
   /* Pedido enviado, no cobrado: va como cliente potencial. */
@@ -6424,7 +6587,7 @@ async function payWithMercadoPago(comprador){
   if(ship>0){
     items.push({ title: 'Costo de envío', quantity: 1, unit_price: ship });
   }
-  const entrega = state.entrega === 'tienda' ? 'Recojo en tienda' : 'Envío a domicilio';
+  const entrega = textoEntrega();
 
   try{
     const res = await fetch(MP_API_URL, {
