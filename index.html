@@ -3170,6 +3170,68 @@ footer.site .footer-bottom{
   .side-asesor .btn-app{max-width:260px;}
 }
 
+/* ======================================================================
+   TALLER DE REPARACIÓN (/taller): negro y dorado, solo en esta pantalla.
+   ====================================================================== */
+.taller{
+  background:#0a0a0a;color:#e9e4da;text-align:center;
+  padding:72px 24px 96px;position:relative;overflow:hidden;
+  background-image:radial-gradient(60% 420px at 50% 0%,rgba(201,173,106,.16),transparent 70%);
+}
+.taller-volver{
+  display:none;position:absolute;left:16px;top:16px;
+  font:500 13px/1 var(--app-sans);color:#a8925f;text-decoration:none;
+}
+.taller-logo{display:block;width:84px;height:84px;margin:0 auto 26px;}
+.taller-sobre{font:500 12px/1.4 var(--app-sans);letter-spacing:.32em;text-transform:uppercase;color:#c9ad6a;}
+.taller h1{margin-top:20px;font:500 68px/1.02 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;letter-spacing:0;}
+.taller h1 em{font-style:italic;color:#d8bf82;}
+.taller-orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:30px;color:#c9ad6a;}
+.taller-orn span{width:70px;height:1px;background:linear-gradient(90deg,transparent,#c9ad6a);}
+.taller-orn span:last-child{background:linear-gradient(90deg,#c9ad6a,transparent);}
+.taller-sub{max-width:560px;margin:26px auto 0;font:400 15px/1.75 var(--app-sans);color:#9d978c;}
+.taller-cartas{
+  max-width:1060px;margin:64px auto 0;text-align:left;
+  display:grid;grid-template-columns:1fr 1fr;gap:28px;
+}
+.taller-carta{
+  position:relative;padding:44px 40px 36px;border:1px solid #3a3223;
+  background:linear-gradient(180deg,#121110,#0c0c0b);
+}
+.taller-carta::after{content:"";position:absolute;top:7px;right:7px;bottom:7px;left:7px;border:1px solid #1f1b14;pointer-events:none;}
+.taller-carta h2{font:600 30px/1 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;text-align:center;}
+.taller-tipos{margin-top:10px;text-align:center;font:500 11px/1.4 var(--app-sans);letter-spacing:.2em;text-transform:uppercase;color:#8d7a52;}
+.taller-lista{margin-top:30px;}
+.taller-fila{display:flex;align-items:baseline;gap:10px;padding:13px 0;}
+.taller-servicio{font:400 15.5px/1.35 var(--app-sans);color:#d6d0c4;}
+.taller-puntos{flex:1;min-width:24px;border-bottom:1px dotted #4a4131;transform:translateY(-4px);}
+.taller-precio{font:600 26px/1 'Cormorant Garamond',Georgia,serif;color:#d8bf82;white-space:nowrap;}
+.taller-precio small{font-size:14px;margin-right:2px;color:#a8925f;}
+.taller-tratar{font:italic 500 19px/1 'Cormorant Garamond',Georgia,serif;color:#a8925f;white-space:nowrap;}
+.taller-cta{
+  display:inline-block;margin-top:56px;padding:18px 34px;border:1px solid #c9ad6a;
+  font:500 13px/1 var(--app-sans);letter-spacing:.22em;text-transform:uppercase;
+  color:#e9d7a6;text-decoration:none;transition:background-color .2s ease,color .2s ease;
+}
+.taller-cta:hover{background:#c9ad6a;color:#0a0a0a;}
+.taller-nota{margin-top:18px;font:400 12.5px/1.5 var(--app-sans);color:#6f6a61;}
+.taller-nota + .taller-nota{margin-top:6px;}
+/* El pie ya es oscuro: sin su margen, el negro del taller sigue hasta él. */
+body.en-taller footer.site{margin-top:0;}
+/* Enlace al taller en la franja negra de arriba (escritorio). */
+.franja-taller{color:#d8bf82;text-decoration:none;font:600 12px/12px var(--app-sans);}
+.franja-taller:hover{text-decoration:underline;}
+@media (max-width:899px){
+  .taller{padding:64px 16px 96px;}
+  .taller-volver{display:block;}
+  .taller-logo{width:68px;height:68px;margin-bottom:22px;}
+  .taller-sobre{font-size:11px;letter-spacing:.24em;}
+  .taller h1{font-size:44px;}
+  .taller-cartas{grid-template-columns:1fr;gap:20px;margin-top:44px;}
+  .taller-carta{padding:34px 22px 26px;}
+  .taller-servicio{font-size:14.5px;}
+  .taller-cta{margin-top:44px;}
+}
 </style>
 </head>
 <body>
@@ -3189,6 +3251,7 @@ footer.site .footer-bottom{
   <div class="franja-util-inner">
     <span>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día</span>
     <div class="franja-derecha">
+      <a class="franja-taller" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
       <span>Av. Los Héroes 382, San Juan de Miraflores</span>
       <span class="franja-horario">9:30 a.m. &ndash; 9:00 p.m.</span>
     </div>
@@ -3285,6 +3348,7 @@ footer.site .footer-bottom{
         <a class="link" href="/cambios-y-devoluciones" onclick="goPolicy('cambios');return false;">Cambios y devoluciones</a>
         <button class="link" onclick="openPolicy('pagos')">Medios de pago</button>
         <button class="link" onclick="openPolicy('garantia')">Garantía de productos</button>
+        <a class="link" href="/taller" onclick="goTaller();return false;">Taller de reparación</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
@@ -3887,6 +3951,7 @@ function routeFromPath(push){
      pantalla de sesión. Se resuelve aquí, antes que nada que filtre. */
   const politica = politicaDeRuta(path);
   if(politica){ goPolicy(politica, push); return true; }
+  if(path === '/taller'){ goTaller(push); return true; }
 
   if(path === '/buscar'){ goSearch(push); return true; }
   if(path === '/carrito'){ goCart(push); return true; }
@@ -3981,6 +4046,7 @@ function renderPieMovil(){
           ${pol('pagos', 'Medios de pago')}
           <a class="pm-link" href="/cambios-y-devoluciones" onclick="goPolicy('cambios');return false;">Cambios y devoluciones</a>
           ${pol('garantia', 'Garantía de productos')}
+          <a class="pm-link" href="/taller" onclick="goTaller();return false;">Taller de reparación</a>
         </div>
       </details>
       <details>
@@ -7174,6 +7240,100 @@ function showToast(msg, conEnlaceAlCarrito){
 }
 
 /* ======================================================================
+   TALLER DE REPARACIÓN (/taller)
+   La única pantalla del sitio en negro y dorado: es un servicio, no un
+   producto, y tiene que verse distinto de la tienda. Los precios son los de
+   la carta impresa del taller. El Worker sirve el mismo texto para Google
+   (PAGINAS_DE_AYUDA en src/index.js): si cambias un precio aquí, cámbialo
+   también allí.
+   ====================================================================== */
+const TALLER_PRECIOS = [
+  { titulo:'Guitarras', tipos:'Acústicas · eléctricas · electroacústicas', filas:[
+    ['Calibración', 100],
+    ['Calibración + cuerdas nuevas', 130],
+    ['Calibración + cuerdas nuevas + mantenimiento', 160],
+    ['Reparación, pintura, otros', null],
+  ]},
+  { titulo:'Bajos', tipos:'Acústicos · eléctricos · electroacústicos', filas:[
+    ['Calibración', 100],
+    ['Calibración + cuerdas nuevas', 200],
+    ['Calibración + cuerdas nuevas + mantenimiento', 230],
+    ['Reparación, pintura, otros', null],
+  ]},
+];
+
+/* El logo de la tienda redibujado en dorado: el redondo de siempre es azul
+   sobre blanco y en el fondo negro quedaba como una pegatina. Mismas formas
+   —la C, la nota, el anillo—, en los tonos de la página. */
+function logoTallerSvg(){
+  return `<svg class="taller-logo" viewBox="0 0 512 512" role="img" aria-label="Chipao Music">
+    <defs>
+      <linearGradient id="tallerOro" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f1dca4"/><stop offset=".55" stop-color="#c9a85e"/><stop offset="1" stop-color="#9c7b3c"/>
+      </linearGradient>
+    </defs>
+    <circle cx="256" cy="256" r="244" fill="none" stroke="url(#tallerOro)" stroke-width="6"/>
+    <circle cx="256" cy="256" r="226" fill="none" stroke="#c9a85e" stroke-opacity=".28" stroke-width="2"/>
+    <path d="M266 209 A89 89 0 1 0 324 333" fill="none" stroke="#efe6d2" stroke-width="58"/>
+    <circle cx="262" cy="292" r="48" fill="url(#tallerOro)"/>
+    <rect x="291" y="76" width="12" height="216" fill="url(#tallerOro)"/>
+    <path d="M298 76 C310 118 392 132 372 226 C366 196 340 168 303 152 Z" fill="url(#tallerOro)"/>
+  </svg>`;
+}
+
+/* Cormorant Garamond solo hace falta aquí: se pide la primera vez que se abre
+   el taller en vez de cargarla en cada visita a la tienda. */
+function cargarFuenteTaller(){
+  if(document.getElementById('fuenteTaller')) return;
+  const l = document.createElement('link');
+  l.id = 'fuenteTaller';
+  l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap';
+  document.head.appendChild(l);
+}
+
+function goTaller(push){
+  document.getElementById('modalOverlay').classList.remove('show');
+  state.view = 'taller';
+  navigateTo('/taller', push);
+  setPageMeta('Taller de reparación de guitarras y bajos en Lima | Chipao Music',
+    'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos desde S/ 100 en San Juan de Miraflores. Reparaciones y pintura a tratar.');
+  setBreadcrumbSchema([{name:'Inicio', path:'/'}, {name:'Taller de reparación', path:'/taller'}]);
+  render();
+  if(push !== false) window.scrollTo({top:0});
+}
+
+function renderTaller(){
+  cargarFuenteTaller();
+  const cartas = TALLER_PRECIOS.map(c => `
+      <div class="taller-carta">
+        <h2>${c.titulo}</h2>
+        <p class="taller-tipos">${c.tipos}</p>
+        <div class="taller-lista">${c.filas.map(([servicio, precio]) => `
+          <div class="taller-fila">
+            <span class="taller-servicio">${servicio}</span><span class="taller-puntos"></span>
+            ${precio ? `<span class="taller-precio"><small>S/</small>${precio}</span>` : '<span class="taller-tratar">a tratar</span>'}
+          </div>`).join('')}
+        </div>
+      </div>`).join('');
+  return `
+  <section class="taller">
+    <a class="taller-volver" href="/" onclick="goHome();return false;">‹ Volver a la tienda</a>
+    ${logoTallerSvg()}
+    <div class="taller-sobre">Taller de luthería · Chipao Music</div>
+    <h1>Repara tu guitarra<br><em>con nosotros</em></h1>
+    <div class="taller-orn" aria-hidden="true"><span></span>✦<span></span></div>
+    <p class="taller-sub">Tu instrumento en manos de quien lo entiende. Calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>
+    <div class="taller-cartas">${cartas}</div>
+    <a class="taller-cta" target="_blank" rel="noopener"
+       href="${waHref('Hola, quiero agendar una reparación en el taller.')}"
+       onclick="trackAdsConversion('whatsapp')">Agenda tu reparación</a>
+    <p class="taller-nota">Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>
+    <p class="taller-nota">Av. Los Héroes 382, San Juan de Miraflores · ${STORE_HOURS}</p>
+  </section>`;
+}
+
+/* ======================================================================
    POLICY MODALS
    ====================================================================== */
 const POLICIES = {
@@ -8316,6 +8476,7 @@ function render(){
     : state.view==='checkout' ? renderCheckout()
     : state.view==='pedido'   ? renderPedido()
     : state.view==='politica' ? renderPolitica()
+    : state.view==='taller'   ? renderTaller()
     : state.view==='admin'      ? renderAdminPanel()
     : state.view==='adminLogin' ? renderAdminLoginPage()
     : renderShop();
@@ -8343,6 +8504,7 @@ function render(){
      WhatsApp no pintan nada mientras se edita el catálogo. */
   const enPanel = state.view==='admin' || state.view==='adminLogin';
   document.body.classList.toggle('en-panel', enPanel);
+  document.body.classList.toggle('en-taller', state.view==='taller');
   document.getElementById('bottomNav').classList.toggle('oculta', conBarraFija || enPanel);
   /* Y tampoco el pie: la barra fija se le montaría encima. La ficha es una
      pantalla de decisión, termina en el CTA. */

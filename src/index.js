@@ -498,6 +498,21 @@ const PAGINAS_DE_AYUDA = {
       '<p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>',
     ].join(''),
   },
+  /* No es una política, pero funciona igual: una página de texto con su
+     URL. Precios copiados de TALLER_PRECIOS en index.html. */
+  '/taller': {
+    title: 'Taller de reparación de guitarras y bajos en Lima | Chipao Music',
+    h1: 'Taller de reparación',
+    description: 'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos desde S/ 100 en San Juan de Miraflores. Reparaciones y pintura a tratar.',
+    body: [
+      '<p>Repara tu guitarra con nosotros: calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>',
+      '<h2>Guitarras (acústicas, eléctricas y electroacústicas)</h2>',
+      '<ul><li>Calibración: S/ 100</li><li>Calibración + cuerdas nuevas: S/ 130</li><li>Calibración + cuerdas nuevas + mantenimiento: S/ 160</li><li>Reparación, pintura, otros: a tratar</li></ul>',
+      '<h2>Bajos (acústicos, eléctricos y electroacústicos)</h2>',
+      '<ul><li>Calibración: S/ 100</li><li>Calibración + cuerdas nuevas: S/ 200</li><li>Calibración + cuerdas nuevas + mantenimiento: S/ 230</li><li>Reparación, pintura, otros: a tratar</li></ul>',
+      '<p>Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>',
+    ].join(''),
+  },
 };
 
 function ayudaMeta(pathname) {
