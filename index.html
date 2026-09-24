@@ -431,9 +431,12 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 .admin-tab.activa{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
 .admin-taller{margin-bottom:12px;gap:4px;}
 .admin-taller-titulo{font:700 16px/1.2 var(--app-sans);color:var(--app-ink);margin-bottom:6px;}
-.admin-taller-fila{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--app-line);}
-.admin-taller-servicio{flex:1;min-width:0;font:400 13.5px/1.35 var(--app-sans);color:var(--app-ink);}
-.admin-taller-precio{flex:none;display:flex;align-items:center;gap:6px;font:600 13px/1 var(--app-sans);color:var(--app-muted);}
+.admin-taller-fila{display:flex;flex-direction:column;gap:8px;padding:10px 0;border-top:1px solid var(--app-line);}
+.admin-taller-servicio{
+  width:100%;resize:vertical;padding:8px 10px;border-radius:10px;border:1.5px solid var(--app-line-strong);
+  font:400 16px/1.3 var(--app-sans);color:var(--app-ink);background:var(--app-surface);
+}
+.admin-taller-precio{align-self:flex-start;display:flex;align-items:center;gap:6px;font:600 13px/1 var(--app-sans);color:var(--app-muted);}
 .admin-taller-precio input{
   width:96px;padding:9px 10px;border-radius:10px;border:1.5px solid var(--app-line-strong);
   font:600 16px/1 var(--app-sans);color:var(--app-ink);background:var(--app-surface);
@@ -7824,19 +7827,20 @@ function renderAdminTaller(){
       ${pestanasAdminHtml()}
     </header>
 
-    <p class="banner-nota">Son los precios de chipaomusic.com/taller. Deja un precio vacío para que diga «a tratar». Al guardar se cambian para todos.</p>
+    <p class="banner-nota">Son los servicios y precios de chipaomusic.com/taller. Puedes cambiar el nombre y el precio de cada uno; deja el precio vacío para que diga «a tratar». Al guardar se cambian para todos.</p>
 
     ${TALLER_PRECIOS.map((g, gi) => `
     <section class="admin-row admin-taller">
       <h2 class="admin-taller-titulo">${escapeHtml(g.titulo)}</h2>
       ${g.filas.map((f, fi) => `
-      <label class="admin-taller-fila">
-        <span class="admin-taller-servicio">${escapeHtml(f[0])}</span>
+      <div class="admin-taller-fila">
+        <textarea class="admin-taller-servicio" id="taller-n-${gi}-${fi}" rows="2" maxlength="80"
+                  aria-label="Nombre del servicio">${escapeHtml(f[0])}</textarea>
         <span class="admin-taller-precio">S/
           <input type="number" id="taller-${gi}-${fi}" inputmode="numeric" min="1" step="1"
-                 value="${f[1] ?? ''}" placeholder="a tratar">
+                 value="${f[1] ?? ''}" placeholder="a tratar" aria-label="Precio">
         </span>
-      </label>`).join('')}
+      </div>`).join('')}
     </section>`).join('')}
 
     <button type="button" class="btn-app terracota admin-guardar" id="taller-guardar" onclick="guardarPreciosTaller(this)">Guardar precios del taller</button>
@@ -7860,7 +7864,14 @@ async function guardarPreciosTaller(btn){
         showToast('Los precios van en soles enteros, sin decimales');
         return;
       }
-      filas.push([g.filas[fi][0], precio]);
+      const campoNombre = document.getElementById(`taller-n-${gi}-${fi}`);
+      const nombre = campoNombre.value.replace(/s+/g, ' ').trim();
+      if(!nombre){
+        campoNombre.focus();
+        showToast('Cada servicio necesita un nombre');
+        return;
+      }
+      filas.push([nombre, precio]);
     }
     precios.push({ titulo: g.titulo, tipos: g.tipos, filas });
   }
