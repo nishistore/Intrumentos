@@ -1789,6 +1789,64 @@ footer.site .footer-bottom{
   font:400 11px/1.4 var(--app-sans);color:rgba(255,255,255,.4);
 }
 
+/* ---- pie del teléfono (renderPieMovil) ----
+   En el teléfono se oculta el pie de columnas y se pinta este. Todo dentro
+   del @media: en escritorio .pie-movil va vacío y no cambia nada. */
+@media (min-width:900px){ .pie-movil{display:none;} }
+@media (max-width:899px){
+  footer.site .footer-grid,
+  footer.site .footer-bottom{display:none;}
+  .pie-movil{max-width:var(--app-max);margin:0 auto;padding:26px var(--app-gutter) 22px;}
+  .pm-marca{display:flex;align-items:center;gap:12px;}
+  .pm-marca img{width:44px;height:44px;border-radius:50%;background:#fff;flex:none;}
+  .pm-marca b{display:block;font:400 17px/1.1 var(--app-black);letter-spacing:-.01em;color:#fff;}
+  .pm-marca span{display:block;margin-top:3px;font:400 12px/1.3 var(--app-sans);color:rgba(255,255,255,.55);}
+
+  .pm-tienda{
+    margin-top:20px;padding:14px;border-radius:14px;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  }
+  .pm-estado{display:flex;align-items:center;gap:7px;font:600 12.5px/1.2 var(--app-sans);color:var(--app-green-mint);}
+  .pm-estado i{width:7px;height:7px;border-radius:50%;background:var(--wa);flex:none;}
+  .pm-estado.cerrado{color:rgba(255,255,255,.7);}
+  .pm-estado.cerrado i{background:rgba(255,255,255,.4);}
+  footer.site .pm-tienda p{margin-top:6px;font:400 13.5px/1.4 var(--app-sans);color:rgba(255,255,255,.85);}
+  .pm-botones{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .pm-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;
+    border-radius:11px;font:800 14px/1 var(--app-sans);text-decoration:none;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;
+  }
+  .pm-btn.wa{background:var(--wa);border-color:var(--wa);color:var(--wa-ink);}
+  .pm-btn svg{width:18px;height:18px;flex:none;}
+  .pm-btn:not(.wa) svg{stroke:currentColor;}
+
+  .pm-acordeon{margin-top:20px;border-top:1px solid rgba(255,255,255,.12);}
+  .pm-acordeon details{border-bottom:1px solid rgba(255,255,255,.12);}
+  .pm-acordeon summary{
+    list-style:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:15px 2px;font:700 14.5px/1.2 var(--app-sans);color:#fff;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .pm-acordeon summary::-webkit-details-marker{display:none;}
+  .pm-acordeon summary::after{content:"+";font:400 22px/1 var(--app-sans);color:rgba(255,255,255,.5);}
+  .pm-acordeon details[open] summary::after{content:"\2212";}
+  .pm-dentro{padding:0 2px 12px;display:flex;flex-direction:column;}
+  .pm-link{
+    display:block;padding:8px 0;background:none;border:none;text-align:left;
+    font:400 14px/1.3 var(--app-sans);color:rgba(255,255,255,.78);text-decoration:none;
+  }
+
+  .pm-redes{margin-top:20px;display:flex;justify-content:center;gap:8px;}
+  .pm-redes a{
+    width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pm-redes svg{width:16px;height:16px;}
+  footer.site .pm-copy{margin-top:14px;text-align:center;font:400 11.5px/1.4 var(--app-sans);color:rgba(255,255,255,.4);}
+}
+
 /* ---------------- /buscar ---------------- */
 .app-head.buscar{padding-bottom:12px;}
 .buscar-fila{display:flex;align-items:center;gap:10px;}
@@ -3137,6 +3195,9 @@ footer.site .footer-bottom{
     </div>
   </div>
   <div class="footer-bottom">© 2026 Instrumentos Chipao. Todos los derechos reservados.</div>
+  <!-- Pie del teléfono: lo pinta renderPieMovil(). El de arriba se queda en
+       el HTML para escritorio y para Google, y en el teléfono se oculta. -->
+  <div id="pieMovil" class="pie-movil"></div>
 </footer>
 
 <script>
@@ -3771,6 +3832,69 @@ function buildNavLists(){
     `<a class="link" href="${hrefCategoria(c.key)}" onclick="goShop('${c.key}');return false;">${c.label}</a>`
   ).join('');
   buildBottomNav();
+  renderPieMovil();
+}
+
+/* Pie del teléfono. Arriba lo que sirve para comprar —si la tienda está
+   abierta, WhatsApp y cómo llegar— y las listas de enlaces plegadas en
+   acordeón, como en Mercado Libre: abiertas eran una pantalla entera de
+   texto. Con <details> los enlaces siguen en la página aunque estén
+   cerrados, y no hace falta JavaScript para abrirlos. */
+function renderPieMovil(){
+  const el = document.getElementById('pieMovil');
+  if(!el) return;
+  if(esEscritorio()){ el.innerHTML = ''; return; }
+
+  const estado = estadoTienda();
+  const abierto = estado.startsWith('abierto');
+  const pol = (clave, texto) =>
+    `<button type="button" class="pm-link" onclick="openPolicy('${clave}')">${texto}</button>`;
+
+  el.innerHTML = `
+    <div class="pm-marca">
+      <img src="/img/logo-redondo.webp" alt="Chipao Music" width="44" height="44" loading="lazy">
+      <div><b>Chipao Music</b><span>Instrumentos musicales en Lima · +12 años</span></div>
+    </div>
+
+    <div class="pm-tienda">
+      <span class="pm-estado${abierto ? '' : ' cerrado'}"><i></i>${abierto ? 'Abierto hoy hasta las 9:00 p.m.' : 'Cerrado · abrimos a las 9:30 a.m.'}</span>
+      <p>Av. Los Héroes 382, San Juan de Miraflores</p>
+      <div class="pm-botones">
+        <a class="pm-btn wa" target="_blank" rel="noopener"
+           href="${waHref('Hola, tengo una consulta.')}"
+           onclick="trackAdsConversion('whatsapp')"><span class="ico-wa">${iconWhatsapp}</span>WhatsApp</a>
+        <a class="pm-btn" target="_blank" rel="noopener" href="${STORE_MAPS_LINK}">${iconSvg('pin', 'aria-hidden="true"')}Cómo llegar</a>
+      </div>
+    </div>
+
+    <div class="pm-acordeon">
+      <details>
+        <summary>Categorías</summary>
+        <div class="pm-dentro">${CATEGORIES.map(c =>
+          `<a class="pm-link" href="${hrefCategoria(c.key)}" onclick="goShop('${c.key}');return false;">${escapeHtml(c.label)}</a>`
+        ).join('')}</div>
+      </details>
+      <details>
+        <summary>Compras y envíos</summary>
+        <div class="pm-dentro">
+          ${pol('envios', 'Política de envíos')}
+          ${pol('pagos', 'Medios de pago')}
+          <a class="pm-link" href="/cambios-y-devoluciones" onclick="goPolicy('cambios');return false;">Cambios y devoluciones</a>
+          ${pol('garantia', 'Garantía de productos')}
+        </div>
+      </details>
+      <details>
+        <summary>Legal y contacto</summary>
+        <div class="pm-dentro">
+          ${pol('terminos', 'Términos y condiciones')}
+          ${pol('privacidad', 'Política de privacidad')}
+          ${pol('contacto', 'Contáctanos')}
+        </div>
+      </details>
+    </div>
+
+    <div class="pm-redes">${document.querySelector('footer.site .footer-social').innerHTML}</div>
+    <p class="pm-copy">© 2026 Instrumentos Chipao</p>`;
 }
 
 /* Barra inferior del celular. El handoff la deja en cuatro destinos — las
