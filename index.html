@@ -422,6 +422,22 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 
 /* ---- herramientas de arriba ---- */
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
+/* Pestañas Productos | Taller, debajo del resumen. */
+.admin-tabs{display:flex;gap:6px;margin-top:12px;}
+.admin-tab{
+  padding:8px 16px;border-radius:var(--app-r-pill);border:1.5px solid var(--app-line-strong);
+  background:var(--app-surface);font:600 13px/1 var(--app-sans);color:var(--app-ink);
+}
+.admin-tab.activa{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
+.admin-taller{margin-bottom:12px;gap:4px;}
+.admin-taller-titulo{font:700 16px/1.2 var(--app-sans);color:var(--app-ink);margin-bottom:6px;}
+.admin-taller-fila{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--app-line);}
+.admin-taller-servicio{flex:1;min-width:0;font:400 13.5px/1.35 var(--app-sans);color:var(--app-ink);}
+.admin-taller-precio{flex:none;display:flex;align-items:center;gap:6px;font:600 13px/1 var(--app-sans);color:var(--app-muted);}
+.admin-taller-precio input{
+  width:96px;padding:9px 10px;border-radius:10px;border:1.5px solid var(--app-line-strong);
+  font:600 16px/1 var(--app-sans);color:var(--app-ink);background:var(--app-surface);
+}
 .admin-buscar{position:relative;margin-bottom:14px;}
 .admin-buscar input{
   width:100%;padding:13px 14px;border-radius:var(--app-r-input);
@@ -3638,6 +3654,7 @@ function leerBannerPromo(){
 /* El arranque, compartido por las dos vias (catalogo incrustado o API). */
 function arrancarConProductos(lista){
   BANNER_PROMO = leerBannerPromo();
+  TALLER_PRECIOS = leerTallerPrecios();
   PRODUCTS = lista;
   PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
   state.priceMax = PRICE_MAX;
@@ -7280,12 +7297,15 @@ function showToast(msg, conEnlaceAlCarrito){
 /* ======================================================================
    TALLER DE REPARACIÓN (/taller)
    La única pantalla del sitio en negro y dorado: es un servicio, no un
-   producto, y tiene que verse distinto de la tienda. Los precios son los de
-   la carta impresa del taller. El Worker sirve el mismo texto para Google
-   (PAGINAS_DE_AYUDA en src/index.js): si cambias un precio aquí, cámbialo
-   también allí.
+   producto, y tiene que verse distinto de la tienda.
+
+   Los precios se editan en la pestaña Taller del panel y viven en D1 (tabla
+   settings, clave taller_precios). El Worker los incrusta en el HTML y aquí
+   se leen al arrancar. TALLER_POR_DEFECTO es la carta impresa del taller: la
+   misma copia está en src/index.js y solo se usa si no llega nada (en el
+   servidor local, o si la base no contesta).
    ====================================================================== */
-const TALLER_PRECIOS = [
+const TALLER_POR_DEFECTO = [
   { titulo:'Guitarras', tipos:'Acústicas · eléctricas · electroacústicas', filas:[
     ['Calibración', 100],
     ['Calibración + cuerdas nuevas', 130],
@@ -7299,6 +7319,24 @@ const TALLER_PRECIOS = [
     ['Reparación, pintura, otros', null],
   ]},
 ];
+let TALLER_PRECIOS = TALLER_POR_DEFECTO;
+
+function leerTallerPrecios(){
+  const bloque = document.getElementById('taller-precios');
+  if(!bloque) return TALLER_POR_DEFECTO;
+  try{
+    const data = JSON.parse(bloque.textContent);
+    return Array.isArray(data) && data.length ? data : TALLER_POR_DEFECTO;
+  }catch(err){
+    return TALLER_POR_DEFECTO;
+  }
+}
+
+/* El precio más bajo de la carta, para el "desde S/ …" de los avisos. */
+function tallerDesde(){
+  const precios = TALLER_PRECIOS.flatMap(g => g.filas.map(f => f[1])).filter(Boolean);
+  return precios.length ? Math.min(...precios) : 0;
+}
 
 /* El logo de la tienda redibujado en dorado: el redondo de siempre es azul
    sobre blanco y en el fondo negro quedaba como una pegatina. Mismas formas
@@ -7335,7 +7373,7 @@ function goTaller(push){
   state.view = 'taller';
   navigateTo('/taller', push);
   setPageMeta('Taller de reparación de guitarras y bajos en Lima | Chipao Music',
-    'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos desde S/ 100 en San Juan de Miraflores. Reparaciones y pintura a tratar.');
+    'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos en San Juan de Miraflores. Mira los precios del taller y agenda por WhatsApp.');
   setBreadcrumbSchema([{name:'Inicio', path:'/'}, {name:'Taller de reparación', path:'/taller'}]);
   render();
   if(push !== false) window.scrollTo({top:0});
@@ -7351,7 +7389,7 @@ function bannerTallerHtml(){
     <span class="bt-texto">
       <span class="bt-sobre">Taller de luthería</span>
       <span class="bt-titulo">Repara tu guitarra <em>con nosotros</em></span>
-      <span class="bt-sub">Calibración desde S/ 100 · cuerdas y mantenimiento · guitarras y bajos</span>
+      <span class="bt-sub">${tallerDesde() ? `Desde ${fmt(tallerDesde())} · ` : ''}calibración, cuerdas y mantenimiento · guitarras y bajos</span>
     </span>
     <span class="bt-btn">Ver precios ›</span>
   </a>`;
@@ -7365,7 +7403,7 @@ function avisoTallerHtml(p){
   const cual = p.sub === 'bajos' ? 'Tu bajo' : 'Tu guitarra';
   return `
   <a class="aviso-taller" href="/taller" onclick="goTaller();return false;">
-    <span class="at-texto"><b>¿${cual} necesita calibración?</b> Calibración, cuerdas y mantenimiento desde S/ 100.</span>
+    <span class="at-texto"><b>¿${cual} necesita calibración?</b> Calibración, cuerdas y mantenimiento${tallerDesde() ? ` desde ${fmt(tallerDesde())}` : ''}.</span>
     <span class="at-enlace">Conoce nuestro taller ›</span>
   </a>`;
 }
@@ -7374,11 +7412,11 @@ function renderTaller(){
   cargarFuenteTaller();
   const cartas = TALLER_PRECIOS.map(c => `
       <div class="taller-carta">
-        <h2>${c.titulo}</h2>
-        <p class="taller-tipos">${c.tipos}</p>
+        <h2>${escapeHtml(c.titulo)}</h2>
+        ${c.tipos ? `<p class="taller-tipos">${escapeHtml(c.tipos)}</p>` : ''}
         <div class="taller-lista">${c.filas.map(([servicio, precio]) => `
           <div class="taller-fila">
-            <span class="taller-servicio">${servicio}</span><span class="taller-puntos"></span>
+            <span class="taller-servicio">${escapeHtml(servicio)}</span><span class="taller-puntos"></span>
             ${precio ? `<span class="taller-precio"><small>S/</small>${precio}</span>` : '<span class="taller-tratar">a tratar</span>'}
           </div>`).join('')}
         </div>
@@ -7758,7 +7796,96 @@ function onAdminSearchInput(val){
   document.getElementById('admin-list').innerHTML = renderAdminListHtml();
 }
 
+/* El panel tiene dos pestañas: los productos, que es casi todo, y los
+   precios del taller. */
+let adminPestana = 'productos';
+function cambiarPestanaAdmin(p){
+  adminPestana = p;
+  render();
+  window.scrollTo({top:0});
+}
+function pestanasAdminHtml(){
+  const b = (k, t) => `<button type="button" class="admin-tab${adminPestana===k?' activa':''}" onclick="cambiarPestanaAdmin('${k}')">${t}</button>`;
+  return `<div class="admin-tabs">${b('productos', 'Productos')}${b('taller', 'Taller')}</div>`;
+}
+
+/* Pestaña Taller: un campo por servicio. Vacío quiere decir "a tratar". */
+function renderAdminTaller(){
+  return `
+  <div class="app-shell admin">
+    <header class="admin-head">
+      <div class="admin-head-fila">
+        <div class="admin-head-texto">
+          <span class="admin-eyebrow">Panel de la tienda</span>
+          <h1>Precios del taller</h1>
+        </div>
+        <button type="button" class="admin-salir" onclick="salirDelPanel()">Salir</button>
+      </div>
+      ${pestanasAdminHtml()}
+    </header>
+
+    <p class="banner-nota">Son los precios de chipaomusic.com/taller. Deja un precio vacío para que diga «a tratar». Al guardar se cambian para todos.</p>
+
+    ${TALLER_PRECIOS.map((g, gi) => `
+    <section class="admin-row admin-taller">
+      <h2 class="admin-taller-titulo">${escapeHtml(g.titulo)}</h2>
+      ${g.filas.map((f, fi) => `
+      <label class="admin-taller-fila">
+        <span class="admin-taller-servicio">${escapeHtml(f[0])}</span>
+        <span class="admin-taller-precio">S/
+          <input type="number" id="taller-${gi}-${fi}" inputmode="numeric" min="1" step="1"
+                 value="${f[1] ?? ''}" placeholder="a tratar">
+        </span>
+      </label>`).join('')}
+    </section>`).join('')}
+
+    <button type="button" class="btn-app terracota admin-guardar" id="taller-guardar" onclick="guardarPreciosTaller(this)">Guardar precios del taller</button>
+    <p class="banner-nota" style="text-align:center;"><a href="/taller" target="_blank" rel="noopener">Ver la página del taller ›</a></p>
+  </div>`;
+}
+
+/* Igual que el banner: la clave la comprueba el Worker contra la API de
+   productos. Desde el servidor local no hay Worker y esto falla. */
+async function guardarPreciosTaller(btn){
+  const precios = [];
+  for(let gi = 0; gi < TALLER_PRECIOS.length; gi++){
+    const g = TALLER_PRECIOS[gi];
+    const filas = [];
+    for(let fi = 0; fi < g.filas.length; fi++){
+      const campo = document.getElementById(`taller-${gi}-${fi}`);
+      const texto = campo.value.trim();
+      const precio = texto === '' ? null : Number(texto);
+      if(precio !== null && !(Number.isInteger(precio) && precio > 0)){
+        campo.focus();
+        showToast('Los precios van en soles enteros, sin decimales');
+        return;
+      }
+      filas.push([g.filas[fi][0], precio]);
+    }
+    precios.push({ titulo: g.titulo, tipos: g.tipos, filas });
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  try{
+    const res = await fetch('/api/taller', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
+      body: JSON.stringify({ precios })
+    });
+    const data = await res.json();
+    if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
+    TALLER_PRECIOS = data.precios;
+    showToast('Precios del taller guardados');
+  }catch(err){
+    showToast('No se pudieron guardar los precios. Revisa tu clave de administrador.');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Guardar precios del taller';
+}
+
 function renderAdminPanel(){
+  if(adminPestana === 'taller') return renderAdminTaller();
   const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
   const ofertas = PRODUCTS.filter(enOferta).length;
   const vendidas = PRODUCTS.filter(x => x.featured).length;
@@ -7778,6 +7905,7 @@ function renderAdminPanel(){
         <span class="admin-dato"><b>${ofertas}</b> en oferta</span>
         <span class="admin-dato"><b>${vendidas}</b> más vendida</span>
       </div>
+      ${pestanasAdminHtml()}
     </header>
 
     <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>

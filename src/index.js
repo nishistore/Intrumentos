@@ -264,6 +264,120 @@ async function apiBanner(request, env, ctx) {
   return respuestaJson({ ok: true, activo });
 }
 
+/* ====================== PRECIOS DEL TALLER ==========================
+
+   Se editan en la pestaña Taller del panel y viven en la misma tabla
+   `settings`, clave `taller_precios`, como JSON. Mismo camino que el banner:
+   se incrustan en el HTML para que /taller, el recuadro de la portada y el
+   aviso de las fichas pinten ya con el precio bueno, y los escribe solo quien
+   tenga la clave de administrador.
+
+   Formato: [{ titulo, tipos, filas: [[servicio, precio]] }], con precio null
+   para "a tratar". TALLER_POR_DEFECTO es la carta impresa del taller; se usa
+   mientras nadie haya guardado nada, o si la base no contesta. La misma copia
+   está en index.html. */
+const CLAVE_TALLER = 'taller_precios';
+const CACHE_TALLER = new Request('https://chipaomusic.com/__taller-precios');
+
+const TALLER_POR_DEFECTO = [
+  { titulo: 'Guitarras', tipos: 'Acústicas · eléctricas · electroacústicas', filas: [
+    ['Calibración', 100],
+    ['Calibración + cuerdas nuevas', 130],
+    ['Calibración + cuerdas nuevas + mantenimiento', 160],
+    ['Reparación, pintura, otros', null],
+  ] },
+  { titulo: 'Bajos', tipos: 'Acústicos · eléctricos · electroacústicos', filas: [
+    ['Calibración', 100],
+    ['Calibración + cuerdas nuevas', 200],
+    ['Calibración + cuerdas nuevas + mantenimiento', 230],
+    ['Reparación, pintura, otros', null],
+  ] },
+];
+
+/* Devuelve la carta limpia o null si algo no tiene la forma esperada. Lo que
+   llega del panel se guarda tal cual sale de aquí, así que es el único
+   filtro: precios enteros y positivos, textos recortados. */
+function validarTaller(data) {
+  if (!Array.isArray(data) || !data.length || data.length > 6) return null;
+  const limpio = [];
+  for (const g of data) {
+    if (!g || typeof g.titulo !== 'string' || !g.titulo.trim()) return null;
+    if (!Array.isArray(g.filas) || !g.filas.length || g.filas.length > 12) return null;
+    const filas = [];
+    for (const f of g.filas) {
+      if (!Array.isArray(f) || typeof f[0] !== 'string' || !f[0].trim()) return null;
+      const precio = f[1] === null || f[1] === '' || f[1] === undefined ? null : Number(f[1]);
+      if (precio !== null && !(Number.isInteger(precio) && precio > 0 && precio <= 100000)) return null;
+      filas.push([f[0].trim().slice(0, 80), precio]);
+    }
+    limpio.push({ titulo: g.titulo.trim().slice(0, 40), tipos: String(g.tipos || '').trim().slice(0, 80), filas });
+  }
+  return limpio;
+}
+
+async function preciosTaller(env, ctx) {
+  try {
+    const cacheado = await caches.default.match(CACHE_TALLER);
+    if (cacheado) return await cacheado.json();
+  } catch { /* sin caché vamos a la base */ }
+
+  let precios = TALLER_POR_DEFECTO;
+  try {
+    const fila = await env.DB.prepare(
+      'SELECT value FROM settings WHERE key = ?').bind(CLAVE_TALLER).first();
+    if (fila) precios = validarTaller(JSON.parse(fila.value)) || TALLER_POR_DEFECTO;
+  } catch {
+    return precios;
+  }
+
+  const guardar = caches.default.put(CACHE_TALLER, new Response(JSON.stringify(precios), {
+    headers: { 'cache-control': 'max-age=' + BANNER_TTL },
+  })).catch(() => {});
+  if (ctx) ctx.waitUntil(guardar); else await guardar;
+  return precios;
+}
+
+async function apiTaller(request, env, ctx) {
+  if (request.method === 'GET') {
+    return respuestaJson({ precios: await preciosTaller(env, ctx) });
+  }
+  if (request.method !== 'PUT') {
+    return respuestaJson({ error: 'Método no permitido' }, 405);
+  }
+  if (!await claveDeAdminValida(request.headers.get('X-Admin-Secret'))) {
+    return respuestaJson({ error: 'No autorizado' }, 401);
+  }
+
+  let precios;
+  try {
+    precios = validarTaller((await request.json()).precios);
+  } catch {
+    precios = null;
+  }
+  if (!precios) return respuestaJson({ error: 'Precios con formato inválido' }, 400);
+
+  try {
+    await env.DB.prepare(
+      "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, datetime('now')) " +
+      'ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at'
+    ).bind(CLAVE_TALLER, JSON.stringify(precios)).run();
+  } catch (err) {
+    return respuestaJson({ error: String(err) }, 500);
+  }
+
+  try { await caches.default.delete(CACHE_TALLER); } catch { /* da igual */ }
+  return respuestaJson({ ok: true, precios });
+}
+
+/* El texto de /taller para quien llega sin JavaScript o el rastreador. */
+function tallerBodyHtml(precios) {
+  return '<p>Repara tu guitarra con nosotros: calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>'
+    + precios.map(g => '<h2>' + escapeHtml(g.titulo) + (g.tipos ? ' (' + escapeHtml(g.tipos.toLowerCase()) + ')' : '') + '</h2><ul>'
+      + g.filas.map(([servicio, precio]) => '<li>' + escapeHtml(servicio) + ': ' + (precio ? 'S/ ' + precio : 'a tratar') + '</li>').join('')
+      + '</ul>').join('')
+    + '<p>Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>';
+}
+
 /* ======================== METADATOS DEL <head> ======================== */
 
 function breadcrumbSchema(trail) {
@@ -499,19 +613,12 @@ const PAGINAS_DE_AYUDA = {
     ].join(''),
   },
   /* No es una política, pero funciona igual: una página de texto con su
-     URL. Precios copiados de TALLER_PRECIOS en index.html. */
+     URL. El cuerpo lo arma tallerBodyHtml con los precios de la base. */
   '/taller': {
     title: 'Taller de reparación de guitarras y bajos en Lima | Chipao Music',
     h1: 'Taller de reparación',
-    description: 'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos desde S/ 100 en San Juan de Miraflores. Reparaciones y pintura a tratar.',
-    body: [
-      '<p>Repara tu guitarra con nosotros: calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>',
-      '<h2>Guitarras (acústicas, eléctricas y electroacústicas)</h2>',
-      '<ul><li>Calibración: S/ 100</li><li>Calibración + cuerdas nuevas: S/ 130</li><li>Calibración + cuerdas nuevas + mantenimiento: S/ 160</li><li>Reparación, pintura, otros: a tratar</li></ul>',
-      '<h2>Bajos (acústicos, eléctricos y electroacústicos)</h2>',
-      '<ul><li>Calibración: S/ 100</li><li>Calibración + cuerdas nuevas: S/ 200</li><li>Calibración + cuerdas nuevas + mantenimiento: S/ 230</li><li>Reparación, pintura, otros: a tratar</li></ul>',
-      '<p>Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>',
-    ].join(''),
+    description: 'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos en San Juan de Miraflores. Mira los precios del taller y agenda por WhatsApp.',
+    body: tallerBodyHtml,
   },
 };
 
@@ -529,11 +636,12 @@ function ayudaMeta(pathname) {
   };
 }
 
-function ayudaBody(pathname) {
+function ayudaBody(pathname, taller) {
   const pg = PAGINAS_DE_AYUDA[pathname];
+  const cuerpo = typeof pg.body === 'function' ? pg.body(taller || TALLER_POR_DEFECTO) : pg.body;
   return '<nav aria-label="Ruta"><a href="/">Inicio</a> &rsaquo; ' + escapeHtml(pg.h1) + '</nav>'
     + '<h1>' + escapeHtml(pg.h1) + '</h1>'
-    + pg.body
+    + cuerpo
     + '<p><a href="/tienda">Ver todo el catálogo</a></p>';
 }
 
@@ -683,12 +791,12 @@ function notFoundBody() {
 
 /* Devuelve el HTML del cuerpo, o null para dejar el que ya trae index.html
    (es el caso de la home, cuyo bloque escrito a mano ya es correcto). */
-function bodyFor(route, products) {
+function bodyFor(route, products, taller) {
   if (!route) return null;
 
   if (route.noEncontrado) return notFoundBody();
 
-  if (route.ayuda) return ayudaBody(route.ayuda);
+  if (route.ayuda) return ayudaBody(route.ayuda, taller);
 
   if (route.product) return productBody(route.product);
 
@@ -846,11 +954,12 @@ class SetHtml {
    es el mismo que usa setPageSchema() en index.html, así que cuando arranca
    el JS reutiliza este bloque en vez de duplicarlo. */
 class HeadExtras {
-  constructor(schema, noindex, products, bannerPromo) {
+  constructor(schema, noindex, products, bannerPromo, taller) {
     this.schema = schema;
     this.noindex = noindex;
     this.products = products;
     this.bannerPromo = bannerPromo;
+    this.taller = taller;
   }
   element(el) {
     if (this.noindex) {
@@ -877,10 +986,15 @@ class HeadExtras {
        separado, la barra se vería aparecer o desaparecer a medio camino. */
     el.append('<script type="application/json" id="banner-promo">{"activo":'
       + (this.bannerPromo === false ? 'false' : 'true') + '}</scr' + 'ipt>', { html: true });
+    /* Los precios del taller, que también se editan desde el panel. */
+    if (this.taller) {
+      el.append('<script type="application/json" id="taller-precios">'
+        + JSON.stringify(this.taller).replace(/</g, LT_ESCAPE) + '</scr' + 'ipt>', { html: true });
+    }
   }
 }
 
-function rewrite(response, route, body, pathname, products, bannerPromo) {
+function rewrite(response, route, body, pathname, products, bannerPromo, taller) {
   const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
@@ -898,7 +1012,7 @@ function rewrite(response, route, body, pathname, products, bannerPromo) {
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo));
+    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
 
@@ -949,6 +1063,7 @@ export default {
     /* El interruptor del banner de promoción: lo lee cualquiera, lo cambia
        solo el panel con la clave de administrador. */
     if (url.pathname === '/api/banner-promo') return apiBanner(request, env, ctx);
+    if (url.pathname === '/api/taller') return apiTaller(request, env, ctx);
 
     if (url.pathname.startsWith('/img/')) return sirveFoto(request, env, ctx);
 
@@ -967,9 +1082,10 @@ export default {
     /* Las dos cosas que se incrustan en el HTML se piden a la vez -el
        catálogo a la API, el interruptor del banner a la base-: en fila una
        detrás de otra sumaban sus dos esperas al TTFB. */
-    const [products, bannerPromo] = await Promise.all([
+    const [products, bannerPromo, taller] = await Promise.all([
       fetchProducts(),
       bannerActivo(env, ctx),
+      preciosTaller(env, ctx),
     ]);
     const route = routeFor(url.pathname, products);
 
@@ -989,7 +1105,7 @@ export default {
       }
     }
     agregaListaDeProductos(route, products);
-    const salida = rewrite(response, route, bodyFor(route, products), url.pathname, products, bannerPromo);
+    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, products, bannerPromo, taller);
 
     /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
        una categoría inventada o una ruta que no es ninguna pantalla (route en
