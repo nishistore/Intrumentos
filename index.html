@@ -3218,9 +3218,9 @@ footer.site .footer-bottom{
   background:radial-gradient(50% 380px at 50% 0%,rgba(201,173,106,.14),transparent 70%);
 }
 .tl-hero .taller-logo{width:96px;height:96px;margin:0 auto 28px;}
-.tl-sobre{font:600 12px/1.4 var(--app-sans);letter-spacing:.3em;text-transform:uppercase;color:#c9ad6a;}
-.tl-hero h1{margin-top:20px;font:500 76px/1.04 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;letter-spacing:-.005em;}
-.tl-hero h1 em{font-style:italic;color:#d8bf82;}
+.tl-sobre{max-width:640px;margin:0 auto;font:600 12px/1.6 var(--app-sans);letter-spacing:.26em;text-transform:uppercase;color:#c9ad6a;}
+.tl-titulo{margin-top:20px;font:500 76px/1.04 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;letter-spacing:-.005em;}
+.tl-titulo em{font-style:italic;color:#d8bf82;}
 .tl-orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:28px;color:#c9ad6a;}
 .tl-orn span{width:80px;height:1px;background:linear-gradient(90deg,transparent,#c9ad6a);}
 .tl-orn span:last-child{background:linear-gradient(90deg,#c9ad6a,transparent);}
@@ -3244,6 +3244,19 @@ footer.site .footer-bottom{
 .tl-serv small{display:block;margin-top:6px;font:400 14.5px/1.45 var(--app-sans);color:#b3ab9e;}
 .tl-precio{text-align:right;font:600 34px/1 'Cormorant Garamond',Georgia,serif;color:#ead7a4;white-space:nowrap;}
 .tl-nota{margin-top:18px;font:400 13.5px/1.5 var(--app-sans);color:#a39b8e;}
+.tl-faq{max-width:760px;margin:88px auto 0;}
+.tl-faq h2{text-align:center;margin-bottom:28px;font:500 40px/1.1 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;}
+.tl-faq h2 em{font-style:italic;color:#d8bf82;}
+.tl-faq details{border-bottom:1px solid #332d24;}
+.tl-faq details:first-of-type{border-top:1px solid #332d24;}
+.tl-faq summary{
+  list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding:20px 0;font:600 17px/1.35 var(--app-sans);color:#f3ecdf;
+}
+.tl-faq summary::-webkit-details-marker{display:none;}
+.tl-faq summary::after{content:"+";flex:none;font:400 26px/1 'Cormorant Garamond',Georgia,serif;color:#c9ad6a;}
+.tl-faq details[open] summary::after{content:"−";}
+.tl-faq details p{padding:0 0 22px;font:400 15.5px/1.65 var(--app-sans);color:#c4bdb0;}
 .tl-cierre{padding:96px 0 72px;text-align:center;}
 .tl-cierre .taller-logo{width:52px;height:52px;margin:0 auto 22px;}
 .tl-cierre h2{font:500 42px/1.1 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;}
@@ -3305,8 +3318,8 @@ body.en-taller footer.site{margin-top:0;}
   .tl-rotulo{letter-spacing:.14em;}
   .tl-hero{padding:44px 0 40px;}
   .tl-hero .taller-logo{width:76px;height:76px;margin-bottom:22px;}
-  .tl-sobre{font-size:10.5px;letter-spacing:.2em;}
-  .tl-hero h1{font-size:46px;}
+  .tl-sobre{max-width:300px;font-size:10.5px;letter-spacing:.16em;}
+  .tl-titulo{font-size:46px;}
   .tl-orn{margin-top:22px;}
   .tl-cab,.tl-fila{grid-template-columns:18px minmax(0,1fr) repeat(var(--cols),70px);column-gap:6px;}
   .tl-col b{font-size:21px;}
@@ -3318,6 +3331,10 @@ body.en-taller footer.site{margin-top:0;}
   .tl-datos{font-size:13px;gap:28px;}
   .tl-rotulo{font-size:10px;}
   .tl-precio{font-size:23px;}
+  .tl-faq{margin-top:64px;}
+  .tl-faq h2{font-size:32px;margin-bottom:20px;}
+  .tl-faq summary{font-size:15.5px;padding:17px 0;}
+  .tl-faq details p{font-size:14.5px;}
   .tl-cierre{padding:64px 0 48px;}
   .tl-cierre h2{font-size:32px;}
   .tl-pie{flex-direction:column;gap:6px;}
@@ -7408,13 +7425,65 @@ function cargarFuenteTaller(){
   document.head.appendChild(l);
 }
 
+
+/* Distritos cercanos al taller. Van en las preguntas frecuentes y en los
+   datos estructurados: quien busca "reparación de guitarras" suele poner su
+   distrito, y el taller queda a minutos de todos estos. */
+const TALLER_ZONAS = ['San Juan de Miraflores', 'Villa María del Triunfo', 'Santiago de Surco', 'Chorrillos', 'Villa El Salvador'];
+
+/* Preguntas frecuentes del taller. Solo dicen lo que la tienda ya ofrece:
+   precios de la carta, envío gratis en Lima, dirección y horario. */
+function tallerFaq(taller) {
+  const precios = taller.flatMap(g => g.filas.map(f => f[1])).filter(Boolean);
+  const desde = precios.length ? Math.min(...precios) : 0;
+  return [
+    ['¿Qué incluye la calibración de una guitarra?',
+      'Ajustamos la altura de las cuerdas, el alma y la octavación para que la guitarra sea cómoda de tocar y suene afinada en todo el mástil. La hacemos en guitarras acústicas, eléctricas, electroacústicas y en bajos.'],
+    ['¿Cuánto cuesta reparar una guitarra?',
+      (desde ? 'La calibración cuesta desde S/ ' + desde + '. ' : '') + 'Las reparaciones, la pintura y otros trabajos se cotizan después de revisar el instrumento, según su estado.'],
+    ['¿Tienen envío a domicilio?',
+      'Sí: el envío a domicilio es gratis en Lima. Escríbenos por WhatsApp y lo coordinamos.'],
+    ['¿Cuánto demora la reparación?',
+      'Depende del trabajo. Cuando revisamos tu instrumento te decimos el plazo por WhatsApp, antes de empezar.'],
+    ['¿Dónde está el taller?',
+      'En Av. Los Héroes 382, San Juan de Miraflores, a pocos minutos de Villa María del Triunfo, Santiago de Surco, Chorrillos y Villa El Salvador. Atendemos de lunes a domingo, de 9:30 a.m. a 9:00 p.m.'],
+  ];
+}
+
+/* El taller como servicio para Google: qué se hace, quién lo hace (la
+   tienda, definida en el <head>), dónde, y a qué precio. */
+function tallerSchema(taller) {
+  const ofertas = taller.flatMap(g => g.filas.filter(f => f[1]).map(f => ({
+    '@type': 'Offer',
+    name: f[0] + ' (' + g.titulo.toLowerCase() + ')',
+    price: String(f[1]),
+    priceCurrency: 'PEN',
+    itemOffered: { '@type': 'Service', name: f[0] + ' de ' + g.titulo.toLowerCase() },
+  })));
+  return {
+    '@type': 'Service',
+    '@id': SITE_ORIGIN + '/taller#servicio',
+    name: 'Reparación de guitarras y bajos',
+    serviceType: 'Reparación y calibración de guitarras y bajos',
+    url: SITE_ORIGIN + '/taller',
+    provider: { '@id': SITE_ORIGIN + '/#tienda' },
+    areaServed: TALLER_ZONAS.map(name => ({ '@type': 'AdministrativeArea', name })),
+    hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Precios del taller', itemListElement: ofertas },
+  };
+}
+
 function goTaller(push){
   document.getElementById('modalOverlay').classList.remove('show');
   state.view = 'taller';
   navigateTo('/taller', push);
-  setPageMeta('Taller de reparación de guitarras y bajos en Lima | Chipao Music',
-    'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos en San Juan de Miraflores. Mira los precios del taller y agenda por WhatsApp.');
-  setBreadcrumbSchema([{name:'Inicio', path:'/'}, {name:'Taller de reparación', path:'/taller'}]);
+  setPageMeta('Reparación de guitarras en San Juan de Miraflores | Chipao Music',
+    'Taller de reparación de guitarras y bajos en San Juan de Miraflores: calibración, cuerdas y mantenimiento con precios a la vista. Envío a domicilio gratis en Lima.');
+  /* Las migas y el servicio juntos: setBreadcrumbSchema solo dejaría las
+     migas y borraría el servicio que manda el Worker. */
+  setPageSchema({ '@context': 'https://schema.org', '@graph': [
+    breadcrumbSchema([{name:'Inicio', path:'/'}, {name:'Taller de reparación', path:'/taller'}]),
+    tallerSchema(TALLER_PRECIOS),
+  ]});
   render();
   if(push !== false) window.scrollTo({top:0});
 }
@@ -7494,8 +7563,8 @@ function renderTaller(){
 
       <div class="tl-hero">
         ${logoTallerSvg()}
-        <div class="tl-sobre">Taller de luthería · Chipao Music</div>
-        <h1>Repara tu guitarra<br><em>con nosotros</em></h1>
+        <h1 class="tl-sobre">Reparación de guitarras y bajos en San Juan de Miraflores</h1>
+        <p class="tl-titulo">Repara tu guitarra<br><em>con nosotros</em></p>
         <div class="tl-orn" aria-hidden="true"><span></span>✦<span></span></div>
         <div class="tl-hero-der">
           <p>Tu instrumento en manos de quien lo entiende. Calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>
@@ -7514,6 +7583,15 @@ function renderTaller(){
         ${filas}
       </div>
       <p class="tl-nota">Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>
+
+      <section class="tl-faq">
+        <h2>Preguntas <em>frecuentes</em></h2>
+        ${tallerFaq(TALLER_PRECIOS).map(([p, r], i) => `
+        <details${i === 0 ? ' open' : ''}>
+          <summary>${escapeHtml(p)}</summary>
+          <p>${escapeHtml(r)}</p>
+        </details>`).join('')}
+      </section>
 
       <div class="tl-cierre">
         ${logoTallerSvg()}

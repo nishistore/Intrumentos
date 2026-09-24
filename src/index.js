@@ -371,6 +371,52 @@ async function apiTaller(request, env, ctx) {
   return respuestaJson({ ok: true, precios });
 }
 
+/* Distritos cercanos al taller. Van en las preguntas frecuentes y en los
+   datos estructurados: quien busca "reparación de guitarras" suele poner su
+   distrito, y el taller queda a minutos de todos estos. */
+const TALLER_ZONAS = ['San Juan de Miraflores', 'Villa María del Triunfo', 'Santiago de Surco', 'Chorrillos', 'Villa El Salvador'];
+
+/* Preguntas frecuentes del taller. Solo dicen lo que la tienda ya ofrece:
+   precios de la carta, envío gratis en Lima, dirección y horario. */
+function tallerFaq(taller) {
+  const precios = taller.flatMap(g => g.filas.map(f => f[1])).filter(Boolean);
+  const desde = precios.length ? Math.min(...precios) : 0;
+  return [
+    ['¿Qué incluye la calibración de una guitarra?',
+      'Ajustamos la altura de las cuerdas, el alma y la octavación para que la guitarra sea cómoda de tocar y suene afinada en todo el mástil. La hacemos en guitarras acústicas, eléctricas, electroacústicas y en bajos.'],
+    ['¿Cuánto cuesta reparar una guitarra?',
+      (desde ? 'La calibración cuesta desde S/ ' + desde + '. ' : '') + 'Las reparaciones, la pintura y otros trabajos se cotizan después de revisar el instrumento, según su estado.'],
+    ['¿Tienen envío a domicilio?',
+      'Sí: el envío a domicilio es gratis en Lima. Escríbenos por WhatsApp y lo coordinamos.'],
+    ['¿Cuánto demora la reparación?',
+      'Depende del trabajo. Cuando revisamos tu instrumento te decimos el plazo por WhatsApp, antes de empezar.'],
+    ['¿Dónde está el taller?',
+      'En Av. Los Héroes 382, San Juan de Miraflores, a pocos minutos de Villa María del Triunfo, Santiago de Surco, Chorrillos y Villa El Salvador. Atendemos de lunes a domingo, de 9:30 a.m. a 9:00 p.m.'],
+  ];
+}
+
+/* El taller como servicio para Google: qué se hace, quién lo hace (la
+   tienda, definida en el <head>), dónde, y a qué precio. */
+function tallerSchema(taller) {
+  const ofertas = taller.flatMap(g => g.filas.filter(f => f[1]).map(f => ({
+    '@type': 'Offer',
+    name: f[0] + ' (' + g.titulo.toLowerCase() + ')',
+    price: String(f[1]),
+    priceCurrency: 'PEN',
+    itemOffered: { '@type': 'Service', name: f[0] + ' de ' + g.titulo.toLowerCase() },
+  })));
+  return {
+    '@type': 'Service',
+    '@id': SITE_ORIGIN + '/taller#servicio',
+    name: 'Reparación de guitarras y bajos',
+    serviceType: 'Reparación y calibración de guitarras y bajos',
+    url: SITE_ORIGIN + '/taller',
+    provider: { '@id': SITE_ORIGIN + '/#tienda' },
+    areaServed: TALLER_ZONAS.map(name => ({ '@type': 'AdministrativeArea', name })),
+    hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Precios del taller', itemListElement: ofertas },
+  };
+}
+
 /* El texto de /taller para quien llega sin JavaScript o el rastreador. */
 function tallerBodyHtml(precios) {
   return '<p>Repara tu guitarra con nosotros: calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>'
@@ -378,7 +424,9 @@ function tallerBodyHtml(precios) {
       + g.filas.map(([servicio, precio, detalle]) => '<li>' + escapeHtml(servicio) + ': ' + (precio ? 'S/ ' + precio : 'a tratar')
         + (detalle ? ' (' + escapeHtml(detalle) + ')' : '') + '</li>').join('')
       + '</ul>').join('')
-    + '<p>Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>';
+    + '<p>Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>'
+    + '<h2>Preguntas frecuentes</h2>'
+    + tallerFaq(precios).map(([p, r]) => '<h3>' + escapeHtml(p) + '</h3><p>' + escapeHtml(r) + '</p>').join('');
 }
 
 /* ======================== METADATOS DEL <head> ======================== */
@@ -618,9 +666,10 @@ const PAGINAS_DE_AYUDA = {
   /* No es una política, pero funciona igual: una página de texto con su
      URL. El cuerpo lo arma tallerBodyHtml con los precios de la base. */
   '/taller': {
-    title: 'Taller de reparación de guitarras y bajos en Lima | Chipao Music',
-    h1: 'Taller de reparación',
-    description: 'Calibración, cuerdas nuevas y mantenimiento de guitarras y bajos en San Juan de Miraflores. Mira los precios del taller y agenda por WhatsApp.',
+    title: 'Reparación de guitarras en San Juan de Miraflores | Chipao Music',
+    h1: 'Reparación de guitarras y bajos en San Juan de Miraflores',
+    miga: 'Taller de reparación',
+    description: 'Taller de reparación de guitarras y bajos en San Juan de Miraflores: calibración, cuerdas y mantenimiento con precios a la vista. Envío a domicilio gratis en Lima.',
     body: tallerBodyHtml,
   },
 };
@@ -634,7 +683,7 @@ function ayudaMeta(pathname) {
     path: pathname,
     schema: withContext(breadcrumbSchema([
       { name: 'Inicio', path: '/' },
-      { name: pg.h1, path: pathname },
+      { name: pg.miga || pg.h1, path: pathname },
     ])),
   };
 }
@@ -642,7 +691,7 @@ function ayudaMeta(pathname) {
 function ayudaBody(pathname, taller) {
   const pg = PAGINAS_DE_AYUDA[pathname];
   const cuerpo = typeof pg.body === 'function' ? pg.body(taller || TALLER_POR_DEFECTO) : pg.body;
-  return '<nav aria-label="Ruta"><a href="/">Inicio</a> &rsaquo; ' + escapeHtml(pg.h1) + '</nav>'
+  return '<nav aria-label="Ruta"><a href="/">Inicio</a> &rsaquo; ' + escapeHtml(pg.miga || pg.h1) + '</nav>'
     + '<h1>' + escapeHtml(pg.h1) + '</h1>'
     + cuerpo
     + '<p><a href="/tienda">Ver todo el catálogo</a></p>';
@@ -1091,6 +1140,12 @@ export default {
       preciosTaller(env, ctx),
     ]);
     const route = routeFor(url.pathname, products);
+    if (route && route.ayuda === '/taller') {
+      route.meta.schema = withContext({ '@graph': [
+        breadcrumbSchema([{ name: 'Inicio', path: '/' }, { name: 'Taller de reparación', path: '/taller' }]),
+        tallerSchema(taller),
+      ] });
+    }
 
     /* Una ficha responde a CUALQUIER texto después del id: /producto/2-loquesea
        daba 200 con el contenido de la guitarra. Son URLs duplicadas infinitas
