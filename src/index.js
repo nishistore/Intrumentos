@@ -69,23 +69,23 @@ function productInCat(p, catKey) {
    instrumento, porque un mismo capo sirve para acústica y para eléctrica. Si
    cambias uno allá, cámbialo aquí: son las URLs que indexa Google. */
 const ACCESORIOS_FILTER_GROUPS = [
-  { key: 'accGrpGuitarraAcustica', label: 'Guitarra Acústica y Clásica', matches: ['accCuerdasAcustica', 'accCapotrastes', 'accPuas'] },
-  { key: 'accGrpGuitarraElectrica', label: 'Guitarra Eléctrica', matches: ['accCuerdasElectrica', 'accCapotrastes', 'accPuas'] },
-  { key: 'accGrpPercusion', label: 'Percusión', matches: ['accBaquetas'] },
-  { key: 'accGrpViento', label: 'Viento', matches: ['accCanas'] },
-  { key: 'accGrpTeclados', label: 'Teclado y Piano', matches: ['accTeclados'] },
-  { key: 'accGrpViolin', label: 'Violín y cuerda frotada', matches: ['accViolin'] },
-  { key: 'accGrpGenerales', label: 'Generales (cualquier instrumento)', matches: ['accAfinadores', 'accAtriles', 'accCuidado'] },
+  { key: 'accGrpGuitarraAcustica', seo: 'Accesorios para guitarra acústica y clásica', label: 'Guitarra Acústica y Clásica', matches: ['accCuerdasAcustica', 'accCapotrastes', 'accPuas'] },
+  { key: 'accGrpGuitarraElectrica', seo: 'Accesorios para guitarra eléctrica', label: 'Guitarra Eléctrica', matches: ['accCuerdasElectrica', 'accCapotrastes', 'accPuas'] },
+  { key: 'accGrpPercusion', seo: 'Accesorios de percusión', label: 'Percusión', matches: ['accBaquetas'] },
+  { key: 'accGrpViento', seo: 'Accesorios para instrumentos de viento', label: 'Viento', matches: ['accCanas'] },
+  { key: 'accGrpTeclados', seo: 'Accesorios para teclado y piano', label: 'Teclado y Piano', matches: ['accTeclados'] },
+  { key: 'accGrpViolin', seo: 'Accesorios para violín', label: 'Violín y cuerda frotada', matches: ['accViolin'] },
+  { key: 'accGrpGenerales', seo: 'Accesorios para instrumentos musicales', label: 'Generales (cualquier instrumento)', matches: ['accAfinadores', 'accAtriles', 'accCuidado'] },
 ];
 
 /* Copia de COLEGIO_FILTER_GROUPS de index.html: Para Colegio agrupa subs de
    varias categorías, porque casi todo lo que muestra vive en otra. */
 const COLEGIO_FILTER_GROUPS = [
-  { key: 'colGrpFlautas', label: 'Flautas dulces', matches: ['flautas'] },
-  { key: 'colGrpMelodicas', label: 'Melódicas', matches: ['melodicas'] },
-  { key: 'colGrpXilofonos', label: 'Xilófonos y metalófonos', matches: ['metalofono', 'colXilofonos'] },
-  { key: 'colGrpPercusion', label: 'Claves, panderetas y percusión', matches: ['panderetas', 'tarolas', 'colPercusion'] },
-  { key: 'colGrpAndinos', label: 'Quenas y zampoñas', matches: ['quenas', 'zamponas'] },
+  { key: 'colGrpFlautas', seo: 'Flautas dulces para el colegio', label: 'Flautas dulces', matches: ['flautas'] },
+  { key: 'colGrpMelodicas', seo: 'Melódicas para el colegio', label: 'Melódicas', matches: ['melodicas'] },
+  { key: 'colGrpXilofonos', seo: 'Xilófonos y metalófonos para el colegio', label: 'Xilófonos y metalófonos', matches: ['metalofono', 'colXilofonos'] },
+  { key: 'colGrpPercusion', seo: 'Claves, panderetas y percusión para el colegio', label: 'Claves, panderetas y percusión', matches: ['panderetas', 'tarolas', 'colPercusion'] },
+  { key: 'colGrpAndinos', seo: 'Quenas y zampoñas para el colegio', label: 'Quenas y zampoñas', matches: ['quenas', 'zamponas'] },
 ];
 
 const FILTER_GROUPS = { accesorios: ACCESORIOS_FILTER_GROUPS, colegio: COLEGIO_FILTER_GROUPS };
@@ -451,7 +451,7 @@ function homeMeta() {
 function shopMeta() {
   return {
     title: 'Catálogo de Instrumentos Musicales | Chipao Music',
-    description: DEFAULT_META_DESCRIPTION,
+    description: 'Catálogo completo de Chipao Music: guitarras, ukeleles, teclados, percusión, viento, audio y accesorios con precio y stock real. Envíos a todo el Perú.',
     path: '/tienda',
     schema: withContext(breadcrumbSchema([
       { name: 'Inicio', path: '/' },
@@ -527,9 +527,12 @@ function subcategoryMeta(cat, sub, products) {
   const desde = conStock.length ? Math.min(...conStock.map(p => p.price)) : 0;
   /* Mismo orden que en las categorías: el precio delante, porque Google corta
      la descripción por el final. */
-  const description = `${sub.label} en Lima${desde ? `, desde S/ ${desde}` : ''}. ${cat.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`;
+  /* `seo` es el nombre de los grupos de Accesorios y Para Colegio: su
+     etiqueta sola repetía el título de otra categoría. */
+  const nombre = sub.seo || sub.label;
+  const description = `${nombre} en Lima${desde ? `, desde S/ ${desde}` : ''}. ${cat.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`;
   return {
-    title: `${sub.label} en Lima | Chipao Music`,
+    title: `${nombre} en Lima | Chipao Music`,
     description,
     path,
     schema: withContext(breadcrumbSchema([
@@ -856,7 +859,7 @@ function bodyFor(route, products, taller) {
     const suyos = products.filter(p => productInCat(p, route.cat.key)
       && (!route.sub || productInSub(p, route.sub)));
     return listBody(
-      route.sub ? `${route.sub.label} en Lima` : `${catSeoLabel(route.cat)} en Lima`,
+      route.sub ? `${route.sub.seo || route.sub.label} en Lima` : `${catSeoLabel(route.cat)} en Lima`,
       /* El `intro` está escrito para la categoría entera y hablaría de
          guitarras en la página de ukeleles: en una subcategoría manda su
          propia descripción. */

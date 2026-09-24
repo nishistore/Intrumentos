@@ -69,8 +69,8 @@
     "reviewCount": "87"
   },
   "sameAs": [
-    "https://www.facebook.com/instrumentoschipao",
-    "https://www.instagram.com/instrumentos_chipao",
+    "https://www.facebook.com/instrumentoschipao/",
+    "https://www.instagram.com/instrumentos_chipao/",
     "https://www.tiktok.com/@instrumentosmusicale"
   ]
 }
@@ -3411,8 +3411,8 @@ body.en-taller footer.site{margin-top:0;}
       </div>
       <p>Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
       <div class="footer-social">
-        <a href="https://www.facebook.com/instrumentoschipao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M13.5 21v-7.8h2.6l.4-3h-3v-1.9c0-.87.24-1.46 1.5-1.46h1.6V4.14C15.94 4.06 15.08 4 14.06 4c-2.13 0-3.6 1.3-3.6 3.68v2.05H7.9v3h2.56V21h3.04z"/></svg></a>
-        <a href="https://www.instagram.com/instrumentos_chipao" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#e9ecf5" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1" fill="#e9ecf5" stroke="none"/></svg></a>
+        <a href="https://www.facebook.com/instrumentoschipao/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M13.5 21v-7.8h2.6l.4-3h-3v-1.9c0-.87.24-1.46 1.5-1.46h1.6V4.14C15.94 4.06 15.08 4 14.06 4c-2.13 0-3.6 1.3-3.6 3.68v2.05H7.9v3h2.56V21h3.04z"/></svg></a>
+        <a href="https://www.instagram.com/instrumentos_chipao/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#e9ecf5" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1" fill="#e9ecf5" stroke="none"/></svg></a>
         <a href="https://www.tiktok.com/@instrumentosmusicale" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M16.5 2c.4 2.2 2 3.9 4.2 4.2v3.1c-1.5 0-2.9-.5-4.2-1.3v6.8a6.3 6.3 0 1 1-6.3-6.3c.3 0 .6 0 .9.1v3.2a3.1 3.1 0 1 0 2.2 3v-12.8h3.2z"/></svg></a>
       </div>
     </div>
@@ -3546,13 +3546,13 @@ function productInCat(p, catKey){
    caen bajo ese grupo — por eso un capo o una púa puede aparecer tanto en "Guitarra
    Acústica" como en "Guitarra Eléctrica" sin duplicar el producto. */
 const ACCESORIOS_FILTER_GROUPS = [
-  {key:'accGrpGuitarraAcustica', label:'Guitarra Acústica y Clásica', matches:['accCuerdasAcustica','accCapotrastes','accPuas']},
-  {key:'accGrpGuitarraElectrica', label:'Guitarra Eléctrica', matches:['accCuerdasElectrica','accCapotrastes','accPuas']},
-  {key:'accGrpPercusion', label:'Percusión', matches:['accBaquetas']},
-  {key:'accGrpViento', label:'Viento', matches:['accCanas']},
-  {key:'accGrpTeclados', label:'Teclado y Piano', matches:['accTeclados']},
-  {key:'accGrpViolin', label:'Violín y cuerda frotada', matches:['accViolin']},
-  {key:'accGrpGenerales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles','accCuidado']},
+  {key:'accGrpGuitarraAcustica', seo:'Accesorios para guitarra acústica y clásica', label:'Guitarra Acústica y Clásica', matches:['accCuerdasAcustica','accCapotrastes','accPuas']},
+  {key:'accGrpGuitarraElectrica', seo:'Accesorios para guitarra eléctrica', label:'Guitarra Eléctrica', matches:['accCuerdasElectrica','accCapotrastes','accPuas']},
+  {key:'accGrpPercusion', seo:'Accesorios de percusión', label:'Percusión', matches:['accBaquetas']},
+  {key:'accGrpViento', seo:'Accesorios para instrumentos de viento', label:'Viento', matches:['accCanas']},
+  {key:'accGrpTeclados', seo:'Accesorios para teclado y piano', label:'Teclado y Piano', matches:['accTeclados']},
+  {key:'accGrpViolin', seo:'Accesorios para violín', label:'Violín y cuerda frotada', matches:['accViolin']},
+  {key:'accGrpGenerales', seo:'Accesorios para instrumentos musicales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles','accCuidado']},
 ];
 
 /* Para Colegio funciona igual: casi todo lo que muestra es de otra categoría
@@ -3560,11 +3560,11 @@ const ACCESORIOS_FILTER_GROUPS = [
    sus filtros agrupan subs reales de varias categorías, más los dos propios
    de Para Colegio para lo que solo vive aquí (xilófonos, claves). */
 const COLEGIO_FILTER_GROUPS = [
-  {key:'colGrpFlautas', label:'Flautas dulces', matches:['flautas']},
-  {key:'colGrpMelodicas', label:'Melódicas', matches:['melodicas']},
-  {key:'colGrpXilofonos', label:'Xilófonos y metalófonos', matches:['metalofono','colXilofonos']},
-  {key:'colGrpPercusion', label:'Claves, panderetas y percusión', matches:['panderetas','tarolas','colPercusion']},
-  {key:'colGrpAndinos', label:'Quenas y zampoñas', matches:['quenas','zamponas']},
+  {key:'colGrpFlautas', seo:'Flautas dulces para el colegio', label:'Flautas dulces', matches:['flautas']},
+  {key:'colGrpMelodicas', seo:'Melódicas para el colegio', label:'Melódicas', matches:['melodicas']},
+  {key:'colGrpXilofonos', seo:'Xilófonos y metalófonos para el colegio', label:'Xilófonos y metalófonos', matches:['metalofono','colXilofonos']},
+  {key:'colGrpPercusion', seo:'Claves, panderetas y percusión para el colegio', label:'Claves, panderetas y percusión', matches:['panderetas','tarolas','colPercusion']},
+  {key:'colGrpAndinos', seo:'Quenas y zampoñas para el colegio', label:'Quenas y zampoñas', matches:['quenas','zamponas']},
 ];
 
 /* Las categorías cuyos filtros son grupos en vez de sus subs crudos. */
@@ -4006,8 +4006,8 @@ function applyCurrentViewMeta(){
             .filter(x => subMatchesActiveFilter(x.sub) && (x.stock||0) > 0);
           const desdeSub = conStock.length ? Math.min(...conStock.map(x=>x.price)) : 0;
           const rutaSub = hrefSubcategoria(c.key, sub);
-          setPageMeta(`${sub.label} en Lima | Chipao Music`,
-            `${sub.label} en Lima${desdeSub ? `, desde ${fmt(desdeSub)}` : ''}. ${c.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`);
+          setPageMeta(`${sub.seo || sub.label} en Lima | Chipao Music`,
+            `${sub.seo || sub.label} en Lima${desdeSub ? `, desde ${fmt(desdeSub)}` : ''}. ${c.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`);
           setBreadcrumbSchema([
             {name:'Inicio',path:'/'},
             {name:c.label,path:hrefCategoria(c.key)},
@@ -4032,7 +4032,9 @@ function applyCurrentViewMeta(){
       return;
     }
   }
-  setPageMeta('Catálogo de Instrumentos Musicales | Chipao Music', DEFAULT_META_DESCRIPTION);
+  /* Distinta de la portada: con la misma, Google no sabe cuál de las dos enseñar. */
+  setPageMeta('Catálogo de Instrumentos Musicales | Chipao Music',
+    'Catálogo completo de Chipao Music: guitarras, ukeleles, teclados, percusión, viento, audio y accesorios con precio y stock real. Envíos a todo el Perú.');
   setBreadcrumbSchema([{name:'Inicio',path:'/'},{name:'Catálogo',path:'/tienda'}]);
 }
 
