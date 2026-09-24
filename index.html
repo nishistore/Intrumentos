@@ -3199,10 +3199,10 @@ footer.site .footer-bottom{
 .taller-logo{display:block;}
 .tl-wrap{max-width:1120px;margin:0 auto;padding:0 40px 40px;}
 .tl-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid #332d24;}
-.tl-marca{display:flex;align-items:center;gap:12px;text-decoration:none;}
-.tl-marca .taller-logo{width:38px;height:38px;}
-.tl-marca b{display:block;font:500 19px/1.1 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;}
-.tl-marca i{display:block;margin-top:4px;font:600 10.5px/1 var(--app-sans);font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:#bda46c;}
+.tl-envio{display:flex;align-items:center;gap:12px;min-width:0;}
+.tl-envio svg{flex:none;width:34px;height:34px;padding:7px;border:1px solid #c9ad6a;border-radius:50%;color:#e3cf9c;}
+.tl-envio span{font:500 22px/1.1 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;}
+.tl-envio em{font-style:italic;color:#e3cf9c;}
 /* Dorado lleno, como el botón del cierre: en la barra de arriba un enlace
    subrayado se perdía sobre el negro. */
 .tl-top-cta{
@@ -3213,11 +3213,20 @@ footer.site .footer-bottom{
   transition:background-color .2s ease;
 }
 .tl-top-cta:hover{background:#e6d19b;}
-.tl-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding:88px 0 64px;}
-.tl-hero h1{font:500 92px/.98 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;letter-spacing:-.01em;}
+.tl-hero{
+  padding:72px 0 64px;text-align:center;
+  background:radial-gradient(50% 380px at 50% 0%,rgba(201,173,106,.14),transparent 70%);
+}
+.tl-hero .taller-logo{width:96px;height:96px;margin:0 auto 28px;}
+.tl-sobre{font:600 12px/1.4 var(--app-sans);letter-spacing:.3em;text-transform:uppercase;color:#c9ad6a;}
+.tl-hero h1{margin-top:20px;font:500 76px/1.04 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;letter-spacing:-.005em;}
 .tl-hero h1 em{font-style:italic;color:#d8bf82;}
-.tl-hero-der p{max-width:360px;font:400 16.5px/1.65 var(--app-sans);color:#d9d2c5;}
-.tl-datos{display:flex;gap:32px;margin-top:26px;font:400 14px/1.6 var(--app-sans);color:#c4bdb0;}
+.tl-orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:28px;color:#c9ad6a;}
+.tl-orn span{width:80px;height:1px;background:linear-gradient(90deg,transparent,#c9ad6a);}
+.tl-orn span:last-child{background:linear-gradient(90deg,#c9ad6a,transparent);}
+.tl-hero-der{margin-top:28px;}
+.tl-hero-der p{max-width:520px;margin:0 auto;font:400 16.5px/1.65 var(--app-sans);color:#d9d2c5;}
+.tl-datos{display:flex;justify-content:center;gap:48px;margin-top:26px;font:400 14px/1.6 var(--app-sans);color:#c4bdb0;}
 .tl-datos span{display:block;margin-bottom:8px;font:600 11px/1 var(--app-sans);letter-spacing:.18em;text-transform:uppercase;color:#c9ad6a;}
 .tl-tabla{border-top:1px solid #c9ad6a;}
 .tl-cab,.tl-fila{
@@ -3290,11 +3299,15 @@ body.en-taller footer.site{margin-top:0;}
   .tl-wrap{padding:0 16px 32px;}
   .tl-top-cta{padding:10px 11px;font-size:9px;letter-spacing:.1em;flex:none;}
   .tl-top-cta span{display:none;}
-  .tl-marca{min-width:0;}
-  .tl-marca i{letter-spacing:.14em;white-space:nowrap;}
+  .tl-envio{gap:8px;}
+  .tl-envio svg{width:28px;height:28px;padding:5px;}
+  .tl-envio span{font-size:16px;}
   .tl-rotulo{letter-spacing:.14em;}
-  .tl-hero{grid-template-columns:1fr;gap:26px;padding:48px 0 40px;}
-  .tl-hero h1{font-size:54px;}
+  .tl-hero{padding:44px 0 40px;}
+  .tl-hero .taller-logo{width:76px;height:76px;margin-bottom:22px;}
+  .tl-sobre{font-size:10.5px;letter-spacing:.2em;}
+  .tl-hero h1{font-size:46px;}
+  .tl-orn{margin-top:22px;}
   .tl-cab,.tl-fila{grid-template-columns:18px minmax(0,1fr) repeat(var(--cols),70px);column-gap:6px;}
   .tl-col b{font-size:21px;}
   .tl-col small{display:none;}
@@ -3302,7 +3315,7 @@ body.en-taller footer.site{margin-top:0;}
   .tl-serv b{font-size:15px;}
   .tl-serv small{font-size:13px;}
   .tl-hero-der p{font-size:15px;}
-  .tl-datos{font-size:13px;gap:24px;}
+  .tl-datos{font-size:13px;gap:28px;}
   .tl-rotulo{font-size:10px;}
   .tl-precio{font-size:23px;}
   .tl-cierre{padding:64px 0 48px;}
@@ -7472,15 +7485,18 @@ function renderTaller(){
   <section class="taller">
     <div class="tl-wrap">
       <header class="tl-top">
-        <a class="tl-marca" href="/" onclick="goHome();return false;">
-          ${logoTallerSvg()}
-          <span><b>Chipao Music</b><i>Taller de luthería</i></span>
-        </a>
+        <div class="tl-envio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>
+          <span>Envío a domicilio <em>gratis</em> en Lima</span>
+        </div>
         <a class="tl-top-cta" target="_blank" rel="noopener" href="${wa}" onclick="trackAdsConversion('whatsapp')">Agenda tu reparación <span aria-hidden="true">→</span></a>
       </header>
 
       <div class="tl-hero">
-        <h1>Repara tu guitarra <em>con nosotros</em></h1>
+        ${logoTallerSvg()}
+        <div class="tl-sobre">Taller de luthería · Chipao Music</div>
+        <h1>Repara tu guitarra<br><em>con nosotros</em></h1>
+        <div class="tl-orn" aria-hidden="true"><span></span>✦<span></span></div>
         <div class="tl-hero-der">
           <p>Tu instrumento en manos de quien lo entiende. Calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>
           <div class="tl-datos">
