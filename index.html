@@ -6520,7 +6520,7 @@ function renderCheckout(){
   const entregaResumen = state.entrega==='tienda'
     ? 'Recojo en tienda · Av. Los Héroes 382'
     : conAgencia ? `Envío a agencia Shalom · ${state.agencia[1]}`
-    : 'Envío a domicilio · Lima y provincias';
+    : 'Envío a domicilio · Lima Metropolitana';
 
   const camposHtml = `
       <label class="campo">
@@ -6637,9 +6637,11 @@ function renderCheckout(){
 
 /* --------------------------- /pedido/<id> --------------------------- */
 function renderPedido(){
-  const entregaResumen = state.pedidoEnviado && state.pedidoEnviado.entrega === 'tienda'
+  const enviado = state.pedidoEnviado || {};
+  const entregaResumen = enviado.entrega === 'tienda'
     ? 'Recojo en tienda'
-    : 'Envío a domicilio · Lima y provincias';
+    : enviado.agencia ? `Envío a agencia Shalom · ${enviado.agencia}`
+    : 'Envío a domicilio · Lima Metropolitana';
   const totalTexto = state.pedidoEnviado ? fmt(state.pedidoEnviado.total) : '';
 
   return `
@@ -6805,7 +6807,8 @@ ${state.entrega === 'tienda' || agenciaActiva() ? 'Recoge' : 'Dirección'}: ${da
    necesita enseñar, vacía el carrito y navega a /pedido/<id>. */
 function cerrarPedido(numero, total){
   pagoMedido = false;   // el próximo pedido vuelve a medir su inicio de pago
-  state.pedidoEnviado = { total, entrega: state.entrega };
+  state.pedidoEnviado = { total, entrega: state.entrega,
+    agencia: state.entrega==='envio' && state.agencia ? state.agencia[1] : null };
   state.orderId = numero;
   state.orderPlaced = true;
   state.cart = [];
