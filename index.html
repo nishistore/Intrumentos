@@ -4654,7 +4654,7 @@ function appProductCard(p, altoFoto, conAgregar){
       <span class="pcard-precio">${fmt(p.price)}</span>
       ${enOferta(p) ? `<span class="pcard-antes">${fmt(p.old)}</span>` : ''}
     </div>
-    <div class="pcard-stock${stock>0?'':' agotado'}">${stock>0 ? 'En stock' : 'Agotado'}</div>
+    <div class="pcard-stock${stock>0?'':' agotado'}">${stock>0 ? 'En stock' + (incluyeEstuche(p) ? ' · Incluye estuche' : '') : 'Agotado'}</div>
   </a>`;
 
   /* El botón "Agregar" de la grilla de categoría (escritorio) va FUERA del
@@ -4762,6 +4762,10 @@ function topDescuentos(n){
    de verdad. Si vuelves a escribir una ruta entera entre comillas, el error
    vuelve. */
 function hrefProducto(x){ return '/producto/' + x.id + '-' + slugify(x.name); }
+/* Todas las guitarras, acústicas y eléctricas, se entregan con estuche. */
+const SUBS_CON_ESTUCHE = ['guitarras', 'guitarrasElectricas'];
+function incluyeEstuche(p){ return SUBS_CON_ESTUCHE.includes(p.sub); }
+
 function hrefCategoria(key){ return '/categoria/' + key; }
 function hrefSubcategoria(key, sub){ return '/categoria/' + key + '/' + subSlug(sub); }
 function fotoDe(x){ return (x.images||[])[0] || ''; }
@@ -6121,7 +6125,8 @@ function renderProductDetail(){
               ${stock > 0
                 ? '<span class="ficha-chip verde">En stock</span>'
                 : '<span class="ficha-chip neutro">Bajo pedido</span>'}
-              <span class="ficha-chip neutro">Envío a todo el Perú</span>
+              ${incluyeEstuche(p) ? '<span class="ficha-chip verde">Incluye estuche</span>' : ''}
+<span class="ficha-chip neutro">Envío a todo el Perú</span>
               ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
             </div>
             ${swatchesHtml}
@@ -6195,7 +6200,8 @@ function renderProductDetail(){
         ${stock > 0
           ? '<span class="ficha-chip verde">En stock</span>'
           : '<span class="ficha-chip neutro">Bajo pedido</span>'}
-        <span class="ficha-chip neutro">Envío a todo el Perú</span>
+        ${incluyeEstuche(p) ? '<span class="ficha-chip verde">Incluye estuche</span>' : ''}
+<span class="ficha-chip neutro">Envío a todo el Perú</span>
         ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
       </div>
 
