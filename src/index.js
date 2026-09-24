@@ -36,7 +36,7 @@ const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan d
    que solo dice ella. Si se cambia aqui hay que cambiarlo igual en
    index.html: las dos copias de CATEGORIES tienen que decir lo mismo. */
 const CATEGORIES = [
-  { key: 'cuerda', intro: "Guitarras acústicas y clásicas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: [{ key: 'guitarras', label: 'Guitarras' }, { key: 'bajos', label: 'Bajos' }, { key: 'violines', label: 'Violines' }, { key: 'ukeleles', label: 'Ukeleles' }, { key: 'charangos', label: 'Charangos' }] },
+  { key: 'cuerda', intro: "Guitarras acústicas, clásicas y eléctricas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: [{ key: 'guitarras', label: 'Guitarras Acústicas' }, { key: 'guitarrasElectricas', label: 'Guitarras Eléctricas' }, { key: 'bajos', label: 'Bajos' }, { key: 'violines', label: 'Violines' }, { key: 'ukeleles', label: 'Ukeleles' }, { key: 'charangos', label: 'Charangos' }] },
   { key: 'teclados', intro: "Teclados y pianos digitales para empezar y para tocar en vivo. Ahora mismo no hay stock cargado en la web: escríbenos por WhatsApp y te decimos qué tenemos en tienda y qué podemos conseguir.", label: 'Teclados', desc: 'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [] },
   { key: 'percusion', intro: "Bombos andinos de cuero hechos a mano, bombos de banda, tarolas, panderetas, kalimbas de 17 teclas y metalófonos, entre S/ 12 y S/ 250. Las baquetas y los parches de repuesto están en Accesorios.", label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: [{ key: 'tambores', label: 'Tambores' }, { key: 'bombos', label: 'Bombos' }, { key: 'tarolas', label: 'Tarolas' }, { key: 'cajones', label: 'Cajones' }, { key: 'metalofono', label: 'Metalófono' }, { key: 'panderetas', label: 'Panderetas' }, { key: 'kalimbas', label: 'Kalimbas' }] },
   { key: 'viento', intro: "Flautas dulces soprano, melódicas de 32 y 37 teclas, quenas y zampoñas, entre S/ 20 y S/ 80. Si es para la lista del colegio, en Para Colegio está todo junto.", label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'flautas', label: 'Flautas' }, { key: 'melodicas', label: 'Melódicas' }, { key: 'quenas', label: 'Quenas' }, { key: 'zamponas', label: 'Zampoñas' }] },
@@ -431,7 +431,14 @@ function productMeta(p) {
    aparta solo. */
 const PRODUCTOS_RETIRADOS = {
   '14': '/categoria/teclados',          // órgano Casio CT-S200
-  '43': '/categoria/cuerda/guitarras',  // guitarra acústica Fever
+  '43': '/categoria/cuerda/guitarras-acusticas',  // guitarra acústica Fever
+};
+
+/* Subcategorías que cambiaron de URL. "Guitarras" se partió en acústicas y
+   eléctricas (2026-09-24); la dirección vieja va a las acústicas, que son la
+   mayoría de lo que había y lo que busca quien escribe "guitarra" a secas. */
+const RUTAS_MOVIDAS = {
+  '/categoria/cuerda/guitarras': '/categoria/cuerda/guitarras-acusticas',
 };
 
 /* <head> de un producto que ya no está en el catálogo. Va con noindex y la
@@ -986,6 +993,8 @@ export default {
       const retirado = url.pathname.match(/^\/producto\/(\d+)/);
       const destino = retirado && PRODUCTOS_RETIRADOS[retirado[1]];
       if (destino) return Response.redirect(SITE_ORIGIN + destino, 301);
+      const movida = RUTAS_MOVIDAS[url.pathname];
+      if (movida) return Response.redirect(SITE_ORIGIN + movida + url.search, 301);
       return new Response(salida.body, { status: 404, headers: salida.headers });
     }
     return salida;
