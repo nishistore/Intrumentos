@@ -272,8 +272,9 @@ async function apiBanner(request, env, ctx) {
    aviso de las fichas pinten ya con el precio bueno, y los escribe solo quien
    tenga la clave de administrador.
 
-   Formato: [{ titulo, tipos, filas: [[servicio, precio]] }], con precio null
-   para "a tratar". TALLER_POR_DEFECTO es la carta impresa del taller; se usa
+   Formato: [{ titulo, tipos, filas: [[servicio, precio, descripción]] }], con
+   precio null para "a tratar". La descripción es la línea pequeña bajo cada
+   servicio en la tabla de /taller. TALLER_POR_DEFECTO es la carta impresa del taller; se usa
    mientras nadie haya guardado nada, o si la base no contesta. La misma copia
    está en index.html. */
 const CLAVE_TALLER = 'taller_precios';
@@ -281,16 +282,16 @@ const CACHE_TALLER = new Request('https://chipaomusic.com/__taller-precios');
 
 const TALLER_POR_DEFECTO = [
   { titulo: 'Guitarras', tipos: 'Acústicas · eléctricas · electroacústicas', filas: [
-    ['Calibración', 100],
-    ['Calibración + cuerdas nuevas', 130],
-    ['Calibración + cuerdas nuevas + mantenimiento', 160],
-    ['Reparación, pintura, otros', null],
+    ['Calibración', 100, 'Altura de cuerdas, alma y octavación'],
+    ['Calibración + cuerdas nuevas', 130, 'Incluye juego de cuerdas'],
+    ['Calibración + cuerdas nuevas + mantenimiento', 160, 'Limpieza de trastes, diapasón y electrónica'],
+    ['Reparación, pintura, otros', null, 'Cotización según el estado del instrumento'],
   ] },
   { titulo: 'Bajos', tipos: 'Acústicos · eléctricos · electroacústicos', filas: [
-    ['Calibración', 100],
-    ['Calibración + cuerdas nuevas', 200],
-    ['Calibración + cuerdas nuevas + mantenimiento', 230],
-    ['Reparación, pintura, otros', null],
+    ['Calibración', 100, 'Altura de cuerdas, alma y octavación'],
+    ['Calibración + cuerdas nuevas', 200, 'Incluye juego de cuerdas'],
+    ['Calibración + cuerdas nuevas + mantenimiento', 230, 'Limpieza de trastes, diapasón y electrónica'],
+    ['Reparación, pintura, otros', null, 'Cotización según el estado del instrumento'],
   ] },
 ];
 
@@ -308,7 +309,8 @@ function validarTaller(data) {
       if (!Array.isArray(f) || typeof f[0] !== 'string' || !f[0].trim()) return null;
       const precio = f[1] === null || f[1] === '' || f[1] === undefined ? null : Number(f[1]);
       if (precio !== null && !(Number.isInteger(precio) && precio > 0 && precio <= 100000)) return null;
-      filas.push([f[0].trim().slice(0, 80), precio]);
+      const detalle = typeof f[2] === 'string' ? f[2].trim().slice(0, 100) : '';
+      filas.push([f[0].trim().slice(0, 80), precio, detalle]);
     }
     limpio.push({ titulo: g.titulo.trim().slice(0, 40), tipos: String(g.tipos || '').trim().slice(0, 80), filas });
   }
@@ -373,7 +375,8 @@ async function apiTaller(request, env, ctx) {
 function tallerBodyHtml(precios) {
   return '<p>Repara tu guitarra con nosotros: calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>'
     + precios.map(g => '<h2>' + escapeHtml(g.titulo) + (g.tipos ? ' (' + escapeHtml(g.tipos.toLowerCase()) + ')' : '') + '</h2><ul>'
-      + g.filas.map(([servicio, precio]) => '<li>' + escapeHtml(servicio) + ': ' + (precio ? 'S/ ' + precio : 'a tratar') + '</li>').join('')
+      + g.filas.map(([servicio, precio, detalle]) => '<li>' + escapeHtml(servicio) + ': ' + (precio ? 'S/ ' + precio : 'a tratar')
+        + (detalle ? ' (' + escapeHtml(detalle) + ')' : '') + '</li>').join('')
       + '</ul>').join('')
     + '<p>Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>';
 }

@@ -429,16 +429,19 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   background:var(--app-surface);font:600 13px/1 var(--app-sans);color:var(--app-ink);
 }
 .admin-tab.activa{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
-.admin-taller{margin-bottom:12px;gap:4px;}
-.admin-taller-titulo{font:700 16px/1.2 var(--app-sans);color:var(--app-ink);margin-bottom:6px;}
-.admin-taller-fila{display:flex;flex-direction:column;gap:8px;padding:10px 0;border-top:1px solid var(--app-line);}
-.admin-taller-servicio{
+.admin-taller{margin-bottom:12px;gap:12px;}
+.admin-taller-num{font:700 10.5px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--app-muted);}
+.admin-taller-campo{display:flex;flex-direction:column;gap:6px;font:600 12.5px/1.3 var(--app-sans);color:var(--app-ink);}
+.admin-taller-campo i{font-style:normal;font-weight:400;color:var(--app-muted);}
+.admin-taller-texto{
   width:100%;resize:vertical;padding:8px 10px;border-radius:10px;border:1.5px solid var(--app-line-strong);
   font:400 16px/1.3 var(--app-sans);color:var(--app-ink);background:var(--app-surface);
 }
-.admin-taller-precio{align-self:flex-start;display:flex;align-items:center;gap:6px;font:600 13px/1 var(--app-sans);color:var(--app-muted);}
+.admin-taller-precios{display:flex;gap:12px;flex-wrap:wrap;}
+.admin-taller-precio{display:flex;flex-direction:column;gap:6px;font:600 12.5px/1.3 var(--app-sans);color:var(--app-ink);}
+.admin-taller-precio span{display:flex;align-items:center;gap:6px;font:600 13px/1 var(--app-sans);color:var(--app-muted);}
 .admin-taller-precio input{
-  width:96px;padding:9px 10px;border-radius:10px;border:1.5px solid var(--app-line-strong);
+  width:110px;padding:9px 10px;border-radius:10px;border:1.5px solid var(--app-line-strong);
   font:600 16px/1 var(--app-sans);color:var(--app-ink);background:var(--app-surface);
 }
 .admin-buscar{position:relative;margin-bottom:14px;}
@@ -3192,49 +3195,58 @@ footer.site .footer-bottom{
 /* ======================================================================
    TALLER DE REPARACIÓN (/taller): negro y dorado, solo en esta pantalla.
    ====================================================================== */
-.taller{
-  background:#0a0a0a;color:#e9e4da;text-align:center;
-  padding:72px 24px 96px;position:relative;overflow:hidden;
-  background-image:radial-gradient(60% 420px at 50% 0%,rgba(201,173,106,.16),transparent 70%);
+.taller{background:#0b0a09;color:#e9e4da;}
+.taller-logo{display:block;}
+.tl-wrap{max-width:1120px;margin:0 auto;padding:0 40px 40px;}
+.tl-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid #26221c;}
+.tl-marca{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.tl-marca .taller-logo{width:38px;height:38px;}
+.tl-marca b{display:block;font:500 19px/1.1 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;}
+.tl-marca i{display:block;margin-top:3px;font:500 9.5px/1 var(--app-sans);font-style:normal;letter-spacing:.24em;text-transform:uppercase;color:#8d7a52;}
+/* Dorado lleno, como el botón del cierre: en la barra de arriba un enlace
+   subrayado se perdía sobre el negro. */
+.tl-top-cta{
+  display:inline-flex;align-items:center;gap:12px;padding:13px 22px;
+  background:#d6bf85;color:#15120d;text-decoration:none;white-space:nowrap;
+  font:700 11.5px/1 var(--app-sans);letter-spacing:.2em;text-transform:uppercase;
+  box-shadow:0 0 0 1px rgba(214,191,133,.35),0 6px 22px rgba(214,191,133,.18);
+  transition:background-color .2s ease;
 }
-.taller-volver{
-  display:none;position:absolute;left:16px;top:16px;
-  font:500 13px/1 var(--app-sans);color:#a8925f;text-decoration:none;
+.tl-top-cta:hover{background:#e6d19b;}
+.tl-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding:88px 0 64px;}
+.tl-hero h1{font:500 92px/.98 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;letter-spacing:-.01em;}
+.tl-hero h1 em{font-style:italic;color:#d8bf82;}
+.tl-hero-der p{max-width:300px;font:400 14px/1.7 var(--app-sans);color:#b6afa3;}
+.tl-datos{display:flex;gap:28px;margin-top:22px;font:400 11.5px/1.6 var(--app-sans);color:#8f887c;}
+.tl-datos span{display:block;margin-bottom:6px;font:500 9.5px/1 var(--app-sans);letter-spacing:.22em;text-transform:uppercase;color:#8d7a52;}
+.tl-tabla{border-top:1px solid #c9ad6a;}
+.tl-cab,.tl-fila{
+  display:grid;grid-template-columns:40px minmax(0,1fr) repeat(var(--cols),150px);
+  align-items:center;column-gap:8px;border-bottom:1px solid #26221c;
 }
-.taller-logo{display:block;width:84px;height:84px;margin:0 auto 26px;}
-.taller-sobre{font:500 12px/1.4 var(--app-sans);letter-spacing:.32em;text-transform:uppercase;color:#c9ad6a;}
-.taller h1{margin-top:20px;font:500 68px/1.02 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;letter-spacing:0;}
-.taller h1 em{font-style:italic;color:#d8bf82;}
-.taller-orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:30px;color:#c9ad6a;}
-.taller-orn span{width:70px;height:1px;background:linear-gradient(90deg,transparent,#c9ad6a);}
-.taller-orn span:last-child{background:linear-gradient(90deg,#c9ad6a,transparent);}
-.taller-sub{max-width:560px;margin:26px auto 0;font:400 15px/1.75 var(--app-sans);color:#9d978c;}
-.taller-cartas{
-  max-width:1060px;margin:64px auto 0;text-align:left;
-  display:grid;grid-template-columns:1fr 1fr;gap:28px;
+.tl-cab{padding:26px 0 18px;align-items:end;}
+.tl-rotulo{grid-column:1 / 3;font:500 9.5px/1 var(--app-sans);letter-spacing:.22em;text-transform:uppercase;color:#8d7a52;}
+.tl-col{text-align:right;}
+.tl-col b{display:block;font:500 25px/1.1 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;}
+.tl-col small{display:block;margin-top:8px;font:500 8.5px/1.5 var(--app-sans);letter-spacing:.16em;text-transform:uppercase;color:#6f6553;}
+.tl-fila{padding:26px 0;}
+.tl-num{font:italic 500 15px/1 'Cormorant Garamond',Georgia,serif;color:#5d5647;}
+.tl-serv b{display:block;font:500 15px/1.3 var(--app-sans);color:#ece6da;}
+.tl-serv small{display:block;margin-top:5px;font:400 11.5px/1.4 var(--app-sans);color:#7d766a;}
+.tl-precio{text-align:right;font:500 28px/1 'Cormorant Garamond',Georgia,serif;color:#e3cf9c;white-space:nowrap;}
+.tl-nota{margin-top:16px;font:400 11px/1.5 var(--app-sans);color:#6a645a;}
+.tl-cierre{padding:96px 0 72px;text-align:center;}
+.tl-cierre .taller-logo{width:52px;height:52px;margin:0 auto 22px;}
+.tl-cierre h2{font:500 42px/1.1 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;}
+.tl-cierre h2 em{font-style:italic;color:#d8bf82;}
+.tl-btn{
+  display:inline-flex;align-items:center;gap:14px;margin-top:26px;padding:17px 26px;
+  background:#d6bf85;color:#15120d;text-decoration:none;
+  font:600 10.5px/1 var(--app-sans);letter-spacing:.2em;text-transform:uppercase;
+  transition:background-color .2s ease;
 }
-.taller-carta{
-  position:relative;padding:44px 40px 36px;border:1px solid #3a3223;
-  background:linear-gradient(180deg,#121110,#0c0c0b);
-}
-.taller-carta::after{content:"";position:absolute;top:7px;right:7px;bottom:7px;left:7px;border:1px solid #1f1b14;pointer-events:none;}
-.taller-carta h2{font:600 30px/1 'Cormorant Garamond',Georgia,serif;color:#f3ecdf;text-align:center;}
-.taller-tipos{margin-top:10px;text-align:center;font:500 11px/1.4 var(--app-sans);letter-spacing:.2em;text-transform:uppercase;color:#8d7a52;}
-.taller-lista{margin-top:30px;}
-.taller-fila{display:flex;align-items:baseline;gap:10px;padding:13px 0;}
-.taller-servicio{font:400 15.5px/1.35 var(--app-sans);color:#d6d0c4;}
-.taller-puntos{flex:1;min-width:24px;border-bottom:1px dotted #4a4131;transform:translateY(-4px);}
-.taller-precio{font:600 26px/1 'Cormorant Garamond',Georgia,serif;color:#d8bf82;white-space:nowrap;}
-.taller-precio small{font-size:14px;margin-right:2px;color:#a8925f;}
-.taller-tratar{font:italic 500 19px/1 'Cormorant Garamond',Georgia,serif;color:#a8925f;white-space:nowrap;}
-.taller-cta{
-  display:inline-block;margin-top:56px;padding:18px 34px;border:1px solid #c9ad6a;
-  font:500 13px/1 var(--app-sans);letter-spacing:.22em;text-transform:uppercase;
-  color:#e9d7a6;text-decoration:none;transition:background-color .2s ease,color .2s ease;
-}
-.taller-cta:hover{background:#c9ad6a;color:#0a0a0a;}
-.taller-nota{margin-top:18px;font:400 12.5px/1.5 var(--app-sans);color:#6f6a61;}
-.taller-nota + .taller-nota{margin-top:6px;}
+.tl-btn:hover{background:#e6d19b;}
+.tl-pie{display:flex;justify-content:space-between;gap:16px;padding-top:22px;border-top:1px solid #26221c;font:400 10.5px/1.4 var(--app-sans);color:#5f594f;}
 /* Recuadro de la portada. */
 .banner-taller{
   margin:24px var(--app-gutter) 0;display:flex;align-items:center;gap:22px;
@@ -3275,15 +3287,23 @@ body.en-taller footer.site{margin-top:0;}
 .franja-taller{color:#d8bf82;text-decoration:none;font:600 12px/12px var(--app-sans);}
 .franja-taller:hover{text-decoration:underline;}
 @media (max-width:899px){
-  .taller{padding:64px 16px 96px;}
-  .taller-volver{display:block;}
-  .taller-logo{width:68px;height:68px;margin-bottom:22px;}
-  .taller-sobre{font-size:11px;letter-spacing:.24em;}
-  .taller h1{font-size:44px;}
-  .taller-cartas{grid-template-columns:1fr;gap:20px;margin-top:44px;}
-  .taller-carta{padding:34px 22px 26px;}
-  .taller-servicio{font-size:14.5px;}
-  .taller-cta{margin-top:44px;}
+  .tl-wrap{padding:0 16px 32px;}
+  .tl-top-cta{padding:10px 11px;font-size:9px;letter-spacing:.1em;flex:none;}
+  .tl-top-cta span{display:none;}
+  .tl-marca{min-width:0;}
+  .tl-marca i{letter-spacing:.14em;white-space:nowrap;}
+  .tl-rotulo{letter-spacing:.14em;}
+  .tl-hero{grid-template-columns:1fr;gap:26px;padding:48px 0 40px;}
+  .tl-hero h1{font-size:54px;}
+  .tl-cab,.tl-fila{grid-template-columns:18px minmax(0,1fr) repeat(var(--cols),64px);column-gap:6px;}
+  .tl-col b{font-size:19px;}
+  .tl-col small{display:none;}
+  .tl-fila{padding:18px 0;}
+  .tl-serv b{font-size:13.5px;}
+  .tl-precio{font-size:20px;}
+  .tl-cierre{padding:64px 0 48px;}
+  .tl-cierre h2{font-size:32px;}
+  .tl-pie{flex-direction:column;gap:6px;}
 }
 </style>
 </head>
@@ -7310,16 +7330,16 @@ function showToast(msg, conEnlaceAlCarrito){
    ====================================================================== */
 const TALLER_POR_DEFECTO = [
   { titulo:'Guitarras', tipos:'Acústicas · eléctricas · electroacústicas', filas:[
-    ['Calibración', 100],
-    ['Calibración + cuerdas nuevas', 130],
-    ['Calibración + cuerdas nuevas + mantenimiento', 160],
-    ['Reparación, pintura, otros', null],
+    ['Calibración', 100, 'Altura de cuerdas, alma y octavación'],
+    ['Calibración + cuerdas nuevas', 130, 'Incluye juego de cuerdas'],
+    ['Calibración + cuerdas nuevas + mantenimiento', 160, 'Limpieza de trastes, diapasón y electrónica'],
+    ['Reparación, pintura, otros', null, 'Cotización según el estado del instrumento'],
   ]},
   { titulo:'Bajos', tipos:'Acústicos · eléctricos · electroacústicos', filas:[
-    ['Calibración', 100],
-    ['Calibración + cuerdas nuevas', 200],
-    ['Calibración + cuerdas nuevas + mantenimiento', 230],
-    ['Reparación, pintura, otros', null],
+    ['Calibración', 100, 'Altura de cuerdas, alma y octavación'],
+    ['Calibración + cuerdas nuevas', 200, 'Incluye juego de cuerdas'],
+    ['Calibración + cuerdas nuevas + mantenimiento', 230, 'Limpieza de trastes, diapasón y electrónica'],
+    ['Reparación, pintura, otros', null, 'Cotización según el estado del instrumento'],
   ]},
 ];
 let TALLER_PRECIOS = TALLER_POR_DEFECTO;
@@ -7411,33 +7431,81 @@ function avisoTallerHtml(p){
   </a>`;
 }
 
+/* La descripción de un servicio (tercer elemento de la fila). Las cartas
+   guardadas antes de que existiera no la traen: esas usan la de la carta
+   impresa en la misma posición. */
+function detalleTaller(f, i){
+  if(f.length > 2) return f[2] || '';
+  return (TALLER_POR_DEFECTO[0].filas[i] || [])[2] || '';
+}
+
+/* i, ii, iii… para numerar los servicios de la carta. */
+function numeroRomano(n){
+  return ['i','ii','iii','iv','v','vi','vii','viii','ix','x','xi','xii'][n - 1] || String(n);
+}
+
 function renderTaller(){
   cargarFuenteTaller();
-  const cartas = TALLER_PRECIOS.map(c => `
-      <div class="taller-carta">
-        <h2>${escapeHtml(c.titulo)}</h2>
-        ${c.tipos ? `<p class="taller-tipos">${escapeHtml(c.tipos)}</p>` : ''}
-        <div class="taller-lista">${c.filas.map(([servicio, precio]) => `
-          <div class="taller-fila">
-            <span class="taller-servicio">${escapeHtml(servicio)}</span><span class="taller-puntos"></span>
-            ${precio ? `<span class="taller-precio"><small>S/</small>${precio}</span>` : '<span class="taller-tratar">a tratar</span>'}
-          </div>`).join('')}
-        </div>
-      </div>`).join('');
+  /* Las filas son los servicios y las columnas los instrumentos. El nombre y
+     la descripción salen de la primera columna (Guitarras). */
+  const cols = TALLER_PRECIOS;
+  const nFilas = Math.max(...cols.map(c => c.filas.length));
+  const base = cols[0].filas;
+  const precioHtml = f => !f ? '—' : f[1] ? `S/ ${f[1]}` : 'A tratar';
+  const filas = Array.from({length:nFilas}, (_, i) => {
+    const f = base[i] || cols.find(c => c.filas[i]).filas[i];
+    const detalle = detalleTaller(f, i);
+    return `
+      <div class="tl-fila">
+        <span class="tl-num">${numeroRomano(i + 1)}</span>
+        <div class="tl-serv"><b>${escapeHtml(f[0])}</b>${detalle ? `<small>${escapeHtml(detalle)}</small>` : ''}</div>
+        ${cols.map(c => `<span class="tl-precio">${precioHtml(c.filas[i])}</span>`).join('')}
+      </div>`;
+  }).join('');
+  const wa = waHref('Hola, quiero agendar una reparación en el taller.');
+  const [dias, horas] = STORE_HOURS.split(', ');
   return `
   <section class="taller">
-    <a class="taller-volver" href="/" onclick="goHome();return false;">‹ Volver a la tienda</a>
-    ${logoTallerSvg()}
-    <div class="taller-sobre">Taller de luthería · Chipao Music</div>
-    <h1>Repara tu guitarra<br><em>con nosotros</em></h1>
-    <div class="taller-orn" aria-hidden="true"><span></span>✦<span></span></div>
-    <p class="taller-sub">Tu instrumento en manos de quien lo entiende. Calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>
-    <div class="taller-cartas">${cartas}</div>
-    <a class="taller-cta" target="_blank" rel="noopener"
-       href="${waHref('Hola, quiero agendar una reparación en el taller.')}"
-       onclick="trackAdsConversion('whatsapp')">Agenda tu reparación</a>
-    <p class="taller-nota">Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>
-    <p class="taller-nota">Av. Los Héroes 382, San Juan de Miraflores · ${STORE_HOURS}</p>
+    <div class="tl-wrap">
+      <header class="tl-top">
+        <a class="tl-marca" href="/" onclick="goHome();return false;">
+          ${logoTallerSvg()}
+          <span><b>Chipao Music</b><i>Taller de luthería</i></span>
+        </a>
+        <a class="tl-top-cta" target="_blank" rel="noopener" href="${wa}" onclick="trackAdsConversion('whatsapp')">Agenda tu reparación <span aria-hidden="true">→</span></a>
+      </header>
+
+      <div class="tl-hero">
+        <h1>Repara tu guitarra <em>con nosotros</em></h1>
+        <div class="tl-hero-der">
+          <p>Tu instrumento en manos de quien lo entiende. Calibración, cuerdas y mantenimiento en nuestro taller de San Juan de Miraflores.</p>
+          <div class="tl-datos">
+            <div><span>Dirección</span>Av. Los Héroes 382<br>San Juan de Miraflores</div>
+            <div><span>Horario</span>${escapeHtml(dias)}<br>${escapeHtml(horas || '')}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-tabla" style="--cols:${cols.length}">
+        <div class="tl-cab">
+          <span class="tl-rotulo">Servicios · Precios</span>
+          ${cols.map(c => `<div class="tl-col"><b>${escapeHtml(c.titulo)}</b>${c.tipos ? `<small>${escapeHtml(c.tipos)}</small>` : ''}</div>`).join('')}
+        </div>
+        ${filas}
+      </div>
+      <p class="tl-nota">Precios referenciales en soles. Reparaciones y pintura se cotizan según el estado del instrumento.</p>
+
+      <div class="tl-cierre">
+        ${logoTallerSvg()}
+        <h2>Dale a tu instrumento <em>el cuidado que merece</em></h2>
+        <a class="tl-btn" target="_blank" rel="noopener" href="${wa}" onclick="trackAdsConversion('whatsapp')">Agenda tu reparación <span aria-hidden="true">→</span></a>
+      </div>
+
+      <footer class="tl-pie">
+        <span>© Chipao Music · Taller de luthería</span>
+        <span>Av. Los Héroes 382, San Juan de Miraflores</span>
+      </footer>
+    </div>
   </section>`;
 }
 
@@ -7812,8 +7880,30 @@ function pestanasAdminHtml(){
   return `<div class="admin-tabs">${b('productos', 'Productos')}${b('taller', 'Taller')}</div>`;
 }
 
-/* Pestaña Taller: un campo por servicio. Vacío quiere decir "a tratar". */
+/* Pestaña Taller: una tarjeta por servicio, con su nombre, su descripción y
+   un precio por instrumento, igual que la tabla de /taller. Nombre y
+   descripción son de la fila entera: se guardan iguales en cada columna.
+   Precio vacío quiere decir "a tratar". */
 function renderAdminTaller(){
+  const cols = TALLER_PRECIOS;
+  const nFilas = Math.max(...cols.map(c => c.filas.length));
+  const fila = i => cols[0].filas[i] || cols.find(c => c.filas[i]).filas[i];
+  const servicios = Array.from({length:nFilas}, (_, i) => `
+    <section class="admin-row admin-taller">
+      <span class="admin-taller-num">Servicio ${numeroRomano(i + 1)}</span>
+      <label class="admin-taller-campo">Nombre
+        <textarea class="admin-taller-texto" id="taller-n-${i}" rows="2" maxlength="80">${escapeHtml(fila(i)[0])}</textarea>
+      </label>
+      <label class="admin-taller-campo">Descripción <i>(la línea pequeña de debajo)</i>
+        <textarea class="admin-taller-texto" id="taller-d-${i}" rows="2" maxlength="100">${escapeHtml(detalleTaller(fila(i), i))}</textarea>
+      </label>
+      <div class="admin-taller-precios">${cols.map((c, ci) => `
+        <label class="admin-taller-precio">${escapeHtml(c.titulo)}
+          <span>S/ <input type="number" id="taller-p-${ci}-${i}" inputmode="numeric" min="1" step="1"
+                 value="${(c.filas[i] || [])[1] ?? ''}" placeholder="a tratar"></span>
+        </label>`).join('')}
+      </div>
+    </section>`).join('');
   return `
   <div class="app-shell admin">
     <header class="admin-head">
@@ -7827,23 +7917,11 @@ function renderAdminTaller(){
       ${pestanasAdminHtml()}
     </header>
 
-    <p class="banner-nota">Son los servicios y precios de chipaomusic.com/taller. Puedes cambiar el nombre y el precio de cada uno; deja el precio vacío para que diga «a tratar». Al guardar se cambian para todos.</p>
+    <p class="banner-nota">Son los servicios de chipaomusic.com/taller. Puedes cambiar el nombre, la descripción y los precios de cada uno; deja un precio vacío para que diga «a tratar». Al guardar se cambian para todos.</p>
 
-    ${TALLER_PRECIOS.map((g, gi) => `
-    <section class="admin-row admin-taller">
-      <h2 class="admin-taller-titulo">${escapeHtml(g.titulo)}</h2>
-      ${g.filas.map((f, fi) => `
-      <div class="admin-taller-fila">
-        <textarea class="admin-taller-servicio" id="taller-n-${gi}-${fi}" rows="2" maxlength="80"
-                  aria-label="Nombre del servicio">${escapeHtml(f[0])}</textarea>
-        <span class="admin-taller-precio">S/
-          <input type="number" id="taller-${gi}-${fi}" inputmode="numeric" min="1" step="1"
-                 value="${f[1] ?? ''}" placeholder="a tratar" aria-label="Precio">
-        </span>
-      </div>`).join('')}
-    </section>`).join('')}
+    ${servicios}
 
-    <button type="button" class="btn-app terracota admin-guardar" id="taller-guardar" onclick="guardarPreciosTaller(this)">Guardar precios del taller</button>
+    <button type="button" class="btn-app terracota admin-guardar" id="taller-guardar" onclick="guardarPreciosTaller(this)">Guardar cambios del taller</button>
     <p class="banner-nota" style="text-align:center;"><a href="/taller" target="_blank" rel="noopener">Ver la página del taller ›</a></p>
   </div>`;
 }
@@ -7851,12 +7929,26 @@ function renderAdminTaller(){
 /* Igual que el banner: la clave la comprueba el Worker contra la API de
    productos. Desde el servidor local no hay Worker y esto falla. */
 async function guardarPreciosTaller(btn){
+  /* Espacios de más fuera, incluidos los saltos de línea del cuadro. */
+  const limpio = v => v.replace(/\s+/g, ' ').trim();
+  const nFilas = Math.max(...TALLER_PRECIOS.map(c => c.filas.length));
+  const nombres = [], detalles = [];
+  for(let i = 0; i < nFilas; i++){
+    const campoNombre = document.getElementById(`taller-n-${i}`);
+    nombres.push(limpio(campoNombre.value));
+    detalles.push(limpio(document.getElementById(`taller-d-${i}`).value));
+    if(!nombres[i]){
+      campoNombre.focus();
+      showToast('Cada servicio necesita un nombre');
+      return;
+    }
+  }
   const precios = [];
-  for(let gi = 0; gi < TALLER_PRECIOS.length; gi++){
-    const g = TALLER_PRECIOS[gi];
+  for(let ci = 0; ci < TALLER_PRECIOS.length; ci++){
+    const c = TALLER_PRECIOS[ci];
     const filas = [];
-    for(let fi = 0; fi < g.filas.length; fi++){
-      const campo = document.getElementById(`taller-${gi}-${fi}`);
+    for(let i = 0; i < nFilas; i++){
+      const campo = document.getElementById(`taller-p-${ci}-${i}`);
       const texto = campo.value.trim();
       const precio = texto === '' ? null : Number(texto);
       if(precio !== null && !(Number.isInteger(precio) && precio > 0)){
@@ -7864,16 +7956,9 @@ async function guardarPreciosTaller(btn){
         showToast('Los precios van en soles enteros, sin decimales');
         return;
       }
-      const campoNombre = document.getElementById(`taller-n-${gi}-${fi}`);
-      const nombre = campoNombre.value.replace(/s+/g, ' ').trim();
-      if(!nombre){
-        campoNombre.focus();
-        showToast('Cada servicio necesita un nombre');
-        return;
-      }
-      filas.push([nombre, precio]);
+      filas.push([nombres[i], precio, detalles[i]]);
     }
-    precios.push({ titulo: g.titulo, tipos: g.tipos, filas });
+    precios.push({ titulo: c.titulo, tipos: c.tipos, filas });
   }
 
   btn.disabled = true;
@@ -7887,12 +7972,12 @@ async function guardarPreciosTaller(btn){
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
     TALLER_PRECIOS = data.precios;
-    showToast('Precios del taller guardados');
+    showToast('Cambios del taller guardados');
   }catch(err){
-    showToast('No se pudieron guardar los precios. Revisa tu clave de administrador.');
+    showToast('No se pudieron guardar los cambios. Revisa tu clave de administrador.');
   }
   btn.disabled = false;
-  btn.textContent = 'Guardar precios del taller';
+  btn.textContent = 'Guardar cambios del taller';
 }
 
 function renderAdminPanel(){
