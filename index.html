@@ -618,7 +618,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    #navEscritorio y #cabeceraMovil salen vacíos en el HTML y los rellena el
    JS. Con conexión rápida no se nota, pero en un teléfono con red lenta el
    navegador ya pintó la página cuando llegan: la cabecera del teléfono mide
-   203px y la de escritorio 127px, así que TODO lo de abajo daba un salto de
+   165px y la de escritorio 127px, así que TODO lo de abajo daba un salto de
    golpe. Eso es lo que Cloudflare marca como CLS malo, con #app de culpable
    (es #app lo que se mueve, pero la culpa es de lo que tiene encima).
 
@@ -629,7 +629,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    La de escritorio se pinta en todas las pantallas, así que su reserva no
    lleva condición. La del teléfono solo existe en la portada, y por eso la
    suya cuelga de .ruta-portada, que pone un script al principio del <body>
-   y QUITA el primer render: reservarla donde no va deja 203px de blanco, y
+   y QUITA el primer render: reservarla donde no va deja 165px de blanco, y
    dentro de la web se cambia de pantalla sin recargar, así que la clase no
    puede quedarse puesta. Si se cambia el alto de cualquiera de las dos, hay
    que cambiarlo aquí. */
@@ -639,7 +639,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   body:not(.en-panel) #navEscritorio:empty{min-height:127px;}
 }
 @media (max-width:899px){
-  html.ruta-portada #cabeceraMovil:empty{min-height:203px;}
+  html.ruta-portada #cabeceraMovil:empty{min-height:165px;}
 }
 /* Y lo mismo por abajo. El HTML trae dentro de #app un texto para Google que
    es más alto que el "Cargando productos…" que lo sustituye, así que al
@@ -985,6 +985,81 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .conf-titulo{display:block;font:800 13.5px/1.2 var(--app-sans);color:var(--app-ink);}
 .conf-sub{display:block;margin-top:2px;font:400 11.5px/1.3 var(--app-sans);color:var(--app-muted);}
 
+/* ---- portada del teléfono: destacado compacto + cuadrícula de categorías ----
+   Todo dentro del @media: en escritorio ninguna de estas clases se pinta, y
+   si alguien estrecha la ventana tampoco debe heredar nada raro. */
+@media (max-width:899px){
+  .hero-venta.compacta{padding-top:12px;}
+  .compacta .hv-gancho{
+    display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;
+    align-items:center;padding:10px;border-radius:14px;
+  }
+  .compacta .hv-badges{top:16px;left:16px;}
+  .compacta .hv-badges .badge-negro{display:none;}
+  .compacta .hv-badges .badge-dto{font-size:10.5px;padding:3px 6px;}
+  .compacta .hv-foto{aspect-ratio:1/1;border-radius:10px;}
+  .compacta .hv-eyebrow{margin-top:0;font-size:9.5px;}
+  .compacta .hv-titulo{margin-top:4px;font-size:16px;line-height:1.15;-webkit-line-clamp:2;}
+  .compacta .hv-detalle .pcard-colores{margin-top:6px;gap:4px;}
+  .compacta .hv-detalle .pcolor{width:12px;height:12px;}
+  .compacta .hv-detalle .pcolor-texto{font-size:11px;}
+  .compacta .hv-precios{margin-top:6px;gap:6px;}
+  .compacta .hv-precio{font-size:21px;}
+  .compacta .hv-antes{font-size:12.5px;}
+  .compacta .hv-ctas{margin-top:8px;}
+  .compacta .hv-ctas .btn-comprar{min-height:38px;padding:9px 10px;font-size:13.5px;border-radius:9px;}
+  .compacta .btn-wa-contorno,
+  .compacta .hv-micro,
+  .compacta .hv-cuotas,
+  .compacta .hv-alerta{display:none;}
+
+  .portada-cats{padding:20px var(--app-gutter) 0;}
+  .pc-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+  .pc-head h2{font:400 19px/1.1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+  .pc-head a{font:700 13px/1 var(--app-sans);color:var(--app-green-ink);text-decoration:none;}
+  .pc-grid{margin-top:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px;}
+  .pc-tile{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    text-decoration:none;color:var(--app-ink);
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  }
+  .pc-cuadro{
+    display:flex;align-items:center;justify-content:center;
+    width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;
+    background:#fff;border:1px solid var(--app-line);
+    transition:transform .18s ease;
+  }
+  .pc-cuadro img{width:84%;height:84%;object-fit:contain;}
+  .pc-cuadro svg{width:34px;height:34px;stroke:var(--app-ink);}
+  .pc-cuadro.oferta{
+    background:var(--peru-rojo);border-color:var(--peru-rojo);
+    color:#fff;font:400 18px/1 var(--app-black);letter-spacing:-.02em;
+  }
+  .pc-tile:active .pc-cuadro{transform:scale(.95);}
+  .pc-nombre{font:600 11.5px/1.2 var(--app-sans);text-align:center;}
+
+  .beneficios-movil{
+    margin:18px var(--app-gutter) 0;
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    background:var(--app-green-soft);border-radius:12px;
+  }
+  .beneficios-movil span{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:10px 6px;text-align:center;
+    font:600 11px/1.25 var(--app-sans);color:var(--app-on-green);
+  }
+  .beneficios-movil span + span{border-left:1px solid rgba(27,122,61,.15);}
+  .beneficios-movil svg{width:20px;height:20px;stroke:var(--app-green-ink);}
+
+  .secundarias-movil{padding-top:26px;}
+  .sec-movil-titulo{font:400 23px/1.1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+  .secundarias-movil .hv-secundarias{margin-top:14px;}
+}
+@media (max-width:899px) and (prefers-reduced-motion: reduce){
+  .pc-cuadro{transition:none;}
+  .pc-tile:active .pc-cuadro{transform:none;}
+}
+
 /* ---- vitrina ---- */
 .vitrina{padding:26px var(--app-gutter) 0;}
 .vitrina-head h2{font:400 23px/1.1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
@@ -1173,50 +1248,6 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 }
 .cab-buscar{padding:12px var(--app-gutter);}
 .cab-buscar .buscador-falso{margin-top:0;}
-/* Los chips se desplazan de lado sin barra de scroll a la vista, y el último
-   lleva un respiro para que se note que la fila sigue. */
-.cab-chips{
-  display:flex;gap:8px;margin-top:10px;
-  overflow-x:auto;scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
-}
-.cab-chips::-webkit-scrollbar{display:none;}
-/* Mismo comportamiento que las categorías de escritorio, traducido al dedo:
-   aquí no hay ratón, así que lo que se ilumina es el momento de tocar. El
-   fondo baja un tono y la píldora se hunde un pelo, en los mismos 180ms.
-   -webkit-tap-highlight-color evita que Android pinte encima su recuadro gris
-   y se coma la animación. */
-.cab-chip{
-  flex:0 0 auto;
-  background:var(--app-sunken);border:1px solid #e2e2de;
-  color:#3a3a36;font:600 12.5px/1 var(--app-sans);
-  padding:7px 13px;border-radius:999px;text-decoration:none;
-  touch-action:manipulation;
-  -webkit-tap-highlight-color:transparent;
-  transition:background-color .18s ease, border-color .18s ease,
-             color .18s ease, transform .18s ease;
-}
-.cab-chip:active{
-  background:#E4E4E1;border-color:#d3d3ce;color:var(--app-ink);
-  transform:scale(.97);
-}
-.cab-chip.activo:active{background:#A8101F;border-color:#A8101F;}
-/* Si la cabecera del teléfono cae en una pantalla con ratón (una ventana
-   estrecha en la computadora), se comporta igual que la de escritorio. */
-@media (hover: hover){
-  .cab-chip:hover{background:#E4E4E1;border-color:#d3d3ce;color:var(--app-ink);}
-  .cab-chip.activo:hover{background:#A8101F;border-color:#A8101F;color:#fff;}
-}
-@media (prefers-reduced-motion: reduce){
-  .cab-chip{transition:none;}
-  .cab-chip:active{transform:none;}
-}
-/* El chip de ofertas es el único rojo de la fila: es el que tiene que
-   llamar, los demás son navegación. */
-.cab-chip.activo{
-  background:var(--peru-rojo);border-color:var(--peru-rojo);color:#fff;font-weight:700;
-}
-.cab-chips > :last-child{margin-right:var(--app-gutter);}
 
 /* ---- barra de compra fija (teléfono) ---- */
 /* Va encima de la barra de pestañas, no en su sitio: navegar es lo primero.
@@ -3416,7 +3447,10 @@ const ICONS = {
      van dibujados con el mismo trazo de 1.6 que los demás. */
   search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
   cart:'<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 11.3a1.8 1.8 0 0 0 1.8 1.4h8a1.8 1.8 0 0 0 1.8-1.4L21 7H6.2"/>',
-  store:'<path d="M4 9.5V20h16V9.5"/><path d="M3 4h18l1.2 4.2a3 3 0 0 1-5.9.8 3 3 0 0 1-5.9 0 3 3 0 0 1-5.9-.8L3 4z"/><path d="M10 20v-5h4v5"/>'
+  store:'<path d="M4 9.5V20h16V9.5"/><path d="M3 4h18l1.2 4.2a3 3 0 0 1-5.9.8 3 3 0 0 1-5.9 0 3 3 0 0 1-5.9-.8L3 4z"/><path d="M10 20v-5h4v5"/>',
+  /* Los dos de la franja de beneficios de la portada del teléfono. */
+  truck:'<path d="M2 6h12v10H2zM14 9.5h4l3.5 3.5v3H14"/><circle cx="6" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/>',
+  card:'<rect x="2.5" y="5.5" width="19" height="13" rx="2"/><path d="M2.5 10h19M6 14.5h4"/>'
 };
 
 /* El logo de WhatsApp es de relleno, no de trazo, así que no entra en ICONS
@@ -4657,16 +4691,100 @@ function cambiarVitrina(){
   }, 250);
 }
 
+/* En el teléfono la caja grande es una tarjeta horizontal (foto a la
+   izquierda, datos a la derecha) y las dos ofertas de al lado bajan debajo
+   de los más vendidos: la caja de antes ocupaba la primera pantalla entera y
+   no se llegaba a ver ni una categoría. El marcado es el mismo; lo que cambia
+   es la clase .compacta, que solo pone el CSS del teléfono. */
 function heroVentasHtml(){
   const x = vitrinaActual();
   if(!x) return '';
+  const movil = !esEscritorio();
   return `
-  <section class="hero-venta">
+  <section class="hero-venta${movil ? ' compacta' : ''}">
     <div class="hv-gancho" id="vitrina" onmouseenter="pausarVitrina(true)" onmouseleave="pausarVitrina(false)"
          ontouchstart="tocarVitrina()">
       ${ganchoHtml(x, true)}
     </div>
-${secundariasHtml()}`;
+    ${movil ? '' : secundariasHtml()}
+  </section>`;
+}
+
+/* Las dos ofertas fijas, en el teléfono, van solas y más abajo. */
+function secundariasMovilHtml(){
+  if(!ofertasSecundarias().length) return '';
+  return `
+  <section class="hero-venta secundarias-movil">
+    <h2 class="sec-movil-titulo">Ofertas de la semana</h2>
+    ${secundariasHtml()}
+  </section>`;
+}
+
+/* ---------------- categorías de la portada (teléfono) ----------------
+   Cuadrícula de 4 × 2 con la foto de un producto de cada categoría, al estilo
+   de los círculos de Mercado Libre. Sustituye a los chips de texto de la
+   cabecera: con ocho entradas caben todas a la vista, sin deslizar. La foto
+   es la del destacado de la categoría o, si no hay, la del más caro con
+   stock. `usados` evita repetir foto entre Viento y Para Colegio, que
+   comparten la melódica. */
+function fotoDeCategoria(catKey, usados){
+  const lista = productosDeCategoria(catKey)
+    .filter(p => (p.images||[]).length && !usados.has(p.id))
+    .sort((a,b) => (b.featured?1:0) - (a.featured?1:0)
+                || ((b.stock||0) > 0) - ((a.stock||0) > 0)
+                || b.price - a.price);
+  const p = lista[0];
+  if(!p) return '';
+  usados.add(p.id);
+  return fotoUrl(fotoDe(p), ANCHO_MINIATURA);
+}
+
+function categoriasPortadaHtml(){
+  const cortos = {cuerda:'Cuerda', teclados:'Teclados', percusion:'Percusión',
+                  viento:'Viento', audio:'Audio', colegio:'Colegio', accesorios:'Accesorios'};
+  const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
+  const maxDto = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
+  const usados = new Set();
+
+  const tiles = CATEGORIES
+    .filter(c => productosDeCategoria(c.key).length)
+    .map(c => {
+      const foto = fotoDeCategoria(c.key, usados);
+      return `
+      <a class="pc-tile" href="${hrefCategoria(c.key)}" onclick="goShop('${c.key}');return false;">
+        <span class="pc-cuadro">${foto
+          ? `<img src="${foto}" alt="" loading="lazy" decoding="async">`
+          : iconSvg(ICON_BY_CAT[c.key] || 'tag')}</span>
+        <span class="pc-nombre">${escapeHtml(cortos[c.key] || c.label)}</span>
+      </a>`;
+    }).join('');
+
+  const tileOfertas = maxDto > 0 ? `
+      <a class="pc-tile" href="/ofertas" onclick="goOffers();return false;">
+        <span class="pc-cuadro oferta">−${maxDto}%</span>
+        <span class="pc-nombre">Ofertas</span>
+      </a>` : '';
+
+  return `
+  <section class="portada-cats">
+    <header class="pc-head">
+      <h2>Categorías</h2>
+      <a href="/tienda" onclick="goShop(null);return false;">Ver todo ›</a>
+    </header>
+    <div class="pc-grid">${tileOfertas}${tiles}</div>
+  </section>`;
+}
+
+/* La franja de confianza del teléfono: tres ventajas en una sola fila. La
+   de cinco celdas de escritorio ocupaba tres filas en la pantalla chica. */
+function beneficiosMovilHtml(){
+  const celdas = [
+    ['store', 'Recojo en 1 hora'],
+    ['truck', 'Envío a todo el Perú'],
+    ['card',  'Yape, Plin y tarjeta'],
+  ];
+  return `<div class="beneficios-movil">${celdas.map(c => `
+    <span>${iconSvg(c[0], 'aria-hidden="true"')}${escapeHtml(c[1])}</span>`).join('')}</div>`;
 }
 
 /* El contenido de la caja grande. 'primera' solo en la carga: esa foto es
@@ -4724,8 +4842,7 @@ function secundariasHtml(){
           <button type="button" class="hv-of-btn" onclick="addToCart(${o.id}, this)">Agregar</button>
         </div>
       </article>`).join('')}
-    </div>
-  </section>`;
+    </div>`;
 }
 
 /* ---------------- franja de confianza ----------------
@@ -4963,6 +5080,19 @@ function prepararBarraCompra(){
 }
 
 function renderHome(){
+  if(!esEscritorio()) return `
+  <div class="app-shell portada">
+    ${heroVentasHtml()}
+    ${categoriasPortadaHtml()}
+    ${beneficiosMovilHtml()}
+    ${vitrinaHtml()}
+    ${secundariasMovilHtml()}
+    ${pruebaSocialHtml()}
+    ${kitEscolarHtml()}
+    ${cierreTiendaHtml()}
+  </div>
+  ${barraCompraHtml()}`;
+
   return `
   <div class="app-shell portada">
     ${heroVentasHtml()}
@@ -7819,23 +7949,9 @@ function renderCabeceraMovil(){
   if(esEscritorio() || state.view !== 'home'){ el.innerHTML = ''; return; }
 
   const unidades = state.cart.reduce((n,c)=>n+c.qty, 0);
-  const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
-  const maxDto = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
 
-  /* Categorías con catálogo de verdad. Los nombres se acortan porque esta
-     fila se desliza de lado y cuanto más ancha, más lejos queda el último
-     chip. "Cuerda" es la excepción: a secas es jerga de tienda de música y
-     ahí va el producto que más se busca, así que lleva el nombre entero
-     aunque ocupe. */
-  const cortos = {cuerda:'Instrumentos de Cuerda', teclados:'Teclados',
-                  percusion:'Percusión', viento:'Viento', audio:'Audio',
-                  colegio:'Colegio', accesorios:'Accesorios'};
-  const chipsCat = CATEGORIES
-    .filter(c => productosDeCategoria(c.key).length)
-    .map(c => `<a class="cab-chip" href="${hrefCategoria(c.key)}"
-        onclick="goShop('${c.key}');return false;">${escapeHtml(cortos[c.key] || c.label)}</a>`)
-    .join('');
-
+  /* Las categorías ya no van aquí como chips: son la cuadrícula con fotos
+     de debajo del producto destacado (categoriasPortadaHtml). */
   el.innerHTML = `
   <div class="cab-movil">
     <div class="cab-franja">Envío gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)} · Recojo en 1 hora</div>
@@ -7855,13 +7971,6 @@ function renderCabeceraMovil(){
         ${iconSvg('search')}
         <span>Busca “cajón”, “ukelele”, “teclado”…</span>
       </a>
-      <!-- Las ofertas van al final: el chip rojo abría la fila y era lo
-           primero que se veía, por delante de las categorías, que son la
-           forma normal de entrar al catálogo. -->
-      <div class="cab-chips">
-        ${chipsCat}
-        ${maxDto > 0 ? `<a class="cab-chip activo" href="/ofertas" onclick="goOffers();return false;">Ofertas −${maxDto}%</a>` : ''}
-      </div>
     </div>
   </div>`;
 }
@@ -7901,7 +8010,7 @@ function render(){
   document.getElementById('app').classList.remove('cargando');
   /* La reserva de hueco para la cabecera del teléfono solo vale hasta que el
      JS pinta por primera vez. A partir de aquí él decide si hay cabecera o
-     no, y dejarla puesta abría 203px de blanco en cuanto se salía de la
+     no, y dejarla puesta abría 165px de blanco en cuanto se salía de la
      portada sin recargar: se tocaba la lupa y el buscador aparecía a media
      pantalla. */
   document.documentElement.classList.remove('ruta-portada');
