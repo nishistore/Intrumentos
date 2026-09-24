@@ -3216,6 +3216,40 @@ footer.site .footer-bottom{
 .taller-cta:hover{background:#c9ad6a;color:#0a0a0a;}
 .taller-nota{margin-top:18px;font:400 12.5px/1.5 var(--app-sans);color:#6f6a61;}
 .taller-nota + .taller-nota{margin-top:6px;}
+/* Recuadro de la portada. */
+.banner-taller{
+  margin:24px var(--app-gutter) 0;display:flex;align-items:center;gap:22px;
+  padding:26px 32px;border-radius:14px;text-decoration:none;color:#e9e4da;
+  background:#0a0a0a radial-gradient(70% 140% at 0% 0%,rgba(201,173,106,.18),transparent 60%);
+  border:1px solid #2a2419;
+}
+.banner-taller .taller-logo{width:64px;height:64px;margin:0;flex:none;}
+.bt-texto{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+.bt-sobre{font:500 11px/1 var(--app-sans);letter-spacing:.28em;text-transform:uppercase;color:#c9ad6a;}
+.bt-titulo{font:500 32px/1.05 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;}
+.bt-titulo em{font-style:italic;color:#d8bf82;}
+.bt-sub{font:400 13px/1.4 var(--app-sans);color:#9d978c;}
+.bt-btn{
+  flex:none;padding:14px 22px;border:1px solid #c9ad6a;color:#e9d7a6;
+  font:500 12px/1 var(--app-sans);letter-spacing:.18em;text-transform:uppercase;
+  transition:background-color .2s ease,color .2s ease;
+}
+.banner-taller:hover .bt-btn{background:#c9ad6a;color:#0a0a0a;}
+/* Aviso en la ficha de guitarras y bajos. */
+.aviso-taller{
+  display:flex;flex-direction:column;gap:6px;margin-top:16px;padding:14px 16px;
+  border-radius:12px;background:#0f0e0c;border:1px solid #2a2419;text-decoration:none;
+}
+.at-texto{font:400 13px/1.45 var(--app-sans);color:#b9b2a5;}
+.at-texto b{color:#f3ecdf;font-weight:600;}
+.at-enlace{font:600 13px/1 var(--app-sans);color:#d8bf82;}
+.aviso-taller:hover .at-enlace{text-decoration:underline;}
+@media (max-width:899px){
+  .banner-taller{margin-top:18px;padding:20px 18px;gap:14px;flex-wrap:wrap;}
+  .banner-taller .taller-logo{width:48px;height:48px;}
+  .bt-titulo{font-size:25px;}
+  .bt-btn{width:100%;text-align:center;}
+}
 /* El pie ya es oscuro: sin su margen, el negro del taller sigue hasta él. */
 body.en-taller footer.site{margin-top:0;}
 /* Enlace al taller en la franja negra de arriba (escritorio). */
@@ -5404,6 +5438,7 @@ function renderHome(){
     ${heroVentasHtml()}
     ${categoriasPortadaHtml()}
     ${beneficiosMovilHtml()}
+    ${bannerTallerHtml()}
     ${vitrinaHtml()}
     ${secundariasMovilHtml()}
     ${pruebaSocialHtml()}
@@ -5417,6 +5452,7 @@ function renderHome(){
     ${heroVentasHtml()}
     ${categoriasPortadaHtml()}
     ${franjaConfianzaHtml()}
+    ${bannerTallerHtml()}
     ${vitrinaHtml()}
     ${pruebaSocialHtml()}
     ${kitEscolarHtml()}
@@ -6192,7 +6228,7 @@ function renderProductDetail(){
                 ? '<span class="ficha-chip verde">En stock</span>'
                 : '<span class="ficha-chip neutro">Bajo pedido</span>'}
               ${incluyeEstuche(p) ? '<span class="ficha-chip verde">Incluye estuche</span>' : ''}
-<span class="ficha-chip neutro">Envío a todo el Perú</span>
+        <span class="ficha-chip neutro">Envío a todo el Perú</span>
               ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
             </div>
             ${swatchesHtml}
@@ -6215,6 +6251,7 @@ function renderProductDetail(){
               <span><b>Pagas como quieras</b> Yape, Plin, tarjeta o transferencia</span>
             </div>
           </div>
+          ${avisoTallerHtml(p)}
           ${asesorHtml}
         </div>
       </div>
@@ -6267,7 +6304,7 @@ function renderProductDetail(){
           ? '<span class="ficha-chip verde">En stock</span>'
           : '<span class="ficha-chip neutro">Bajo pedido</span>'}
         ${incluyeEstuche(p) ? '<span class="ficha-chip verde">Incluye estuche</span>' : ''}
-<span class="ficha-chip neutro">Envío a todo el Perú</span>
+        <span class="ficha-chip neutro">Envío a todo el Perú</span>
         ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
       </div>
 
@@ -6289,6 +6326,7 @@ function renderProductDetail(){
         ${incluye.map(i => `<div class="incluye-item"><span class="incluye-punto"></span>${escapeHtml(i)}</div>`).join('')}
       </div>` : ''}
 
+      ${avisoTallerHtml(p)}
       ${asesorHtml}
     </div>
 
@@ -7301,6 +7339,35 @@ function goTaller(push){
   setBreadcrumbSchema([{name:'Inicio', path:'/'}, {name:'Taller de reparación', path:'/taller'}]);
   render();
   if(push !== false) window.scrollTo({top:0});
+}
+
+/* Recuadro de la portada que lleva al taller: la única pieza negra y dorada
+   de la tienda, así que se ve sin necesidad de ser grande. */
+function bannerTallerHtml(){
+  cargarFuenteTaller();
+  return `
+  <a class="banner-taller" href="/taller" onclick="goTaller();return false;">
+    ${logoTallerSvg()}
+    <span class="bt-texto">
+      <span class="bt-sobre">Taller de luthería</span>
+      <span class="bt-titulo">Repara tu guitarra <em>con nosotros</em></span>
+      <span class="bt-sub">Calibración desde S/ 100 · cuerdas y mantenimiento · guitarras y bajos</span>
+    </span>
+    <span class="bt-btn">Ver precios ›</span>
+  </a>`;
+}
+
+/* En la ficha de una guitarra o un bajo: quien ya tiene uno es quien más
+   probablemente necesite calibrarlo. */
+const SUBS_TALLER = ['guitarras', 'guitarrasElectricas', 'bajos'];
+function avisoTallerHtml(p){
+  if(!SUBS_TALLER.includes(p.sub)) return '';
+  const cual = p.sub === 'bajos' ? 'Tu bajo' : 'Tu guitarra';
+  return `
+  <a class="aviso-taller" href="/taller" onclick="goTaller();return false;">
+    <span class="at-texto"><b>¿${cual} necesita calibración?</b> Calibración, cuerdas y mantenimiento desde S/ 100.</span>
+    <span class="at-enlace">Conoce nuestro taller ›</span>
+  </a>`;
 }
 
 function renderTaller(){
