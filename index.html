@@ -147,7 +147,7 @@
   /* El verde vivo es CLARO, así que solo sirve de fondo: encima lleva texto
      oscuro (--app-on-green), no blanco. Blanco sobre este verde da 2:1 de
      contraste y se vuelve ilegible. Para verde como TEXTO sobre fondo claro
-     —"Stock en tienda", títulos— está --app-green-ink, que es el mismo tono
+     —"En stock", títulos— está --app-green-ink, que es el mismo tono
      oscurecido hasta que se lee bien. */
   --app-green:#6FC87A;            /* verde vivo: SOLO fondos */
   --app-green-hover:#5DB869;      /* hover del verde (solo escritorio) */
@@ -4654,7 +4654,7 @@ function appProductCard(p, altoFoto, conAgregar){
       <span class="pcard-precio">${fmt(p.price)}</span>
       ${enOferta(p) ? `<span class="pcard-antes">${fmt(p.old)}</span>` : ''}
     </div>
-    <div class="pcard-stock${stock>0?'':' agotado'}">${stock>0 ? (esEscritorio() ? 'Stock en tienda' : 'En tienda') : 'Agotado'}</div>
+    <div class="pcard-stock${stock>0?'':' agotado'}">${stock>0 ? 'En stock' : 'Agotado'}</div>
   </a>`;
 
   /* El botón "Agregar" de la grilla de categoría (escritorio) va FUERA del
@@ -6119,7 +6119,7 @@ function renderProductDetail(){
             ${preciosHtml}
             <div class="ficha-chips">
               ${stock > 0
-                ? '<span class="ficha-chip verde">Stock en tienda</span>'
+                ? '<span class="ficha-chip verde">En stock</span>'
                 : '<span class="ficha-chip neutro">Bajo pedido</span>'}
               <span class="ficha-chip neutro">Envío a todo el Perú</span>
               ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
@@ -6193,7 +6193,7 @@ function renderProductDetail(){
 
       <div class="ficha-chips">
         ${stock > 0
-          ? '<span class="ficha-chip verde">Stock en tienda</span>'
+          ? '<span class="ficha-chip verde">En stock</span>'
           : '<span class="ficha-chip neutro">Bajo pedido</span>'}
         <span class="ficha-chip neutro">Envío a todo el Perú</span>
         ${stock > 0 && stock <= 3 ? `<span class="ficha-chip alerta">Quedan ${stock}</span>` : ''}
@@ -7872,7 +7872,7 @@ function navFilaHtml(p, i){
       <span class="nav-res-nombre">${escapeHtml(p.name)}</span>
       <span class="nav-res-linea">
         <span class="nav-res-precio">${fmt(p.price)}</span>
-        <span class="nav-res-stock${stock>0?'':' agotado'}">${stock>0?'Stock en tienda':'Agotado'}</span>
+        <span class="nav-res-stock${stock>0?'':' agotado'}">${stock>0?'En stock':'Agotado'}</span>
       </span>
     </span>
     <span class="nav-res-chevron">›</span>
