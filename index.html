@@ -618,7 +618,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    #navEscritorio y #cabeceraMovil salen vacíos en el HTML y los rellena el
    JS. Con conexión rápida no se nota, pero en un teléfono con red lenta el
    navegador ya pintó la página cuando llegan: la cabecera del teléfono mide
-   165px y la de escritorio 127px, así que TODO lo de abajo daba un salto de
+   165px y la de escritorio 139px, así que TODO lo de abajo daba un salto de
    golpe. Eso es lo que Cloudflare marca como CLS malo, con #app de culpable
    (es #app lo que se mueve, pero la culpa es de lo que tiene encima).
 
@@ -635,8 +635,8 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    que cambiarlo aquí. */
 @media (min-width:900px){
   /* Menos en el panel, donde la barra de la tienda no se pinta nunca: ahi el
-     hueco reservado es una franja blanca de 127px y nada mas. */
-  body:not(.en-panel) #navEscritorio:empty{min-height:127px;}
+     hueco reservado es una franja blanca de 139px y nada mas. */
+  body:not(.en-panel) #navEscritorio:empty{min-height:139px;}
 }
 @media (max-width:899px){
   html.ruta-portada #cabeceraMovil:empty{min-height:165px;}
@@ -1058,6 +1058,44 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 @media (max-width:899px) and (prefers-reduced-motion: reduce){
   .pc-cuadro{transition:none;}
   .pc-tile:active .pc-cuadro{transform:none;}
+}
+
+/* La misma cuadrícula en escritorio: una fila de 8, entre el destacado y
+   la franja de confianza, con lo que hay dentro de cada categoría. */
+@media (min-width:900px){
+  .portada-cats{padding:34px var(--app-gutter) 0;}
+  .pc-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;}
+  .pc-head h2{font:400 26px/1.1 var(--app-black);letter-spacing:-.02em;color:var(--app-ink);}
+  .pc-head a{
+    font:700 14.5px/1 var(--app-sans);color:var(--app-ink);text-decoration:none;
+    border-bottom:1.5px solid var(--app-line-strong);padding-bottom:2px;
+  }
+  .pc-grid{margin-top:18px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:16px;}
+  .pc-tile{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    text-decoration:none;color:var(--app-ink);text-align:center;
+  }
+  .pc-cuadro{
+    display:flex;align-items:center;justify-content:center;
+    width:100%;aspect-ratio:1/1;border-radius:18px;overflow:hidden;margin-bottom:6px;
+    background:#fff;border:1px solid var(--app-line);
+    transition:border-color .18s ease, transform .18s ease;
+  }
+  .pc-cuadro img{width:78%;height:78%;object-fit:contain;}
+  .pc-cuadro svg{width:44px;height:44px;stroke:var(--app-ink);}
+  .pc-cuadro.oferta{
+    background:var(--peru-rojo);border-color:var(--peru-rojo);
+    color:#fff;font:400 26px/1 var(--app-black);letter-spacing:-.02em;
+  }
+  .pc-tile:hover .pc-cuadro{border-color:var(--app-ink);transform:translateY(-2px);}
+  .pc-tile:hover .pc-cuadro.oferta{background:var(--peru-rojo-hondo);border-color:var(--peru-rojo-hondo);}
+  .pc-nombre{font:700 14px/1.2 var(--app-sans);}
+  .pc-resumen{font:400 12px/1.3 var(--app-sans);color:var(--app-muted);}
+  .app-shell.portada > .portada-cats + .confianza{margin-top:28px;}
+}
+@media (min-width:900px) and (prefers-reduced-motion: reduce){
+  .pc-cuadro{transition:none;}
+  .pc-tile:hover .pc-cuadro{transform:none;}
 }
 
 /* ---- vitrina ---- */
@@ -2430,27 +2468,89 @@ footer.site .footer-bottom{
    detrás de la palabra. El gutter se descuenta el padding de la píldora para
    que "Cuerda" siga alineado con el logo de arriba, y el gap baja a 4px
    porque los 22px de padding ya separan visualmente. */
+/* Rediseño "C": las categorías se veían poco (13px gris). Ahora cada una
+   lleva un círculo con la foto de un producto suyo, la letra es negra y más
+   grande, y Ofertas es una píldora roja con el mayor descuento. */
 .nav-esc-cats{
-  max-width:var(--app-max);margin:0 auto;height:48px;
-  display:flex;align-items:center;gap:4px;
-  padding:0 calc(var(--app-gutter) - 11px);
+  max-width:var(--app-max);margin:0 auto;height:60px;
+  display:flex;align-items:center;gap:2px;
+  padding:0 calc(var(--app-gutter) - 8px);
   border-top:1px solid rgba(23,20,15,.07);
 }
-.nav-esc-cats a{
-  height:32px;padding:0 11px;border-radius:999px;
-  display:flex;align-items:center;flex:none;
-  font:600 13px/1 var(--app-sans);color:var(--app-ink-70);
-  text-decoration:none;
+.nav-cat{position:relative;height:100%;display:flex;align-items:center;flex:none;}
+.nav-cat-link{
+  height:44px;padding:0 12px 0 6px;border-radius:999px;
+  display:flex;align-items:center;gap:8px;
+  font:700 14px/1 var(--app-sans);color:var(--app-ink);
+  text-decoration:none;white-space:nowrap;
   transition:background-color .18s ease, color .18s ease;
 }
-.nav-esc-cats a:hover{background:var(--app-sunken);color:var(--app-ink);}
-/* La categoría abierta es la píldora llena. Antes era un subrayado, que
-   debajo de una píldora no encajaba. */
-.nav-esc-cats a.activo{background:var(--app-ink);color:#fff;}
-.nav-esc-cats a.activo:hover{background:#000;color:#fff;}
-.nav-esc-cats .nav-ofertas{margin-left:auto;color:var(--app-ink);}
+.nav-cat-foto{
+  width:32px;height:32px;border-radius:50%;flex:none;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid var(--app-line);
+}
+.nav-cat-foto img{width:84%;height:84%;object-fit:contain;}
+.nav-cat-foto svg{width:17px;height:17px;stroke:var(--app-ink);}
+.nav-cat:hover .nav-cat-link{background:var(--app-sunken);}
+/* La categoría abierta es la píldora llena, como antes. */
+.nav-cat-link.activo,
+.nav-cat:hover .nav-cat-link.activo{background:var(--app-ink);color:#fff;}
+.nav-esc-cats .nav-ofertas{
+  margin-left:auto;flex:none;height:38px;padding:0 16px;border-radius:999px;
+  display:flex;align-items:center;
+  background:var(--peru-rojo);color:#fff;text-decoration:none;
+  font:800 13.5px/1 var(--app-sans);white-space:nowrap;
+  transition:background-color .18s ease;
+}
+.nav-esc-cats .nav-ofertas:hover,
+.nav-esc-cats .nav-ofertas.activo{background:var(--peru-rojo-hondo);}
+
+/* Menú de subcategorías: solo con ratón. En una tablet de más de 900px el
+   toque va directo a la categoría. */
+.nav-cat-menu{display:none;}
+@media (hover: hover){
+  .nav-cat-menu{
+    position:absolute;top:100%;left:0;z-index:70;
+    min-width:420px;padding:18px;
+    background:#fff;border:1px solid var(--app-line);
+    border-radius:0 0 14px 14px;
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
+    gap:18px;
+  }
+  .nav-cat:hover .nav-cat-menu,
+  .nav-cat:focus-within .nav-cat-menu{display:flex;}
+  .nav-esc-cats.sin-menu .nav-cat-menu{display:none;}
+  /* Los de la derecha se abren hacia la izquierda, para no salirse. */
+  .nav-cat:nth-last-child(-n+4) .nav-cat-menu{left:auto;right:0;}
+}
+.ncm-lista{flex:1;display:flex;flex-direction:column;}
+.ncm-titulo{
+  font:500 10.5px/1 var(--app-mono2);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--app-green-ink);margin-bottom:8px;
+}
+.ncm-lista a{
+  padding:7px 0;font:500 14px/1.2 var(--app-sans);color:var(--app-ink);text-decoration:none;
+}
+.ncm-lista a:hover{text-decoration:underline;}
+.ncm-lista .ncm-todo{margin-top:4px;font-weight:700;color:var(--app-green-ink);}
+.ncm-foto{
+  width:150px;flex:none;align-self:stretch;border-radius:10px;
+  background:#fff;border:1px solid var(--app-line);display:flex;align-items:center;justify-content:center;
+}
+.ncm-foto img{width:80%;height:auto;max-height:150px;object-fit:contain;}
 @media (prefers-reduced-motion: reduce){
-  .nav-esc-cats a{transition:none;}
+  .nav-cat-link,.nav-esc-cats .nav-ofertas{transition:none;}
+}
+/* Con fotos la fila pide los 1280px enteros. Por debajo, las fotos se van
+   y los nombres (que no se acortan: ver renderNavEscritorio) siguen cabiendo. */
+@media (max-width:1279px){
+  .nav-cat-foto{display:none;}
+  .nav-cat-link{padding:0 12px;}
+}
+@media (max-width:1049px){
+  .nav-cat-link{padding:0 8px;font-size:13px;}
+  .nav-esc-cats .nav-ofertas{padding:0 12px;font-size:12.5px;}
 }
 
 /* ======================================================================
@@ -4863,23 +4963,47 @@ function fotoDeCategoria(catKey, usados){
   return fotoUrl(fotoDe(p), ANCHO_MINIATURA);
 }
 
+/* Las fotos de la barra de categorías de escritorio, una por categoría.
+   `usados` sale con los productos elegidos, para que la cuadrícula de la
+   portada, que va debajo, enseñe OTRA foto de la misma categoría y no se
+   vea la misma guitarra dos veces en la pantalla. */
+function fotosBarraCategorias(usados){
+  const fotos = {};
+  CATEGORIES.forEach(c => { fotos[c.key] = fotoDeCategoria(c.key, usados); });
+  return fotos;
+}
+
+/* Lo que hay dentro de cada categoría, en dos o tres palabras: el `desc`
+   de CATEGORIES es para Google y no cabe debajo de un cuadro. */
+const RESUMEN_CATEGORIA = {
+  cuerda:'Guitarras, ukeleles', teclados:'Teclados y pianos', percusion:'Bombos, cajones',
+  viento:'Flautas, melódicas', audio:'Micrófonos, amplis', colegio:'Lista escolar',
+  accesorios:'Cuerdas, púas'
+};
+
+/* La misma cuadrícula en el teléfono (4 × 2, nombres cortos) y en
+   escritorio (una fila de 8, con el nombre completo y lo que hay dentro). */
 function categoriasPortadaHtml(){
+  const escritorio = esEscritorio();
   const cortos = {cuerda:'Cuerda', teclados:'Teclados', percusion:'Percusión',
                   viento:'Viento', audio:'Audio', colegio:'Colegio', accesorios:'Accesorios'};
   const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
   const maxDto = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
   const usados = new Set();
+  const fotosBarra = escritorio ? fotosBarraCategorias(usados) : {};
 
   const tiles = CATEGORIES
     .filter(c => productosDeCategoria(c.key).length)
     .map(c => {
-      const foto = fotoDeCategoria(c.key, usados);
+      /* Si la categoría solo tiene un producto con foto, repite el de la barra. */
+      const foto = fotoDeCategoria(c.key, usados) || fotosBarra[c.key];
       return `
       <a class="pc-tile" href="${hrefCategoria(c.key)}" onclick="goShop('${c.key}');return false;">
         <span class="pc-cuadro">${foto
           ? `<img src="${foto}" alt="" loading="lazy" decoding="async">`
           : iconSvg(ICON_BY_CAT[c.key] || 'tag')}</span>
-        <span class="pc-nombre">${escapeHtml(cortos[c.key] || c.label)}</span>
+        <span class="pc-nombre">${escapeHtml(escritorio ? c.label : (cortos[c.key] || c.label))}</span>
+        ${escritorio && RESUMEN_CATEGORIA[c.key] ? `<span class="pc-resumen">${RESUMEN_CATEGORIA[c.key]}</span>` : ''}
       </a>`;
     }).join('');
 
@@ -4887,13 +5011,14 @@ function categoriasPortadaHtml(){
       <a class="pc-tile" href="/ofertas" onclick="goOffers();return false;">
         <span class="pc-cuadro oferta">−${maxDto}%</span>
         <span class="pc-nombre">Ofertas</span>
+        ${escritorio ? `<span class="pc-resumen">${ofertas.length} productos</span>` : ''}
       </a>` : '';
 
   return `
   <section class="portada-cats">
     <header class="pc-head">
-      <h2>Categorías</h2>
-      <a href="/tienda" onclick="goShop(null);return false;">Ver todo ›</a>
+      <h2>${escritorio ? 'Compra por categoría' : 'Categorías'}</h2>
+      <a href="/tienda" onclick="goShop(null);return false;">${escritorio ? 'Ver todo el catálogo ›' : 'Ver todo ›'}</a>
     </header>
     <div class="pc-grid">${tileOfertas}${tiles}</div>
   </section>`;
@@ -5220,6 +5345,7 @@ function renderHome(){
   return `
   <div class="app-shell portada">
     ${heroVentasHtml()}
+    ${categoriasPortadaHtml()}
     ${franjaConfianzaHtml()}
     ${vitrinaHtml()}
     ${pruebaSocialHtml()}
@@ -7887,6 +8013,9 @@ function renderNavEscritorio(){
      salir, y la barra de la tienda solo roba alto. */
   if(state.view==='admin' || state.view==='adminLogin'){ el.innerHTML = ''; return; }
   const enCarrito = ['carrito','checkout','pedido'].includes(state.view);
+  const fotos = fotosBarraCategorias(new Set());
+  const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
+  const maxDto = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
   el.innerHTML = `
     <div class="nav-esc-inner">
       <a class="nav-esc-marca" href="/" onclick="cerrarNavBuscar();goHome();return false;">
@@ -7931,14 +8060,46 @@ function renderNavEscritorio(){
          música y quien no la conoce no sabe qué hay detrás. Si algún día se
          añade una categoría y la fila deja de caber, el sitio para acortar es
          aquí, no el nombre de la categoría, que es lo que lee Google. -->
-    <nav class="nav-esc-cats" aria-label="Categorías">
-      ${CATEGORIES.map(c=>`
-        <a class="${state.view==='shop' && state.activeCat===c.key ? 'activo':''}"
-           href="${hrefCategoria(c.key)}"
-           onclick="cerrarNavBuscar();goShop('${c.key}');return false;">${escapeHtml(c.label)}</a>`).join('')}
-      <a class="nav-ofertas" href="/ofertas"
-         onclick="cerrarNavBuscar();goOffers();return false;">Ofertas</a>
+    <!-- Cada categoría lleva la foto de uno de sus productos y, al pasar el
+         ratón, un menú con sus subcategorías. -->
+    <nav class="nav-esc-cats${navMenuCerrado ? ' sin-menu' : ''}" aria-label="Categorías"
+         onmouseleave="navMenuCerrado=false;this.classList.remove('sin-menu')">
+      ${CATEGORIES.map(c => navCategoriaHtml(c, fotos[c.key])).join('')}
+      <a class="nav-ofertas${state.view==='shop' && state.offersOnly ? ' activo' : ''}" href="/ofertas"
+         onclick="cerrarNavBuscar();cerrarMenuCategorias();goOffers();return false;">Ofertas${maxDto > 0 ? ` −${maxDto}%` : ''}</a>
     </nav>`;
+}
+
+/* Al elegir algo del menú la barra se vuelve a pintar con el ratón todavía
+   encima, y el menú se quedaría abierto tapando la página nueva. Se apaga
+   hasta que el ratón sale de la barra. */
+let navMenuCerrado = false;
+function cerrarMenuCategorias(){ navMenuCerrado = true; }
+
+function navCategoriaHtml(c, foto){
+  const activa = state.view==='shop' && !state.offersOnly && state.activeCat===c.key;
+  const subs = subsNavegables(c).slice(0, 8);
+  const menu = subs.length ? `
+      <div class="nav-cat-menu">
+        <div class="ncm-lista">
+          <span class="ncm-titulo">${escapeHtml(c.label)}</span>
+          ${subs.map(s => `
+          <a href="${hrefSubcategoria(c.key, s)}"
+             onclick="cerrarNavBuscar();cerrarMenuCategorias();goShop('${c.key}','${s.key}');return false;">${escapeHtml(s.label)}</a>`).join('')}
+          <a class="ncm-todo" href="${hrefCategoria(c.key)}"
+             onclick="cerrarNavBuscar();cerrarMenuCategorias();goShop('${c.key}');return false;">Ver todo en ${escapeHtml(c.label)} ›</a>
+        </div>
+        ${foto ? `<span class="ncm-foto"><img src="${foto}" alt="" loading="lazy" decoding="async"></span>` : ''}
+      </div>` : '';
+  return `
+    <div class="nav-cat">
+      <a class="nav-cat-link${activa ? ' activo' : ''}" href="${hrefCategoria(c.key)}"
+         onclick="cerrarNavBuscar();cerrarMenuCategorias();goShop('${c.key}');return false;">
+        <span class="nav-cat-foto">${foto
+          ? `<img src="${foto}" alt="" width="32" height="32" decoding="async">`
+          : iconSvg(ICON_BY_CAT[c.key] || 'tag')}</span>${escapeHtml(c.label)}</a>
+      ${menu}
+    </div>`;
 }
 
 /* ---------------- banda de oferta ----------------
