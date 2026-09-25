@@ -7194,6 +7194,24 @@ function loadGoogleAdsTracking(){
   gtag('config', GOOGLE_ADS_CONVERSION_ID);
 }
 
+/* Microsoft Clarity: graba cómo navegan los visitantes (dónde tocan, hasta
+   dónde bajan, cuándo se van) para entender por qué los que llegan desde los
+   anuncios se van sin escribir. Proyecto "Chipao Music" del dueño. Solo en el
+   dominio real, para no llenarlo de visitas de prueba, y nunca si se entra al
+   panel por su URL; si se entra después, render() marca #app para que
+   Clarity lo tape (data-clarity-mask). Los campos de formulario los enmascara
+   Clarity por defecto. */
+const CLARITY_ID = 'ynzzy3nret';
+function loadClarity(){
+  if(location.hostname !== 'chipaomusic.com') return;
+  if(new URLSearchParams(location.search).has('panel')) return;
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", CLARITY_ID);
+}
+
 /* Avisa a Google Ads que ocurrió una conversión. labelKey es una clave de
    GOOGLE_ADS_LABELS. No hace nada si aún no configuraste tus etiquetas. */
 function trackAdsConversion(labelKey, value){
@@ -8923,6 +8941,8 @@ function render(){
      WhatsApp no pintan nada mientras se edita el catálogo. */
   const enPanel = state.view==='admin' || state.view==='adminLogin';
   document.body.classList.toggle('en-panel', enPanel);
+  if(enPanel) document.getElementById('app').setAttribute('data-clarity-mask', 'true');
+  else document.getElementById('app').removeAttribute('data-clarity-mask');
   document.body.classList.toggle('en-taller', state.view==='taller');
   document.getElementById('bottomNav').classList.toggle('oculta', conBarraFija || enPanel);
   /* Y tampoco el pie: la barra fija se le montaría encima. La ficha es una
@@ -8937,6 +8957,7 @@ document.getElementById('app').innerHTML = `
   </div>`;
 fetchProducts();
 loadGoogleAdsTracking();
+loadClarity();
 </script>
 </body>
 </html>
