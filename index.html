@@ -2267,6 +2267,7 @@ footer.site .footer-bottom{
   display:block;margin-bottom:4px;
   font:600 11px/1 var(--app-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--app-green-ink);
 }
+.agencia-adicional{display:block;margin-top:6px;font:600 12.5px/1.4 var(--app-sans);color:var(--app-ink);}
 .agencia-acciones{display:flex;gap:8px;margin-top:10px;}
 .nota-cierre{
   margin-top:12px;
@@ -6533,6 +6534,9 @@ function updateCartCount(){
 }
 const FREE_SHIPPING_THRESHOLD = 100;
 const SHIPPING_FEE = 15;
+/* Adicional por mandar a una agencia Shalom de provincia. Se cobra aunque el
+   envío sea gratis, y solo cuando hay agencia elegida. */
+const PROVINCE_SURCHARGE = 5;
 
 /* ======================== MEDIOS DE PAGO ========================
 
@@ -6613,10 +6617,16 @@ function shippingCost(subtotal, entrega){
   return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 }
 
+function provinceSurcharge(subtotal, entrega){
+  if(subtotal <= 0) return 0;
+  return (entrega || state.entrega) === 'envio' && state.agencia ? PROVINCE_SURCHARGE : 0;
+}
+
 function computeOrderTotals(pagoKey, entrega){
   const subtotal = cartSubtotal();
   const ship = shippingCost(subtotal, entrega);
-  return { subtotal, ship, total: subtotal + ship };
+  const provincia = provinceSurcharge(subtotal, entrega);
+  return { subtotal, ship, provincia, total: subtotal + ship + provincia };
 }
 
 function cartTotal(){
@@ -6670,6 +6680,7 @@ function agenciaShalomHtml(){
         <span class="agencia-eyebrow">Agencia Shalom · ${escapeHtml(a[0])}</span>
         <span class="agencia-nombre">${escapeHtml(a[1])}</span>
         <span class="agencia-dir">${escapeHtml(a[2])}</span>
+        <span class="agencia-adicional">Envío a provincia: adicional de ${fmt(PROVINCE_SURCHARGE)}</span>
         <span class="agencia-acciones">
           <button type="button" onclick="abrirBuscadorAgencia()">Cambiar</button>
           <button type="button" onclick="quitarAgencia()">Quitar</button>
@@ -6812,7 +6823,7 @@ function filaRadio(sel, titulo, nota, coste, accion, logo, regalo){
 }
 
 function resumenTotalesHtml(etiquetaTotal){
-  const { subtotal, ship, total } = computeOrderTotals();
+  const { subtotal, ship, provincia, total } = computeOrderTotals();
   const unidades = state.cart.reduce((s,c)=>s+c.qty, 0);
   return `
   <div class="resumen">
@@ -6821,6 +6832,7 @@ function resumenTotalesHtml(etiquetaTotal){
       <span>${state.entrega==='tienda' ? 'Recojo en tienda' : 'Envío'}</span>
       <span>${ship > 0 ? fmt(ship) : 'Gratis'}</span>
     </div>
+    ${provincia > 0 ? `<div class="resumen-fila"><span>Adicional envío a provincia</span><span>${fmt(provincia)}</span></div>` : ''}
     <div class="resumen-total">
       <span>${escapeHtml(etiquetaTotal)}</span>
       <span class="resumen-cifra">${fmt(total)}</span>
@@ -7208,7 +7220,7 @@ async function submitOrder(e){
     return;
   }
 
-  const { subtotal, ship, total } = computeOrderTotals();
+  const { subtotal, ship, provincia, total } = computeOrderTotals();
   const lineas = state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
     if(!p) return '';
@@ -7224,7 +7236,7 @@ async function submitOrder(e){
 ${lineas}
 
 Subtotal: ${fmt(subtotal)}
-${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fmt(ship):'Gratis'}`}
+${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fmt(ship):'Gratis'}`}${provincia > 0 ? `\nAdicional envío a provincia: ${fmt(provincia)}` : ''}
 Total: ${fmt(total)}
 
 Entrega: ${entregaTexto}
@@ -7281,9 +7293,12 @@ async function payWithMercadoPago(comprador){
     const p = PRODUCTS.find(x=>x.id===c.id);
     return { title: p.name + (c.color ? ' (' + c.color + ')' : ''), quantity: c.qty, unit_price: p.price };
   });
-  const { ship } = computeOrderTotals();
+  const { ship, provincia } = computeOrderTotals();
   if(ship>0){
     items.push({ title: 'Costo de envío', quantity: 1, unit_price: ship });
+  }
+  if(provincia>0){
+    items.push({ title: 'Adicional envío a provincia', quantity: 1, unit_price: provincia });
   }
   const entrega = textoEntrega();
 
