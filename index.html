@@ -4166,10 +4166,10 @@ function renderPieMovil(){
     `<button type="button" class="pm-link" onclick="openPolicy('${clave}')">${texto}</button>`;
 
   el.innerHTML = `
-    <div class="pm-marca">
+    <a class="pm-marca" href="/" onclick="goHome();return false;">
       <img src="/img/logo-redondo.webp" alt="Chipao Music" width="44" height="44" loading="lazy">
       <div><b>Chipao Music</b><span>Instrumentos musicales en Lima · +12 años</span></div>
-    </div>
+    </a>
 
     <div class="pm-tienda">
       <span class="pm-estado${abierto ? '' : ' cerrado'}"><i></i>${abierto ? 'Abierto hoy hasta las 9:00 p.m.' : 'Cerrado · abrimos a las 9:30 a.m.'}</span>
