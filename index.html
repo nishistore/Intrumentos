@@ -292,6 +292,23 @@ ul{list-style:none;}
 .modal ul{padding-left:18px;list-style:disc;}
 .modal h4{font-size:13px;color:var(--brown-heading);margin:14px 0 6px;}
 
+/* ---------------- zoom de foto de producto ----------------
+   La foto de la ficha no reaccionaba al toque: Clarity mostraba varias
+   sesiones tocando la imagen varias veces seguidas sin que pasara nada
+   (clic muerto). Ahora abre la misma foto a pantalla completa. */
+.foto-zoom-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:75;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.foto-zoom-overlay.show{display:flex;}
+.foto-zoom-overlay img{max-width:100%;max-height:100%;object-fit:contain;}
+.foto-zoom-close{
+  position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+}
+.foto-zoom-close svg{width:16px;height:16px;stroke:#fff;}
+
 /* toast */
 /* Flota por encima de la barra inferior (96px desde abajo, como el handoff)
    para no tapar las etiquetas de las pestañas. */
@@ -1617,6 +1634,11 @@ a.eyebrow-terracota:active{opacity:.6;}
 .ficha-galeria iframe{
   width:100%;height:100%;border:0;
   object-fit:contain;background:#fff;
+}
+.ficha-foto-zoom-btn{
+  width:100%;height:100%;border:0;margin:0;padding:0;
+  background:none;display:block;cursor:zoom-in;
+  -webkit-tap-highlight-color:transparent;
 }
 /* Los puntitos van fuera de la galería, no encima de la foto: una foto de
    instrumento sobre fondo blanco se traga cualquier cosa clara que le pongas
@@ -3392,6 +3414,12 @@ body.en-taller footer.site{margin-top:0;}
   </div>
 </div>
 
+<!-- ============ ZOOM DE FOTO DE PRODUCTO ============ -->
+<div class="foto-zoom-overlay" id="fotoZoomOverlay" onclick="if(event.target===this)cerrarFotoZoom();">
+  <button type="button" class="foto-zoom-close" onclick="cerrarFotoZoom()" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <img id="fotoZoomImg" src="" alt="">
+</div>
+
 <!-- ============ TOAST ============ -->
 <div class="toast" id="toast" role="status" aria-live="polite"><span class="punto-vivo"></span><span id="toastMsg"></span><button type="button" class="toast-accion" id="toastAccion" onclick="goCart()">Ver</button></div>
 
@@ -3664,6 +3692,7 @@ const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
 const ANCHO_MINIATURA = 200;   // miniaturas del carrito, buscador y galeria
 const ANCHO_TARJETA   = 700;   // tarjetas del catalogo y portada
 const ANCHO_GALERIA   = 1200;  // la foto grande de la ficha
+const ANCHO_ZOOM       = 1600; // la foto ampliada a pantalla completa
 
 function fotoUrl(u, ancho){
   const ruta = (typeof u === 'string' && u.startsWith(R2_PUBLICO))
@@ -6112,6 +6141,19 @@ function setActiveSlide(i){
   render();
 }
 
+/* La foto de la ficha, a pantalla completa. Solo aplica a fotos, no a video
+   ni a los iframes de YouTube: esos ya tienen su propio control. */
+function abrirFotoZoom(){
+  const p = PRODUCTS.find(x => x.id === pdState.productId);
+  const url = p && (p.images || [])[pdState.activeIndex];
+  if(!url) return;
+  document.getElementById('fotoZoomImg').src = fotoUrl(url, ANCHO_ZOOM);
+  document.getElementById('fotoZoomOverlay').classList.add('show');
+}
+function cerrarFotoZoom(){
+  document.getElementById('fotoZoomOverlay').classList.remove('show');
+}
+
 /* Deslizar sobre la foto para cambiar de color en el teléfono. Los swatches
    siguen ahí: esto es un atajo, no un reemplazo, porque un gesto no se ve y
    nadie lo descubre si no lo prueba.
@@ -6191,7 +6233,9 @@ function renderProductDetail(){
   if(!activo){
     galeria = `<span class="ficha-sinfoto">${iconSvg(iconFor(p))}</span>`;
   }else if(activo.type === 'image'){
-    galeria = `<img src="${fotoUrl(activo.url, ANCHO_GALERIA)}" alt="${escapeHtml(p.name)}${colorActivo ? ' — ' + escapeHtml(colorActivo) : ''}" decoding="async">`;
+    galeria = `<button type="button" class="ficha-foto-zoom-btn" onclick="abrirFotoZoom()" aria-label="Ampliar foto">
+      <img src="${fotoUrl(activo.url, ANCHO_GALERIA)}" alt="${escapeHtml(p.name)}${colorActivo ? ' — ' + escapeHtml(colorActivo) : ''}" decoding="async">
+    </button>`;
   }else{
     const embed = toEmbedUrl(activo.url);
     galeria = embed
