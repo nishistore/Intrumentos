@@ -7983,6 +7983,54 @@ function chipMasVendidaHtml(p){
     ><span class="estrella">${puesta ? '★' : '☆'}</span>Más vendida</button>`;
 }
 
+/* El aviso "(colores disponibles)" en el nombre. Antes había que escribirlo
+   a mano dentro del nombre -así quedaron Melódica California, Pandereta
+   Media Luna...-, con el riesgo de escribirlo distinto cada vez o dejarlo
+   pegado sin espacio. El punto de color automático (ver coloresDeProducto)
+   solo sale si las fotos están subidas con el color en el nombre del
+   archivo; este chip es para cuando eso no alcanza -antes de tener las
+   fotos de cada color, o si el producto no las va a tener nunca- y de
+   todas formas hay que avisarle al cliente. */
+const SUFIJO_COLORES = ' (colores disponibles)';
+const RE_SUFIJO_COLORES = /\s*\((colores disponibles|varios colores)\)\s*$/i;
+function tieneSufijoColores(nombre){
+  return RE_SUFIJO_COLORES.test(nombre || '');
+}
+function sinSufijoColores(nombre){
+  return (nombre || '').replace(RE_SUFIJO_COLORES, '').trimEnd();
+}
+function chipColoresHtml(p){
+  const puesto = tieneSufijoColores(p.name);
+  return `<button type="button" class="chip-vendida${puesto ? ' puesta' : ''}" id="colores-${p.id}"
+    aria-pressed="${puesto ? 'true' : 'false'}" onclick="toggleColoresNombre(${p.id}, this)"
+    >Colores</button>`;
+}
+
+/* Escribe o quita el aviso y guarda el nombre al toque, como "Más vendida":
+   es un sí o un no, no algo para dejar a medias en el cuadro de texto hasta
+   acordarse de tocar "Guardar cambios". */
+async function toggleColoresNombre(id, btn){
+  const p = PRODUCTS.find(x => x.id === id);
+  if(!p) return;
+  const input = document.getElementById('name-' + id);
+  const puesto = !tieneSufijoColores(p.name);
+  const base = sinSufijoColores(p.name);
+  const nombre = puesto ? base + SUFIJO_COLORES : base;
+  btn.disabled = true;
+  try{
+    await guardarProducto(p, { name: nombre });
+    p.name = nombre;
+    if(input) input.value = nombre;
+    btn.classList.toggle('puesta', puesto);
+    btn.setAttribute('aria-pressed', puesto ? 'true' : 'false');
+    showToast(puesto ? 'Se agregó el aviso de colores al nombre' : 'Se quitó el aviso de colores del nombre');
+  }catch(err){
+    showToast('No se pudo guardar. Revisa tu clave de administrador.');
+  }finally{
+    btn.disabled = false;
+  }
+}
+
 function adminRowHtml(p){
   const foto = (p.images || [])[0];
   /* Lo que se necesita saber de un vistazo sin abrir nada. */
@@ -8004,6 +8052,7 @@ function adminRowHtml(p){
       </div>
       <div class="admin-chips">
         ${chipMasVendidaHtml(p)}
+        ${chipColoresHtml(p)}
         <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">Descripción</button>
         <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">Fotos y video</button>
         <button type="button" class="media-toggle borrar" onclick="deleteProduct(${p.id}, this)">Eliminar</button>
