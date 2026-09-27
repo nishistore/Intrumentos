@@ -8657,6 +8657,15 @@ function renderNavEscritorio(){
   /* En el panel no: ahi la cabecera es la suya, con el resumen y el boton de
      salir, y la barra de la tienda solo roba alto. */
   if(state.view==='admin' || state.view==='adminLogin'){ el.innerHTML = ''; return; }
+  /* .nav-esc es display:none por debajo de los 900px (ver CSS): en el
+     teléfono esto se tira igual. Antes se armaba entero en cada render() -o
+     sea, en cada toque a un color, una cantidad o un filtro- recorriendo el
+     catálogo siete veces para las fotos de categoría más el cálculo del
+     descuento máximo. Ese trabajo de sobra en el hilo principal es lo que
+     Clarity marcaba como INP alto, sobre todo en gama baja: el 70% de las
+     visitas son móvil. Se recupera solo con volver a escritorio (render() ya
+     se llama al cruzar el punto de quiebre, ver checkBreakpoint). */
+  if(!esEscritorio()){ el.innerHTML = ''; return; }
   const enCarrito = ['carrito','checkout','pedido'].includes(state.view);
   const fotos = fotosBarraCategorias(new Set());
   const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
