@@ -6052,7 +6052,10 @@ const COLOR_WORDS = {
 const COLOR_KEYS_BY_SPECIFICITY = Object.keys(COLOR_WORDS).sort((a,b)=>b.length-a.length);
 function colorFromImageUrl(url){
   if(!url) return null;
-  const base = (url.split('/').pop()||'').split('.')[0].toLowerCase();
+  /* Quita solo la extensión (lo de después del ÚLTIMO punto): un nombre
+     como "armonica.azul.jpg" tiene dos puntos, y cortar en el primero
+     -como hacía antes- se comía el color entero y dejaba "armonica". */
+  const base = (url.split('/').pop()||'').replace(/\.[^./]+$/, '').toLowerCase();
   for(const key of COLOR_KEYS_BY_SPECIFICITY){
     if(base.includes(key)) return COLOR_WORDS[key];
   }
