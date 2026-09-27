@@ -3276,6 +3276,12 @@ footer.site .footer-bottom{
 .tl-serv b{display:block;font:600 18px/1.3 var(--app-sans);color:#f6f1e7;}
 .tl-serv small{display:block;margin-top:6px;font:400 14.5px/1.45 var(--app-sans);color:#b3ab9e;}
 .tl-precio{text-align:right;font:600 34px/1 'Cormorant Garamond',Georgia,serif;color:#ead7a4;white-space:nowrap;}
+/* Cuando todas las columnas de la fila dicen "A tratar", una sola celda
+   centrada que ocupa lo que antes eran columnas repetidas -no tiene
+   sentido escribir el mismo aviso una vez por instrumento. Va de la
+   columna 3 (después del número y el servicio) hasta el final, así no
+   depende de cuántas columnas de precio haya. */
+.tl-precio-todos{grid-column:3 / -1;text-align:center;}
 .tl-nota{margin-top:18px;font:400 13.5px/1.5 var(--app-sans);color:#a39b8e;}
 .tl-faq{max-width:760px;margin:88px auto 0;}
 .tl-faq h2{text-align:center;margin-bottom:28px;font:500 40px/1.1 'Cormorant Garamond',Georgia,serif;color:#f6f1e7;}
@@ -7631,14 +7637,22 @@ function renderTaller(){
   const nFilas = Math.max(...cols.map(c => c.filas.length));
   const base = cols[0].filas;
   const precioHtml = f => !f ? '—' : f[1] ? `S/ ${f[1]}` : 'A tratar';
+  /* "A tratar" repetido una vez por columna (Guitarras, Bajos...) se lee
+     como si cada instrumento tuviera un trato distinto, cuando en realidad
+     es el mismo aviso para todos: si ninguna columna de la fila tiene
+     precio fijo, se dice una sola vez, centrado. */
+  const todosATratar = i => cols.every(c => c.filas[i] && !c.filas[i][1]);
   const filas = Array.from({length:nFilas}, (_, i) => {
     const f = base[i] || cols.find(c => c.filas[i]).filas[i];
     const detalle = detalleTaller(f, i);
+    const precios = todosATratar(i)
+      ? `<span class="tl-precio tl-precio-todos">A tratar</span>`
+      : cols.map(c => `<span class="tl-precio">${precioHtml(c.filas[i])}</span>`).join('');
     return `
       <div class="tl-fila">
         <span class="tl-num">${numeroRomano(i + 1)}</span>
         <div class="tl-serv"><b>${escapeHtml(f[0])}</b>${detalle ? `<small>${escapeHtml(detalle)}</small>` : ''}</div>
-        ${cols.map(c => `<span class="tl-precio">${precioHtml(c.filas[i])}</span>`).join('')}
+        ${precios}
       </div>`;
   }).join('');
   const wa = waHref('Hola, quiero agendar una reparación en el taller.');
