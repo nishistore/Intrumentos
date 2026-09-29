@@ -888,19 +888,60 @@ function bodyFor(route, products, taller) {
    aparece solo, sin tener que regenerar ningún archivo a mano.
    ================================================================= */
 
-function sitemapXml(products) {
-  const rutas = ['/', '/tienda', '/ofertas', ...Object.keys(PAGINAS_DE_AYUDA)];
+/* updated_at no viene en la API de productos (ver fetchProducts): esta
+   consulta aparte a la misma base, solo para el sitemap. Si falla, el
+   sitemap sale igual, nomás sin <lastmod>. */
+async function leerUpdatedAt(env, products) {
+  const mapa = {};
+  try {
+    const { results } = await env.DB.prepare('SELECT id, updated_at FROM products').all();
+    for (const fila of results || []) {
+      if (fila.updated_at) mapa[fila.id] = String(fila.updated_at).slice(0, 10);
+    }
+  } catch {
+    /* da igual, ver comentario de arriba */
+  }
+  return mapa;
+}
+
+/* La fecha más nueva entre los productos de la lista, para el <lastmod> de
+   una página que no es la ficha de uno solo (la portada, una categoría). */
+function masReciente(lista, updatedAtById) {
+  let max = null;
+  for (const p of lista) {
+    const fecha = updatedAtById[p.id];
+    if (fecha && (!max || fecha > max)) max = fecha;
+  }
+  return max;
+}
+
+function sitemapXml(products, updatedAtById = {}) {
+  const sitioAlDia = masReciente(products, updatedAtById);
+  const rutas = [
+    { path: '/', lastmod: sitioAlDia },
+    { path: '/tienda', lastmod: sitioAlDia },
+    { path: '/ofertas', lastmod: masReciente(products.filter(isOffer), updatedAtById) },
+    /* Las páginas de ayuda son texto fijo en el código, sin fecha propia que
+       consultar: mejor sin <lastmod> que con una inventada. */
+    ...Object.keys(PAGINAS_DE_AYUDA).map(path => ({ path, lastmod: null })),
+  ];
   for (const c of CATEGORIES) {
-    rutas.push(`/categoria/${c.key}`);
+    rutas.push({
+      path: `/categoria/${c.key}`,
+      lastmod: masReciente(products.filter(p => productInCat(p, c.key)), updatedAtById),
+    });
     /* Una subcategoría vacía es una página delgada: solo entra en el sitemap
        si de verdad tiene productos con stock. */
     for (const s of subsNavegables(c)) {
-      const hay = products.some(p => (p.stock || 0) > 0 && productInCat(p, c.key) && productInSub(p, s));
-      if (hay) rutas.push(`/categoria/${c.key}/${subSlug(s)}`);
+      const deLaSub = products.filter(p => (p.stock || 0) > 0 && productInCat(p, c.key) && productInSub(p, s));
+      if (deLaSub.length) {
+        rutas.push({ path: `/categoria/${c.key}/${subSlug(s)}`, lastmod: masReciente(deLaSub, updatedAtById) });
+      }
     }
   }
 
-  const fijas = rutas.map(r => `  <url><loc>${escapeHtml(SITE_ORIGIN + r)}</loc></url>`);
+  const lastmodTag = f => f ? `<lastmod>${f}</lastmod>` : '';
+  const fijas = rutas.map(r => `  <url><loc>${escapeHtml(SITE_ORIGIN + r.path)}</loc>${lastmodTag(r.lastmod)}</url>`);
 
   /* Cada producto declara además sus fotos, para que puedan salir en la
      búsqueda de imágenes de Google — que en una tienda trae visitas. */
@@ -908,7 +949,7 @@ function sitemapXml(products) {
     const imgs = (p.images || []).slice(0, 5).map(src =>
       `\n    <image:image><image:loc>${escapeHtml(src)}</image:loc><image:title>${escapeHtml(p.name)}</image:title></image:image>`
     ).join('');
-    return `  <url><loc>${escapeHtml(SITE_ORIGIN + productPath(p))}</loc>${imgs}\n  </url>`;
+    return `  <url><loc>${escapeHtml(SITE_ORIGIN + productPath(p))}</loc>${lastmodTag(updatedAtById[p.id])}${imgs}\n  </url>`;
   });
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${fijas.concat(fichas).join('\n')}\n</urlset>\n`;
@@ -1107,7 +1148,12 @@ export default {
       if (!products.length) {
         return new Response('Catálogo no disponible, reintenta más tarde.', { status: 503 });
       }
-      return new Response(sitemapXml(products), {
+      /* updated_at vive en la misma base D1 que esta API SOLO usa para
+         settings (env.DB), no en la API de productos: la ficha de ahí no lo
+         trae. Una consulta aparte, en vez de tocar esa API, que sirve a otras
+         cosas y no es de este repo. */
+      const updatedAtById = await leerUpdatedAt(env, products);
+      return new Response(sitemapXml(products, updatedAtById), {
         headers: {
           'content-type': 'application/xml; charset=utf-8',
           'cache-control': 'public, max-age=3600',
