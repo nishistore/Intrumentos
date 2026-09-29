@@ -651,6 +651,14 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   color:var(--app-ink);
   padding-bottom:28px;
 }
+/* El <h1> real de la portada: "Instrumentos Musicales en Lima" no tiene un
+   sitio visual (el hero arranca directo con el producto), así que va oculto
+   a la vista pero legible para buscadores y lectores de pantalla. El título
+   del producto destacado es un <h2>, ver heroVentasHtml(). */
+.oculto-visual{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
 /* El shell no lleva padding lateral: cada bloque pone el suyo, porque las
    cabeceras y los carruseles tienen que llegar de borde a borde. */
 /* ---- hueco reservado para las cabeceras que pinta el JS ----
@@ -5281,7 +5289,7 @@ function ganchoHtml(x, primera){
       </a>
       <div class="hv-detalle">
         <span class="hv-eyebrow">${escapeHtml(catLabel(x))}</span>
-        <h1 class="hv-titulo"><a href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">${escapeHtml(x.name)}</a></h1>
+        <h2 class="hv-titulo"><a href="${hrefProducto(x)}" onclick="openProductDetail(${x.id});return false;">${escapeHtml(x.name)}</a></h2>
         ${puntosColorHtml(x)}
         <div class="hv-precios">
           <span class="hv-precio">${fmt(x.price)}</span>
@@ -5554,9 +5562,12 @@ function prepararBarraCompra(){
   vigiaBarraCompra.observe(ctas);
 }
 
+const H1_PORTADA = '<h1 class="oculto-visual">Instrumentos Musicales en Lima &mdash; Chipao Music</h1>';
+
 function renderHome(){
   if(!esEscritorio()) return `
   <div class="app-shell portada">
+    ${H1_PORTADA}
     ${heroVentasHtml()}
     ${categoriasPortadaHtml()}
     ${beneficiosMovilHtml()}
@@ -5571,6 +5582,7 @@ function renderHome(){
 
   return `
   <div class="app-shell portada">
+    ${H1_PORTADA}
     ${heroVentasHtml()}
     ${categoriasPortadaHtml()}
     ${franjaConfianzaHtml()}
