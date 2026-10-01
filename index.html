@@ -3714,8 +3714,8 @@ function productInCat(p, catKey){
    caen bajo ese grupo — por eso un capo o una púa puede aparecer tanto en "Guitarra
    Acústica" como en "Guitarra Eléctrica" sin duplicar el producto. */
 const ACCESORIOS_FILTER_GROUPS = [
-  {key:'accGrpGuitarraAcustica', seo:'Accesorios para guitarra acústica y clásica', label:'Guitarra Acústica y Clásica', matches:['accCuerdasAcustica','accCapotrastes','accPuas']},
-  {key:'accGrpGuitarraElectrica', seo:'Accesorios para guitarra eléctrica', label:'Guitarra Eléctrica', matches:['accCuerdasElectrica','accCapotrastes','accPuas']},
+  {key:'accGrpGuitarraAcustica', seo:'Accesorios para guitarra acústica y clásica', label:'Guitarra Acústica y Clásica', fotoId:185, matches:['accCuerdasAcustica','accCapotrastes','accPuas']},
+  {key:'accGrpGuitarraElectrica', seo:'Accesorios para guitarra eléctrica', label:'Guitarra Eléctrica', fotoId:170, matches:['accCuerdasElectrica','accCapotrastes','accPuas']},
   {key:'accGrpPercusion', seo:'Accesorios de percusión', label:'Percusión', matches:['accBaquetas']},
   {key:'accGrpViento', seo:'Accesorios para instrumentos de viento', label:'Viento', matches:['accCanas']},
   {key:'accGrpTeclados', seo:'Accesorios para teclado y piano', label:'Teclado y Piano', matches:['accTeclados']},
@@ -5810,7 +5810,7 @@ function subsMovilHtml(){
   const mosaicos = subs.map(s=>{
     const lista = cuantos(s);
     const n = lista.length;
-    const conFoto = lista.find(p=>fotoDe(p));
+    const conFoto = lista.find(p=>p.id === s.fotoId && fotoDe(p)) || lista.find(p=>fotoDe(p));
     const foto = conFoto ? `<img src="${fotoUrl(fotoDe(conFoto), ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">` : '';
     const activo = state.activeSubs.has(s.key);
     if(!n){
@@ -5874,8 +5874,12 @@ function filaFiltroHtml(texto, marcada, accion, conteo, foto){
 
 /* La foto de un producto cualquiera que cumpla la condición, de la categoría
    abierta: es solo una referencia, no el producto exacto. */
-function fotoDeFiltro(cumple){
-  const p = PRODUCTS.find(x => (!state.activeCat || productInCat(x, state.activeCat)) && cumple(x) && fotoDe(x));
+function fotoDeFiltro(cumple, fotoId){
+  /* `fotoId` fija el producto de la foto cuando el grupo la quiere distinta de
+     la primera que salga: Guitarra Eléctrica enseña un juego de cuerdas y no el
+     capotraste que cae primero en la lista. */
+  const p = PRODUCTS.find(x => x.id === fotoId && fotoDe(x))
+    || PRODUCTS.find(x => (!state.activeCat || productInCat(x, state.activeCat)) && cumple(x) && fotoDe(x));
   return p ? `<img src="${fotoUrl(fotoDe(p), ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">` : '';
 }
 
@@ -5935,7 +5939,7 @@ function sidebarCategoriaHtml(){
           state.activeSubs.size ? 'limpiarSubs()' : '')}
       ${subs.map(s=>filaFiltroHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`,
           cuentaFiltro('subs', p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key),
-          fotoDeFiltro(p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key))).join('')}
+          fotoDeFiltro(p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key, s.fotoId))).join('')}
     </div>` : '';
 
   /* Dentro de una categoría con subcategorías la lista de categorías no va:
