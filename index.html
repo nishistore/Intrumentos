@@ -3023,6 +3023,15 @@ footer.site .footer-bottom{
   /* Un filtro que no deja nada a la vista no se puede pulsar. Si YA está
      puesto sí, o no habría manera de quitarlo (ver filaFiltroHtml). */
   .fila-filtro[disabled]{opacity:.45;}
+
+  /* Miniatura cuadrada con la foto de un producto de ese tipo, a la izquierda
+     de cada fila de tipo y de precio. */
+  .ff-foto{
+    flex:none;width:40px;height:40px;border-radius:var(--app-r-img);
+    background:var(--app-sunken);overflow:hidden;font-style:normal;
+  }
+  .ff-foto img{display:block;width:100%;height:100%;object-fit:contain;}
+  .fila-filtro.con-foto{padding-top:6px;padding-bottom:6px;min-height:52px;}
   .side-limpiar{
     align-self:flex-start;background:none;border:0;padding:0;margin-left:15px;
     font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
@@ -5852,14 +5861,22 @@ function fichaCategoriaHtml(cat){
 
    Si el filtro no deja nada a la vista va apagado y no se puede pulsar, salvo
    que YA esté puesto: entonces hay que poder quitarlo. */
-function filaFiltroHtml(texto, marcada, accion, conteo){
+function filaFiltroHtml(texto, marcada, accion, conteo, foto){
   const muerta = !marcada && conteo === 0;
   return `
-  <button type="button" class="fila-filtro${marcada?' marcada':''}"
+  <button type="button" class="fila-filtro${marcada?' marcada':''}${foto?' con-foto':''}"
           aria-pressed="${marcada?'true':'false'}"${muerta?' disabled':''} onclick="${accion}">
+    ${foto ? `<em class="ff-foto">${foto}</em>` : ''}
     <span>${escapeHtml(texto)}</span>
     ${conteo != null ? `<i>${conteo}</i>` : ''}
   </button>`;
+}
+
+/* La foto de un producto cualquiera que cumpla la condición, de la categoría
+   abierta: es solo una referencia, no el producto exacto. */
+function fotoDeFiltro(cumple){
+  const p = PRODUCTS.find(x => (!state.activeCat || productInCat(x, state.activeCat)) && cumple(x) && fotoDe(x));
+  return p ? `<img src="${fotoUrl(fotoDe(p), ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">` : '';
 }
 
 /* El título de un bloque dice QUÉ se elige, no dónde se está: el <h1> ya dijo
@@ -5888,7 +5905,8 @@ function sidebarCategoriaHtml(){
 
   const rangos = RANGOS_PRECIO.map(r=>
     filaFiltroHtml(r.label, state.rangosPrecio.has(r.key), `toggleRangoPrecio('${r.key}')`,
-      cuentaFiltro('precio', p => p.price >= r.min && p.price < r.max))
+      cuentaFiltro('precio', p => p.price >= r.min && p.price < r.max),
+      fotoDeFiltro(p => p.price >= r.min && p.price < r.max))
   ).join('');
 
   const limpiables = state.rangosPrecio.size || state.activeSubs.size
@@ -5916,7 +5934,8 @@ function sidebarCategoriaHtml(){
       ${tituloBloqueHtml(cat.key==='accesorios' ? 'Para qué instrumento' : 'Tipo de instrumento',
           state.activeSubs.size ? 'limpiarSubs()' : '')}
       ${subs.map(s=>filaFiltroHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`,
-          cuentaFiltro('subs', p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key))).join('')}
+          cuentaFiltro('subs', p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key),
+          fotoDeFiltro(p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key))).join('')}
     </div>` : '';
 
   /* Dentro de una categoría con subcategorías la lista de categorías no va:
