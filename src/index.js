@@ -36,7 +36,7 @@ const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan d
    que solo dice ella. Si se cambia aqui hay que cambiarlo igual en
    index.html: las dos copias de CATEGORIES tienen que decir lo mismo. */
 const CATEGORIES = [
-  { key: 'cuerda', intro: "Guitarras acústicas, clásicas y eléctricas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: [{ key: 'guitarras', label: 'Guitarras Acústicas' }, { key: 'guitarrasElectricas', label: 'Guitarras Eléctricas' }, { key: 'bajos', label: 'Bajos' }, { key: 'violines', label: 'Violines' }, { key: 'ukeleles', label: 'Ukeleles' }, { key: 'charangos', label: 'Charangos' }] },
+  { key: 'cuerda', intro: "Guitarras acústicas, clásicas y eléctricas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", label: 'Instrumentos de Cuerda', desc: 'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.', subs: [{ key: 'guitarras', label: 'Guitarras Acústicas' }, { key: 'guitarrasElectricas', label: 'Guitarras Eléctricas' }, { key: 'electroacusticos', label: 'Electroacústicos' }, { key: 'bajos', label: 'Bajos' }, { key: 'charangos', label: 'Andinos' }, { key: 'violines', label: 'Violines' }, { key: 'ukeleles', label: 'Ukeleles' }] },
   { key: 'teclados', intro: "Teclados y pianos digitales para empezar y para tocar en vivo. Ahora mismo no hay stock cargado en la web: escríbenos por WhatsApp y te decimos qué tenemos en tienda y qué podemos conseguir.", label: 'Teclados', desc: 'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [] },
   { key: 'percusion', intro: "Bombos andinos de cuero hechos a mano, bombos de banda, tarolas, panderetas, kalimbas de 17 teclas y metalófonos, entre S/ 12 y S/ 250. Las baquetas y los parches de repuesto están en Accesorios.", label: 'Percusión', desc: 'Cajones, bombos, tarolas, tambores, panderetas y kalimbas. Tienda de percusión en San Juan de Miraflores, Lima, con envíos a todo el país.', subs: [{ key: 'tambores', label: 'Tambores' }, { key: 'bombos', label: 'Bombos' }, { key: 'tarolas', label: 'Tarolas' }, { key: 'cajones', label: 'Cajones' }, { key: 'metalofono', label: 'Metalófono' }, { key: 'panderetas', label: 'Panderetas' }, { key: 'kalimbas', label: 'Kalimbas' }, { key: 'timbales', label: 'Timbales' }] },
   { key: 'viento', intro: "Flautas dulces soprano, melódicas de 32 y 37 teclas, quenas y zampoñas, entre S/ 20 y S/ 80. Si es para la lista del colegio, en Para Colegio está todo junto.", label: 'Viento', desc: 'Flautas dulces, melódicas, quenas y zampoñas, para el colegio y para tocar en serio. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.', subs: [{ key: 'flautas', label: 'Flautas' }, { key: 'melodicas', label: 'Melódicas' }, { key: 'quenas', label: 'Quenas' }, { key: 'zamponas', label: 'Zampoñas' }] },
@@ -262,6 +262,75 @@ async function apiBanner(request, env, ctx) {
   try { await caches.default.delete(CACHE_BANNER); } catch { /* da igual */ }
 
   return respuestaJson({ ok: true, activo });
+}
+
+/* ====================== TEMA ESTACIONAL ==============================
+
+   Navidad y Halloween, un botón cada uno en el panel. Mismo camino que el
+   banner: la clave vive en `settings` (tema_estacional) y el Worker la
+   incrusta como atributo `data-tema` del <body> -no en un script aparte-
+   porque el CSS ya hace todo el trabajo con selectores `body[data-tema=…]`
+   y así no hace falta ni una línea de JS para que se vea el tema.
+   ==================================================================== */
+
+const CLAVE_TEMA = 'tema_estacional';
+const CACHE_TEMA = new Request('https://chipaomusic.com/__tema-estacional');
+const TEMAS_VALIDOS = ['normal', 'navidad', 'halloween'];
+
+async function temaActivo(env, ctx) {
+  try {
+    const cacheado = await caches.default.match(CACHE_TEMA);
+    if (cacheado) return await cacheado.text();
+  } catch { /* sin caché vamos a la base */ }
+
+  let tema = 'normal';
+  try {
+    const fila = await env.DB.prepare(
+      'SELECT value FROM settings WHERE key = ?').bind(CLAVE_TEMA).first();
+    if (fila && TEMAS_VALIDOS.includes(fila.value)) tema = fila.value;
+  } catch {
+    return tema;
+  }
+
+  const guardar = caches.default.put(CACHE_TEMA, new Response(tema, {
+    headers: { 'cache-control': 'max-age=' + BANNER_TTL },
+  })).catch(() => {});
+  if (ctx) ctx.waitUntil(guardar); else await guardar;
+  return tema;
+}
+
+async function apiTema(request, env, ctx) {
+  if (request.method === 'GET') {
+    return respuestaJson({ tema: await temaActivo(env, ctx) });
+  }
+  if (request.method !== 'PUT') {
+    return respuestaJson({ error: 'Método no permitido' }, 405);
+  }
+  if (!await claveDeAdminValida(request.headers.get('X-Admin-Secret'))) {
+    return respuestaJson({ error: 'No autorizado' }, 401);
+  }
+
+  let tema;
+  try {
+    tema = (await request.json()).tema;
+  } catch {
+    return respuestaJson({ error: 'Falta el campo tema' }, 400);
+  }
+  if (!TEMAS_VALIDOS.includes(tema)) {
+    return respuestaJson({ error: 'Tema inválido' }, 400);
+  }
+
+  try {
+    await env.DB.prepare(
+      "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, datetime('now')) " +
+      'ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at'
+    ).bind(CLAVE_TEMA, tema).run();
+  } catch (err) {
+    return respuestaJson({ error: String(err) }, 500);
+  }
+
+  try { await caches.default.delete(CACHE_TEMA); } catch { /* da igual */ }
+  return respuestaJson({ ok: true, tema });
 }
 
 /* ====================== PRECIOS DEL TALLER ==========================
@@ -607,6 +676,9 @@ const PRODUCTOS_RETIRADOS = {
    mayoría de lo que había y lo que busca quien escribe "guitarra" a secas. */
 const RUTAS_MOVIDAS = {
   '/categoria/cuerda/guitarras': '/categoria/cuerda/guitarras-acusticas',
+  /* La clave sigue siendo `charangos` (las filas de D1 no se tocan); solo la
+     etiqueta pasó a "Andinos", y con ella la URL. */
+  '/categoria/cuerda/charangos': '/categoria/cuerda/andinos',
 };
 
 /* <head> de un producto que ya no está en el catálogo. Va con noindex y la
@@ -1090,7 +1162,7 @@ class HeadExtras {
   }
 }
 
-function rewrite(response, route, body, pathname, products, bannerPromo, taller) {
+function rewrite(response, route, body, pathname, products, bannerPromo, taller, tema) {
   const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
@@ -1108,7 +1180,8 @@ function rewrite(response, route, body, pathname, products, bannerPromo, taller)
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller));
+    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller))
+    .on('body', new SetAttr('data-tema', tema || 'normal'));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
 
@@ -1165,6 +1238,7 @@ export default {
        solo el panel con la clave de administrador. */
     if (url.pathname === '/api/banner-promo') return apiBanner(request, env, ctx);
     if (url.pathname === '/api/taller') return apiTaller(request, env, ctx);
+    if (url.pathname === '/api/tema') return apiTema(request, env, ctx);
 
     if (url.pathname.startsWith('/img/')) return sirveFoto(request, env, ctx);
 
@@ -1183,10 +1257,11 @@ export default {
     /* Las dos cosas que se incrustan en el HTML se piden a la vez -el
        catálogo a la API, el interruptor del banner a la base-: en fila una
        detrás de otra sumaban sus dos esperas al TTFB. */
-    const [products, bannerPromo, taller] = await Promise.all([
+    const [products, bannerPromo, taller, tema] = await Promise.all([
       fetchProducts(),
       bannerActivo(env, ctx),
       preciosTaller(env, ctx),
+      temaActivo(env, ctx),
     ]);
     const route = routeFor(url.pathname, products);
     if (route && route.ayuda === '/taller') {
@@ -1212,7 +1287,7 @@ export default {
       }
     }
     agregaListaDeProductos(route, products);
-    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, products, bannerPromo, taller);
+    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, products, bannerPromo, taller, tema);
 
     /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
        una categoría inventada o una ruta que no es ninguna pantalla (route en

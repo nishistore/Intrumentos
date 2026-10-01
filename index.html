@@ -207,6 +207,61 @@
   --app-stripe:repeating-linear-gradient(135deg,#F0F0F0 0 8px,#E7E7E7 8px 16px);
 }
 
+/* ======================================================================
+   TEMA ESTACIONAL (Navidad / Halloween)
+
+   El panel de administración pone data-tema en <body> (normal por defecto,
+   ver toggleTema() más abajo y tema_estacional en src/index.js). Solo
+   retocan fondo y borde de piezas puntuales -nunca --app-ink ni
+   --app-paper, que son el texto y el fondo de TODA la pantalla- para no
+   arriesgar el contraste del resto del sitio. La especificidad del
+   selector `body[data-tema=…] .clase` ya gana sobre la regla sin tema sin
+   importar el orden, así que este bloque puede ir aquí arriba, junto a los
+   demás tokens, aunque las clases que toca se definan más abajo. */
+body[data-tema="navidad"] .cab-franja,
+body[data-tema="navidad"] .franja-util{background:#0F5C33;}
+body[data-tema="navidad"] .urgencia{background:#B0142B;}
+body[data-tema="navidad"] .urg-cel{background:#0B3F23;}
+body[data-tema="navidad"] .urg-label::before,
+body[data-tema="navidad"] .urg-label-movil::before{content:"🎄 ";}
+body[data-tema="navidad"] .cab-franja::before{content:"❄ ";}
+body[data-tema="navidad"] .franja-util-inner>span:first-child::before{content:"❄ ";}
+body[data-tema="navidad"] .pc-cuadro{border-color:#d6a13c;}
+body[data-tema="navidad"] .pc-tile:hover .pc-cuadro{border-color:#0F5C33;}
+
+body[data-tema="halloween"] .cab-franja,
+body[data-tema="halloween"] .franja-util{background:#241019;}
+body[data-tema="halloween"] .urgencia{background:#E8641C;}
+body[data-tema="halloween"] .urg-cel{background:#2B1B4A;}
+body[data-tema="halloween"] .urg-label::before,
+body[data-tema="halloween"] .urg-label-movil::before{content:"🎃 ";}
+body[data-tema="halloween"] .cab-franja::before{content:"🎃 ";}
+body[data-tema="halloween"] .franja-util-inner>span:first-child::before{content:"🎃 ";}
+body[data-tema="halloween"] .pc-cuadro{border-color:#E8641C;}
+body[data-tema="halloween"] .pc-tile:hover .pc-cuadro{border-color:#2B1B4A;}
+
+/* El vaivén del emoji de temporada. Solo transform, un único elemento (el
+   ::before), nada de JS ni de reflow: no debería tocar el INP que costó
+   arreglar (ver rendimiento-inp-chipao). Respeta a quien pidió menos
+   movimiento en su sistema. */
+@media (prefers-reduced-motion: no-preference){
+  body[data-tema="navidad"] .urg-label::before,
+  body[data-tema="navidad"] .urg-label-movil::before,
+  body[data-tema="navidad"] .cab-franja::before,
+  body[data-tema="navidad"] .franja-util-inner>span:first-child::before,
+  body[data-tema="halloween"] .urg-label::before,
+  body[data-tema="halloween"] .urg-label-movil::before,
+  body[data-tema="halloween"] .cab-franja::before,
+  body[data-tema="halloween"] .franja-util-inner>span:first-child::before{
+    display:inline-block;transform-origin:70% 85%;
+    animation:tema-vaiven 2.2s ease-in-out infinite;
+  }
+}
+@keyframes tema-vaiven{
+  0%,100%{transform:rotate(-10deg);}
+  50%{transform:rotate(10deg);}
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 /* text-size-adjust:100% le dice a Safari que no reescale el texto por su
    cuenta. Sin esto va en "auto" y el tamaño con el que compara su umbral de
@@ -592,6 +647,14 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 .banner-btn[disabled]{opacity:.6;}
 .banner-nota{margin:8px 0 16px;font:400 12px/1.5 var(--app-sans);color:var(--app-muted);}
 .banner-nota{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 2px 16px;}
+
+/* Los tres botones del tema estacional: mismo patrón que el del banner
+   -contorno = quitado, relleno = puesto- pero en fila, uno por tema. */
+.tema-actions{display:flex;gap:8px;}
+.tema-btn{flex:1;border-color:var(--app-line-strong);color:var(--app-ink);}
+.tema-btn:hover{background:var(--app-sunken);}
+.tema-btn.puesto{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
+.tema-btn[disabled]{opacity:.6;}
 
 /* Hueco para la barra inferior: sus 78px más la franja de gestos del
    teléfono, si la hay. Sin esto el último producto de la lista queda
@@ -1573,6 +1636,29 @@ a.eyebrow-terracota:active{opacity:.6;}
   color:var(--app-ink);
 }
 .chip.limpiar{border-style:dashed;color:var(--app-muted);}
+
+/* ---------------- subcategorías en el teléfono ---------------- */
+.subs-bloque{margin-top:14px;}
+.subs-eyebrow{font:700 11px/1 var(--app-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--app-muted);margin-bottom:9px;}
+/* Mosaicos con la foto de un producto de cada tipo. */
+.subs-mosaicos{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sub-mosaico{
+  display:flex;align-items:center;gap:10px;min-height:68px;padding:8px 10px 8px 8px;
+  border:1.5px solid var(--app-line);border-radius:var(--app-r-card);background:var(--app-surface);
+  text-align:left;color:var(--app-ink);text-decoration:none;touch-action:manipulation;
+}
+.sub-mosaico .sm-foto{
+  flex:none;width:52px;height:52px;border-radius:var(--app-r-img);
+  background:var(--app-sunken);overflow:hidden;
+}
+.sub-mosaico .sm-foto img{display:block;width:100%;height:100%;object-fit:contain;}
+.sub-mosaico .sm-texto{min-width:0;}
+.sub-mosaico b{display:block;font:700 13.5px/1.2 var(--app-sans);}
+.sub-mosaico em{display:block;margin-top:3px;font:500 12px/1.2 var(--app-sans);font-style:normal;color:var(--app-muted);}
+.sub-mosaico.todo{padding-left:14px;}
+.sub-mosaico.activo{border-color:var(--app-ink);background:var(--app-sunken);box-shadow:0 0 0 1px var(--app-ink);}
+.sub-mosaico.vacia{border-style:dashed;}
+.sub-mosaico.vacia b,.sub-mosaico.vacia em{color:var(--app-muted);}
 
 /* ---------------- estados vacíos ---------------- */
 /* Aviso de producto retirado. Va en el amarillo de los avisos, no en el rojo
@@ -3536,7 +3622,7 @@ body.en-taller footer.site{margin-top:0;}
 const CATEGORIES = [
   {key:'cuerda', label:'Instrumentos de Cuerda',
     intro: "Guitarras acústicas, clásicas y eléctricas, ukeleles soprano y de concierto, violines 4/4, bajos y charangos, desde S/ 100. Puedes probarlos en la tienda antes de decidir. Las cuerdas de repuesto, las púas y los capotrastes están en Accesorios.", icon:'string', desc:'Guitarras acústicas y eléctricas, bajos, violines, ukeleles y charangos en Lima. Tienda en San Juan de Miraflores con envíos a todo el Perú.',
-    subs:[{key:'guitarras',label:'Guitarras Acústicas'},{key:'guitarrasElectricas',label:'Guitarras Eléctricas'},{key:'bajos',label:'Bajos'},{key:'violines',label:'Violines'},{key:'ukeleles',label:'Ukeleles'},{key:'charangos',label:'Charangos'}]},
+    subs:[{key:'guitarras',label:'Guitarras Acústicas'},{key:'guitarrasElectricas',label:'Guitarras Eléctricas'},{key:'electroacusticos',label:'Electroacústicos'},{key:'bajos',label:'Bajos'},{key:'charangos',label:'Andinos'},{key:'violines',label:'Violines'},{key:'ukeleles',label:'Ukeleles'}]},
   {key:'teclados', label:'Teclados',
     intro: "Teclados y pianos digitales para empezar y para tocar en vivo. Ahora mismo no hay stock cargado en la web: escríbenos por WhatsApp y te decimos qué tenemos en tienda y qué podemos conseguir.", icon:'keyboard', desc:'Teclados y pianos digitales para estudiar y para tocar en vivo. Tienda de instrumentos en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
     subs:[]},
@@ -5670,17 +5756,58 @@ function chipsFiltroHtml(){
     chipHtml('Recojo hoy', state.soloStock, 'toggleSoloStock()'),
     chipHtml(`Hasta ${fmt(LIMITE_CHIP_PRECIO)}`, state.priceMax <= LIMITE_CHIP_PRECIO, 'toggleTope()'),
   ];
-  const cat = CATEGORIES.find(c=>c.key===state.activeCat);
-  if(cat){
-    const subs = subsNavegables(cat);
-    for(const s of subs){
-      chips.push(chipHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`));
-    }
-  }
+  /* Las subcategorías ya no van aquí, al final de una fila que había que
+     desplazar para encontrarlas: tienen su propio bloque, ver subsMovilHtml. */
   const algunoPuesto = state.sort==='price-asc' || state.soloOfertas || state.soloStock
     || state.priceMax <= LIMITE_CHIP_PRECIO || state.activeSubs.size;
   if(algunoPuesto) chips.push(`<button type="button" class="chip limpiar" onclick="clearFilters()">Limpiar</button>`);
   return `<div class="chips-fila">${chips.join('')}</div>`;
+}
+
+/* Las subcategorías en el teléfono: mosaicos con la foto de un producto de
+   cada tipo, en un bloque propio encima de los filtros. Antes iban al final de
+   la fila de chips y había que desplazar para encontrarlas. */
+
+function quitarSubs(){ state.activeSubs = new Set(); trasFiltrar(); }
+
+function subsMovilHtml(){
+  const cat = CATEGORIES.find(c=>c.key===state.activeCat);
+  const subs = cat ? subsNavegables(cat) : [];
+  if(subs.length < 2) return '';
+  const cuantos = s => PRODUCTS.filter(p => productInCat(p, cat.key) && (p.sub === s.key || (s.matches||[]).includes(p.sub)));
+  const todo = productosDeCategoria(cat.key).length;
+  const ningunaPuesta = !state.activeSubs.size;
+
+  const mosaicos = subs.map(s=>{
+    const lista = cuantos(s);
+    const n = lista.length;
+    const conFoto = lista.find(p=>fotoDe(p));
+    const foto = conFoto ? `<img src="${fotoUrl(fotoDe(conFoto), ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">` : '';
+    const activo = state.activeSubs.has(s.key);
+    if(!n){
+      return `
+      <a class="sub-mosaico vacia" target="_blank" rel="noopener"
+         href="${waHref('Hola, quiero consultar por ' + s.label.toLowerCase() + '.')}" onclick="trackAdsConversion('whatsapp')">
+        <span class="sm-foto"></span>
+        <span class="sm-texto"><b>${escapeHtml(s.label)}</b><em>Consúltanos ›</em></span>
+      </a>`;
+    }
+    return `
+    <button type="button" class="sub-mosaico${activo?' activo':''}" aria-pressed="${activo?'true':'false'}" onclick="toggleChipSub('${s.key}')">
+      <span class="sm-foto">${foto}</span>
+      <span class="sm-texto"><b>${escapeHtml(s.label)}</b><em>${n} modelo${n!==1?'s':''}</em></span>
+    </button>`;
+  }).join('');
+  return `
+  <div class="subs-bloque">
+    <div class="subs-eyebrow">Elige el tipo</div>
+    <div class="subs-mosaicos">
+      <button type="button" class="sub-mosaico todo${ningunaPuesta?' activo':''}" aria-pressed="${ningunaPuesta?'true':'false'}" onclick="quitarSubs()">
+        <span class="sm-texto"><b>Ver todo</b><em>${todo} productos</em></span>
+      </button>
+      ${mosaicos}
+    </div>
+  </div>`;
 }
 
 /* ---------------- panel lateral de categoría (escritorio) ----------------
@@ -5922,10 +6049,9 @@ function renderShop(){
         </div>
         ${pillAsesorHtml()}
       </div>
-      ${sinCatalogo ? '' : chipsFiltroHtml()}
+      ${sinCatalogo ? '' : subsMovilHtml() + chipsFiltroHtml()}
     </header>
     ${avisoHtml}
-    ${introHtml}
     ${cuerpo}
   </div>`;
 }
@@ -8246,6 +8372,19 @@ async function guardarPreciosTaller(btn){
   btn.textContent = 'Guardar cambios del taller';
 }
 
+/* El tema activo vive en el atributo data-tema del <body>, que pone el
+   Worker antes de la primera pintada (ver rewrite() en src/index.js): no
+   hace falta guardarlo aparte en un JS, alcanza con leerlo de ahí. En el
+   servidor local no hay Worker que lo ponga, así que cae a 'normal'. */
+function temaActivo(){
+  return document.body.dataset.tema || 'normal';
+}
+function temaBotonHtml(clave, etiqueta){
+  const puesto = temaActivo() === clave;
+  return `<button class="btn-outline tema-btn${puesto ? ' puesto' : ''}" data-tema-btn="${clave}"
+    ${puesto ? 'disabled' : ''} onclick="toggleTema('${clave}', this)">${etiqueta}</button>`;
+}
+
 function renderAdminPanel(){
   if(adminPestana === 'taller') return renderAdminTaller();
   const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
@@ -8276,6 +8415,13 @@ function renderAdminPanel(){
       <button class="btn-outline banner-btn${BANNER_PROMO ? ' puesto' : ''}" id="banner-btn" onclick="toggleBannerPromo(this)">${BANNER_PROMO ? 'Desactivar' : 'Activar'} banner de promoción</button>
     </div>
     <p class="banner-nota">Es la barra roja con el contador y los tres mayores descuentos, arriba de la portada y del catálogo. Un clic y cambia para todos.</p>
+
+    <div class="admin-actions tema-actions">
+      ${temaBotonHtml('normal', 'Normal')}
+      ${temaBotonHtml('navidad', '🎄 Navidad')}
+      ${temaBotonHtml('halloween', '🎃 Halloween')}
+    </div>
+    <p class="banner-nota">Cambia los colores de la franja de arriba, el contador de ofertas y las categorías, para todos los visitantes.</p>
 
     <div class="admin-actions" style="margin-bottom:14px;">
       <button class="btn-outline" style="width:100%;" onclick="toggleNewProductForm()">Agregar producto nuevo</button>
@@ -8393,6 +8539,41 @@ function pintarBotonBanner(btn){
   btn.classList.toggle('puesto', BANNER_PROMO);
   btn.disabled = false;
 }
+
+/* Mismo patrón que el banner: sin formulario, un clic y cambia para todos.
+   El propio <body> cambia de tema al toque, sin esperar la respuesta del
+   servidor -es solo un atributo, no hay nada que perder si falla-, y si la
+   escritura falla de verdad se vuelve al tema anterior. Igual que el
+   banner, /api/tema no existe en el servidor local: el cambio se ve pero no
+   se guarda hasta que corre en el sitio real. */
+async function toggleTema(nuevo, btn){
+  const anterior = temaActivo();
+  if(nuevo === anterior) return;
+  const fila = btn.closest('.tema-actions');
+  fila.querySelectorAll('.tema-btn').forEach(b => b.disabled = true);
+  document.body.dataset.tema = nuevo;
+  try{
+    const res = await fetch('/api/tema', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
+      body: JSON.stringify({ tema: nuevo })
+    });
+    const data = await res.json();
+    if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
+    document.body.dataset.tema = data.tema;
+    showToast('Tema de la tienda: ' + ROTULO_TEMA[data.tema]);
+  }catch(err){
+    document.body.dataset.tema = anterior;
+    showToast('No se pudo cambiar el tema. Revisa tu clave de administrador.');
+  }
+  fila.querySelectorAll('.tema-btn').forEach(b => {
+    const clave = b.dataset.temaBtn;
+    const puesto = clave === temaActivo();
+    b.classList.toggle('puesto', puesto);
+    b.disabled = puesto;
+  });
+}
+const ROTULO_TEMA = { normal: 'Normal', navidad: 'Navidad 🎄', halloween: 'Halloween 🎃' };
 
 function onAdminCatChange(id){
   const catKey = document.getElementById(`cat-${id}`).value;
