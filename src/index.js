@@ -266,7 +266,7 @@ async function apiBanner(request, env, ctx) {
 
 /* ====================== TEMA ESTACIONAL ==============================
 
-   Navidad y Halloween, un botón cada uno en el panel. Mismo camino que el
+   Navidad, Halloween y Criolla, un botón cada uno en el panel. Mismo camino que el
    banner: la clave vive en `settings` (tema_estacional) y el Worker la
    incrusta como atributo `data-tema` del <body> -no en un script aparte-
    porque el CSS ya hace todo el trabajo con selectores `body[data-tema=…]`
@@ -275,7 +275,7 @@ async function apiBanner(request, env, ctx) {
 
 const CLAVE_TEMA = 'tema_estacional';
 const CACHE_TEMA = new Request('https://chipaomusic.com/__tema-estacional');
-const TEMAS_VALIDOS = ['normal', 'navidad', 'halloween'];
+const TEMAS_VALIDOS = ['normal', 'navidad', 'halloween', 'criolla'];
 
 async function temaActivo(env, ctx) {
   try {

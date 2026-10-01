@@ -296,6 +296,26 @@ ul{list-style:none;}
 /* Quedó el nombre por compatibilidad con el marcado; ya no hay serif: toda
    la página va en Archivo. */
 .h-serif{font-family:var(--app-sans);font-weight:700;letter-spacing:-.02em;}
+
+/* Gorra de bruja sobre el logo en modo Halloween. <logo-gorro> envuelve cada
+   logo redondo; fuera de Halloween no pinta nada y no cambia el diseño. */
+logo-gorro{display:inline-flex;position:relative;flex:none;}
+body[data-tema="halloween"] logo-gorro::after{
+  content:"";position:absolute;pointer-events:none;
+  left:-16%;top:-52%;width:100%;height:76%;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80'><ellipse cx='50' cy='68' rx='47' ry='10' fill='%231A1024'/><path d='M25 66 L43 16 Q47 4 61 8 Q55 15 60 26 L77 66 Z' fill='%232B1B4A'/><path d='M30 54 L72 54 L76 64 L26 64 Z' fill='%23E8641C'/><rect x='46' y='53' width='10' height='11' rx='2' fill='%23F4C542'/><rect x='49' y='56' width='4' height='5' fill='%23E8641C'/></svg>") center/contain no-repeat;
+  transform:rotate(-16deg);
+}
+/* Tema criolla: sombrero de paja con cinta roja y blanca sobre el logo, quieto,
+   y un poco más de aire entre el logo y el nombre. */
+body[data-tema="criolla"] logo-gorro{margin-right:5px;}
+body[data-tema="criolla"] logo-gorro::after{
+  content:"";position:absolute;pointer-events:none;
+  left:-8%;top:-32%;width:100%;height:58%;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'><ellipse cx='50' cy='45' rx='49' ry='11' fill='%23E3C27A' stroke='%23B8923F' stroke-width='2'/><path d='M25 44 Q24 10 50 10 Q76 10 75 44 Z' fill='%23EBCF8E' stroke='%23B8923F' stroke-width='2'/><path d='M25.5 33 L74.5 33 L75 44 L25 44 Z' fill='%23C8102E'/><rect x='25' y='37' width='50' height='3' fill='%23fff'/></svg>") center/contain no-repeat;
+  transform:rotate(-9deg);
+}
+
 .logo{
   display:flex;align-items:center;
   white-space:nowrap;
@@ -650,8 +670,8 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 
 /* Los tres botones del tema estacional: mismo patrón que el del banner
    -contorno = quitado, relleno = puesto- pero en fila, uno por tema. */
-.tema-actions{display:flex;gap:8px;}
-.tema-btn{flex:1;border-color:var(--app-line-strong);color:var(--app-ink);}
+.tema-actions{display:flex;flex-wrap:wrap;gap:8px;}
+.tema-btn{flex:1 1 calc(50% - 4px);border-color:var(--app-line-strong);color:var(--app-ink);}
 .tema-btn:hover{background:var(--app-sunken);}
 .tema-btn.puesto{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
 .tema-btn[disabled]{opacity:.6;}
@@ -3546,7 +3566,7 @@ body.en-taller footer.site{margin-top:0;}
   <div class="footer-grid">
     <div class="footer-col footer-brand">
       <div class="logo logo-on-dark">
-        <img src="/img/logo-redondo.webp" alt="Chipao Music" class="logo-mark">
+        <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Music" class="logo-mark"></logo-gorro>
       </div>
       <p>Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
       <div class="footer-social">
@@ -4267,7 +4287,7 @@ function renderPieMovil(){
 
   el.innerHTML = `
     <a class="pm-marca" href="/" onclick="goHome();return false;">
-      <img src="/img/logo-redondo.webp" alt="Chipao Music" width="44" height="44" loading="lazy">
+      <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Music" width="44" height="44" loading="lazy"></logo-gorro>
       <div><b>Chipao Music</b><span>Instrumentos musicales en Lima · +12 años</span></div>
     </a>
 
@@ -6544,7 +6564,7 @@ function renderProductDetail(){
       <div class="app-head-fila">
         <button type="button" class="btn-volver" onclick="volverAtras()" aria-label="Volver">‹</button>
         <a class="ficha-marca" href="/" onclick="goHome();return false;">
-          <img src="/img/logo-redondo.webp" alt="" width="32" height="32">
+          <logo-gorro><img src="/img/logo-redondo.webp" alt="" width="32" height="32"></logo-gorro>
           <b>Chipao Music</b>
         </a>
         <a class="ficha-lupa" href="/buscar" onclick="goSearch();return false;" aria-label="Buscar">
@@ -8420,6 +8440,7 @@ function renderAdminPanel(){
       ${temaBotonHtml('normal', 'Normal')}
       ${temaBotonHtml('navidad', '🎄 Navidad')}
       ${temaBotonHtml('halloween', '🎃 Halloween')}
+      ${temaBotonHtml('criolla', '🎶 Criolla')}
     </div>
     <p class="banner-nota">Cambia los colores de la franja de arriba, el contador de ofertas y las categorías, para todos los visitantes.</p>
 
@@ -8573,7 +8594,7 @@ async function toggleTema(nuevo, btn){
     b.disabled = puesto;
   });
 }
-const ROTULO_TEMA = { normal: 'Normal', navidad: 'Navidad 🎄', halloween: 'Halloween 🎃' };
+const ROTULO_TEMA = { normal: 'Normal', navidad: 'Navidad 🎄', halloween: 'Halloween 🎃', criolla: 'Criolla 🎶' };
 
 function onAdminCatChange(id){
   const catKey = document.getElementById(`cat-${id}`).value;
@@ -8932,7 +8953,7 @@ function renderNavEscritorio(){
   el.innerHTML = `
     <div class="nav-esc-inner">
       <a class="nav-esc-marca" href="/" onclick="cerrarNavBuscar();goHome();return false;">
-        <img src="/img/logo-redondo.webp" alt="Chipao Music" width="44" height="44">
+        <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Music" width="44" height="44"></logo-gorro>
         <span>
           <b>Chipao Music</b>
           <i>Instrumentos musicales</i>
@@ -9157,8 +9178,8 @@ function renderCabeceraMovil(){
   <div class="cab-movil">
     <div class="cab-franja">Envío gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)} · Recojo en 1 hora</div>
     <div class="cab-fila">
-      <img class="cab-logo" src="/img/logo-redondo.webp"
-           alt="Chipao Music" width="34" height="34">
+      <logo-gorro><img class="cab-logo" src="/img/logo-redondo.webp"
+           alt="Chipao Music" width="34" height="34"></logo-gorro>
       <div class="cab-texto">
         <b>Chipao Music</b>
         <i>San Juan de Miraflores · ${estadoTienda()}</i>
