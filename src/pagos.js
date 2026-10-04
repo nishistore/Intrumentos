@@ -219,16 +219,19 @@ export function validarLectura(lectura, pedido, ahora) {
 function promptLectura(ahora) {
   const hoy = new Date(ahora - 5 * 3600000).toISOString().slice(0, 10);
   return `Hoy es ${hoy} (hora de Lima). Las fechas de este año y del anterior son normales: NO las juzgues, solo transcríbelas.
-Esta imagen debería ser la captura de un comprobante de un pago a un Yape (Perú). Hay DOS formatos válidos:
+Esta imagen debería ser la captura de un comprobante de un pago a un Yape (Perú). Hay TRES formatos válidos:
   (a) la app Yape: pantalla morada que dice "¡Yapeaste!", con "Nro. de celular" y "Nro. de operación";
-  (b) la app de un banco (BBVA, BCP, Interbank, Scotiabank, etc.) que dice "Operación exitosa" o similar y muestra "Entidad de destino: Yape", con el contacto de destino terminado en los últimos dígitos del celular (por ejemplo "·7384") y un "Número de operación" que puede llevar letras.
+  (b) la app de un banco (BBVA, BCP, Interbank, Scotiabank, etc.) que dice "Operación exitosa" o similar y muestra "Entidad de destino: Yape", con el contacto de destino terminado en los últimos dígitos del celular (por ejemplo "·7384") y un "Número de operación" que puede llevar letras;
+  (c) la app Plin de un banco (por ejemplo Interbank): "¡Pago exitoso!" con el logo de Plin, "Enviado a:" seguido del nombre y del celular completo con el destino al final ("921 317 384 - Yape"), "Fecha y hora" y "Código de operación".
+En los tres casos lo que vale es que el DESTINO sea Yape. Si en (c) el destino dice otra cosa (por ejemplo "- Plin" o el nombre de un banco), es_yape es false.
+IMPORTANTE: ignora el reloj y la barra de estado del celular (arriba de la pantalla, por ejemplo "22:19"): NO es la hora del pago. La fecha y la hora del pago son las que aparecen dentro del comprobante ("Fecha y hora", o junto al título).
 Lee SOLO lo que se ve y devuelve JSON. No inventes nada: si un dato no se ve, déjalo vacío.
-- es_yape: true si es un comprobante de un pago cuyo destino es Yape, en cualquiera de los dos formatos. false si es de otra cosa (otra app, un destino que no es Yape, una foto de otra pantalla, un montaje).
+- es_yape: true si es un comprobante de un pago cuyo destino es Yape, en cualquiera de los tres formatos. false si es de otra cosa (otra app, un destino que no es Yape, una foto de otra pantalla, un montaje).
 - monto: el importe enviado, tras "S/" (puede tener decimales: 200.00 es 200).
 - destinatario: el nombre del destinatario tal cual se ve: debajo del monto en Yape (suele terminar en *) o en "Contacto" en un banco.
 - celular_ultimos: los dígitos visibles del celular de destino (por ejemplo 384 o 7384).
 - fecha: en formato YYYY-MM-DD. Los meses vienen en español, abreviados o completos: ene/enero, feb/febrero, mar/marzo, abr/abril, may/mayo, jun/junio, jul/julio, ago/agosto, set/septiembre, oct/octubre, nov/noviembre, dic/diciembre.
-- hora: en 24 horas HH:MM. "05:17 p. m." es 17:17 y "12:22 p. m." es 12:22; "12:05 a. m." es 00:05; "08:08" a secas ya está en 24 horas.
+- hora: en 24 horas HH:MM. "05:17 p. m." y "05:17 PM" son 17:17; "12:22 p. m." es 12:22; "12:05 a. m." es 00:05; "03:19 PM" es 15:19; "08:08" a secas ya está en 24 horas.
 - operacion: el número de operación completo, con sus letras si las tiene, sin espacios.
 - codigo_seguridad: los tres dígitos de "Código de seguridad" si existe (los bancos no lo traen: déjalo vacío).
 - mensaje: el texto del mensaje que escribió quien pagó, si hay una caja con mensaje.
