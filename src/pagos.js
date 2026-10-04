@@ -161,7 +161,7 @@ export function validarLectura(lectura, pedido, ahora) {
   const dudas = [];    // no es culpa del cliente: lo decide el dueño
 
   if (!lectura || lectura.es_yape !== true) {
-    fallos.push('La imagen no parece un comprobante de Yape ("¡Yapeaste!").');
+    fallos.push('La imagen no parece un comprobante de un Yape ("¡Yapeaste!", o "Operación exitosa" desde tu banco con destino Yape).');
     return { ok: false, fallos, dudas };
   }
 
@@ -180,8 +180,9 @@ export function validarLectura(lectura, pedido, ahora) {
     fallos.push(`El comprobante no es de un pago a ${YAPE.nombreVisible} (celular terminado en ${YAPE.ultimosDigitos}).`);
   }
 
-  const operacion = String(lectura.operacion || '').replace(/\D/g, '');
-  if (!/^\d{6,12}$/.test(operacion)) {
+  /* En Yape son 8 dígitos; en un banco (BBVA) llevan letras: 154122DB36DD. */
+  const operacion = String(lectura.operacion || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  if (!/^[A-Z0-9]{6,20}$/.test(operacion)) {
     fallos.push('No se alcanza a leer el número de operación.');
   }
 
@@ -218,18 +219,20 @@ export function validarLectura(lectura, pedido, ahora) {
 function promptLectura(ahora) {
   const hoy = new Date(ahora - 5 * 3600000).toISOString().slice(0, 10);
   return `Hoy es ${hoy} (hora de Lima). Las fechas de este año y del anterior son normales: NO las juzgues, solo transcríbelas.
-Esta imagen debería ser la captura de un comprobante de la app Yape (Perú), la pantalla morada que dice "¡Yapeaste!".
+Esta imagen debería ser la captura de un comprobante de un pago a un Yape (Perú). Hay DOS formatos válidos:
+  (a) la app Yape: pantalla morada que dice "¡Yapeaste!", con "Nro. de celular" y "Nro. de operación";
+  (b) la app de un banco (BBVA, BCP, Interbank, Scotiabank, etc.) que dice "Operación exitosa" o similar y muestra "Entidad de destino: Yape", con el contacto de destino terminado en los últimos dígitos del celular (por ejemplo "·7384") y un "Número de operación" que puede llevar letras.
 Lee SOLO lo que se ve y devuelve JSON. No inventes nada: si un dato no se ve, déjalo vacío.
-- es_yape: true solo si es la pantalla de comprobante de Yape (no una foto de otra pantalla, ni otra app, ni un montaje).
-- monto: el número grande tras "S/" (puede tener decimales).
-- destinatario: el nombre que aparece debajo del monto, tal cual (suele terminar en *).
-- celular_ultimos: los dígitos visibles de "Nro. de celular" (por ejemplo 384).
-- fecha: en formato YYYY-MM-DD. Los meses vienen abreviados en español: ene, feb, mar, abr, may, jun, jul, ago, set, oct, nov, dic.
-- hora: en 24 horas HH:MM. "05:17 p. m." es 17:17 y "12:22 p. m." es 12:22; "12:05 a. m." es 00:05.
-- operacion: el número de "Nro. de operación".
-- codigo_seguridad: los tres dígitos de "Código de seguridad".
+- es_yape: true si es un comprobante de un pago cuyo destino es Yape, en cualquiera de los dos formatos. false si es de otra cosa (otra app, un destino que no es Yape, una foto de otra pantalla, un montaje).
+- monto: el importe enviado, tras "S/" (puede tener decimales: 200.00 es 200).
+- destinatario: el nombre del destinatario tal cual se ve: debajo del monto en Yape (suele terminar en *) o en "Contacto" en un banco.
+- celular_ultimos: los dígitos visibles del celular de destino (por ejemplo 384 o 7384).
+- fecha: en formato YYYY-MM-DD. Los meses vienen en español, abreviados o completos: ene/enero, feb/febrero, mar/marzo, abr/abril, may/mayo, jun/junio, jul/julio, ago/agosto, set/septiembre, oct/octubre, nov/noviembre, dic/diciembre.
+- hora: en 24 horas HH:MM. "05:17 p. m." es 17:17 y "12:22 p. m." es 12:22; "12:05 a. m." es 00:05; "08:08" a secas ya está en 24 horas.
+- operacion: el número de operación completo, con sus letras si las tiene, sin espacios.
+- codigo_seguridad: los tres dígitos de "Código de seguridad" si existe (los bancos no lo traen: déjalo vacío).
 - mensaje: el texto del mensaje que escribió quien pagó, si hay una caja con mensaje.
-- sospecha: SOLO si ves señales visuales de edición (tipografías distintas, números desalineados, recortes raros, bordes de pegado), explica en una frase corta qué ves. Nunca la uses para comentar la fecha, el año ni el monto. Si todo se ve normal, deja este campo vacío.`;
+- sospecha: SOLO si ves señales visuales de edición (tipografías distintas, números desalineados, recortes raros, bordes de pegado), explica en una frase corta qué ves. Que la pantalla sea de un banco y no de Yape NO es sospechoso. Nunca la uses para comentar la fecha, el año ni el monto. Si todo se ve normal, deja este campo vacío.`;
 }
 
 const ESQUEMA_LECTURA = {
@@ -301,7 +304,7 @@ export async function leerComprobante(env, bytes, mime) {
 export function lecturaIncompleta(l) {
   return Boolean(l && l.es_yape === true && (
     !String(l.destinatario || '').trim() || !l.fecha || !l.hora
-    || !/\d{6,}/.test(String(l.operacion || '')) || !(Number(l.monto) > 0)));
+    || !/[A-Za-z0-9]{6,}/.test(String(l.operacion || '')) || !(Number(l.monto) > 0)));
 }
 
 /* ------------------------------ correo ------------------------------ */
