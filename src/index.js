@@ -615,6 +615,16 @@ function subcategoryMeta(cat, sub, products) {
   };
 }
 
+/* Google corta los títulos a unos 60 caracteres. Con "| Chipao Music" detrás,
+   un nombre de más de 55 se queda sin la marca o con el final comido: se corta
+   en una palabra completa. El nombre entero sigue en el <h1> y en la descripción. */
+function nombreParaTitulo(nombre) {
+  const MAX = 55;
+  if (nombre.length <= MAX) return nombre;
+  const corte = nombre.slice(0, MAX).replace(/\s+\S*$/, '');
+  return (corte || nombre.slice(0, MAX)).replace(/[\s,;:(\-–—]+$/, '') + '…';
+}
+
 function productMeta(p) {
   const path = productPath(p);
   const cat = CATEGORIES.find(c => c.key === p.cat);
@@ -624,7 +634,7 @@ function productMeta(p) {
   trail.push({ name: p.name, path });
 
   return {
-    title: `${p.name} | Chipao Music`,
+    title: `${nombreParaTitulo(p.name)} | Chipao Music`,
     description: `${p.name} — ${priceLine}. Tienda de instrumentos musicales en San Juan de Miraflores, Lima, con envíos a todo el Perú.`,
     image: (p.images && p.images[0]) || DEFAULT_OG_IMAGE,
     type: 'product',
@@ -672,6 +682,13 @@ function productMeta(p) {
 const PRODUCTOS_RETIRADOS = {
   '14': '/categoria/teclados',          // órgano Casio CT-S200
   '43': '/categoria/cuerda/guitarras-acusticas',  // guitarra acústica Fever
+  /* 2026-10-04, tras ver en Search Console que Google seguía visitándolos y
+     recibiendo 404: cada uno va a su sustituto o a su subcategoría. */
+  '35': '/producto/208-xilofono-infantil-de-8-notas-con-baquetas',  // xilófono escolar 8 notas
+  '149': '/categoria/cuerda/guitarras-acusticas',   // guitarra clásica Freeman naranja
+  '45': '/categoria/cuerda/ukeleles',               // ukelele concierto Vozzex
+  '31': '/categoria/percusion/bombos',              // bombito escolar con palillo
+  '79': '/categoria/accesorios/guitarra-acustica-y-clasica',  // capotraste Romeo
 };
 
 /* Subcategorías que cambiaron de URL. "Guitarras" se partió en acústicas y
@@ -874,19 +891,98 @@ function productListHtml(products) {
   return `<ul>${items}</ul>`;
 }
 
-function listBody(heading, intro, products, vacio) {
-  const lista = products.length
-    ? `<p>${products.length} ${products.length === 1 ? 'producto' : 'productos'}.</p>${productListHtml(products)}`
-    : `<p>${vacio}</p>`;
-  return `<h1>${escapeHtml(heading)}</h1><p>${escapeHtml(intro)}</p>${lista}`;
+/* `extra` es HTML que va entre la introducción y la lista: la navegación a
+   las subcategorías o a las hermanas. Sin esos enlaces, las subcategorías solo
+   las conocía Google por el sitemap, y las que solo se conocen por el sitemap
+   se quedan en "Descubierta: actualmente sin indexar". */
+function listBody(heading, intro, products, vacio, extra = '') {
+  let lista;
+  if (products.length) {
+    const precios = products.map(p => p.price);
+    const rango = products.length > 1 && Math.min(...precios) !== Math.max(...precios)
+      ? ` Precios desde S/ ${Math.min(...precios)} hasta S/ ${Math.max(...precios)}.` : '';
+    lista = `<p>${products.length} ${products.length === 1 ? 'producto' : 'productos'}.${rango}</p>${productListHtml(products)}`;
+  } else {
+    lista = `<p>${vacio}</p>`;
+  }
+  return `<h1>${escapeHtml(heading)}</h1><p>${escapeHtml(intro)}</p>${extra}${lista}`;
 }
 
-function productBody(p) {
+/* Subcategorías de una categoría que de verdad tienen algo con stock: las
+   mismas que entran al sitemap. */
+function subsConProductos(cat, products) {
+  return subsNavegables(cat).filter(s =>
+    products.some(p => (p.stock || 0) > 0 && productInCat(p, cat.key) && productInSub(p, s)));
+}
+
+function subPath(cat, sub) {
+  return `/categoria/${cat.key}/${subSlug(sub)}`;
+}
+
+/* Todas las categorías con sus subcategorías, como árbol de enlaces. Va en la
+   portada y en /tienda, que son las páginas que Google ya conoce y visita. */
+function directorioHtml(products) {
+  const items = CATEGORIES.map(c => {
+    const subs = subsConProductos(c, products);
+    const hijos = subs.length
+      ? `<ul>${subs.map(s => `<li><a href="${subPath(c, s)}">${escapeHtml(s.seo || s.label)}</a></li>`).join('')}</ul>`
+      : '';
+    return `<li><a href="/categoria/${c.key}">${escapeHtml(c.label)}</a>${hijos}</li>`;
+  }).join('');
+  return `<nav aria-label="Categorías y subcategorías"><h2>Todas las categorías</h2><ul>${items}</ul></nav>`;
+}
+
+/* En una categoría: enlaces a sus subcategorías con cuántos productos hay. */
+function navHijas(cat, products) {
+  const subs = subsConProductos(cat, products);
+  if (!subs.length) return '';
+  const items = subs.map(s => {
+    const n = products.filter(p => (p.stock || 0) > 0 && productInCat(p, cat.key) && productInSub(p, s)).length;
+    return `<li><a href="${subPath(cat, s)}">${escapeHtml(s.seo || s.label)}</a> (${n})</li>`;
+  }).join('');
+  return `<nav aria-label="Subcategorías de ${escapeHtml(cat.label)}"><h2>Explora ${escapeHtml(cat.label.toLowerCase())} por tipo</h2><ul>${items}</ul></nav>`;
+}
+
+/* En una subcategoría: la categoría de arriba y las hermanas. */
+function navHermanas(cat, sub, products) {
+  const hermanas = subsConProductos(cat, products).filter(s => s.key !== sub.key);
+  const items = hermanas.map(s => `<li><a href="${subPath(cat, s)}">${escapeHtml(s.seo || s.label)}</a></li>`).join('');
+  return `<nav aria-label="Más en ${escapeHtml(cat.label)}"><p><a href="/">Inicio</a> &rsaquo; <a href="/categoria/${cat.key}">${escapeHtml(cat.label)}</a> &rsaquo; ${escapeHtml(sub.seo || sub.label)}</p>`
+    + (items ? `<h2>Más en ${escapeHtml(cat.label.toLowerCase())}</h2><ul>${items}</ul>` : '')
+    + '</nav>';
+}
+
+/* La portada. Es el mismo bloque que index.html trae escrito a mano, con el
+   árbol de categorías y unos cuantos productos con enlace: la portada es lo
+   primero que visita Google, y lo que no cuelga de ella tarda en ser
+   descubierto. Si cambias el texto aquí, cámbialo en <main id="app"> de
+   index.html. */
+function homeBody(products) {
+  const conStock = products.filter(p => (p.stock || 0) > 0);
+  const elegidos = [
+    ...conStock.filter(isOffer),
+    ...conStock.filter(p => p.featured && !isOffer(p)),
+    ...conStock.filter(p => !p.featured && !isOffer(p)),
+  ].slice(0, 12);
+  const destacados = elegidos.length
+    ? `<h2>Productos destacados</h2>${productListHtml(elegidos)}<p><a href="/tienda">Ver todo el catálogo</a> · <a href="/ofertas">Ver las ofertas</a></p>`
+    : '<p><a href="/tienda">Ver todo el catálogo</a></p>';
+  return '<h1>Instrumentos Musicales en Lima &mdash; Chipao Music</h1>'
+    + '<p>Tienda de instrumentos musicales en San Juan de Miraflores, Lima: guitarras, teclados, percusión, viento, audio y accesorios para estudiantes, colegios y músicos profesionales. Envíos a todo el Perú, pago con Yape o tarjeta, y recojo en tienda.</p>'
+    + directorioHtml(products)
+    + destacados
+    + '<h2>Visítanos en San Juan de Miraflores</h2>'
+    + '<p>Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú. Atendemos de lunes a domingo, de 9:30 a.m. a 9:00 p.m. WhatsApp <a href="https://wa.me/51921317384">+51 921 317 384</a>.</p>';
+}
+
+function productBody(p, products = []) {
   const cat = CATEGORIES.find(c => c.key === p.cat);
+  const sub = cat ? subsNavegables(cat).find(s => productInSub(p, s)) : null;
   const partes = [];
 
   const migas = cat
     ? `<a href="/">Inicio</a> &rsaquo; <a href="/categoria/${cat.key}">${escapeHtml(cat.label)}</a>`
+      + (sub ? ` &rsaquo; <a href="${subPath(cat, sub)}">${escapeHtml(sub.seo || sub.label)}</a>` : '')
     : '<a href="/">Inicio</a>';
   partes.push(`<nav aria-label="Ruta">${migas}</nav>`);
 
@@ -904,8 +1000,32 @@ function productBody(p) {
     }
   }
 
+  /* Cómo se recibe: lo que de verdad ofrece la tienda, escrito una vez aquí y
+     en el carrito. Es útil para quien compra y le da cuerpo a una ficha que,
+     sin descripción propia, quedaba con un par de líneas. */
+  if ((p.stock || 0) > 0) {
+    partes.push(`<h2>Cómo recibir ${escapeHtml(p.name)}</h2><ul>`
+      + '<li>Envío a Lima Metropolitana: S/ 10, gratis desde S/ 100. Recíbelo en menos de 24 horas.</li>'
+      + '<li>Envío a todo el Perú: S/ 15, gratis desde S/ 100, para recoger en una agencia Shalom. Tarda de 1 a 4 días útiles.</li>'
+      + '<li>Recojo en tienda: gratis, en Av. Los Héroes 382, San Juan de Miraflores, listo en 1 hora.</li>'
+      + '<li>Pagas con Yape o con tarjeta de crédito o débito.</li></ul>');
+  }
+
+  /* Productos parecidos: mismo tipo primero, luego misma categoría. Son los
+     enlaces que hacen que una ficha cuelgue de otras fichas y no solo del
+     sitemap. */
+  const parecidos = products
+    .filter(q => q.id !== p.id && (q.stock || 0) > 0 && q.cat === p.cat)
+    .sort((a, b) => Number(sub && productInSub(b, sub)) - Number(sub && productInSub(a, sub)))
+    .slice(0, 8);
+  if (parecidos.length) {
+    const donde = sub ? (sub.seo || sub.label) : (cat ? cat.label : 'la tienda');
+    partes.push(`<h2>Más de ${escapeHtml(donde.toLowerCase())}</h2>${productListHtml(parecidos)}`);
+  }
+
   if (cat) {
-    partes.push(`<p><a href="/categoria/${cat.key}">Ver más ${escapeHtml(cat.label.toLowerCase())}</a></p>`);
+    if (sub) partes.push(`<p><a href="${subPath(cat, sub)}">Ver más ${escapeHtml((sub.seo || sub.label).toLowerCase())}</a></p>`);
+    partes.push(`<p><a href="/categoria/${cat.key}">Ver todo en ${escapeHtml(cat.label.toLowerCase())}</a></p>`);
   }
   partes.push('<p><a href="/tienda">Ver todo el catálogo</a></p>');
 
@@ -928,7 +1048,7 @@ function bodyFor(route, products, taller) {
 
   if (route.ayuda) return ayudaBody(route.ayuda, taller);
 
-  if (route.product) return productBody(route.product);
+  if (route.product) return productBody(route.product, products);
 
   if (route.cat) {
     const suyos = products.filter(p => productInCat(p, route.cat.key)
@@ -940,19 +1060,22 @@ function bodyFor(route, products, taller) {
          propia descripción. */
       route.sub ? route.meta.description : (route.cat.intro || route.meta.description),
       suyos,
-      'Estamos actualizando esta categoría, disculpa las molestias.'
+      'Estamos actualizando esta categoría, disculpa las molestias.',
+      route.sub ? navHermanas(route.cat, route.sub, products) : navHijas(route.cat, products)
     );
   }
 
   if (route.meta.path === '/tienda') {
     return listBody('Catálogo de instrumentos musicales', DEFAULT_META_DESCRIPTION, products,
-      'Estamos actualizando el catálogo.');
+      'Estamos actualizando el catálogo.', directorioHtml(products));
   }
 
   if (route.meta.path === '/ofertas') {
     return listBody('Ofertas en instrumentos musicales', INTRO_OFERTAS, products.filter(isOffer),
       'Ahora mismo no hay ofertas activas. Vuelve pronto.');
   }
+
+  if (route.meta.path === '/' && products.length) return homeBody(products);
 
   return null;
 }

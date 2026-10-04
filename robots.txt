@@ -1,4 +1,14 @@
 User-agent: *
 Allow: /
 
+# Panel de pedidos y rutas internas: no son paginas para buscadores.
+Disallow: /pedidos
+Disallow: /pedido-admin
+Disallow: /api/
+
+# Direcciones basura que Google lee del codigo de la pagina (plantillas de
+# JavaScript como /producto/${p.id}-...) y que Search Console reporta como
+# excluidas. %24 es el signo $ codificado.
+Disallow: /producto/%24
+
 Sitemap: https://chipaomusic.com/sitemap.xml
