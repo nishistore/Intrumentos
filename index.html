@@ -2289,6 +2289,20 @@ footer.site .footer-bottom{
 .opcion-texto{flex:1;min-width:0;}
 .opcion-titulo{display:block;font:600 12.5px/1.25 var(--app-sans);color:var(--app-ink);}
 .opcion-nota{display:block;margin-top:3px;font:400 11.5px/1.35 var(--app-sans);color:var(--app-muted-2);}
+
+/* ---------------- progreso hacia el envío gratis (carrito) ---------------- */
+.envio-prog{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--app-sunken);}
+.envio-prog p{margin:0;font:600 13px/1.35 var(--app-sans);color:var(--app-ink);}
+.envio-barra{margin-top:9px;height:8px;border-radius:4px;background:var(--app-line);overflow:hidden;}
+.envio-barra i{display:block;height:100%;border-radius:4px;background:var(--app-ink);transition:width .25s ease;}
+.envio-prog small{display:block;margin-top:7px;font:400 11.5px/1.3 var(--app-sans);color:var(--app-muted-2);}
+.envio-prog.ok{background:var(--app-green-soft);}
+.envio-prog.ok p{color:var(--app-green-ink);}
+.envio-prog.ok .envio-barra i{background:var(--app-green);}
+.envio-prog.ok small{color:var(--app-green-ink);}
+.envio-prog + .bloque-titulo,
+.ped-panel .envio-prog + .bloque-titulo{margin-top:20px;}
+.ped-panel .envio-prog:first-child{margin-top:0;}
 .opcion-regalo{
   display:inline-block;margin-top:6px;padding:3px 7px;border-radius:6px;
   background:var(--peru-rojo);font:700 10.5px/1.2 var(--app-sans);color:#fff;
@@ -2554,6 +2568,10 @@ footer.site .footer-bottom{
   padding:0 var(--app-gutter);
 }
 .franja-util span{font:400 12px/1 var(--app-sans);color:rgba(255,255,255,.72);}
+/* El monto lo pinta render() desde FREE_SHIPPING_THRESHOLD; el texto fijo del
+   HTML es solo lo que se ve antes de que cargue el JS. */
+.franja-util b.franja-gratis{font-weight:700;color:var(--app-green-mint);}
+.franja-util-inner > span:first-child{white-space:nowrap;}
 .franja-derecha{display:flex;align-items:center;gap:20px;}
 .franja-horario{font-weight:500;color:var(--app-green-mint) !important;}
 
@@ -3570,7 +3588,7 @@ body.en-taller footer.site{margin-top:0;}
      debajo de 900px con CSS. -->
 <div class="franja-util">
   <div class="franja-util-inner">
-    <span>Envíos a todo el Perú · Yape o tarjeta · recojo en tienda el mismo día</span>
+    <span><b class="franja-gratis">Envío gratis desde S/ 100</b> · a todo el Perú · Yape o tarjeta</span>
     <div class="franja-derecha">
       <a class="franja-taller" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
       <span>Av. Los Héroes 382, San Juan de Miraflores</span>
@@ -7105,11 +7123,29 @@ function cabeceraPedido(titulo, alVolver){
    gratis": el handoff ya reserva esa línea para explicar el umbral, así que
    el aviso va donde la persona está decidiendo, no en un cartel aparte. */
 function notaEnvio(subtotal){
-  if(subtotal <= 0) return `Gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)} · 1 a 4 días útiles`;
+  return `Gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)} · 1 a 4 días útiles`;
+}
+
+/* Cuánto falta para el envío gratis, con barra, encima de las opciones de
+   entrega: es donde la persona decide si suma otro producto. Con recojo en
+   tienda no hay envío que ahorrar y no se enseña. Sin :has() ni color-mix,
+   por los iPhones viejos de los clientes. */
+function progresoEnvioHtml(subtotal){
+  if(state.entrega !== 'envio' || subtotal <= 0) return '';
   const falta = FREE_SHIPPING_THRESHOLD - subtotal;
-  return falta > 0
-    ? `Te faltan ${fmt(falta)} para el envío gratis · 1 a 4 días útiles`
-    : `Ya tienes envío gratis · 1 a 4 días útiles`;
+  if(falta <= 0){
+    return `<div class="envio-prog ok" role="status">
+      <p>¡Tienes envío gratis!</p>
+      <div class="envio-barra"><i style="width:100%"></i></div>
+      <small>Tu pedido llega sin costo de envío</small>
+    </div>`;
+  }
+  const pct = Math.max(4, Math.min(100, Math.round(subtotal * 100 / FREE_SHIPPING_THRESHOLD)));
+  return `<div class="envio-prog" role="status">
+    <p>Te faltan <b>${fmt(falta)}</b> para el envío gratis</p>
+    <div class="envio-barra"><i style="width:${pct}%"></i></div>
+    <small>${fmt(subtotal)} de ${fmt(FREE_SHIPPING_THRESHOLD)}</small>
+  </div>`;
 }
 
 function filaRadio(sel, titulo, nota, coste, accion, logo, regalo){
@@ -7215,6 +7251,7 @@ function renderCarrito(){
   }).join('');
 
   const entregaHtml = `
+    ${progresoEnvioHtml(subtotal)}
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
       ${filaRadio(state.entrega==='envio', 'Envío a todo el Perú', notaEnvio(subtotal),
@@ -9624,6 +9661,9 @@ function render(){
   renderNavEscritorio();
   renderCabeceraMovil();
   renderBandaOferta();
+  /* El umbral del envío gratis tiene una sola fuente: la constante. */
+  const franjaGratis = document.querySelector('.franja-gratis');
+  if(franjaGratis) franjaGratis.textContent = 'Envío gratis desde ' + fmt(FREE_SHIPPING_THRESHOLD);
   renderWaFlotante();
   prepararBarraCompra();
   montarVitrina();
