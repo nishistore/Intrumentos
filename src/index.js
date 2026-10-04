@@ -18,6 +18,9 @@
         regenerarlo a mano cada vez que se agrega un producto.
    ====================================================================== */
 
+import { manejaPagos } from './pagos.js';
+import { manejaPanelPedidos } from './pedidos-panel.js';
+
 const SITE_ORIGIN = 'https://chipaomusic.com';
 const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
 const DEFAULT_OG_IMAGE = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-2.jpg';
@@ -781,8 +784,8 @@ function sesionMeta(pathname) {
   }
   if (RUTA_PEDIDO.test(pathname)) {
     return {
-      title: 'Pedido enviado | Chipao Music',
-      description: 'Tu pedido llegó al WhatsApp de la tienda. Te escribimos para confirmar stock y coordinar la entrega.',
+      title: 'Tu pedido | Chipao Music',
+      description: 'Sigue el estado de tu pedido en Chipao Music.',
       path: pathname,
     };
   }
@@ -1236,6 +1239,17 @@ export default {
 
     /* El interruptor del banner de promoción: lo lee cualquiera, lo cambia
        solo el panel con la clave de administrador. */
+    /* Pagos con Yape: pedidos, captura del comprobante y el panel por correo.
+       Devuelve null si la ruta no es suya. */
+    if (url.pathname === '/pedidos' || url.pathname.startsWith('/api/pedidos-admin')) {
+      const panel = await manejaPanelPedidos(request, env, ctx, claveDeAdminValida);
+      if (panel) return panel;
+    }
+    if (url.pathname.startsWith('/api/pedido') || url.pathname.startsWith('/pedido-admin')) {
+      const pago = await manejaPagos(request, env, ctx);
+      if (pago) return pago;
+    }
+
     if (url.pathname === '/api/banner-promo') return apiBanner(request, env, ctx);
     if (url.pathname === '/api/taller') return apiTaller(request, env, ctx);
     if (url.pathname === '/api/tema') return apiTema(request, env, ctx);

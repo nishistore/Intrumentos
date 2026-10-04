@@ -2451,6 +2451,58 @@ footer.site .footer-bottom{
 .pedido-dir{margin-top:6px;font:400 11.5px/1.45 var(--app-sans);color:var(--app-muted-2);}
 .pedido-ok .btn-app{margin-top:12px;height:48px;font-size:13.5px;}
 
+/* ---------------- pago con Yape ----------------
+   Sin :has(), dvh ni color-mix: los clientes entran con iPhones sin actualizar. */
+.yape-pago{padding-top:28px;padding-bottom:40px;text-align:center;}
+.yape-reloj{
+  display:inline-block;padding:8px 14px;border-radius:var(--app-r-pill);
+  background:var(--app-sunken);border:1px solid var(--app-line);
+  font:700 12.5px/1.2 var(--app-sans);color:var(--app-ink);font-variant-numeric:tabular-nums;
+}
+.yape-pasos{
+  margin:20px 0 0;padding:0;list-style:none;counter-reset:paso;text-align:left;
+}
+.yape-pasos li{
+  counter-increment:paso;position:relative;
+  margin-top:10px;padding:14px 14px 14px 52px;
+  border-radius:var(--app-r-card);background:var(--app-surface);border:1px solid var(--app-line);
+  font:400 13px/1.5 var(--app-sans);color:var(--app-ink);
+}
+.yape-pasos li::before{
+  content:counter(paso);position:absolute;left:14px;top:14px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--app-ink);color:#fff;
+  font:700 13px/26px var(--app-sans);text-align:center;
+}
+.yape-pasos small{display:block;margin-top:5px;font:400 11.5px/1.45 var(--app-sans);color:var(--app-muted-2);}
+.yape-numero{
+  margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border-radius:11px;background:var(--app-sunken);
+}
+.yape-numero span{font:800 22px/1 var(--app-sans);letter-spacing:.02em;font-variant-numeric:tabular-nums;}
+.yape-numero button{
+  flex:none;height:34px;padding:0 14px;border-radius:var(--app-r-pill);
+  border:1px solid var(--app-line-strong);background:var(--app-surface);
+  font:600 12px/1 var(--app-sans);color:var(--app-ink);touch-action:manipulation;
+}
+.yape-subir{margin-top:16px;height:50px;font-size:14px;cursor:pointer;position:relative;}
+.yape-subir input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;}
+.yape-subir.ocupado{opacity:.6;pointer-events:none;}
+.yape-aviso{
+  margin-top:12px;padding:12px 14px;border-radius:11px;text-align:left;
+  background:#FDECEA;border:1px solid #F3C4BF;color:#8A1C12;
+  font:500 12.5px/1.45 var(--app-sans);
+}
+.yape-aviso[hidden]{display:none;}
+.yape-aviso p+p{margin-top:5px;}
+.yape-nota{margin-top:14px;font:400 11.5px/1.5 var(--app-sans);color:var(--app-muted-3);text-wrap:pretty;}
+.yape-pago .btn-app.contorno{margin-top:12px;height:46px;font-size:13px;}
+.pedido-ok .btn-app.contorno{margin-top:10px;}
+.yape-espera{background:var(--app-sunken);color:var(--app-ink);border:1px solid var(--app-line);}
+@media (min-width:900px){
+  .yape-pago{max-width:520px;margin:0 auto;padding-top:64px;}
+}
+
 /* ---------------- página de una política ----------------
    Cambios y devoluciones dejó de ser un modal del pie y pasó a ser una
    página con su propia URL. Los estilos no se heredan de .modal —esa es la
@@ -4008,12 +4060,13 @@ const state = {
   /* Literal a propósito: MEDIOS_PAGO y PAGO_INICIAL se declaran más abajo
      con const, y leerlos aquí reventaría con ReferenceError al cargar. */
   pago:'yape',       // clave de MEDIOS_PAGO
-  datos:{nombre:'', telefono:'', direccion:''},
+  datos:{nombre:'', telefono:'', email:'', direccion:''},
   agencia:null,      // agencia Shalom elegida para envío a provincia: [departamento, nombre, dirección]
   buscandoAgencia:false,
   orderPlaced:false,
   orderId:null,      // número del último pedido enviado, para /pedido/<id>
   pedidoEnviado:null,// {total, entrega} congelado al cerrar, para la confirmación
+  pedidoYape:null,   // pedido de Yape que vive en el servidor (ver PAGO CON YAPE)
   searchQuery:'',    // texto de la pantalla /buscar (independiente del filtro de la tienda)
   searchRango:null,  // rango de precio elegido en /buscar: 'bajo' | 'medio' | 'alto'
   politica:null      // clave de POLICIES que se está viendo como página
@@ -4433,7 +4486,7 @@ const META_SESION = {
   buscar:   ['Buscar instrumentos | Chipao Music', 'Busca guitarras, ukeleles, cajones, teclados y accesorios en el catálogo de Chipao Music.'],
   carrito:  ['Tu carrito | Chipao Music', 'Revisa los instrumentos que agregaste antes de cerrar tu pedido.'],
   checkout: ['Finalizar pedido | Chipao Music', 'Elige cómo recibes tu pedido y con qué medio de pago quieres cerrarlo.'],
-  pedido:   ['Pedido enviado | Chipao Music', 'Tu pedido llegó al WhatsApp de la tienda. Te escribimos para confirmar stock y coordinar la entrega.'],
+  pedido:   ['Tu pedido | Chipao Music', 'Sigue el estado de tu pedido en Chipao Music.'],
 };
 function aplicarMetaSesion(clave){
   const [titulo, desc] = META_SESION[clave];
@@ -4490,7 +4543,16 @@ function goPedido(id, push){
   state.orderPlaced = true;
   navigateTo('/pedido/' + id, push);
   aplicarMetaSesion('pedido');
-  render();
+  /* Un pedido de Yape vive en el servidor: al entrar por la URL (recarga,
+     atrás, enlace) se pregunta cómo va. Los de WhatsApp no existen allá. */
+  if(RE_PEDIDO_YAPE.test(id) && !(state.pedidoYape && state.pedidoYape.id === id)){
+    state.pedidoYape = { id, estado:'cargando' };
+    render();
+    cargarPedidoYape(id);
+  } else {
+    render();
+    iniciarRelojYape();
+  }
   if(push !== false) window.scrollTo({top:0});
 }
 
@@ -6811,7 +6873,7 @@ const iconoBanco = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
    medios que se cobran sin pasarela, para que se elijan antes que Mercado
    Pago, que se lleva comisión. */
 const MEDIOS_PAGO = [
-  { key:'yape',     label:'Yape',                       nota:'Te enviamos el número por WhatsApp',                 logo:'/pagos/yape.png', regalo:true },
+  { key:'yape',     label:'Yape',                       nota:'Pagas desde tu app y validamos al instante',     logo:'/pagos/yape.png', regalo:true },
   { key:'plin',     label:'Plin',                       nota:'Confirmación inmediata',                             logo:'/pagos/plin.png', regalo:true },
   { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', logo:'/pagos/mercadopago.png' },
   { key:'transfer', label:'Transferencia bancaria',      nota:'BCP o Interbank',                                    marcador:{fondo:'#EDEDEA', tinta:'#57514A', icono:'banco'}, regalo:true },
@@ -7225,6 +7287,12 @@ function renderCheckout(){
                placeholder="Ej. 987654321" pattern="[0-9]{9}" maxlength="9" required
                title="Nueve dígitos, como 987654321" value="${escapeHtml(state.datos.telefono)}">
       </label>
+      ${medio.key==='yape' ? `
+      <label class="campo">
+        <span>Correo (ahí te llega la confirmación)</span>
+        <input id="coEmail" type="email" inputmode="email" autocomplete="email"
+               placeholder="Ej. maria@gmail.com" maxlength="120" required value="${escapeHtml(state.datos.email||'')}">
+      </label>` : ''}
       ${state.entrega==='envio' ? agenciaShalomHtml() : ''}
       <label class="campo">
         <span>${state.entrega==='tienda' ? 'Quién lo recoge y cuándo'
@@ -7235,9 +7303,12 @@ function renderCheckout(){
 
   const notaCierre = medio.key === 'tarjeta'
     ? 'Al continuar te llevamos a Mercado Pago para pagar con tarjeta. Al volver te confirmamos el pedido.'
+    : medio.key === 'yape'
+    ? 'Al continuar te mostramos el número de Yape. Tienes 10 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante y te llega la confirmación por correo.'
     : 'Al confirmar, tu pedido llega armado al WhatsApp de la tienda con productos, color y forma de entrega. Un asesor valida el stock y te da los datos para pagar.';
-  const ctaTexto = medio.key === 'tarjeta' ? 'Pagar con Mercado Pago' : 'Confirmar pedido por WhatsApp';
-  const ctaClase = medio.key === 'tarjeta' ? 'terracota' : 'verde';
+  const ctaTexto = medio.key === 'tarjeta' ? 'Pagar con Mercado Pago'
+    : medio.key === 'yape' ? 'Continuar al pago con Yape' : 'Confirmar pedido por WhatsApp';
+  const ctaClase = medio.key === 'tarjeta' || medio.key === 'yape' ? 'terracota' : 'verde';
 
   /* Escritorio: los medios de pago en rejilla y el formulario a la
      izquierda, con el resumen del pedido pegado a la derecha. El <form>
@@ -7329,6 +7400,7 @@ function renderCheckout(){
 
 /* --------------------------- /pedido/<id> --------------------------- */
 function renderPedido(){
+  if(state.pedidoYape) return renderPedidoYape();
   const enviado = state.pedidoEnviado || {};
   const entregaResumen = enviado.entrega === 'tienda'
     ? 'Recojo en tienda'
@@ -7464,6 +7536,7 @@ function leerDatosDelFormulario(){
   state.datos = {
     nombre: v('coNombre').trim(),
     telefono: v('coTelefono').trim(),
+    email: v('coEmail').trim(),
     direccion: v('coDireccion').trim(),
   };
   return state.datos;
@@ -7479,6 +7552,11 @@ async function submitOrder(e){
   /* La tarjeta se cobra en línea; el resto se cierra en el chat. */
   if(medio.key === 'tarjeta'){
     await payWithMercadoPago(datos);
+    return;
+  }
+  /* Yape se valida en la web con la captura del comprobante. */
+  if(medio.key === 'yape'){
+    await pagarConYape(datos);
     return;
   }
 
@@ -7533,10 +7611,281 @@ function cerrarPedido(numero, total){
 
 /* "Seguir comprando": limpia el pedido cerrado y vuelve a la portada. */
 function terminarPedido(){
+  state.pedidoYape = null;
   state.orderPlaced = false;
   state.orderId = null;
   state.pedidoEnviado = null;
   goHome();
+}
+
+/* ======================== PAGO CON YAPE ========================
+
+   El pedido se crea en el servidor (/api/pedido), que calcula el total con
+   los precios de la base. El cliente yapea, sube la captura del comprobante y
+   el Worker la valida (ver src/pagos.js): monto, destinatario, hora y número
+   de operación. Estados que llegan del servidor: pendiente, revision, pagado,
+   rechazado, expirado.
+
+   El pedido vive en state.pedidoYape; la cuenta regresiva y el sondeo del
+   estado "en revisión" cuelgan de un solo setInterval que solo toca el texto
+   del reloj, sin repintar la pantalla cada segundo. */
+const RE_PEDIDO_YAPE = /^CH-[A-Z0-9]{6}$/;
+const YAPE_SONDEO_SEG = 15;
+let yapeTimer = null, yapeTicks = 0, yapeEnviando = false;
+
+async function pagarConYape(datos){
+  const btn = document.getElementById('btnConfirmar');
+  const original = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = 'Creando tu pedido...'; }
+  const restaurar = () => { if(btn){ btn.disabled = false; btn.textContent = original; } };
+  try{
+    const r = await fetch('/api/pedido', {
+      method:'POST', headers:{ 'content-type':'application/json' },
+      body: JSON.stringify({
+        items: state.cart.map(c => ({ id:c.id, qty:c.qty, color:c.color || null })),
+        entrega: state.entrega,
+        agencia: state.entrega === 'envio' && state.agencia ? state.agencia : null,
+        datos
+      })
+    });
+    const d = await r.json().catch(() => ({}));
+    if(!r.ok){ showToast(d.error || 'No pudimos crear el pedido. Inténtalo otra vez.'); restaurar(); return; }
+    d.desfase = d.ahora_ms - Date.now();
+    state.pedidoYape = d;
+    goPedido(d.id, true);
+  }catch(err){
+    showToast('Sin conexión. Revisa tu internet e inténtalo otra vez.');
+    restaurar();
+  }
+}
+
+async function cargarPedidoYape(id){
+  try{
+    const r = await fetch('/api/pedido/' + id);
+    if(r.status === 404){ state.pedidoYape = null; render(); return; }
+    const d = await r.json();
+    d.desfase = d.ahora_ms - Date.now();
+    state.pedidoYape = d;
+  }catch(err){
+    state.pedidoYape = { id, estado:'sin-red' };
+  }
+  if(state.view === 'pedido' && state.orderId === id){ render(); iniciarRelojYape(); }
+}
+
+/* Aplica lo que respondió el servidor. Si el pedido acaba de quedar pagado
+   aquí mismo, se vacía el carrito y se mide la compra: solo en esa
+   transición, para no contarla de nuevo al recargar. */
+function aplicarEstadoYape(nuevo){
+  const antes = state.pedidoYape && state.pedidoYape.estado;
+  nuevo.desfase = nuevo.ahora_ms - Date.now();
+  state.pedidoYape = nuevo;
+  if(nuevo.estado === 'pagado' && (antes === 'pendiente' || antes === 'revision')){
+    trackAdsConversion('compraPagada', nuevo.total);
+    pagoMedido = false;
+    state.cart = [];
+    updateCartCount();
+  }
+  if(state.view === 'pedido' && state.orderId === nuevo.id){ render(); iniciarRelojYape(); }
+}
+
+function segundosRestantesYape(){
+  const p = state.pedidoYape;
+  if(!p || !p.expira_ms) return 0;
+  return Math.floor((p.expira_ms - (Date.now() + (p.desfase || 0))) / 1000);
+}
+function textoRelojYape(){
+  const s = segundosRestantesYape();
+  if(s <= 0) return 'Se acabó el tiempo. Si ya pagaste, sube la captura ahora.';
+  return 'Te quedan ' + String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+
+function iniciarRelojYape(){
+  clearInterval(yapeTimer);
+  yapeTimer = null;
+  const p = state.pedidoYape;
+  if(!p || state.view !== 'pedido' || (p.estado !== 'pendiente' && p.estado !== 'revision')) return;
+  yapeTicks = 0;
+  yapeTimer = setInterval(async () => {
+    const q = state.pedidoYape;
+    if(!q || state.view !== 'pedido' || state.orderId !== q.id){ clearInterval(yapeTimer); return; }
+    if(q.estado === 'pendiente'){
+      const el = document.getElementById('yapeReloj');
+      if(el) el.textContent = textoRelojYape();
+    } else if(q.estado === 'revision'){
+      if(++yapeTicks % YAPE_SONDEO_SEG === 0){
+        try{
+          const r = await fetch('/api/pedido/' + q.id);
+          if(r.ok){ const d = await r.json(); if(d.estado !== q.estado) aplicarEstadoYape(d); }
+        }catch(err){}
+      }
+    } else {
+      clearInterval(yapeTimer);
+    }
+  }, 1000);
+}
+
+/* Reduce la captura antes de subirla: el celular la saca de 1-3 MB y el
+   comprobante se lee igual de bien a 1600 px. Si el navegador no la puede
+   decodificar (HEIC, por ejemplo) se manda tal cual, si cabe. */
+function reducirCaptura(file){
+  return new Promise(resolve => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try{
+        const lado = Math.max(img.naturalWidth, img.naturalHeight);
+        const k = lado > 1600 ? 1600 / lado : 1;
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k);
+        c.height = Math.round(img.naturalHeight * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(b => { URL.revokeObjectURL(url); resolve(b || file); }, 'image/jpeg', 0.85);
+      }catch(err){ URL.revokeObjectURL(url); resolve(file); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
+function avisoYape(lineas){
+  const el = document.getElementById('yapeAviso');
+  if(!el) return;
+  el.innerHTML = lineas.map(l => `<p>${escapeHtml(l)}</p>`).join('');
+  el.hidden = !lineas.length;
+}
+
+async function subirCapturaYape(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  const p = state.pedidoYape;
+  if(!file || !p || yapeEnviando) return;
+  if(!/^image\//.test(file.type)){ avisoYape(['Sube la captura como imagen (JPG, PNG o WebP).']); return; }
+  yapeEnviando = true;
+  const boton = document.getElementById('yapeSubir');
+  const textoBoton = boton ? boton.querySelector('span') : null;
+  if(boton) boton.classList.add('ocupado');
+  if(textoBoton) textoBoton.textContent = 'Validando tu pago...';
+  avisoYape([]);
+  try{
+    const imagen = await reducirCaptura(file);
+    const r = await fetch('/api/pedido/' + p.id + '/comprobante', {
+      method:'POST', headers:{ 'content-type': imagen.type || 'image/jpeg' }, body: imagen
+    });
+    const d = await r.json().catch(() => ({}));
+    if(!r.ok){ avisoYape([d.error || 'No pudimos revisar la captura. Inténtalo otra vez.']); }
+    else if(d.rechazo && d.rechazo.length){
+      avisoYape(d.rechazo.concat(['Puedes subir otra captura.']));
+    }
+    else aplicarEstadoYape(d);
+  }catch(err){
+    avisoYape(['Sin conexión. Revisa tu internet y vuelve a subir la captura.']);
+  }
+  yapeEnviando = false;
+  const b2 = document.getElementById('yapeSubir');
+  if(b2){ b2.classList.remove('ocupado'); const t = b2.querySelector('span'); if(t) t.textContent = 'Subir captura del comprobante'; }
+}
+
+function copiarNumeroYape(numero){
+  const listo = () => showToast('Número copiado');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(numero).then(listo, listo);
+  } else {
+    const t = document.createElement('textarea');
+    t.value = numero; document.body.appendChild(t); t.select();
+    try{ document.execCommand('copy'); }catch(err){}
+    document.body.removeChild(t); listo();
+  }
+}
+
+function renderPedidoYape(){
+  const p = state.pedidoYape;
+  const id = escapeHtml(p.id);
+  const ayuda = waHref('Hola, mi pedido es ' + p.id + ' y necesito ayuda con mi pago de Yape.');
+  const enlaceAyuda = `<a class="btn-app contorno" target="_blank" rel="noopener" href="${ayuda}">Escribirnos por WhatsApp</a>`;
+  const num = p.yape ? p.yape.numero : '921317384';
+  const numBonito = num.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+
+  if(p.estado === 'cargando'){
+    return `<div class="app-shell"><div class="pedido-ok"><p class="pedido-copy">Cargando tu pedido...</p></div></div>`;
+  }
+  if(p.estado === 'sin-red'){
+    return `<div class="app-shell"><div class="pedido-ok">
+      <h1 class="pedido-titulo">Sin conexión</h1>
+      <p class="pedido-copy">No pudimos consultar tu pedido <strong>#${id}</strong>. Revisa tu internet.</p>
+      <button type="button" class="btn-app oscuro" onclick="cargarPedidoYape('${id}')">Reintentar</button>
+    </div></div>`;
+  }
+  if(p.estado === 'pagado'){
+    return `<div class="app-shell"><div class="pedido-ok">
+      <span class="pedido-check">✓</span>
+      <h1 class="pedido-titulo">¡Pago confirmado!</h1>
+      <p class="pedido-copy">Pedido <strong>#${id}</strong> por ${fmt(p.total)}. Te enviamos la confirmación por correo. Si no la ves, revisa la carpeta de spam.</p>
+      <button type="button" class="btn-app oscuro" onclick="terminarPedido()">Seguir comprando</button>
+      ${enlaceAyuda}
+    </div></div>`;
+  }
+  if(p.estado === 'revision'){
+    return `<div class="app-shell"><div class="pedido-ok">
+      <span class="pedido-check yape-espera">…</span>
+      <h1 class="pedido-titulo">Estamos revisando tu pago</h1>
+      <p class="pedido-copy">Pedido <strong>#${id}</strong> por ${fmt(p.total)}. Recibimos tu captura y la confirmamos a mano. Esta pantalla se actualiza sola y también te escribimos por correo.</p>
+      ${enlaceAyuda}
+    </div></div>`;
+  }
+  if(p.estado === 'rechazado'){
+    return `<div class="app-shell"><div class="pedido-ok">
+      <h1 class="pedido-titulo">No pudimos validar tu pago</h1>
+      <p class="pedido-copy">Pedido <strong>#${id}</strong>. Escríbenos por WhatsApp con tu código y lo resolvemos enseguida.</p>
+      ${enlaceAyuda}
+      <button type="button" class="btn-app contorno" onclick="terminarPedido()">Volver a la tienda</button>
+    </div></div>`;
+  }
+  if(p.estado === 'expirado'){
+    return `<div class="app-shell"><div class="pedido-ok">
+      <h1 class="pedido-titulo">Se acabó el tiempo</h1>
+      <p class="pedido-copy">El pedido <strong>#${id}</strong> venció sin un pago válido. Tu carrito sigue ahí: puedes intentarlo de nuevo.</p>
+      <p class="pedido-copy">Si ya yapeaste, escríbenos con tu código y lo revisamos.</p>
+      <button type="button" class="btn-app oscuro" onclick="state.pedidoYape=null;goCheckout()">Intentar de nuevo</button>
+      ${enlaceAyuda}
+    </div></div>`;
+  }
+
+  /* pendiente: instrucciones y subida de la captura */
+  return `
+  <div class="app-shell">
+    <div class="yape-pago">
+      <div class="yape-reloj" id="yapeReloj" role="timer">${textoRelojYape()}</div>
+      <h1 class="pedido-titulo">Paga ${fmt(p.total)} con Yape</h1>
+      <p class="pedido-copy">Pedido <strong>#${id}</strong></p>
+
+      <ol class="yape-pasos">
+        <li>
+          <b>Yapea exactamente ${fmt(p.total)}</b> a este número:
+          <div class="yape-numero">
+            <span>${numBonito}</span>
+            <button type="button" onclick="copiarNumeroYape('${num}')">Copiar</button>
+          </div>
+          <small>En Yape verás el nombre <b>${escapeHtml(p.yape ? p.yape.nombre : '')}</b>. Si es otro, no pagues.</small>
+        </li>
+        <li>
+          <b>Escribe tu código en el mensaje</b> de Yape: <b>${id}</b>
+          <small>No es obligatorio, pero nos ayuda a ubicar tu pago.</small>
+        </li>
+        <li>
+          <b>Sube la captura</b> de la pantalla "¡Yapeaste!" completa, sin recortar.
+        </li>
+      </ol>
+
+      <label class="btn-app oscuro yape-subir" id="yapeSubir">
+        <input type="file" accept="image/*" onchange="subirCapturaYape(this)">
+        <span>Subir captura del comprobante</span>
+      </label>
+      <div class="yape-aviso" id="yapeAviso" role="alert" hidden></div>
+
+      <p class="yape-nota">Pagos desde S/ 200 los confirmamos a mano y te avisamos por correo. La captura debe ser de un pago hecho después de crear este pedido.</p>
+      ${enlaceAyuda}
+    </div>
+  </div>`;
 }
 
 async function payWithMercadoPago(comprador){

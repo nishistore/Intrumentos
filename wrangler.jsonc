@@ -4,8 +4,22 @@
   "compatibility_date": "2026-08-29",
   "r2_buckets": [
     // Las fotos, para servirlas desde /img/ en vez del dominio publico de R2.
-    { "binding": "FOTOS", "bucket_name": "chipao-fotos" }
+    { "binding": "FOTOS", "bucket_name": "chipao-fotos" },
+    // Capturas de los comprobantes de Yape. Bucket PRIVADO (sin dominio
+    // publico): trae nombres y numeros de operacion de clientes. Se mira solo
+    // desde el enlace del correo (/pedido-admin). Hay que crearlo antes de
+    // desplegar: npx wrangler r2 bucket create chipao-comprobantes
+    { "binding": "COMPROBANTES", "bucket_name": "chipao-comprobantes" }
   ],
+  // Secretos (no van aqui): GEMINI_API_KEY y RESEND_API_KEY, con
+  // npx wrangler secret put <NOMBRE>. Ver src/pagos.js.
+  "vars": {
+    "GEMINI_MODEL": "gemini-3.5-flash-lite",
+    // Remitente de los correos. El dominio chipaomusic.com esta verificado en
+    // Resend (2026-10-04, region Sao Paulo). Antes de eso solo servia
+    // onboarding@resend.dev, que solo envia al dueno de la cuenta de Resend.
+    "CORREO_DE": "Chipao Music <pedidos@chipaomusic.com>"
+  },
   // El interruptor del banner de promocion (tabla settings, clave
   // banner_promo). Es la misma base del catalogo, que sirve la API de
   // productos: aqui solo se lee ese ajuste y se escribe desde el panel.
