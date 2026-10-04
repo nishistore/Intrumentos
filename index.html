@@ -38,7 +38,7 @@
   "email": "contacto@chipaomusic.com",
   "priceRange": "S/",
   "currenciesAccepted": "PEN",
-  "paymentAccepted": "Efectivo, Yape, Plin, Tarjeta de crédito, Tarjeta de débito, Transferencia bancaria",
+  "paymentAccepted": "Efectivo, Yape, Tarjeta de crédito, Tarjeta de débito",
   "hasMap": "https://maps.app.goo.gl/y722ggq4K2s6Q5pK9",
   "geo": {
     "@type": "GeoCoordinates",
@@ -3570,7 +3570,7 @@ body.en-taller footer.site{margin-top:0;}
      debajo de 900px con CSS. -->
 <div class="franja-util">
   <div class="franja-util-inner">
-    <span>Envíos a todo el Perú · Yape, Plin, tarjeta o transferencia · recojo en tienda el mismo día</span>
+    <span>Envíos a todo el Perú · Yape o tarjeta · recojo en tienda el mismo día</span>
     <div class="franja-derecha">
       <a class="franja-taller" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
       <span>Av. Los Héroes 382, San Juan de Miraflores</span>
@@ -3606,7 +3606,7 @@ body.en-taller footer.site{margin-top:0;}
 
 <!-- ============ APP ROOT ============ -->
 <main id="app"><h1>Instrumentos Musicales en Lima &mdash; Chipao Music</h1>
-<p>Tienda de instrumentos musicales en San Juan de Miraflores, Lima: guitarras, teclados, percusión, viento, audio y accesorios para estudiantes, colegios y músicos profesionales. Envíos a todo el Perú, pago con Yape, Plin, tarjeta o transferencia, y recojo en tienda.</p>
+<p>Tienda de instrumentos musicales en San Juan de Miraflores, Lima: guitarras, teclados, percusión, viento, audio y accesorios para estudiantes, colegios y músicos profesionales. Envíos a todo el Perú, pago con Yape o tarjeta, y recojo en tienda.</p>
 <nav aria-label="Categorías de productos"><ul>
 <li><a href="/categoria/cuerda">Instrumentos de Cuerda</a></li>
 <li><a href="/categoria/teclados">Teclados</a></li>
@@ -3660,7 +3660,7 @@ body.en-taller footer.site{margin-top:0;}
          lo mismo ya está en el carrito y en la ficha, al lado del precio. -->
     <div class="footer-col footer-pagos">
       <h4>Pagos y envíos</h4>
-      <span>Yape · Plin · transferencia</span>
+      <span>Yape</span>
       <span>Visa y Mastercard</span>
       <span>Envío gratis desde S/ 100</span>
       <span>Recojo en tienda en 1 hora</span>
@@ -5441,7 +5441,7 @@ function beneficiosMovilHtml(){
   const celdas = [
     ['store', 'Recojo en 1 hora'],
     ['truck', 'Envío a todo el Perú'],
-    ['card',  'Yape, Plin y tarjeta'],
+    ['card',  'Yape y tarjeta'],
   ];
   return `<div class="beneficios-movil">${celdas.map(c => `
     <span>${iconSvg(c[0], 'aria-hidden="true"')}${escapeHtml(c[1])}</span>`).join('')}</div>`;
@@ -5511,7 +5511,7 @@ function secundariasHtml(){
 function franjaConfianzaHtml(){
   const celdas = [
     ['Envío gratis', 'en compras desde ' + fmt(FREE_SHIPPING_THRESHOLD)],
-    ['Yape, Plin o tarjeta', 'paga como te quede mejor'],
+    ['Yape o tarjeta', 'paga como te quede mejor'],
     ['Garantía de 6 meses', 'contra defectos de fábrica'],
     ['Recojo en 1 hora', 'Av. Los Héroes 382, S.J.M.'],
     ['+12 años atendiendo', 'a músicos y colegios de Lima'],
@@ -6631,7 +6631,7 @@ function renderProductDetail(){
             <div class="fe-datos">
               <span><b>Recojo en tienda</b> listo en 1 hora</span>
               <span><b>Envío a todo el Perú</b> gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)}</span>
-              <span><b>Pagas como quieras</b> Yape, Plin, tarjeta o transferencia</span>
+              <span><b>Pagas como quieras</b> Yape o tarjeta</span>
             </div>
           </div>
           ${avisoTallerHtml(p)}
@@ -6874,9 +6874,7 @@ const iconoBanco = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
    Pago, que se lleva comisión. */
 const MEDIOS_PAGO = [
   { key:'yape',     label:'Yape',                       nota:'Pagas desde tu app y validamos al instante',     logo:'/pagos/yape.png', regalo:true },
-  { key:'plin',     label:'Plin',                       nota:'Confirmación inmediata',                             logo:'/pagos/plin.png', regalo:true },
   { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', logo:'/pagos/mercadopago.png' },
-  { key:'transfer', label:'Transferencia bancaria',      nota:'BCP o Interbank',                                    marcador:{fondo:'#EDEDEA', tinta:'#57514A', icono:'banco'}, regalo:true },
   { key:'tienda',   label:'Pago en tienda al recoger',   nota:'Pagas en efectivo o por Yape cuando lo recojas',     soloRecojo:true },
 ];
 
@@ -8269,7 +8267,7 @@ const POLICIES = {
     <p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>`},
   pagos:{title:'Medios de pago', body:`
     <p>Aceptamos los siguientes medios de pago:</p>
-    <ul><li>Tarjetas de crédito y débito Visa, Mastercard y American Express.</li><li>Yape, Plin y transferencia bancaria.</li><li>Recojo en tienda, pagando ahí mismo (según disponibilidad).</li></ul>
+    <ul><li>Tarjetas de crédito y débito Visa, Mastercard y American Express.</li><li>Yape.</li><li>Recojo en tienda, pagando ahí mismo (según disponibilidad).</li></ul>
     <p>Todas las transacciones con tarjeta son procesadas mediante pasarelas de pago seguras y encriptadas.</p>`},
   garantia:{title:'Garantía de productos', body:`
     <p>Todos nuestros instrumentos cuentan con garantía contra defectos de fábrica:</p>
