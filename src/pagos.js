@@ -41,8 +41,9 @@ const MAX_PEDIDOS_POR_IP = 6;     // pedidos abiertos por IP en una ventana
 const MAX_BYTES_CAPTURA = 1.5 * 1024 * 1024;
 
 const FREE_SHIPPING_THRESHOLD = 100;   // iguales a las de index.html
+const SHIPPING_FEE_LIMA = 10;
 const SHIPPING_FEE = 15;
-const PROVINCE_SURCHARGE = 5;
+const PROVINCE_SURCHARGE = 0;   // eran 5 hasta el 2026-10-04; "todo el Perú" cuesta 15 en total
 
 const CORREO_DUENO = 'nishistore@gmail.com';
 const SITE = 'https://chipaomusic.com';
@@ -136,10 +137,13 @@ async function firmaValida(env, id, t) {
 }
 
 /* ------------------------------ totales ------------------------------ */
-export function calcularTotales(subtotal, entrega, conAgencia) {
-  const envio = subtotal <= 0 || entrega === 'tienda' ? 0
-    : subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-  const provincia = subtotal > 0 && entrega === 'envio' && conAgencia ? PROVINCE_SURCHARGE : 0;
+/* entrega: 'lima' (a domicilio), 'peru' (agencia Shalom) o 'tienda'. El
+   adicional de la agencia se cobra siempre que sea 'peru', aunque el envío
+   sea gratis. */
+export function calcularTotales(subtotal, entrega) {
+  if (subtotal <= 0 || entrega === 'tienda') return { subtotal, envio: 0, provincia: 0, total: subtotal };
+  const envio = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : entrega === 'lima' ? SHIPPING_FEE_LIMA : SHIPPING_FEE;
+  const provincia = entrega === 'peru' ? PROVINCE_SURCHARGE : 0;
   return { subtotal, envio, provincia, total: subtotal + envio + provincia };
 }
 
@@ -341,6 +345,7 @@ function lineasHtml(items) {
 
 export function entregaTexto(p) {
   if (p.entrega === 'tienda') return 'Recojo en tienda (Av. Los Héroes 382)';
+  if (p.entrega === 'lima') return 'Envío a domicilio en Lima Metropolitana';
   const a = p.agencia ? JSON.parse(p.agencia) : null;
   return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a domicilio';
 }
@@ -463,12 +468,21 @@ async function crearPedido(request, env) {
   }
   if (direccion.length < 3 || direccion.length > 300) return json({ error: 'Falta la dirección o quién recoge.' }, 400);
 
-  const entrega = cuerpo.entrega === 'tienda' ? 'tienda' : cuerpo.entrega === 'envio' ? 'envio' : null;
-  if (!entrega) return json({ error: 'Elige cómo recibes tu pedido.' }, 400);
   let agencia = null;
-  if (entrega === 'envio' && Array.isArray(cuerpo.agencia) && cuerpo.agencia.length === 3) {
+  if (Array.isArray(cuerpo.agencia) && cuerpo.agencia.length === 3) {
     agencia = cuerpo.agencia.map(x => String(x).slice(0, 160));
   }
+  /* 'envio' es el valor de antes de separar Lima y provincia: lo manda una
+     página vieja que alguien tenía abierta al desplegar. */
+  let entrega = cuerpo.entrega;
+  if (entrega === 'envio') entrega = agencia ? 'peru' : 'lima';
+  if (entrega !== 'lima' && entrega !== 'peru' && entrega !== 'tienda') {
+    return json({ error: 'Elige cómo recibes tu pedido.' }, 400);
+  }
+  if (entrega === 'peru' && !agencia) {
+    return json({ error: 'Elige la agencia Shalom donde recoges tu pedido.' }, 400);
+  }
+  if (entrega !== 'peru') agencia = null;
 
   const entrada = Array.isArray(cuerpo.items) ? cuerpo.items : [];
   if (!entrada.length || entrada.length > 30) return json({ error: 'El carrito está vacío.' }, 400);
@@ -505,7 +519,7 @@ async function crearPedido(request, env) {
   }
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-  const t = calcularTotales(subtotal, entrega, Boolean(agencia));
+  const t = calcularTotales(subtotal, entrega);
 
   const ip = request.headers.get('cf-connecting-ip') || '';
   const ahora = Date.now();
