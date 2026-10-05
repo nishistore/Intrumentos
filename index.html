@@ -4818,7 +4818,7 @@ const ALIAS_SECCION = {
   charangos: ['charango', 'charangos'],
   interfaces: ['interfaz'],
 };
-function formasDePalabra(w){
+function formasSeccion(w){
   const f = new Set([w]);
   if(w.length > 3 && w.endsWith('s')) f.add(w.slice(0, -1));
   if(w.length > 4 && w.endsWith('es')) f.add(w.slice(0, -2));
@@ -4830,8 +4830,8 @@ function seccionDeBusqueda(q){
   const tokens = texto => sinTildes(texto).split(/[^a-z0-9]+/).filter(Boolean);
   const todasEn = (listaTokens) => {
     const formas = new Set();
-    listaTokens.forEach(t => formasDePalabra(t).forEach(x => formas.add(x)));
-    return palabras.every(w => [...formasDePalabra(w)].some(x => formas.has(x)));
+    listaTokens.forEach(t => formasSeccion(t).forEach(x => formas.add(x)));
+    return palabras.every(w => [...formasSeccion(w)].some(x => formas.has(x)));
   };
   const porCat = CATEGORIES.find(c => todasEn(tokens(c.seo ? c.label + ' ' + c.seo : c.label)));
   if(porCat) return { cat: porCat, subs: [] };
