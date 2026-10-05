@@ -4803,6 +4803,57 @@ function buscarProductos(q){
     .map(x => x.p);
 }
 
+/* Escribir el nombre de un instrumento y dar Enter lleva a su sección: "guitarras"
+   abre las guitarras, "cajón" los cajones, "percusión" toda Percusión. Solo
+   cuando lo escrito ES una categoría o subcategoría; "guitarra vozzex" o
+   cualquier otra cosa sigue yendo al producto. Devuelve {cat, subs} o null.
+
+   Se compara por palabra, con singular y plural indistintos ("cajon" =
+   "cajones", "ukelele" = "ukeleles"). Primero se miran las categorías y luego
+   las subcategorías; si lo escrito cae en varias categorías (violín está en
+   Cuerda y en Accesorios) gana la que tiene más subcategorías coincidentes y,
+   a igualdad, la que va primero en CATEGORIES. */
+const ALIAS_SECCION = {
+  electroacusticos: ['guitarra', 'guitarras'],
+  charangos: ['charango', 'charangos'],
+  interfaces: ['interfaz'],
+};
+function formasDePalabra(w){
+  const f = new Set([w]);
+  if(w.length > 3 && w.endsWith('s')) f.add(w.slice(0, -1));
+  if(w.length > 4 && w.endsWith('es')) f.add(w.slice(0, -2));
+  return f;
+}
+function seccionDeBusqueda(q){
+  const palabras = palabrasDeBusqueda(q).filter(w => !/^instrumentos?$/.test(w));
+  if(!palabras.length) return null;
+  const tokens = texto => sinTildes(texto).split(/[^a-z0-9]+/).filter(Boolean);
+  const todasEn = (listaTokens) => {
+    const formas = new Set();
+    listaTokens.forEach(t => formasDePalabra(t).forEach(x => formas.add(x)));
+    return palabras.every(w => [...formasDePalabra(w)].some(x => formas.has(x)));
+  };
+  const porCat = CATEGORIES.find(c => todasEn(tokens(c.seo ? c.label + ' ' + c.seo : c.label)));
+  if(porCat) return { cat: porCat, subs: [] };
+  let mejor = null;
+  for(const c of CATEGORIES){
+    const subs = c.subs.filter(s => todasEn(tokens(s.label).concat(ALIAS_SECCION[s.key] || [])));
+    if(!subs.length) continue;
+    /* A igualdad, la subcategoría más concreta: "baquetas" es "Baquetas y
+       parches" (Accesorios) antes que "Claves, baquetas y percusión". */
+    const largo = subs.reduce((n, s) => n + tokens(s.label).length, 0);
+    if(!mejor || subs.length > mejor.subs.length || (subs.length === mejor.subs.length && largo < mejor.largo)) mejor = { cat: c, subs, largo };
+  }
+  return mejor && { cat: mejor.cat, subs: mejor.subs.map(s => s.key) };
+}
+function irASeccionDeBusqueda(q){
+  const s = seccionDeBusqueda(q);
+  if(!s) return false;
+  goShop(s.cat.key, s.subs.length === 1 ? s.subs[0] : undefined);
+  if(s.subs.length > 1){ state.activeSubs = new Set(s.subs); render(); }
+  return true;
+}
+
 /* Rangos de precio del handoff. Los conteos salen del catálogo en cada
    render, así que no se quedan viejos cuando cambian los precios. */
 /* Texto propio de la pantalla de ofertas, hermano del `intro` de cada
@@ -4968,7 +5019,8 @@ function renderSearch(){
           <input id="buscarInput" type="search" autocomplete="off" enterkeyhint="search"
                  placeholder="Buscar instrumento o marca"
                  value="${escapeHtml(state.searchQuery)}"
-                 oninput="onBuscarInput(this.value)">
+                 oninput="onBuscarInput(this.value)"
+                 onkeydown="if(event.key==='Enter' && irASeccionDeBusqueda(this.value)){ event.preventDefault(); this.blur(); }">
         </span>
         <button type="button" class="buscar-cerrar" onclick="goHome()">Cerrar</button>
       </div>
@@ -9316,6 +9368,15 @@ function abrirDesdeNavBuscar(id){
 function onNavBuscarTecla(e){
   const vistos = navResultados().slice(0, NAV_MAX_RESULTADOS);
   if(e.key === 'Escape'){ cerrarNavBuscar(); e.target.blur(); return; }
+  /* Enter sin haber marcado ninguna fila: si lo escrito es una sección, a la sección. */
+  if(e.key === 'Enter' && navMarcado < 0 && seccionDeBusqueda(navQuery)){
+    e.preventDefault();
+    const q = navQuery;
+    cerrarNavBuscar();
+    e.target.blur();
+    irASeccionDeBusqueda(q);
+    return;
+  }
   if(!vistos.length) return;
 
   if(e.key === 'ArrowDown'){
