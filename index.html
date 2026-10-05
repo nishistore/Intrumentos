@@ -376,10 +376,23 @@ body[data-tema="criolla"] logo-gorro::after{
   display:none;align-items:center;justify-content:center;padding:20px;
 }
 .foto-zoom-overlay.show{display:flex;}
-.foto-zoom-overlay img{max-width:100%;max-height:100%;object-fit:contain;}
+.foto-zoom-overlay{touch-action:none;overflow:hidden;-webkit-user-select:none;user-select:none;}
+.foto-zoom-overlay img{
+  max-width:100%;max-height:100%;object-fit:contain;
+  transform-origin:center center;will-change:transform;
+  -webkit-user-drag:none;
+}
+.foto-zoom-overlay img.anima{transition:transform .22s ease-out;}
+.foto-zoom-ayuda{
+  position:absolute;z-index:2;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);padding:8px 14px;border-radius:999px;
+  background:rgba(0,0,0,.6);color:#fff;font:500 13px/1.2 var(--app-sans);
+  white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .4s;
+}
+.foto-zoom-ayuda.ver{opacity:1;}
 .foto-zoom-close{
-  position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;
-  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+  position:absolute;z-index:2;top:16px;right:16px;width:38px;height:38px;border-radius:50%;
+  background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.5);
   display:flex;align-items:center;justify-content:center;
 }
 .foto-zoom-close svg{width:16px;height:16px;stroke:#fff;}
@@ -3616,7 +3629,8 @@ body.en-taller footer.site{margin-top:0;}
 <!-- ============ ZOOM DE FOTO DE PRODUCTO ============ -->
 <div class="foto-zoom-overlay" id="fotoZoomOverlay" onclick="if(event.target===this)cerrarFotoZoom();">
   <button type="button" class="foto-zoom-close" onclick="cerrarFotoZoom()" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-  <img id="fotoZoomImg" alt="">
+  <img id="fotoZoomImg" alt="" draggable="false">
+  <div class="foto-zoom-ayuda" id="fotoZoomAyuda">Pellizca o toca dos veces para acercar</div>
 </div>
 
 <!-- ============ TOAST ============ -->
@@ -6471,10 +6485,128 @@ function abrirFotoZoom(){
   if(!url) return;
   document.getElementById('fotoZoomImg').src = fotoUrl(url, ANCHO_ZOOM);
   document.getElementById('fotoZoomOverlay').classList.add('show');
+  zoomFoto.s = 1; zoomFoto.x = 0; zoomFoto.y = 0;
+  pintarZoomFoto(false);
+  /* La pista solo en pantallas táctiles, y se va sola a los 2,5 segundos. */
+  const ayuda = document.getElementById('fotoZoomAyuda');
+  if(ayuda && 'ontouchstart' in window){
+    ayuda.classList.add('ver');
+    setTimeout(() => ayuda.classList.remove('ver'), 2500);
+  }
 }
 function cerrarFotoZoom(){
   document.getElementById('fotoZoomOverlay').classList.remove('show');
+  document.getElementById('fotoZoomAyuda').classList.remove('ver');
 }
+
+/* Zoom de la foto ampliada: pellizco con dos dedos, arrastre con uno cuando
+   ya está acercada, doble toque para acercar y volver, y rueda en el
+   escritorio. Es JavaScript a mano con eventos táctiles y no PointerEvents
+   porque Safari de iPhone viejo (<13) no los tiene.
+
+   zoomFoto guarda escala (s) y desplazamiento (x, y) en píxeles respecto al
+   centro de la pantalla. Al acercar, el punto que queda bajo los dedos se
+   mantiene quieto: u = (punto - desplazamiento) / escala. */
+const ZOOM_MAX = 4;
+const zoomFoto = { s:1, x:0, y:0 };
+let gestoZoom = null, ultimoToqueZoom = 0;
+
+function pintarZoomFoto(animar){
+  const img = document.getElementById('fotoZoomImg');
+  if(!img) return;
+  img.classList.toggle('anima', !!animar);
+  img.style.transform = `translate(${zoomFoto.x}px,${zoomFoto.y}px) scale(${zoomFoto.s})`;
+}
+/* Que la foto no se pueda arrastrar fuera de la pantalla: el desplazamiento
+   máximo es lo que sobra de la foto ya ampliada respecto a la pantalla. */
+function acotarZoomFoto(){
+  const img = document.getElementById('fotoZoomImg');
+  const ov = document.getElementById('fotoZoomOverlay');
+  const maxX = Math.max(0, (img.offsetWidth * zoomFoto.s - ov.clientWidth) / 2);
+  const maxY = Math.max(0, (img.offsetHeight * zoomFoto.s - ov.clientHeight) / 2);
+  zoomFoto.x = Math.min(maxX, Math.max(-maxX, zoomFoto.x));
+  zoomFoto.y = Math.min(maxY, Math.max(-maxY, zoomFoto.y));
+}
+/* Cambia la escala dejando quieto el punto (cx, cy), en coordenadas de pantalla. */
+function escalarZoomFoto(nueva, cx, cy){
+  const ov = document.getElementById('fotoZoomOverlay');
+  nueva = Math.min(ZOOM_MAX, Math.max(1, nueva));
+  const px = cx - ov.clientWidth / 2, py = cy - ov.clientHeight / 2;
+  const ux = (px - zoomFoto.x) / zoomFoto.s, uy = (py - zoomFoto.y) / zoomFoto.s;
+  zoomFoto.s = nueva;
+  zoomFoto.x = px - nueva * ux;
+  zoomFoto.y = py - nueva * uy;
+  if(nueva === 1){ zoomFoto.x = 0; zoomFoto.y = 0; }
+  acotarZoomFoto();
+}
+function dobleToqueZoomFoto(cx, cy){
+  escalarZoomFoto(zoomFoto.s > 1.05 ? 1 : 2.5, cx, cy);
+  pintarZoomFoto(true);
+}
+function distanciaDedos(t){
+  return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+}
+(function(){
+  const ov = document.getElementById('fotoZoomOverlay');
+  if(!ov) return;
+  ov.addEventListener('touchstart', e => {
+    if(e.target.closest('.foto-zoom-close')) return;
+    const t = e.touches;
+    if(t.length === 2){
+      gestoZoom = { tipo:'pellizco', d: distanciaDedos(t), s: zoomFoto.s };
+    }else if(t.length === 1){
+      gestoZoom = { tipo:'arrastre', x: t[0].clientX, y: t[0].clientY,
+                    ox: zoomFoto.x, oy: zoomFoto.y, movido:false };
+    }
+  }, { passive: true });
+  ov.addEventListener('touchmove', e => {
+    if(!gestoZoom) return;
+    e.preventDefault();
+    const t = e.touches;
+    if(gestoZoom.tipo === 'pellizco' && t.length === 2){
+      const cx = (t[0].clientX + t[1].clientX) / 2, cy = (t[0].clientY + t[1].clientY) / 2;
+      escalarZoomFoto(gestoZoom.s * distanciaDedos(t) / gestoZoom.d, cx, cy);
+      pintarZoomFoto(false);
+    }else if(gestoZoom.tipo === 'arrastre' && t.length === 1){
+      const dx = t[0].clientX - gestoZoom.x, dy = t[0].clientY - gestoZoom.y;
+      if(Math.abs(dx) + Math.abs(dy) > 6) gestoZoom.movido = true;
+      if(zoomFoto.s > 1){
+        zoomFoto.x = gestoZoom.ox + dx; zoomFoto.y = gestoZoom.oy + dy;
+        acotarZoomFoto();
+        pintarZoomFoto(false);
+      }
+    }
+  }, { passive: false });
+  ov.addEventListener('touchend', e => {
+    const g = gestoZoom;
+    if(e.touches.length === 1){   // soltó un dedo del pellizco: sigue con el otro
+      const t = e.touches[0];
+      gestoZoom = { tipo:'arrastre', x:t.clientX, y:t.clientY, ox:zoomFoto.x, oy:zoomFoto.y, movido:true };
+      return;
+    }
+    gestoZoom = null;
+    if(!g || g.tipo !== 'arrastre' || g.movido || e.target.closest('.foto-zoom-close')) return;
+    /* Un toque suelto: dos seguidos en menos de 300 ms son el doble toque. */
+    const ahora = Date.now(), c = e.changedTouches[0];
+    if(ahora - ultimoToqueZoom < 300){
+      ultimoToqueZoom = 0;
+      e.preventDefault();
+      dobleToqueZoomFoto(c.clientX, c.clientY);
+    }else{
+      ultimoToqueZoom = ahora;
+    }
+  }, { passive: false });
+  /* Escritorio: doble clic y rueda. */
+  ov.addEventListener('dblclick', e => {
+    if(e.target.closest('.foto-zoom-close')) return;
+    dobleToqueZoomFoto(e.clientX, e.clientY);
+  });
+  ov.addEventListener('wheel', e => {
+    e.preventDefault();
+    escalarZoomFoto(zoomFoto.s * (e.deltaY < 0 ? 1.2 : 1 / 1.2), e.clientX, e.clientY);
+    pintarZoomFoto(false);
+  }, { passive: false });
+})();
 
 /* Deslizar sobre la foto para cambiar de color en el teléfono. Los swatches
    siguen ahí: esto es un atajo, no un reemplazo, porque un gesto no se ve y
