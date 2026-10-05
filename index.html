@@ -6509,7 +6509,7 @@ function cerrarFotoZoom(){
    mantiene quieto: u = (punto - desplazamiento) / escala. */
 const ZOOM_MAX = 4;
 const zoomFoto = { s:1, x:0, y:0 };
-let gestoZoom = null, ultimoToqueZoom = 0;
+let gestoZoom = null, ultimoToqueZoom = 0, bloqueoToqueZoom = 0;
 
 function pintarZoomFoto(animar){
   const img = document.getElementById('fotoZoomImg');
@@ -6569,7 +6569,7 @@ function distanciaDedos(t){
       pintarZoomFoto(false);
     }else if(gestoZoom.tipo === 'arrastre' && t.length === 1){
       const dx = t[0].clientX - gestoZoom.x, dy = t[0].clientY - gestoZoom.y;
-      if(Math.abs(dx) + Math.abs(dy) > 6) gestoZoom.movido = true;
+      if(Math.abs(dx) + Math.abs(dy) > 14) gestoZoom.movido = true;   // el dedo tiembla al tocar rápido
       if(zoomFoto.s > 1){
         zoomFoto.x = gestoZoom.ox + dx; zoomFoto.y = gestoZoom.oy + dy;
         acotarZoomFoto();
@@ -6586,11 +6586,18 @@ function distanciaDedos(t){
     }
     gestoZoom = null;
     if(!g || g.tipo !== 'arrastre' || g.movido || e.target.closest('.foto-zoom-close')) return;
-    /* Un toque suelto: dos seguidos en menos de 300 ms son el doble toque. */
+    /* Un toque suelto: dos seguidos en menos de 350 ms son el doble toque.
+       Tras uno, los toques que sigan en la siguiente media segundo se
+       ignoran: quien toca cuatro o cinco veces seguidas no quiere acercar y
+       alejar, quiere acercar, y antes el tercero y el cuarto deshacían todo. */
+    /* Un toque fuera de la foto no cuenta: ese sigue cerrando el visor. */
+    if(e.target !== document.getElementById('fotoZoomImg')) return;
     const ahora = Date.now(), c = e.changedTouches[0];
-    if(ahora - ultimoToqueZoom < 300){
+    e.preventDefault();
+    if(ahora < bloqueoToqueZoom) return;
+    if(ahora - ultimoToqueZoom < 350){
       ultimoToqueZoom = 0;
-      e.preventDefault();
+      bloqueoToqueZoom = ahora + 500;
       dobleToqueZoomFoto(c.clientX, c.clientY);
     }else{
       ultimoToqueZoom = ahora;
