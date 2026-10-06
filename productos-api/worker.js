@@ -43,23 +43,49 @@ async function requireAdmin(request, env) {
   const ip = request.headers.get("CF-Connecting-IP") || "desconocida";
   const ventana = `-${LOGIN_WINDOW_MINUTES} minutes`;
   try {
-    if (secret === env.ADMIN_SECRET) {
+    if (await claveCoincide(secret, env.ADMIN_SECRET)) {
       const fila = await env.DB.prepare(
         `SELECT COUNT(*) AS n FROM login_attempts WHERE ip = ? AND created_at >= datetime('now', ?)`
       ).bind(ip, ventana).first();
       if (fila.n >= LOGIN_MAX_ATTEMPTS) return json({ error: MENSAJE_LIMITE }, 429);
       return null;
     }
-    await env.DB.prepare(`DELETE FROM login_attempts WHERE created_at < datetime('now', '-1 day')`).run();
-    const r = await env.DB.prepare(
-      `INSERT INTO login_attempts (ip)
-       SELECT ?1 WHERE (SELECT COUNT(*) FROM login_attempts WHERE ip = ?1 AND created_at >= datetime('now', ?2)) < ?3`
-    ).bind(ip, ventana, LOGIN_MAX_ATTEMPTS).run();
-    if (!r.meta.changes) return json({ error: MENSAJE_LIMITE }, 429);
+    if (!await apuntarIntento(env, ip)) return json({ error: MENSAJE_LIMITE }, 429);
     return json({ error: "No autorizado" }, 401);
   } catch {
     return json({ error: "No autorizado" }, 401);
   }
+}
+
+/* Apunta un intento de esta IP si todavía le quedan; devuelve false si ya
+   gastó los 5 de la ventana. Es UN solo INSERT condicionado al conteo, no
+   "contar y luego insertar": con dos pasos, cien peticiones en paralelo leen
+   todas "0 intentos" antes de que ninguna escriba y se cuelan. Aprovecha para
+   borrar lo de hace más de un día, que no cuenta para nada. */
+async function apuntarIntento(env, ip) {
+  await env.DB.prepare(`DELETE FROM login_attempts WHERE created_at < datetime('now', '-1 day')`).run();
+  const r = await env.DB.prepare(
+    `INSERT INTO login_attempts (ip)
+     SELECT ?1 WHERE (SELECT COUNT(*) FROM login_attempts WHERE ip = ?1 AND created_at >= datetime('now', ?2)) < ?3`
+  ).bind(ip, `-${LOGIN_WINDOW_MINUTES} minutes`, LOGIN_MAX_ATTEMPTS).run();
+  return r.meta.changes > 0;
+}
+
+/* Compara la clave en tiempo constante. Con "===" el tiempo de respuesta
+   depende de cuántas letras iniciales acertó, y eso se puede medir. Se
+   comparan los SHA-256 de las dos, que siempre miden lo mismo, y se recorren
+   enteros sin salir al primer byte distinto. */
+async function claveCoincide(dada, real) {
+  if (typeof dada !== "string" || typeof real !== "string" || !dada || !real) return false;
+  const enc = new TextEncoder();
+  const [a, b] = await Promise.all([
+    crypto.subtle.digest("SHA-256", enc.encode(dada)),
+    crypto.subtle.digest("SHA-256", enc.encode(real))
+  ]);
+  const x = new Uint8Array(a), y = new Uint8Array(b);
+  let diferencia = 0;
+  for (let i = 0; i < x.length; i++) diferencia |= x[i] ^ y[i];
+  return diferencia === 0;
 }
 
 export default {
@@ -71,16 +97,13 @@ export default {
     if (request.method === "POST" && url.pathname === "/admin/login") {
       const ip = request.headers.get("CF-Connecting-IP") || "desconocida";
       try {
-        const windowStart = `-${LOGIN_WINDOW_MINUTES} minutes`;
-        const { results: recent } = await env.DB.prepare(
-          `SELECT COUNT(*) as n FROM login_attempts WHERE ip = ? AND created_at >= datetime('now', ?)`
-        ).bind(ip, windowStart).all();
-        if (recent[0].n >= LOGIN_MAX_ATTEMPTS) {
+        /* Cada intento se apunta ANTES de mirar la clave, acierte o no; si
+           acierta, se borran los de esta IP más abajo. */
+        if (!await apuntarIntento(env, ip)) {
           return json({ ok: false, error: MENSAJE_LIMITE }, 429);
         }
-        await env.DB.prepare(`INSERT INTO login_attempts (ip) VALUES (?)`).bind(ip).run();
         const body = await request.json();
-        const ok = body.password && body.password === env.ADMIN_SECRET;
+        const ok = await claveCoincide(body.password, env.ADMIN_SECRET);
         if (!ok) return json({ ok: false }, 401);
         await env.DB.prepare(`DELETE FROM login_attempts WHERE ip = ?`).bind(ip).run();
         return json({ ok: true, secret: env.ADMIN_SECRET });
