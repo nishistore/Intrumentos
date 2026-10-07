@@ -691,6 +691,51 @@ const PRODUCTOS_RETIRADOS = {
   '79': '/categoria/accesorios/guitarra-acustica-y-clasica',  // capotraste Romeo
 };
 
+/* Productos con id viejo. Entre el 14 y el 19-09-2026 el catálogo se unificó
+   (las variantes de color pasaron a un solo producto "varios colores") y se
+   borraron ~60 ids de las fichas sueltas (59 a 161 y algunos de 13 a 30).
+   Google los tenía indexados y desde entonces recibe 404 (53 en Search Console
+   el 07-10), y por eso bajaron las indexadas.
+
+   No sabemos a qué producto nuevo corresponde cada id, pero la dirección trae
+   el nombre ('/producto/143-guitarra-clasica-freeman-...'): por la palabra
+   clave mandamos a la subcategoría equivalente. El orden importa: la primera
+   que coincide gana, y 'guitarra-electrica' va antes que 'guitarra'. Solo se
+   usa cuando el id NO está en el catálogo, y si nada coincide sigue el 404. */
+const DESTINOS_POR_NOMBRE = [
+  [/^(cejilla|capo|capotraste)/, '/categoria/accesorios/guitarra-acustica-y-clasica'],
+  [/^(cuerdas?|juego-de-cuerdas)/, '/categoria/accesorios/guitarra-acustica-y-clasica'],
+  [/^(afinador|atril|soporte|pedestal)/, '/categoria/accesorios/generales-cualquier-instrumento'],
+  [/^boquilla/, '/categoria/accesorios/viento'],
+  [/^ukulele/, '/categoria/cuerda/ukeleles'],
+  [/^guitarra-electrica/, '/categoria/cuerda/guitarras-electricas'],
+  [/^guitarra/, '/categoria/cuerda/guitarras-acusticas'],
+  [/^bajo/, '/categoria/cuerda/bajos'],
+  [/^(charango|andino)/, '/categoria/cuerda/andinos'],
+  [/^violin/, '/categoria/cuerda/violines'],
+  [/^quena/, '/categoria/viento/quenas'],
+  [/^zampona/, '/categoria/viento/zamponas'],
+  [/^melodica/, '/categoria/viento/melodicas'],
+  [/^flauta/, '/categoria/viento/flautas'],
+  [/^teclado/, '/categoria/teclados'],
+  [/^microfono/, '/categoria/audio/microfonos'],
+  [/^(interfaz|adaptador)/, '/categoria/audio/interfaces'],
+  [/^amplificador/, '/categoria/audio/amplificadores'],
+  [/^bombo/, '/categoria/percusion/bombos'],
+  [/^tarola/, '/categoria/percusion/tarolas'],
+  [/^kalimba/, '/categoria/percusion/kalimbas'],
+  [/^pandereta/, '/categoria/percusion/panderetas'],
+  [/^(xilofono|metalofono)/, '/categoria/percusion/metalofono'],
+  [/^(cajon|baqueta|clave|tambor)/, '/categoria/percusion'],
+];
+
+function destinoPorNombre(pathname) {
+  const m = pathname.match(/^\/producto\/\d+-([^/]+)/);
+  if (!m) return null;
+  const hit = DESTINOS_POR_NOMBRE.find(([re]) => re.test(m[1]));
+  return hit ? hit[1] : null;
+}
+
 /* Subcategorías que cambiaron de URL. "Guitarras" se partió en acústicas y
    eléctricas (2026-09-24); la dirección vieja va a las acústicas, que son la
    mayoría de lo que había y lo que busca quien escribe "guitarra" a secas. */
@@ -1443,6 +1488,8 @@ export default {
       const retirado = url.pathname.match(/^\/producto\/(\d+)/);
       const destino = retirado && PRODUCTOS_RETIRADOS[retirado[1]];
       if (destino) return Response.redirect(SITE_ORIGIN + destino, 301);
+      const porNombre = retirado && destinoPorNombre(url.pathname);
+      if (porNombre) return Response.redirect(SITE_ORIGIN + porNombre, 301);
       const movida = RUTAS_MOVIDAS[url.pathname];
       if (movida) return Response.redirect(SITE_ORIGIN + movida + url.search, 301);
       return new Response(salida.body, { status: 404, headers: salida.headers });
