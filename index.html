@@ -2409,7 +2409,7 @@ footer.site .footer-bottom{
   font:600 11px/1 var(--app-sans);letter-spacing:.06em;
   text-transform:uppercase;color:var(--app-muted-2);
 }
-.campo input,.campo textarea{
+.campo input,.campo textarea,.campo select{
   width:100%;
   min-height:46px;padding:12px 13px;
   border-radius:11px;
@@ -2421,7 +2421,40 @@ footer.site .footer-bottom{
   resize:vertical;
 }
 .campo input::placeholder,.campo textarea::placeholder{color:var(--app-muted-3);font-size:14px;}
-.campo input:focus,.campo textarea:focus{outline:none;border-color:var(--app-ink);}
+.campo input:focus,.campo textarea:focus,.campo select:focus{outline:none;border-color:var(--app-ink);}
+/* Libro de reclamaciones (/libro-de-reclamaciones) */
+.lr-proveedor{
+  max-width:640px;margin-top:14px;padding:14px 16px;border-radius:var(--app-r-card);
+  background:var(--app-surface);border:1px solid var(--app-line);
+  font:400 12.5px/1.6 var(--app-sans);color:var(--app-ink-70);
+}
+.lr-proveedor b{color:var(--app-ink);font-weight:600;}
+.lr-form{max-width:640px;margin-top:6px;}
+.lr-form h2{
+  margin-top:26px;padding-top:18px;border-top:1px solid var(--app-line);
+  font:700 15px/1.3 var(--app-sans);letter-spacing:-.015em;color:var(--app-ink);
+}
+.lr-form h2 small{display:block;margin-top:3px;font:400 12px/1.4 var(--app-sans);color:var(--app-muted);letter-spacing:0;}
+.lr-fila{display:grid;grid-template-columns:130px minmax(0,1fr);gap:10px;}
+.lr-opciones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px;}
+.lr-op{
+  display:block;padding:12px 13px;border-radius:11px;background:var(--app-surface);
+  border:1.5px solid var(--app-line);touch-action:manipulation;
+}
+.lr-op input{position:absolute;opacity:0;pointer-events:none;}
+.lr-op b{display:block;font:700 13px/1.2 var(--app-sans);color:var(--app-ink);}
+.lr-op span{display:block;margin-top:4px;font:400 11.5px/1.4 var(--app-sans);color:var(--app-muted);}
+.lr-op.activo{border-color:var(--app-ink);background:var(--app-green-soft);}
+.lr-aviso{margin-top:16px;font:400 12px/1.6 var(--app-sans);color:var(--app-muted);}
+.lr-check{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font:400 12.5px/1.5 var(--app-sans);color:var(--app-ink-70);}
+.lr-check input{margin-top:3px;width:18px;height:18px;flex:none;}
+.lr-form .btn-app{margin-top:18px;width:100%;}
+.lr-gracias{
+  max-width:640px;margin-top:20px;padding:20px;border-radius:var(--app-r-card);
+  background:var(--app-green-soft);border:1px solid var(--app-line);
+}
+.lr-gracias b{display:block;font:700 16px/1.3 var(--app-sans);color:var(--app-ink);}
+.lr-gracias p{margin-top:8px;font:400 13px/1.6 var(--app-sans);color:var(--app-ink-70);}
 .campo input:invalid:not(:placeholder-shown){border-color:var(--app-ink);}
 .campo-resumen{
   margin-top:9px;
@@ -3742,6 +3775,7 @@ body.en-taller footer.site{margin-top:0;}
         <h4>Legal</h4>
         <button class="link" onclick="openPolicy('terminos')">Términos y condiciones</button>
         <button class="link" onclick="openPolicy('privacidad')">Política de privacidad</button>
+        <a class="link" href="/libro-de-reclamaciones" onclick="goPolicy('reclamaciones');return false;">Libro de reclamaciones</a>
         <button class="link" onclick="openPolicy('contacto')">Contáctanos</button>
       </div>
     </div>
@@ -4448,6 +4482,7 @@ function renderPieMovil(){
         <div class="pm-dentro">
           ${pol('terminos', 'Términos y condiciones')}
           ${pol('privacidad', 'Política de privacidad')}
+          <a class="pm-link" href="/libro-de-reclamaciones" onclick="goPolicy('reclamaciones');return false;">Libro de reclamaciones</a>
           ${pol('contacto', 'Contáctanos')}
         </div>
       </details>
@@ -8601,6 +8636,13 @@ const POLICIES = {
     <h2>¿Cómo solicitarlo?</h2>
     <ul><li>Escríbenos indicando tu número de pedido y motivo del cambio.</li><li>Coordinamos la recolección o el envío del producto.</li><li>Una vez verificado, procesamos el cambio o la devolución del dinero en un máximo de 10 días hábiles.</li></ul>
     <p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>`},
+  /* Con `path`, como la anterior, pero su pantalla no es solo texto: lleva el
+     formulario (renderPolitica). El texto de aquí es el que sirve el Worker. */
+  reclamaciones:{title:'Libro de reclamaciones', path:'/libro-de-reclamaciones',
+    desc:'Libro de reclamaciones virtual de Chipao Music. Registra un reclamo o una queja sobre un producto o servicio y te respondemos en un máximo de 15 días hábiles.',
+    body:`
+    <p>Conforme al Código de Protección y Defensa del Consumidor, ponemos a tu disposición nuestro Libro de Reclamaciones virtual. Si tienes un reclamo o una queja sobre un producto o servicio, regístralo aquí.</p>
+    <p>Te respondemos en un plazo máximo de 15 días hábiles, y recibirás una copia de tu hoja de reclamación en el correo que indiques.</p>`},
   pagos:{title:'Medios de pago', body:`
     <p>Aceptamos los siguientes medios de pago:</p>
     <ul><li>Tarjetas de crédito y débito Visa, Mastercard y American Express.</li><li>Yape.</li><li>Recojo en tienda, pagando ahí mismo (según disponibilidad).</li></ul>
@@ -8655,7 +8697,9 @@ function goPolicy(key, push){
 function renderPolitica(){
   const p = POLICIES[state.politica];
   if(!p || !p.path){ state.view = 'home'; return renderHome(); }
-  const cuerpo = `
+  const cuerpo = state.politica === 'reclamaciones' ? `
+    <div class="politica-cuerpo">${p.body}</div>
+    ${reclamoHtml()}` : `
     <div class="politica-cuerpo">${p.body}</div>
     <div class="politica-ayuda">
       <b>¿Tienes un pedido que cambiar?</b>
@@ -8668,6 +8712,111 @@ function renderPolitica(){
     ? `<div class="app-shell politica ped-esc">${cabeceraPedidoEscritorio(p.title, p.title)}${cuerpo}</div>`
     : `<div class="app-shell politica">${cabeceraPedido(p.title, 'goHome()')}${cuerpo}</div>`;
 }
+/* ------------------- /libro-de-reclamaciones ------------------- */
+const PROVEEDOR_RUC = '10772011348';
+
+function reclamoHtml(){
+  return `
+    <div class="lr-proveedor">
+      <b>Proveedor:</b> Chipao Music<br>
+      <b>RUC:</b> ${PROVEEDOR_RUC}<br>
+      <b>Establecimiento:</b> ${escapeHtml(STORE_ADDRESS)}
+    </div>
+    <form class="lr-form" id="reclamoForm" onsubmit="enviarReclamo(event)" novalidate>
+      <h2>1. Tus datos</h2>
+      <label class="campo"><span>Nombre completo</span>
+        <input id="lrNombre" type="text" autocomplete="name" maxlength="120" required></label>
+      <div class="lr-fila">
+        <label class="campo"><span>Documento</span>
+          <select id="lrTipoDoc"><option>DNI</option><option>CE</option><option>Pasaporte</option><option>RUC</option></select></label>
+        <label class="campo"><span>Número</span>
+          <input id="lrDoc" type="text" inputmode="numeric" maxlength="12" required></label>
+      </div>
+      <label class="campo"><span>Domicilio</span>
+        <input id="lrDomicilio" type="text" autocomplete="street-address" maxlength="160" required placeholder="Calle, número, distrito"></label>
+      <label class="campo"><span>Teléfono</span>
+        <input id="lrTelefono" type="tel" inputmode="numeric" autocomplete="tel" maxlength="9" required placeholder="Ej. 987654321"></label>
+      <label class="campo"><span>Correo (ahí te llega la copia)</span>
+        <input id="lrEmail" type="email" inputmode="email" autocomplete="email" maxlength="120" required placeholder="Ej. maria@gmail.com"></label>
+
+      <h2>2. Lo que compraste</h2>
+      <div class="lr-opciones">
+        <label class="lr-op activo" data-grupo="bien"><input type="radio" name="lrBien" value="Producto" checked onchange="marcarOpcion(this)"><b>Producto</b><span>Un instrumento o accesorio</span></label>
+        <label class="lr-op" data-grupo="bien"><input type="radio" name="lrBien" value="Servicio" onchange="marcarOpcion(this)"><b>Servicio</b><span>Taller, envío, atención</span></label>
+      </div>
+      <label class="campo"><span>Monto reclamado (S/) · opcional</span>
+        <input id="lrMonto" type="text" inputmode="decimal" maxlength="9" placeholder="Ej. 85"></label>
+      <label class="campo"><span>Descripción · número de pedido si lo tienes</span>
+        <textarea id="lrBienDesc" rows="2" maxlength="300" required placeholder="Ej. Guitarra acústica, pedido CH-1234"></textarea></label>
+
+      <h2>3. Tu reclamo o queja
+        <small>Reclamo: disconformidad con un producto o servicio. Queja: malestar por la atención recibida.</small></h2>
+      <div class="lr-opciones">
+        <label class="lr-op activo" data-grupo="tipo"><input type="radio" name="lrTipo" value="Reclamo" checked onchange="marcarOpcion(this)"><b>Reclamo</b><span>Del producto o servicio</span></label>
+        <label class="lr-op" data-grupo="tipo"><input type="radio" name="lrTipo" value="Queja" onchange="marcarOpcion(this)"><b>Queja</b><span>De la atención</span></label>
+      </div>
+      <label class="campo"><span>Detalle de lo ocurrido</span>
+        <textarea id="lrDetalle" rows="4" maxlength="1500" required placeholder="Cuéntanos qué pasó, cuándo y con quién hablaste"></textarea></label>
+      <label class="campo"><span>Qué solicitas</span>
+        <textarea id="lrPedido" rows="3" maxlength="800" required placeholder="Ej. Que me cambien el producto o me devuelvan el dinero"></textarea></label>
+
+      <label class="lr-check"><input type="checkbox" id="lrAcepto">
+        <span>Declaro que la información es verdadera. Acepto que el proveedor use mis datos solo para atender este reclamo.</span></label>
+      <p class="lr-aviso">La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI. El proveedor responde en un máximo de 15 días hábiles, prorrogables por otros 15 según el caso.</p>
+      <p class="lr-aviso" id="lrError" style="color:#b3261e;display:none;"></p>
+      <input id="lrWeb" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;">
+      <button type="submit" class="btn-app terracota">Enviar reclamo</button>
+    </form>`;
+}
+
+function marcarOpcion(radio){
+  document.querySelectorAll(`.lr-op[data-grupo="${radio.parentNode.dataset.grupo}"]`)
+    .forEach(l => l.classList.toggle('activo', l.firstElementChild.checked));
+}
+
+function enviarReclamo(ev){
+  ev.preventDefault();
+  const v = id => document.getElementById(id).value.trim();
+  const err = document.getElementById('lrError');
+  const falta = ['lrNombre','lrDoc','lrDomicilio','lrTelefono','lrEmail','lrBienDesc','lrDetalle','lrPedido'].some(id => !v(id));
+  let msg = '';
+  if(falta) msg = 'Completa todos los campos marcados con texto.';
+  else if(!/^[0-9]{9}$/.test(v('lrTelefono'))) msg = 'El teléfono son nueve dígitos, como 987654321.';
+  else if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('lrEmail'))) msg = 'Revisa el correo: parece incompleto.';
+  else if(!document.getElementById('lrAcepto').checked) msg = 'Marca la declaración para poder enviar.';
+  err.textContent = msg;
+  err.style.display = msg ? 'block' : 'none';
+  if(msg) return;
+  const boton = document.querySelector('#reclamoForm button[type=submit]');
+  boton.disabled = true; boton.textContent = 'Enviando…';
+  const falla = txt => {
+    err.textContent = txt; err.style.display = 'block';
+    boton.disabled = false; boton.textContent = 'Enviar reclamo';
+  };
+  fetch('/api/reclamo', {
+    method:'POST', headers:{'content-type':'application/json'},
+    body: JSON.stringify({
+      nombre:v('lrNombre'), tipo_doc:v('lrTipoDoc'), doc:v('lrDoc'), domicilio:v('lrDomicilio'),
+      telefono:v('lrTelefono'), email:v('lrEmail'),
+      bien:document.querySelector('input[name=lrBien]:checked').value, monto:v('lrMonto'),
+      bien_desc:v('lrBienDesc'),
+      tipo:document.querySelector('input[name=lrTipo]:checked').value,
+      detalle:v('lrDetalle'), pedido:v('lrPedido'), web:v('lrWeb'),
+    }),
+  }).then(r => r.json().then(d => ({ok:r.ok, d})))
+    .then(({ok, d}) => {
+      if(!ok) return falla(d.error || 'No se pudo enviar. Escríbenos por WhatsApp.');
+      const correo = v('lrEmail');
+      document.getElementById('reclamoForm').outerHTML = `
+        <div class="lr-gracias">
+          <b>Recibimos tu reclamo · ${escapeHtml(d.numero)}</b>
+          <p>Te enviamos una copia a ${escapeHtml(correo)}. Te responderemos en un máximo de 15 días hábiles.</p>
+        </div>`;
+      window.scrollTo({top:0});
+    })
+    .catch(() => falla('No se pudo enviar. Revisa tu conexión o escríbenos por WhatsApp.'));
+}
+
 function closeModal(){
   const wasProduct = !!pdState.productId;
   document.getElementById('modalOverlay').classList.remove('show');

@@ -19,6 +19,7 @@
    ====================================================================== */
 
 import { manejaPagos } from './pagos.js';
+import { manejaReclamos } from './reclamos.js';
 import { manejaPanelPedidos } from './pedidos-panel.js';
 
 const SITE_ORIGIN = 'https://chipaomusic.com';
@@ -803,6 +804,16 @@ const PAGINAS_DE_AYUDA = {
       '<p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>',
     ].join(''),
   },
+  '/libro-de-reclamaciones': {
+    title: 'Libro de reclamaciones | Chipao Music',
+    h1: 'Libro de reclamaciones',
+    description: 'Libro de reclamaciones virtual de Chipao Music. Registra un reclamo o una queja sobre un producto o servicio y te respondemos en un máximo de 15 días hábiles.',
+    body: [
+      '<p>Conforme al Código de Protección y Defensa del Consumidor, ponemos a tu disposición nuestro Libro de Reclamaciones virtual. Si tienes un reclamo o una queja sobre un producto o servicio, regístralo aquí.</p>',
+      '<p>Te respondemos en un plazo máximo de 15 días hábiles, y recibirás una copia de tu hoja de reclamación en el correo que indiques.</p>',
+      '<p>Proveedor: Chipao Music · RUC 10772011348 · Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú.</p>',
+    ].join(''),
+  },
   /* No es una política, pero funciona igual: una página de texto con su
      URL. El cuerpo lo arma tallerBodyHtml con los precios de la base. */
   '/taller': {
@@ -1416,6 +1427,11 @@ export default {
     if (url.pathname.startsWith('/api/pedido') || url.pathname.startsWith('/pedido-admin')) {
       const pago = await manejaPagos(request, env, ctx);
       if (pago) return pago;
+    }
+
+    if (url.pathname === '/api/reclamo') {
+      const reclamo = await manejaReclamos(request, env, ctx);
+      if (reclamo) return reclamo;
     }
 
     if (url.pathname === '/api/banner-promo') return apiBanner(request, env, ctx);

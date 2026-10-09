@@ -45,21 +45,21 @@ const SHIPPING_FEE_LIMA = 10;
 const SHIPPING_FEE = 15;
 const PROVINCE_SURCHARGE = 0;   // eran 5 hasta el 2026-10-04; "todo el Perú" cuesta 15 en total
 
-const CORREO_DUENO = 'nishistore@gmail.com';
+export const CORREO_DUENO = 'nishistore@gmail.com';
 const SITE = 'https://chipaomusic.com';
 /* gemini-2.5-flash ya no se da a cuentas nuevas (404). Flash-Lite lee bien los
    comprobantes (probado con capturas reales) y tiene plan gratuito. */
 const MODELO_POR_DEFECTO = 'gemini-3.5-flash-lite';
 
 /* ------------------------------ utilidades ------------------------------ */
-function json(datos, status = 200) {
+export function json(datos, status = 200) {
   return new Response(JSON.stringify(datos), {
     status,
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
   });
 }
 
-function escapeHtml(s) {
+export function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -315,7 +315,7 @@ export function lecturaIncompleta(l) {
 }
 
 /* ------------------------------ correo ------------------------------ */
-async function enviarCorreo(env, { para, asunto, html }) {
+export async function enviarCorreo(env, { para, asunto, html }) {
   if (!env.RESEND_API_KEY) {
     console.log('[pagos] sin RESEND_API_KEY, no se envía:', asunto, '->', para);
     return false;
@@ -350,7 +350,7 @@ export function entregaTexto(p) {
   return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a domicilio';
 }
 
-function marco(titulo, cuerpo) {
+export function marco(titulo, cuerpo) {
   return `<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;color:#222">
 <h2 style="margin:0 0 12px">${escapeHtml(titulo)}</h2>${cuerpo}
 <p style="color:#888;font-size:12px;margin-top:24px">Chipao Music · Av. Los Héroes 382, San Juan de Miraflores</p></div>`;
