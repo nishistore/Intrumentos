@@ -11,6 +11,13 @@ const LOGIN_MAX_ATTEMPTS = 5;
 const LOGIN_WINDOW_MINUTES = 5;
 const IMAGE_FIELDS = ["image1", "image2", "image3", "image4", "image5", "image6", "image7"];
 
+/* Las categorías extra se guardan como texto separado por comas ("colegio,viento"). */
+function extraCatsATexto(v) {
+  if (!Array.isArray(v)) return null;
+  const claves = v.map((x) => String(x).trim()).filter((x) => /^[a-zA-Z0-9_-]{1,40}$/.test(x));
+  return claves.length ? [...new Set(claves)].join(",") : null;
+}
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -124,6 +131,7 @@ export default {
           badge: r.badge,
           stock: r.stock,
           featured: !!r.featured,
+          extraCats: r.extra_cats ? r.extra_cats.split(",").filter(Boolean) : [],
           description: r.description || null,
           images: IMAGE_FIELDS.map((f) => r[f]).filter(Boolean),
           video: r.video || null
@@ -145,7 +153,7 @@ export default {
         if (!name || !cat || !sub || !Number.isFinite(price)) {
           return json({ error: "Faltan campos obligatorios: name, cat, sub, price" }, 400);
         }
-        const columns = ["name", "cat", "sub", "price", "old", "badge", "stock", "featured", "description", "video", ...IMAGE_FIELDS];
+        const columns = ["name", "cat", "sub", "price", "old", "badge", "stock", "featured", "extra_cats", "description", "video", ...IMAGE_FIELDS];
         const values = [
           name,
           cat,
@@ -155,6 +163,7 @@ export default {
           body.badge ?? null,
           Number.isFinite(Number(body.stock)) ? Number(body.stock) : 0,
           body.featured ? 1 : 0,
+          extraCatsATexto(body.extraCats),
           body.description ?? null,
           body.video ?? null,
           ...IMAGE_FIELDS.map((f) => body[f] ?? null)
@@ -188,6 +197,10 @@ export default {
               values.push(body[f]);
             }
           }
+        }
+        if ("extraCats" in body) {
+          updates.push("extra_cats = ?");
+          values.push(extraCatsATexto(body.extraCats));
         }
         if (!updates.length) return json({ error: "Nada para actualizar" }, 400);
         updates.push("updated_at = datetime('now')");

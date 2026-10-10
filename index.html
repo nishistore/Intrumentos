@@ -658,6 +658,17 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   grid-column:1 / -1;
 }
 .admin-check input{width:18px !important;height:18px;flex:none;padding:0 !important;}
+/* "También mostrar en": una casilla por cada otra categoría, en fila. */
+.admin-extra{grid-column:1 / -1;display:flex;flex-direction:column;gap:7px;
+  font:600 10px/1 var(--app-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--app-muted-3);}
+.admin-extra-lista{display:flex;flex-wrap:wrap;gap:7px;}
+.admin-extra-lista label{
+  flex-direction:row !important;align-items:center;gap:7px;cursor:pointer;
+  padding:8px 12px;border:1px solid var(--app-line-strong);border-radius:999px;
+  text-transform:none !important;letter-spacing:0 !important;
+  font:600 12.5px/1 var(--app-sans) !important;color:var(--app-ink) !important;
+}
+.admin-extra-lista input{width:16px !important;height:16px;flex:none;padding:0 !important;accent-color:var(--app-ink);}
 
 /* Safari hace zoom al enfocar un campo de menos de 16px, y al entrar la
    contraseña se enfoca sola. En pantalla táctil todo sube a 16px. */
@@ -3851,8 +3862,12 @@ const CROSS_LISTED_CATS = {
   210: ["colegio"],  // Quena Lupaca con Funda
   211: ["colegio"],  // Zampoña Lupaca con Funda
 };
+/* Además de la lista fija de arriba, cada producto puede traer `extraCats`
+   (lo marca el administrador en el panel: "También mostrar en"). */
 function productInCat(p, catKey){
-  return p.cat === catKey || (CROSS_LISTED_CATS[p.id] || []).includes(catKey);
+  return p.cat === catKey
+    || (CROSS_LISTED_CATS[p.id] || []).includes(catKey)
+    || (p.extraCats || []).includes(catKey);
 }
 
 /* La barra lateral de la tienda agrupa Accesorios por INSTRUMENTO en vez de por tipo
@@ -3878,7 +3893,7 @@ const COLEGIO_FILTER_GROUPS = [
   {key:'colGrpFlautas', seo:'Flautas dulces para el colegio', label:'Flautas dulces', matches:['flautas']},
   {key:'colGrpMelodicas', seo:'Melódicas para el colegio', label:'Melódicas', matches:['melodicas']},
   {key:'colGrpXilofonos', seo:'Xilófonos y metalófonos para el colegio', label:'Xilófonos y metalófonos', matches:['metalofono','colXilofonos']},
-  {key:'colGrpPercusion', seo:'Claves, panderetas y percusión para el colegio', label:'Claves, panderetas y percusión', matches:['panderetas','tarolas','colPercusion']},
+  {key:'colGrpPercusion', seo:'Claves, panderetas y percusión para el colegio', label:'Claves, panderetas y percusión', matches:['panderetas','tarolas','cajones','colPercusion']},
   {key:'colGrpAndinos', seo:'Quenas y zampoñas para el colegio', label:'Quenas y zampoñas', matches:['quenas','zamponas']},
 ];
 
@@ -8952,6 +8967,20 @@ function toggleNewProductForm(){
   if(show) document.getElementById('name-new')?.focus();
 }
 
+/* "También mostrar en": una casilla por cada categoría distinta de la principal.
+   El producto sigue siendo uno solo (una ficha, una URL, un stock); solo
+   aparece también en la lista de esas categorías. */
+function extraCatsHtml(catKey, marcadas){
+  const otras = CATEGORIES.filter(c => c.key !== catKey);
+  return `<span>También mostrar en</span>
+    <div class="admin-extra-lista">${otras.map(c =>
+      `<label><input type="checkbox" value="${c.key}" ${(marcadas||[]).includes(c.key)?'checked':''}> ${c.label}</label>`
+    ).join('')}</div>`;
+}
+function leerExtraCats(id){
+  return [...document.querySelectorAll(`#extra-${id} input:checked`)].map(i => i.value);
+}
+
 function renderNewProductForm(){
   const firstCat = CATEGORIES[0];
   return `
@@ -8980,6 +9009,7 @@ function renderNewProductForm(){
           <input type="checkbox" id="featured-new">
           Marcarlo como más vendida
         </label>
+        <div class="admin-extra" id="extra-new">${extraCatsHtml(firstCat.key, [])}</div>
       </div>
       <div class="media-editor open">
         <div class="media-field">
@@ -9099,6 +9129,7 @@ function adminRowHtml(p){
         <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
         <label>Etiqueta<input type="text" placeholder="—" value="${escapeHtml(p.badge ?? '')}" id="badge-${p.id}" style="width:110px;"></label>
         <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
+        <div class="admin-extra" id="extra-${p.id}">${extraCatsHtml(p.cat, p.extraCats)}</div>
       </div>
       <div class="media-editor" id="desc-editor-${p.id}">
         <div class="media-field">
@@ -9454,6 +9485,7 @@ const ROTULO_TEMA = { normal: 'Normal', navidad: 'Navidad 🎄', halloween: 'Hal
 function onAdminCatChange(id){
   const catKey = document.getElementById(`cat-${id}`).value;
   document.getElementById(`sub-${id}`).innerHTML = subOptionsHtml(catKey, '');
+  document.getElementById(`extra-${id}`).innerHTML = extraCatsHtml(catKey, leerExtraCats(id));
 }
 function toggleMediaEditor(id){
   document.getElementById(`media-editor-${id}`)?.classList.toggle('open');
@@ -9479,6 +9511,7 @@ async function saveProduct(id, btnEl){
   /* "Más vendida" ya no se guarda aquí: tiene su propio interruptor, que
      escribe al instante. Se manda tal como está para no pisarlo. */
   const featured = Boolean(p.featured);
+  const extraCats = leerExtraCats(id);
   const descVal = document.getElementById(`desc-${id}`).value.trim();
   const description = descVal === '' ? null : descVal;
   const imgs = readImageFields(n=>`img${n}-${id}`);
@@ -9492,13 +9525,13 @@ async function saveProduct(id, btnEl){
     const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
-      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, description, video: video||null, ...imagesToBody(imgs) })
+      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, extraCats, description, video: video||null, ...imagesToBody(imgs) })
     });
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
 
     // refleja el cambio al instante, sin recargar toda la tienda
-    p.name = name; p.cat = cat; p.sub = sub; p.price = price; p.old = old; p.badge = badge; p.stock = stock; p.featured = featured; p.description = description;
+    p.name = name; p.cat = cat; p.sub = sub; p.price = price; p.old = old; p.badge = badge; p.stock = stock; p.featured = featured; p.extraCats = extraCats; p.description = description;
     p.images = imgs.filter(Boolean); p.video = video || null;
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
@@ -9541,6 +9574,7 @@ async function createProduct(btnEl){
   const badge = badgeVal === '' ? null : badgeVal;
   const stock = Math.max(0, parseInt(document.getElementById('stock-new').value) || 0);
   const featured = document.getElementById('featured-new').checked;
+  const extraCats = leerExtraCats('new');
   const descVal = document.getElementById('desc-new').value.trim();
   const description = descVal === '' ? null : descVal;
   const imgs = readImageFields(n=>`img${n}-new`);
@@ -9554,12 +9588,12 @@ async function createProduct(btnEl){
     const res = await fetch(`${PRODUCTS_API_URL}/products`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
-      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, description, video: video||null, ...imagesToBody(imgs) })
+      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, extraCats, description, video: video||null, ...imagesToBody(imgs) })
     });
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al crear');
 
-    PRODUCTS.push({ id: data.id, name, cat, sub, price, old, badge, stock, featured, description, images: imgs.filter(Boolean), video: video||null });
+    PRODUCTS.push({ id: data.id, name, cat, sub, price, old, badge, stock, featured, extraCats, description, images: imgs.filter(Boolean), video: video||null });
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
     if(state.view==='shop') render();

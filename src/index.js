@@ -65,7 +65,9 @@ const CROSS_LISTED_CATS = {
   211: ["colegio"],  // Zampoña Lupaca con Funda
 };
 function productInCat(p, catKey) {
-  return p.cat === catKey || (CROSS_LISTED_CATS[p.id] || []).includes(catKey);
+  return p.cat === catKey
+    || (CROSS_LISTED_CATS[p.id] || []).includes(catKey)
+    || (p.extraCats || []).includes(catKey);
 }
 
 /* Copia de ACCESORIOS_FILTER_GROUPS de index.html. En Accesorios los chips que
@@ -88,7 +90,7 @@ const COLEGIO_FILTER_GROUPS = [
   { key: 'colGrpFlautas', seo: 'Flautas dulces para el colegio', label: 'Flautas dulces', matches: ['flautas'] },
   { key: 'colGrpMelodicas', seo: 'Melódicas para el colegio', label: 'Melódicas', matches: ['melodicas'] },
   { key: 'colGrpXilofonos', seo: 'Xilófonos y metalófonos para el colegio', label: 'Xilófonos y metalófonos', matches: ['metalofono', 'colXilofonos'] },
-  { key: 'colGrpPercusion', seo: 'Claves, panderetas y percusión para el colegio', label: 'Claves, panderetas y percusión', matches: ['panderetas', 'tarolas', 'colPercusion'] },
+  { key: 'colGrpPercusion', seo: 'Claves, panderetas y percusión para el colegio', label: 'Claves, panderetas y percusión', matches: ['panderetas', 'tarolas', 'cajones', 'colPercusion'] },
   { key: 'colGrpAndinos', seo: 'Quenas y zampoñas para el colegio', label: 'Quenas y zampoñas', matches: ['quenas', 'zamponas'] },
 ];
 
