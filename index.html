@@ -3658,6 +3658,21 @@ body.en-taller footer.site{margin-top:0;}
   .tl-pie{flex-direction:column;gap:6px;}
 }
 </style>
+<!-- OneSignal: notificaciones push. Solo en el dominio real y fuera del panel
+     (la app de OneSignal esta atada a chipaomusic.com). El service worker es
+     OneSignalSDKWorker.js, en la raiz. -->
+<script>
+if(location.hostname === 'chipaomusic.com' && !new URLSearchParams(location.search).has('panel')){
+  var s = document.createElement('script');
+  s.src = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
+  s.defer = true;
+  document.head.appendChild(s);
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal){
+    await OneSignal.init({ appId: "02dfa5b2-266b-497e-a13c-c4951ca591e7" });
+  });
+}
+</script>
 </head>
 <body>
 
