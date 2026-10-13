@@ -6444,9 +6444,11 @@ function toggleTope(){
   state.priceMax = state.priceMax <= LIMITE_CHIP_PRECIO ? PRICE_MAX : LIMITE_CHIP_PRECIO;
   trasFiltrar();
 }
+/* Una sola subcategoría a la vez: tocar otra reemplaza a la anterior, y
+   volver a tocar la activa la quita. */
 function toggleChipSub(subKey){
-  if(state.activeSubs.has(subKey)) state.activeSubs.delete(subKey);
-  else state.activeSubs.add(subKey);
+  const yaActiva = state.activeSubs.has(subKey);
+  state.activeSubs = new Set(yaActiva ? [] : [subKey]);
   trasFiltrar();
 }
 /* Limpia los filtros pero NO la categoría: quien pulsa "Limpiar" dentro de
