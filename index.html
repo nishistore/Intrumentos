@@ -81,7 +81,10 @@
      Poppins se cayeron con el sitio anterior: eran dos familias completas
      descargándose en cada visita sin que las usara nadie. Los nombres van en
      orden alfabético porque la API css2 lo exige. -->
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Las fuentes no bloquean el primer pintado: se piden como "print" y pasan a
+     "all" al llegar. Mientras tanto se ve la fuente del sistema (display=swap). -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{
   --navy-deep:#ffffff;

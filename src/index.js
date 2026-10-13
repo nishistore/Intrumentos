@@ -1306,7 +1306,8 @@ class SetHtml {
    es el mismo que usa setPageSchema() en index.html, así que cuando arranca
    el JS reutiliza este bloque en vez de duplicarlo. */
 class HeadExtras {
-  constructor(schema, noindex, products, bannerPromo, taller) {
+  constructor(schema, noindex, products, bannerPromo, taller, portada) {
+    this.portada = portada;
     this.schema = schema;
     this.noindex = noindex;
     this.products = products;
@@ -1314,6 +1315,23 @@ class HeadExtras {
     this.taller = taller;
   }
   element(el) {
+    /* La foto del producto gancho de la portada es el LCP, pero el navegador
+       no la descubria hasta que corria el JS y pintaba la tarjeta (ya con el
+       HTML entero bajado y las fuentes resueltas). Con un preload al principio
+       del head la pide en cuanto llega el primer byte. Misma regla que
+       heroProducto() en index.html y misma URL que imgProducto(), para que el
+       <img> reutilice la descarga en vez de pedirla otra vez. */
+    if (this.portada && this.products && this.products.length) {
+      const c = this.products
+        .filter(x => (x.stock || 0) > 0 && x.cat !== 'accesorios' && (x.images || []).length)
+        .sort((a, b) => b.price - a.price);
+      const enOferta = x => Boolean(x.old && x.old > x.price);
+      const hero = c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0];
+      if (hero) {
+        const href = fotoUrl(hero.images[0], 700).replace(/"/g, '&quot;');
+        el.prepend('<link rel="preload" as="image" href="' + href + '" fetchpriority="high">', { html: true });
+      }
+    }
     if (this.noindex) {
       el.append('<meta name="robots" content="noindex,follow">', { html: true });
     }
@@ -1364,7 +1382,7 @@ function rewrite(response, route, body, pathname, products, bannerPromo, taller,
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller))
+    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller, pathname === '/'))
     .on('body', new SetAttr('data-tema', tema || 'normal'));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
