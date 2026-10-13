@@ -5222,6 +5222,10 @@ function coloresDeProducto(p){
 
 const MAX_PUNTOS_COLOR = 5;
 
+/* Una variante es "color" si tiene tono conocido; si no (Diseño 1...), es otra cosa. */
+function esDiseno(label){ return /^Diseño /.test(label || ''); }
+function palabraVariante(labels){ return labels.some(esDiseno) ? 'Diseño' : 'Color'; }
+
 /* Que el producto viene en varios colores no se decía en ninguna parte de la
    tarjeta: había que entrar a la ficha para enterarse, y ocho productos del
    catálogo no lo dicen ni siquiera en el nombre. Con un solo color no se
@@ -5231,8 +5235,8 @@ function puntosColorHtml(p){
   if(colores.length < 2) return '';
   return `
     <div class="pcard-colores">
-      ${colores.slice(0, MAX_PUNTOS_COLOR).map(c => `<span class="pcolor" style="background:${COLOR_HEX[c] || '#ccc'}" title="${escapeHtml(c)}"></span>`).join('')}
-      <span class="pcolor-texto">${colores.length} colores</span>
+      ${colores.filter(c => !esDiseno(c)).slice(0, MAX_PUNTOS_COLOR).map(c => `<span class="pcolor" style="background:${COLOR_HEX[c] || '#ccc'}" title="${escapeHtml(c)}"></span>`).join('')}
+      <span class="pcolor-texto">${colores.length} ${colores.some(esDiseno) ? 'diseños' : 'colores'}</span>
     </div>`;
 }
 
@@ -6552,7 +6556,12 @@ function colorFromImageUrl(url){
   /* Quita solo la extensión (lo de después del ÚLTIMO punto): un nombre
      como "armonica.azul.jpg" tiene dos puntos, y cortar en el primero
      -como hacía antes- se comía el color entero y dejaba "armonica". */
-  const base = (url.split('/').pop()||'').replace(/\.[^./]+$/, '').toLowerCase();
+  let base = (url.split('/').pop()||'').replace(/\.[^./]+$/, '').toLowerCase();
+  try{ base = decodeURIComponent(base); }catch(err){}
+  /* "diseno 1", "diseño-2"...: variantes que no son un color (el estuche de
+     zampoña). Se tratan igual que un color: una foto = una opción. */
+  const dis = base.match(/dise[nñ]o[\s_-]*(\d+)/);
+  if(dis) return 'Diseño ' + dis[1];
   for(const key of COLOR_KEYS_BY_SPECIFICITY){
     if(base.includes(key)) return COLOR_WORDS[key];
   }
@@ -6870,7 +6879,7 @@ function renderProductDetail(){
 
   const enCarrito = state.cart.reduce((s,c) => s + c.qty, 0);
   const ahorro = enOferta(p) ? p.old - p.price : 0;
-  const consulta = `Hola, me interesa ${p.name}${colorActivo ? ' (color ' + colorActivo + ')' : ''}. ¿Está disponible?`;
+  const consulta = `Hola, me interesa ${p.name}${colorActivo ? ' (' + (esDiseno(colorActivo) ? '' : 'color ') + colorActivo + ')' : ''}. ¿Está disponible?`;
 
   /* Puntitos debajo de la foto: dicen cuántas fotos hay y en cuál estás, y
      son la pista de que se puede deslizar. Cada uno lleva a su foto, así que
@@ -6889,14 +6898,14 @@ function renderProductDetail(){
     </div>`;
 
   const swatchesHtml = !hayColores ? '' : `
-      <div class="ficha-color-label">Color — <span>${escapeHtml(colorActivo || 'elige uno')}</span></div>
+      <div class="ficha-color-label">${palabraVariante(colores)} — <span>${escapeHtml(colorActivo ? colorActivo.replace(/^Diseño /,'') : 'elige uno')}</span></div>
       <div class="ficha-swatches">
         ${images.map((url, i) => {
           const label = colores[i];
           if(!label) return '';
           const sel = i === pdState.activeIndex;
           return `<button type="button" class="swatch${sel ? ' sel' : ''}"
-            style="background:${COLOR_HEX[label] || '#ccc'}"
+            style="${esDiseno(label) ? `background:#fff url('${fotoUrl(url, ANCHO_MINIATURA)}') center/cover no-repeat` : `background:${COLOR_HEX[label] || '#ccc'}`}"
             aria-label="${escapeHtml(label)}" aria-pressed="${sel ? 'true' : 'false'}"
             onclick="setActiveSlide(${i})"></button>`;
         }).join('')}
