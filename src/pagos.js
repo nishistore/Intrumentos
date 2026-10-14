@@ -344,7 +344,13 @@ function lineasHtml(items) {
 }
 
 export function entregaTexto(p) {
-  if (p.entrega === 'tienda') return 'Recojo en tienda (Av. Los Héroes 382)';
+  if (p.entrega === 'tienda') {
+    /* La web antepone "Mando mi motorizado ·" a la dirección cuando el cliente
+       manda su propio motorizado; el pedido sigue siendo 'tienda'. */
+    return String(p.direccion || '').startsWith('Mando mi motorizado')
+      ? 'Recojo con motorizado (Av. Los Héroes 382)'
+      : 'Recojo en tienda (Av. Los Héroes 382)';
+  }
   if (p.entrega === 'lima') return 'Envío a domicilio en Lima Metropolitana';
   const a = p.agencia ? JSON.parse(p.agencia) : null;
   return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a domicilio';

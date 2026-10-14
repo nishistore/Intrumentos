@@ -7828,7 +7828,7 @@ function renderPedido(){
   if(state.pedidoYape) return renderPedidoYape();
   const enviado = state.pedidoEnviado || {};
   const entregaResumen = enviado.entrega === 'tienda'
-    ? 'Recojo en tienda'
+    ? (enviado.moto ? 'Recojo con motorizado' : 'Recojo en tienda')
     : enviado.agencia ? `Envío a agencia Shalom · ${enviado.agencia}`
     : 'Envío a domicilio · Lima Metropolitana';
   const totalTexto = state.pedidoEnviado ? fmt(state.pedidoEnviado.total) : '';
@@ -8027,7 +8027,7 @@ ${state.entrega === 'tienda' || agenciaActiva() ? 'Recoge' : 'Dirección'}: ${da
    necesita enseñar, vacía el carrito y navega a /pedido/<id>. */
 function cerrarPedido(numero, total){
   pagoMedido = false;   // el próximo pedido vuelve a medir su inicio de pago
-  state.pedidoEnviado = { total, entrega: state.entrega,
+  state.pedidoEnviado = { total, entrega: state.entrega, moto: state.entrega === 'tienda' && state.motoPropio,
     agencia: agenciaActiva() ? agenciaActiva()[1] : null };
   state.orderId = numero;
   state.orderPlaced = true;
