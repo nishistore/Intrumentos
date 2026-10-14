@@ -4197,6 +4197,7 @@ const state = {
   search:'',
   cart:[],           // {id, qty, color}
   entrega:'lima',    // 'lima' | 'peru' | 'tienda' — se guarda en localStorage
+  motoPropio:false,  // con 'tienda': true si manda su propio motorizado a recoger
   /* Literal a propósito: MEDIOS_PAGO y PAGO_INICIAL se declaran más abajo
      con const, y leerlos aquí reventaría con ReferenceError al cargar. */
   pago:'yape',       // clave de MEDIOS_PAGO
@@ -7340,18 +7341,20 @@ function cartTotal(){
    mañana no tenga que volver a elegirla. */
 const ENTREGA_STORAGE_KEY = 'chipao-entrega-v1';
 function saveEntrega(){
-  try{ localStorage.setItem(ENTREGA_STORAGE_KEY, state.entrega); }catch(err){}
+  try{ localStorage.setItem(ENTREGA_STORAGE_KEY, state.entrega === 'tienda' && state.motoPropio ? 'moto' : state.entrega); }catch(err){}
 }
 function loadEntrega(){
   try{
-    const v = localStorage.getItem(ENTREGA_STORAGE_KEY);
+    let v = localStorage.getItem(ENTREGA_STORAGE_KEY);
+    if(v === 'moto'){ v = 'tienda'; state.motoPropio = true; }
     if(v === 'lima' || v === 'peru' || v === 'tienda') state.entrega = v;
     else if(v === 'envio') state.entrega = 'lima';   // valor de antes de separar Lima y provincia
   }catch(err){}
 }
 
-function setEntrega(valor){
+function setEntrega(valor, moto){
   state.entrega = valor;
+  state.motoPropio = valor === 'tienda' && !!moto;
   saveEntrega();
   /* Si dejó de recoger, "pago en tienda" ya no existe: se vuelve al inicial
      en vez de quedarse con un medio que no se puede elegir. */
@@ -7371,7 +7374,7 @@ function agenciaActiva(){
   return state.entrega === 'peru' && state.agencia ? state.agencia : null;
 }
 function textoEntrega(){
-  if(state.entrega === 'tienda') return 'Recojo en tienda (Av. Los Héroes 382)';
+  if(state.entrega === 'tienda') return state.motoPropio ? 'Recojo con mi motorizado (Av. Los Héroes 382)' : 'Recojo en tienda (Av. Los Héroes 382)';
   if(state.entrega === 'lima') return 'Envío a domicilio en Lima Metropolitana';
   const a = agenciaActiva();
   return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a provincia (agencia Shalom por elegir)';
@@ -7637,12 +7640,14 @@ function renderCarrito(){
     ${progresoEnvioHtml(subtotal)}
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
+      ${filaRadio(state.entrega==='tienda' && state.motoPropio, 'Mando mi motorizado',
+         'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)")}
       ${filaRadio(state.entrega==='lima', 'Envío a Lima Metropolitana', 'Recíbelo en menos de 24h',
          costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')")}
       ${filaRadio(state.entrega==='peru', 'Envío a todo el Perú', '1 a 4 días útiles · recoges en agencia Shalom',
          costeEnvioTexto(subtotal,'peru'), "setEntrega('peru')")}
-      ${filaRadio(state.entrega==='tienda', 'Recojo en tienda',
-         'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda')")}
+      ${filaRadio(state.entrega==='tienda' && !state.motoPropio, 'Recojo en tienda',
+         'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',false)")}
     </div>`;
 
   /* Escritorio: las líneas a la izquierda y el panel de entrega y totales
@@ -7692,7 +7697,7 @@ function renderCheckout(){
   const medio = medioPago(state.pago);
   const conAgencia = state.entrega==='peru' && !!state.agencia;
   const entregaResumen = state.entrega==='tienda'
-    ? 'Recojo en tienda · Av. Los Héroes 382'
+    ? (state.motoPropio ? 'Recoge tu motorizado · Av. Los Héroes 382' : 'Recojo en tienda · Av. Los Héroes 382')
     : state.entrega==='peru' ? (conAgencia ? `Envío a agencia Shalom · ${state.agencia[1]}` : 'Envío a provincia · falta elegir la agencia')
     : 'Envío a domicilio · Lima Metropolitana';
 
@@ -7715,9 +7720,9 @@ function renderCheckout(){
       </label>` : ''}
       ${state.entrega==='peru' ? agenciaShalomHtml() : ''}
       <label class="campo">
-        <span>${state.entrega==='tienda' ? 'Quién lo recoge y cuándo'
+        <span>${state.entrega==='tienda' ? (state.motoPropio ? 'Datos del motorizado y a qué hora llega' : 'Quién lo recoge y cuándo')
               : conAgencia ? 'Quién recoge en la agencia' : 'Dirección de entrega'}</span>
-        <textarea id="coDireccion" rows="2" placeholder="${state.entrega==='tienda' ? 'Ej. Paso yo mañana por la tarde'
+        <textarea id="coDireccion" rows="2" placeholder="${state.entrega==='tienda' ? (state.motoPropio ? 'Ej. Nombre y celular del motorizado, llega a las 4 p.m.' : 'Ej. Paso yo mañana por la tarde')
               : conAgencia ? 'Nombre y DNI, como figura en el documento' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
       </label>`;
 
@@ -7964,8 +7969,10 @@ function leerDatosDelFormulario(){
 
 async function submitOrder(e){
   e.preventDefault();
-  const datos = leerDatosDelFormulario();
+  let datos = leerDatosDelFormulario();
   if(!datos.nombre || !datos.telefono || !datos.direccion) return;
+  /* El pedido y el WhatsApp tienen que decir que viene un motorizado. */
+  if(state.entrega === 'tienda' && state.motoPropio) datos = {...datos, direccion: 'Mando mi motorizado · ' + datos.direccion};
   if(state.entrega === 'peru' && !state.agencia){
     showToast('Elige la agencia Shalom donde recoges tu pedido');
     return;
