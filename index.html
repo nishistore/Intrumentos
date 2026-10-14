@@ -2611,6 +2611,25 @@ footer.site .footer-bottom{
 .yape-aviso p+p{margin-top:5px;}
 .yape-nota{margin-top:14px;font:400 11.5px/1.5 var(--app-sans);color:var(--app-muted-3);text-wrap:pretty;}
 .yape-pago .btn-app.contorno{margin-top:12px;height:46px;font-size:13px;}
+.yape-alerta{
+  margin:18px 0 0;padding:12px 14px;border-radius:11px;text-align:left;
+  background:#FFF4DC;border:1px solid #EBCB84;color:#6B4400;
+  font:500 12.5px/1.5 var(--app-sans);
+}
+.yape-alerta b{font-weight:800;}
+.yape-pasos li.clave{border:2px solid var(--app-ink);padding:13px 13px 13px 51px;}
+.yape-pasos li.clave::before{background:#B45309;}
+.yape-oblig{
+  display:inline-block;margin-left:6px;padding:2px 8px;border-radius:var(--app-r-pill);
+  background:#B45309;color:#fff;font:700 10.5px/1.4 var(--app-sans);letter-spacing:.03em;text-transform:uppercase;vertical-align:1px;
+}
+.yape-subir{animation:yapePulso 2s ease-out infinite;}
+@keyframes yapePulso{
+  0%{box-shadow:0 0 0 0 rgba(180,83,9,.45);}
+  70%,100%{box-shadow:0 0 0 12px rgba(180,83,9,0);}
+}
+@media (prefers-reduced-motion:reduce){.yape-subir{animation:none;}}
+.yape-sin-captura{margin-top:10px;font:600 12.5px/1.45 var(--app-sans);color:#8A4B00;text-wrap:pretty;}
 .pedido-ok .btn-app.contorno{margin-top:10px;}
 .yape-espera{background:var(--app-sunken);color:var(--app-ink);border:1px solid var(--app-line);}
 @media (min-width:900px){
@@ -8289,6 +8308,8 @@ function renderPedidoYape(){
       <h1 class="pedido-titulo">Paga ${fmt(p.total)} con Yape</h1>
       <p class="pedido-copy">Pedido <strong>#${id}</strong></p>
 
+      <div class="yape-alerta"><b>Tu pedido no queda confirmado hasta que subas la captura del Yape.</b> Yapear solo no basta: la captura es lo que nos dice que ya pagaste.</div>
+
       <ol class="yape-pasos">
         <li>
           <b>Yapea exactamente ${fmt(p.total)}</b> a este número:
@@ -8302,8 +8323,8 @@ function renderPedidoYape(){
           <b>Escribe tu código en el mensaje</b> de Yape: <b>${id}</b>
           <small>No es obligatorio, pero nos ayuda a ubicar tu pago.</small>
         </li>
-        <li>
-          <b>Sube la captura</b> del comprobante, completa y sin recortar: la pantalla "¡Yapeaste!" o, si yapeaste desde la app de tu banco, la de "Operación exitosa".
+        <li class="clave">
+          <b>Sube la captura</b><span class="yape-oblig">Obligatorio</span> del comprobante, completa y sin recortar: la pantalla "¡Yapeaste!" o, si yapeaste desde la app de tu banco, la de "Operación exitosa".
         </li>
       </ol>
 
@@ -8312,6 +8333,7 @@ function renderPedidoYape(){
         <span>Subir captura del comprobante</span>
       </label>
       <div class="yape-aviso" id="yapeAviso" role="alert" hidden></div>
+      <p class="yape-sin-captura">¿Ya yapeaste? Sube la captura ahora, si no tu pedido se queda sin confirmar.</p>
 
       <p class="yape-nota">Pagos desde S/ 200 los confirmamos a mano y te avisamos por correo. La captura debe ser de un pago hecho después de crear este pedido.</p>
       ${enlaceAyuda}
