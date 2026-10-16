@@ -2042,8 +2042,14 @@ footer.site .store-maps-btn{
 /* Las siete categorías en dos columnas: en una sola eran siete renglones. */
 footer.site #footerCats{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}
 footer.site #footerCats .link{margin:0;}
-.footer-telefono{color:var(--app-green-mint) !important;margin-top:10px;}
-.footer-solo-esc{display:block;}
+footer.site .ft-row{display:flex;gap:12px;align-items:flex-start;margin:0 0 12px;}
+footer.site .ft-row svg{stroke:rgba(255,255,255,.5);margin-top:2px;}
+footer.site .ft-row p{margin:0;}
+footer.site .ft-row span{display:block;color:rgba(255,255,255,.9);}
+footer.site .ft-row small{display:block;font-size:inherit;color:rgba(255,255,255,.55);}
+footer.site .footer-col a.ft-maps{display:inline-flex;align-self:flex-start;align-items:center;margin-top:4px;padding:8px 14px;border:1px solid rgba(255,255,255,.22);border-radius:8px;font-weight:500;gap:6px;color:#e9ecf5;}
+footer.site .footer-col a.ft-maps:hover{border-color:var(--gold-light);color:var(--gold-light);}
+footer.site .ft-maps svg{stroke:currentColor;}
 footer.site .footer-pagos{display:none;}
 
 /* Ayuda y Legal se tumban en una fila de enlaces, sin sus títulos: como
@@ -3804,10 +3810,9 @@ if(location.hostname === 'chipaomusic.com' && !new URLSearchParams(location.sear
     <div class="footer-col footer-tienda">
       <h4>Visítanos</h4>
       <div id="footerLocation">
-        <p>Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú</p>
-        <p>Lunes a domingo, 9:30 a.m. &ndash; 9:00 p.m.</p>
+        <p>Av. Los Héroes 382, San Juan de Miraflores, Lima</p>
+        <p>Todos los días, 9:30 a.m. &ndash; 9:00 p.m.</p>
       </div>
-      <p class="footer-solo-esc footer-telefono">+51 921 317 384</p>
     </div>
     <!-- Cuarta columna del handoff de escritorio. En el teléfono no se enseña:
          lo mismo ya está en el carrito y en la ficha, al lado del precio. -->
@@ -8409,7 +8414,18 @@ function checkPaymentReturnStatus(){
   window.history.replaceState({}, '', window.location.pathname);
 }
 
-document.getElementById('footerLocation').innerHTML = storeLocationHTML(100);
+/* Pie de página: dirección y horario en filas con ícono y un botón "Cómo llegar".
+   Sin el teléfono (ya está en el botón de WhatsApp) y sin mapa. */
+document.getElementById('footerLocation').innerHTML = `
+  <div class="ft-row">
+    ${iconSvg('pin','style="width:17px;height:17px;flex-shrink:0"')}
+    <p><span>Av. Los Héroes 382</span><small>San Juan de Miraflores, Lima</small></p>
+  </div>
+  <div class="ft-row">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <p><span>Todos los días</span><small>9:30 a.m. &ndash; 9:00 p.m.</small></p>
+  </div>
+  <a href="${STORE_MAPS_LINK}" target="_blank" rel="noopener" class="store-maps-btn ft-maps"><span>Cómo llegar</span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M7 17L17 7M8 7h9v9"/></svg></a>`;
 
 /* Sincroniza la página (categoría/producto/ofertas/inicio) con el botón
    "atrás"/"adelante" del navegador */
