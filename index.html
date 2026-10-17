@@ -527,13 +527,6 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
 
 /* ---- herramientas de arriba ---- */
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
-/* Pestañas Productos | Taller, debajo del resumen. */
-.admin-tabs{display:flex;gap:6px;margin-top:12px;}
-.admin-tab{
-  padding:8px 16px;border-radius:var(--app-r-pill);border:1.5px solid var(--app-line-strong);
-  background:var(--app-surface);font:600 13px/1 var(--app-sans);color:var(--app-ink);
-}
-.admin-tab.activa{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
 .admin-taller{margin-bottom:12px;gap:12px;}
 .admin-taller-num{font:700 10.5px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--app-muted);}
 .admin-taller-campo{display:flex;flex-direction:column;gap:6px;font:600 12.5px/1.3 var(--app-sans);color:var(--app-ink);}
@@ -680,6 +673,111 @@ footer .store-map-embed{border-color:rgba(255,255,255,.16);filter:grayscale(.15)
   .admin-row select,
   .admin-row textarea{font-size:16px;}
 }
+
+/* ---- panel: menu lateral, lista compacta y editor ---- */
+.admin-cuerpo{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;}
+.admin-main{min-width:0;}
+.admin-menu{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
+.admin-menu{scrollbar-width:none;}
+.admin-menu::-webkit-scrollbar{display:none;}
+.admin-menu-item{
+  flex:none;padding:9px 15px;border-radius:var(--app-r-pill);border:1.5px solid var(--app-line-strong);
+  background:var(--app-surface);font:600 13px/1 var(--app-sans);color:var(--app-ink);white-space:nowrap;
+}
+.admin-menu-item.activa{background:var(--app-ink);border-color:var(--app-ink);color:#fff;}
+@media (min-width:900px){
+  .admin-cuerpo{grid-template-columns:200px minmax(0,1fr);gap:24px;}
+  .admin-menu{flex-direction:column;overflow:visible;position:sticky;top:104px;gap:3px;}
+  .admin-menu-item{
+    border:1px solid transparent;border-radius:var(--app-r-input);background:none;
+    padding:10px 12px;text-align:left;color:var(--app-muted);font-weight:500;
+  }
+  .admin-menu-item:hover{background:var(--app-surface);color:var(--app-ink);}
+  .admin-menu-item.activa{background:var(--app-surface);border-color:var(--app-line-strong);color:var(--app-ink);font-weight:700;}
+}
+.admin-sec-titulo{margin:0 0 10px;font:700 15px/1.3 var(--app-sans);color:var(--app-ink);}
+
+.admin-barra{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.admin-barra input{
+  flex:1 1 220px;min-width:0;padding:11px 14px;border-radius:var(--app-r-input);
+  border:1px solid var(--app-line-strong);background:var(--app-surface);font:400 14px/1 var(--app-sans);color:var(--app-ink);
+}
+.admin-barra select{
+  flex:0 1 200px;padding:11px 10px;border-radius:var(--app-r-input);
+  border:1px solid var(--app-line-strong);background:var(--app-surface);font:400 14px/1 var(--app-sans);color:var(--app-ink);
+}
+.admin-barra input:focus,.admin-barra select:focus{outline:none;border-color:var(--app-ink);}
+.admin-nuevo{
+  flex:none;padding:11px 18px;border-radius:var(--app-r-input);border:0;
+  background:var(--app-ink);color:#fff;font:600 13.5px/1 var(--app-sans);
+}
+#new-product-form{margin-bottom:12px;}
+
+.admin-split{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;}
+.admin-split .admin-list{gap:0;margin-bottom:0;background:var(--app-surface);border:1px solid var(--app-line);border-radius:var(--app-r-card);overflow:hidden;}
+.admin-split .admin-list .admin-vacio{padding:28px 14px;}
+.admin-editor-caja{display:none;}
+.admin-split.editando .admin-editor-caja{display:block;}
+.admin-split.editando .admin-list{display:none;}
+@media (min-width:1100px){
+  .admin-split.editando{grid-template-columns:minmax(0,1fr) 440px;}
+  .admin-split.editando .admin-list{display:block;}
+  .admin-split.editando .admin-editor-caja{position:sticky;top:104px;max-height:calc(100vh - 120px);overflow-y:auto;}
+  .admin-split.editando .af-marcas{display:none;}
+}
+
+.admin-fila{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  padding:10px 14px;background:var(--app-surface);border:0;border-bottom:1px solid var(--app-line);
+  font-family:var(--app-sans);color:var(--app-ink);
+}
+.admin-fila:last-child{border-bottom:0;}
+.admin-fila:hover{background:var(--app-sunken);}
+.admin-fila.activa{background:var(--app-sunken);box-shadow:inset 3px 0 0 var(--app-ink);}
+.admin-fila.zero{box-shadow:inset 4px 0 0 var(--peru-rojo);}
+.admin-fila.zero.activa{box-shadow:inset 4px 0 0 var(--peru-rojo);}
+.admin-fila .admin-thumb{width:40px;height:40px;}
+.af-texto{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.af-nombre{font:600 14px/1.25 var(--app-sans);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.af-donde{font:400 11.5px/1.2 var(--app-sans);color:var(--app-muted-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.af-datos{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.af-datos b{font:700 14px/1.2 var(--app-sans);}
+.af-datos i{font:400 11.5px/1.2 var(--app-sans);font-style:normal;color:var(--app-muted-2);}
+.af-datos i.alerta{color:#8E0B18;font-weight:600;}
+.af-marcas{flex:none;display:flex;gap:5px;min-width:0;}
+.af-marca{font:600 10.5px/1 var(--app-sans);font-style:normal;padding:4px 8px;border-radius:999px;white-space:nowrap;}
+.af-marca.vendida{background:var(--app-ink);color:#fff;}
+.af-marca.oferta{background:#FDECEC;color:#8E0B18;}
+.af-flecha{flex:none;font:400 20px/1 var(--app-sans);color:var(--app-faint);}
+@media (max-width:640px){
+  .af-marcas{display:none;}
+}
+
+.admin-editor{gap:12px;border-color:var(--app-line-strong);}
+.ae-cabeza{display:flex;align-items:center;gap:11px;}
+.ae-cabeza .aname{flex:1;min-width:0;}
+.ae-cerrar{
+  flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--app-line-strong);
+  background:var(--app-surface);font:400 20px/1 var(--app-sans);color:var(--app-ink);
+}
+.ae-cerrar:hover{border-color:var(--app-ink);}
+.ae-tabs{display:flex;gap:18px;border-bottom:1px solid var(--app-line);}
+.ae-tab{
+  padding:8px 0;margin-bottom:-1px;background:none;border:0;border-bottom:2px solid transparent;
+  font:500 13px/1.2 var(--app-sans);color:var(--app-muted);
+}
+.ae-tab.activa{border-bottom-color:var(--app-ink);color:var(--app-ink);font-weight:700;}
+.ae-panel{display:none;flex-direction:column;gap:12px;}
+.ae-panel.abierto{display:flex;}
+.ae-panel .admin-fields{border-top:0;padding-top:0;}
+.ae-campos{display:flex;flex-direction:column;gap:11px;}
+.ae-pie{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--app-line);}
+.ae-pie .admin-guardar{width:auto;margin:0;padding-left:22px;padding-right:22px;}
+.ae-eliminar{background:none;border:0;padding:8px 0;font:600 12.5px/1 var(--app-sans);color:#8E0B18;}
+.ae-eliminar:hover{text-decoration:underline;}
+.admin-editor input,
+.admin-editor select,
+.admin-editor textarea{width:100%;}
 
 /* Interruptor del banner de promocion. Va del rojo de la bandera -el mismo de
    la barra que enciende- para que se vea de un golpe en cual de los dos
@@ -9066,6 +9164,7 @@ async function toggleColoresNombre(id, btn){
     if(input) input.value = nombre;
     btn.classList.toggle('puesta', puesto);
     btn.setAttribute('aria-pressed', puesto ? 'true' : 'false');
+    pintarListaAdmin();
     showToast(puesto ? 'Se agregó el aviso de colores al nombre' : 'Se quitó el aviso de colores del nombre');
   }catch(err){
     showToast('No se pudo guardar. Revisa tu clave de administrador.');
@@ -9074,76 +9173,174 @@ async function toggleColoresNombre(id, btn){
   }
 }
 
+/* La lista es de filas compactas de solo lectura: foto, nombre, dónde está,
+   precio y stock. Se edita en el panel de al lado (adminEditorHtml), que es
+   uno solo para todo el catálogo en vez de un formulario por producto. */
+let adminEditId = null;
+let adminEditTab = 'datos';
+
+function etiquetaCatAdmin(p){
+  const cat = CATEGORIES.find(c => c.key === p.cat);
+  const sub = cat && (cat.subs || []).find(s => s.key === p.sub);
+  return [cat && cat.label, sub && sub.label].filter(Boolean).join(' · ');
+}
+
 function adminRowHtml(p){
   const foto = (p.images || [])[0];
-  /* Lo que se necesita saber de un vistazo sin abrir nada. */
-  const meta = [
-    fmt(p.price),
-    (p.stock || 0) > 0 ? `${p.stock} en stock` : 'sin stock',
-    enOferta(p) ? `antes ${fmt(p.old)}` : null
-  ].filter(Boolean).join(' · ');
+  const sinStock = (p.stock || 0) <= 0;
   return `
-    <div class="admin-row ${p.stock<=0?'zero':''}" data-row="${p.id}">
-      <div class="admin-row-top">
+    <button type="button" class="admin-fila${sinStock ? ' zero' : ''}${adminEditId === p.id ? ' activa' : ''}"
+      data-fila="${p.id}" onclick="abrirEditorAdmin(${p.id})">
+      ${foto
+        ? `<img class="admin-thumb" src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">`
+        : `<span class="admin-thumb vacia">${iconSvg(iconFor(p))}</span>`}
+      <span class="af-texto">
+        <span class="af-nombre">${escapeHtml(p.name)}</span>
+        <span class="af-donde">${escapeHtml(etiquetaCatAdmin(p))}</span>
+      </span>
+      <span class="af-datos">
+        <b>${fmt(p.price)}</b>
+        <i class="${sinStock ? 'alerta' : ''}">${sinStock ? 'sin stock' : p.stock + ' en stock'}</i>
+      </span>
+      <span class="af-marcas">
+        ${p.featured ? '<em class="af-marca vendida">Más vendida</em>' : ''}
+        ${enOferta(p) ? `<em class="af-marca oferta">-${pctDescuento(p)}%</em>` : ''}
+      </span>
+      <span class="af-flecha" aria-hidden="true">›</span>
+    </button>`;
+}
+
+/* El editor lleva los MISMOS ids que tenía cada fila (name-ID, price-ID...),
+   porque saveProduct, onAdminCatChange y los interruptores leen el DOM por
+   id. Las tres pestañas se pintan siempre y solo se esconden con CSS: si se
+   pintara una sola, Guardar cambios no encontraría los campos de las otras. */
+function adminEditorHtml(p){
+  const t = adminEditTab;
+  const pestana = (k, texto) => `<button type="button" class="ae-tab${t === k ? ' activa' : ''}" data-aetab="${k}" onclick="cambiarTabEditor('${k}')">${texto}</button>`;
+  const foto = (p.images || [])[0];
+  return `
+    <div class="admin-row admin-editor" data-row="${p.id}">
+      <div class="ae-cabeza">
         ${foto
-          ? `<img class="admin-thumb" src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="" loading="lazy" decoding="async">`
+          ? `<img class="admin-thumb" src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="">`
           : `<span class="admin-thumb vacia">${iconSvg(iconFor(p))}</span>`}
         <div class="aname">
-          <input type="text" value="${escapeHtml(p.name)}" id="name-${p.id}" class="aname-input">
-          <div class="admin-linea-meta">${escapeHtml(meta)}</div>
+          <input type="text" value="${escapeHtml(p.name)}" id="name-${p.id}" class="aname-input" aria-label="Nombre del producto">
+          <div class="admin-linea-meta">${escapeHtml(etiquetaCatAdmin(p))}</div>
+        </div>
+        <button type="button" class="ae-cerrar" onclick="cerrarEditorAdmin()" aria-label="Cerrar">×</button>
+      </div>
+      <div class="ae-tabs">
+        ${pestana('datos', 'Datos')}${pestana('fotos', 'Fotos y video')}${pestana('desc', 'Descripción')}
+      </div>
+
+      <div class="ae-panel${t === 'datos' ? ' abierto' : ''}" data-aepanel="datos">
+        <div class="admin-chips">
+          ${chipMasVendidaHtml(p)}
+          ${chipColoresHtml(p)}
+        </div>
+        <div class="admin-fields">
+          <label>Categoría
+            <select id="cat-${p.id}" onchange="onAdminCatChange(${p.id})">
+              ${CATEGORIES.map(c=>`<option value="${c.key}" ${p.cat===c.key?'selected':''}>${c.label}</option>`).join('')}
+            </select>
+          </label>
+          <label>Subcategoría
+            <select id="sub-${p.id}">
+              ${subOptionsHtml(p.cat, p.sub)}
+            </select>
+          </label>
+          <label>Precio<input type="number" min="0" step="1" value="${p.price}" id="price-${p.id}"></label>
+          <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
+          <label>Etiqueta<input type="text" placeholder="—" value="${escapeHtml(p.badge ?? '')}" id="badge-${p.id}"></label>
+          <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
+          <div class="admin-extra" id="extra-${p.id}">${extraCatsHtml(p.cat, p.extraCats)}</div>
         </div>
       </div>
-      <div class="admin-chips">
-        ${chipMasVendidaHtml(p)}
-        ${chipColoresHtml(p)}
-        <button type="button" class="media-toggle" onclick="toggleDescEditor(${p.id})">Descripción</button>
-        <button type="button" class="media-toggle" onclick="toggleMediaEditor(${p.id})">Fotos y video</button>
-        <button type="button" class="media-toggle borrar" onclick="deleteProduct(${p.id}, this)">Eliminar</button>
+
+      <div class="ae-panel${t === 'fotos' ? ' abierto' : ''}" data-aepanel="fotos">
+        <div class="ae-campos">
+          ${adminImageFieldsHtml(n=>`img${n}-${p.id}`, p.images)}
+          <div class="media-field">
+            <label>Video (URL de YouTube o link directo .mp4)</label>
+            <input type="text" placeholder="https://..." value="${p.video||''}" id="vid-${p.id}" style="width:100%;">
+          </div>
+        </div>
       </div>
-      <div class="admin-fields">
-        <label>Categoría
-          <select id="cat-${p.id}" onchange="onAdminCatChange(${p.id})">
-            ${CATEGORIES.map(c=>`<option value="${c.key}" ${p.cat===c.key?'selected':''}>${c.label}</option>`).join('')}
-          </select>
-        </label>
-        <label>Subcategoría
-          <select id="sub-${p.id}">
-            ${subOptionsHtml(p.cat, p.sub)}
-          </select>
-        </label>
-        <label>Precio<input type="number" min="0" step="1" value="${p.price}" id="price-${p.id}"></label>
-        <label>Antes (oferta)<input type="number" min="0" step="1" placeholder="—" value="${p.old ?? ''}" id="old-${p.id}"></label>
-        <label>Etiqueta<input type="text" placeholder="—" value="${escapeHtml(p.badge ?? '')}" id="badge-${p.id}" style="width:110px;"></label>
-        <label>Stock<input type="number" min="0" value="${p.stock}" id="stock-${p.id}"></label>
-        <div class="admin-extra" id="extra-${p.id}">${extraCatsHtml(p.cat, p.extraCats)}</div>
-      </div>
-      <div class="media-editor" id="desc-editor-${p.id}">
+
+      <div class="ae-panel${t === 'desc' ? ' abierto' : ''}" data-aepanel="desc">
         <div class="media-field">
           <label>Descripción</label>
-          <textarea placeholder="Descripción del producto..." id="desc-${p.id}" rows="6">${escapeHtml(p.description||'')}</textarea>
+          <textarea placeholder="Descripción del producto..." id="desc-${p.id}" rows="10">${escapeHtml(p.description||'')}</textarea>
         </div>
       </div>
-      <div class="media-editor" id="media-editor-${p.id}">
-        ${adminImageFieldsHtml(n=>`img${n}-${p.id}`, p.images)}
-        <div class="media-field">
-          <label>Video (URL de YouTube o link directo .mp4)</label>
-          <input type="text" placeholder="https://..." value="${p.video||''}" id="vid-${p.id}" style="width:100%;">
-        </div>
+
+      <div class="ae-pie">
+        <button type="button" class="ae-eliminar" onclick="deleteProduct(${p.id}, this)">Eliminar producto</button>
+        <button class="btn-gold admin-guardar" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
       </div>
-      <button class="btn-gold admin-guardar" onclick="saveProduct(${p.id}, this)">Guardar cambios</button>
     </div>`;
 }
 
+/* Repintar solo la lista: pintar la pantalla entera le quitaría el scroll y
+   lo que estés escribiendo en el editor. */
+function pintarListaAdmin(){
+  const caja = document.getElementById('admin-list');
+  if(caja) caja.innerHTML = renderAdminListHtml();
+  pintarResumenAdmin();
+}
+
+function abrirEditorAdmin(id){
+  adminEditId = id;
+  adminEditTab = 'datos';
+  pintarEditorAdmin();
+}
+function cerrarEditorAdmin(){
+  adminEditId = null;
+  pintarEditorAdmin();
+}
+function pintarEditorAdmin(){
+  const p = PRODUCTS.find(x => x.id === adminEditId);
+  const caja = document.getElementById('admin-editor');
+  const split = document.getElementById('admin-split');
+  if(!caja || !split) return;
+  caja.innerHTML = p ? adminEditorHtml(p) : '';
+  split.classList.toggle('editando', Boolean(p));
+  document.getElementById('admin-list').innerHTML = renderAdminListHtml();
+  if(p){
+    const fila = document.querySelector(`.admin-fila[data-fila="${p.id}"]`);
+    if(fila && window.innerWidth >= 1100) fila.scrollIntoView({block:'nearest'});
+    if(window.innerWidth < 1100) window.scrollTo({top:0});
+  }
+}
+function cambiarTabEditor(k){
+  adminEditTab = k;
+  document.querySelectorAll('.ae-tab').forEach(b => b.classList.toggle('activa', b.dataset.aetab === k));
+  document.querySelectorAll('.ae-panel').forEach(d => d.classList.toggle('abierto', d.dataset.aepanel === k));
+}
+
+let adminCatFiltro = '';
 function filteredAdminProducts(){
   const q = adminSearchQuery.trim().toLowerCase();
-  if(!q) return PRODUCTS;
-  return PRODUCTS.filter(p=>p.name.toLowerCase().includes(q));
+  return PRODUCTS.filter(p =>
+    (!q || p.name.toLowerCase().includes(q)) &&
+    (!adminCatFiltro || p.cat === adminCatFiltro) &&
+    (adminPestana !== 'ofertas' || enOferta(p)));
 }
 
 function renderAdminListHtml(){
   const list = filteredAdminProducts();
-  if(!list.length) return `<p class="admin-vacio">Ningún producto coincide con "${escapeHtml(adminSearchQuery)}".</p>`;
+  if(!list.length){
+    return adminPestana === 'ofertas' && !adminSearchQuery && !adminCatFiltro
+      ? '<p class="admin-vacio">No hay productos en oferta ahora mismo.</p>'
+      : `<p class="admin-vacio">Ningún producto coincide con la búsqueda.</p>`;
+  }
   return list.map(adminRowHtml).join('');
+}
+
+function onAdminCatFiltro(val){
+  adminCatFiltro = val;
+  document.getElementById('admin-list').innerHTML = renderAdminListHtml();
 }
 
 function onAdminSearchInput(val){
@@ -9151,17 +9348,54 @@ function onAdminSearchInput(val){
   document.getElementById('admin-list').innerHTML = renderAdminListHtml();
 }
 
-/* El panel tiene dos pestañas: los productos, que es casi todo, y los
-   precios del taller. */
+/* El panel se reparte en secciones, con un menú a la izquierda (en el
+   teléfono pasa a una tira de botones arriba). Productos y Ofertas comparten
+   lista; Tienda y apariencia lleva los temas; Taller, sus precios. */
 let adminPestana = 'productos';
 function cambiarPestanaAdmin(p){
   adminPestana = p;
+  adminEditId = null;
   render();
   window.scrollTo({top:0});
 }
-function pestanasAdminHtml(){
-  const b = (k, t) => `<button type="button" class="admin-tab${adminPestana===k?' activa':''}" onclick="cambiarPestanaAdmin('${k}')">${t}</button>`;
-  return `<div class="admin-tabs">${b('productos', 'Productos')}${b('taller', 'Taller')}</div>`;
+const SECCIONES_ADMIN = [
+  ['productos', 'Productos'],
+  ['ofertas', 'Ofertas'],
+  ['tienda', 'Tienda y apariencia'],
+  ['taller', 'Taller'],
+];
+function menuAdminHtml(){
+  return `<nav class="admin-menu" aria-label="Secciones del panel">${SECCIONES_ADMIN.map(([k, t]) =>
+    `<button type="button" class="admin-menu-item${adminPestana === k ? ' activa' : ''}" onclick="cambiarPestanaAdmin('${k}')">${t}</button>`
+  ).join('')}</nav>`;
+}
+/* El marco común de todas las secciones: cabecera, menú y contenido. */
+function adminMarcoHtml(titulo, cuerpo, conResumen){
+  const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
+  const ofertas = PRODUCTS.filter(enOferta).length;
+  const vendidas = PRODUCTS.filter(x => x.featured).length;
+  return `
+  <div class="app-shell admin">
+    <header class="admin-head">
+      <div class="admin-head-fila">
+        <div class="admin-head-texto">
+          <span class="admin-eyebrow">Panel de la tienda</span>
+          <h1>${titulo}</h1>
+        </div>
+        <button type="button" class="admin-salir" onclick="salirDelPanel()">Salir</button>
+      </div>
+      ${conResumen ? `<div class="admin-resumen">
+        <span class="admin-dato"><b>${PRODUCTS.length}</b> en catálogo</span>
+        <span class="admin-dato${sinStock ? ' alerta' : ''}"><b>${sinStock}</b> sin stock</span>
+        <span class="admin-dato"><b>${ofertas}</b> en oferta</span>
+        <span class="admin-dato"><b>${vendidas}</b> más vendida</span>
+      </div>` : ''}
+    </header>
+    <div class="admin-cuerpo">
+      ${menuAdminHtml()}
+      <main class="admin-main">${cuerpo}</main>
+    </div>
+  </div>`;
 }
 
 /* Pestaña Taller: una tarjeta por servicio, con su nombre, su descripción y
@@ -9188,26 +9422,14 @@ function renderAdminTaller(){
         </label>`).join('')}
       </div>
     </section>`).join('');
-  return `
-  <div class="app-shell admin">
-    <header class="admin-head">
-      <div class="admin-head-fila">
-        <div class="admin-head-texto">
-          <span class="admin-eyebrow">Panel de la tienda</span>
-          <h1>Precios del taller</h1>
-        </div>
-        <button type="button" class="admin-salir" onclick="salirDelPanel()">Salir</button>
-      </div>
-      ${pestanasAdminHtml()}
-    </header>
-
+  return adminMarcoHtml('Precios del taller', `
     <p class="banner-nota">Son los servicios de chipaomusic.com/taller. Puedes cambiar el nombre, la descripción y los precios de cada uno; deja un precio vacío para que diga «a tratar». Al guardar se cambian para todos.</p>
 
     ${servicios}
 
     <button type="button" class="btn-app terracota admin-guardar" id="taller-guardar" onclick="guardarPreciosTaller(this)">Guardar cambios del taller</button>
     <p class="banner-nota" style="text-align:center;"><a href="/taller" target="_blank" rel="noopener">Ver la página del taller ›</a></p>
-  </div>`;
+  `, false);
 }
 
 /* Igual que el banner: la clave la comprueba el Worker contra la API de
@@ -9279,55 +9501,44 @@ function temaBotonHtml(clave, etiqueta){
 
 function renderAdminPanel(){
   if(adminPestana === 'taller') return renderAdminTaller();
-  const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
-  const ofertas = PRODUCTS.filter(enOferta).length;
-  const vendidas = PRODUCTS.filter(x => x.featured).length;
-  return `
-  <div class="app-shell admin">
-    <header class="admin-head">
-      <div class="admin-head-fila">
-        <div class="admin-head-texto">
-          <span class="admin-eyebrow">Panel de la tienda</span>
-          <h1>Tus productos</h1>
-        </div>
-        <button type="button" class="admin-salir" onclick="salirDelPanel()">Salir</button>
-      </div>
-      <div class="admin-resumen">
-        <span class="admin-dato"><b>${PRODUCTS.length}</b> en catálogo</span>
-        <span class="admin-dato${sinStock ? ' alerta' : ''}"><b>${sinStock}</b> sin stock</span>
-        <span class="admin-dato"><b>${ofertas}</b> en oferta</span>
-        <span class="admin-dato"><b>${vendidas}</b> más vendida</span>
-      </div>
-      ${pestanasAdminHtml()}
-    </header>
 
-    <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
-
-    <div class="admin-actions">
-      <button class="btn-outline banner-btn${BANNER_PROMO ? ' puesto' : ''}" id="banner-btn" onclick="toggleBannerPromo(this)">${BANNER_PROMO ? 'Desactivar' : 'Activar'} banner de promoción</button>
-    </div>
-    <p class="banner-nota">Es la barra roja con el contador y los tres mayores descuentos, arriba de la portada y del catálogo. Un clic y cambia para todos.</p>
-
+  if(adminPestana === 'tienda'){
+    return adminMarcoHtml('Tienda y apariencia', `
+    <div class="admin-warn">Base de datos en vivo: cada cambio que hagas aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
+    <h2 class="admin-sec-titulo">Tema de la tienda</h2>
     <div class="admin-actions tema-actions">
       ${temaBotonHtml('normal', 'Normal')}
       ${temaBotonHtml('navidad', '🎄 Navidad')}
       ${temaBotonHtml('halloween', '🎃 Halloween')}
       ${temaBotonHtml('criolla', '🎶 Criolla')}
     </div>
-    <p class="banner-nota">Cambia los colores de la franja de arriba, el contador de ofertas y las categorías, para todos los visitantes.</p>
+    <p class="banner-nota">Cambia los colores de la franja de arriba, el contador de ofertas y las categorías, para todos los visitantes.</p>`, false);
+  }
 
-    <div class="admin-actions" style="margin-bottom:14px;">
-      <button class="btn-outline" style="width:100%;" onclick="toggleNewProductForm()">Agregar producto nuevo</button>
+  const enOfertas = adminPestana === 'ofertas';
+  const bannerHtml = enOfertas ? `
+    <div class="admin-actions">
+      <button class="btn-outline banner-btn${BANNER_PROMO ? ' puesto' : ''}" id="banner-btn" onclick="toggleBannerPromo(this)">${BANNER_PROMO ? 'Desactivar' : 'Activar'} banner de promoción</button>
     </div>
-    ${renderNewProductForm()}
-
-    <div class="admin-buscar">
+    <p class="banner-nota">Es la barra roja con el contador y los tres mayores descuentos, arriba de la portada y del catálogo. Un clic y cambia para todos.</p>` : '';
+  const nuevoHtml = enOfertas ? '' : `
+    ${renderNewProductForm()}`;
+  return adminMarcoHtml(enOfertas ? 'Ofertas' : 'Tus productos', `
+    <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
+    ${bannerHtml}
+    <div class="admin-barra">
       <input type="text" id="admin-search" placeholder="Buscar producto por nombre..." value="${escapeHtml(adminSearchQuery)}" oninput="onAdminSearchInput(this.value)">
+      <select id="admin-cat-filtro" onchange="onAdminCatFiltro(this.value)" aria-label="Filtrar por categoría">
+        <option value="">Todas las categorías</option>
+        ${CATEGORIES.map(c => `<option value="${c.key}" ${adminCatFiltro === c.key ? 'selected' : ''}>${c.label}</option>`).join('')}
+      </select>
+      ${enOfertas ? '' : '<button type="button" class="admin-nuevo" onclick="toggleNewProductForm()">+ Nuevo</button>'}
     </div>
-    <div class="admin-list" id="admin-list">
-      ${renderAdminListHtml()}
-    </div>
-  </div>`;
+    ${nuevoHtml}
+    <div class="admin-split${adminEditId ? ' editando' : ''}" id="admin-split">
+      <div class="admin-list" id="admin-list">${renderAdminListHtml()}</div>
+      <aside class="admin-editor-caja" id="admin-editor">${(() => { const p = PRODUCTS.find(x => x.id === adminEditId); return p ? adminEditorHtml(p) : ''; })()}</aside>
+    </div>`, true);
 }
 
 /* Guarda un producto con uno o varios campos cambiados, sin pasar por el
@@ -9369,7 +9580,7 @@ async function toggleMasVendida(id, btn){
     btn.setAttribute('aria-pressed', puesta ? 'true' : 'false');
     const estrella = btn.querySelector('.estrella');
     if(estrella) estrella.textContent = puesta ? '★' : '☆';
-    pintarResumenAdmin();
+    pintarListaAdmin();
     showToast(puesta ? 'Ahora sale como más vendida' : 'Ya no sale como más vendida');
   }catch(err){
     showToast('No se pudo guardar. Revisa tu clave de administrador.');
@@ -9522,7 +9733,7 @@ async function saveProduct(id, btnEl){
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
 
-    document.querySelector(`.admin-row[data-row="${id}"]`)?.classList.toggle('zero', stock<=0);
+    pintarListaAdmin();
     if(state.view==='shop') render();
     btnEl.textContent = '✓ Guardado';
     showToast('Producto actualizado');
@@ -9610,6 +9821,7 @@ async function deleteProduct(id, btnEl){
     if(!res.ok || data.error) throw new Error(data.error || 'Error al eliminar');
 
     PRODUCTS = PRODUCTS.filter(x=>x.id!==id);
+    if(adminEditId === id) adminEditId = null;
     PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(x=>x.price)) : 3000;
     if(state.priceMax > PRICE_MAX) state.priceMax = PRICE_MAX;
     if(state.view==='shop') render();
