@@ -4041,6 +4041,9 @@ const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
    onerror=redirect es el seguro: si la transformacion falla, Cloudflare sirve
    la original en vez de devolver un error y dejar el hueco vacio. */
 const ANCHO_MINIATURA = 200;   // miniaturas del carrito, buscador y galeria
+/* En el telefono la tarjeta mide ~170px (~340 reales con pantalla retina), asi
+   que 400 sobra y pesa bastante menos. En escritorio se queda en 700. */
+const ANCHO_TARJETA_MOVIL = 400;
 const ANCHO_TARJETA   = 700;   // tarjetas del catalogo y portada
 const ANCHO_GALERIA   = 1200;  // la foto grande de la ficha
 const ANCHO_ZOOM       = 1600; // la foto ampliada a pantalla completa
@@ -4050,6 +4053,7 @@ function fotoUrl(u, ancho){
     ? '/img/' + u.slice(R2_PUBLICO.length)
     : u;
   if(!ancho || typeof ruta !== 'string' || !ruta.startsWith('/img/')) return ruta;
+  if(ancho === ANCHO_TARJETA && !esEscritorio()) ancho = ANCHO_TARJETA_MOVIL;
   return `/cdn-cgi/image/width=${ancho},format=auto,onerror=redirect${ruta}`;
 }
 
