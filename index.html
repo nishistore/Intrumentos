@@ -1539,6 +1539,8 @@ body.con-barra-compra{padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-
   overflow:hidden;
 }
 .pcard-foto img{width:100%;height:100%;object-fit:contain;background:#fff;}
+.pcard-foto img,.tv-foto img{transition:opacity .25s ease-out;}
+img.img-espera{opacity:0;}
 .pcard-sinfoto{
   display:flex;align-items:center;justify-content:center;height:100%;
 }
@@ -4599,12 +4601,21 @@ function buildBottomNav(){
 /* ======================================================================
    ROUTING
    ====================================================================== */
+/* Al cambiar de seccion el contenido ya es otro: subir con animacion (el html
+   lleva scroll-behavior:smooth) se ve como un barrido sobre la pagina nueva y
+   parece que se recarga. Se sube de golpe. */
+function subirAlInicio(){
+  /* 'instant' no existe en los Safari muy viejos y alli lanza error: se cae
+     al metodo de siempre (que sube con animacion, pero sube). */
+  try{ window.scrollTo({top:0, behavior:'instant'}); }
+  catch(e){ window.scrollTo(0, 0); }
+}
 function goHome(push){
   state.view='home';
   navigateTo('/', push);
   setPageMeta(SITE_TITLE, DEFAULT_META_DESCRIPTION);
   render();
-  if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
+  if(push !== false) subirAlInicio();
 }
 function goShop(catKey, subKey, push){
   /* Los chips se quedan puestos mientras no cambies de categoría: si vuelves
@@ -4630,7 +4641,7 @@ function goShop(catKey, subKey, push){
   navigateTo(rutaDeCatalogo(), push);
   applyCurrentViewMeta();
   render();
-  if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
+  if(push !== false) subirAlInicio();
 }
 function goOffers(push){
   state.view='shop';
@@ -4641,7 +4652,7 @@ function goOffers(push){
   navigateTo('/ofertas', push);
   applyCurrentViewMeta();
   render();
-  if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
+  if(push !== false) subirAlInicio();
 }
 /* ======================================================================
    PANTALLAS DEL REDISEÑO MÓVIL: /buscar, /carrito, /checkout, /pedido/<id>
@@ -10240,6 +10251,16 @@ function render(){
     : state.view==='admin'      ? renderAdminPanel()
     : state.view==='adminLogin' ? renderAdminLoginPage()
     : renderShop();
+  /* Las fotos de la seccion nueva llegan despues del texto: sin esto se ven
+     como cuadros blancos que saltan de golpe. Las que aun no cargaron salen
+     transparentes (sobre el gris de su caja) y se funden al llegar. */
+  document.getElementById('app').querySelectorAll('img').forEach(im => {
+    if(im.complete) return;
+    im.classList.add('img-espera');
+    const listo = () => im.classList.remove('img-espera');
+    im.addEventListener('load', listo, {once:true});
+    im.addEventListener('error', listo, {once:true});
+  });
   buildNavLists();
   renderNavEscritorio();
   renderCabeceraMovil();
