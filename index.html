@@ -345,11 +345,8 @@ body[data-tema="criolla"] logo-gorro::after{
   transition:.2s ease;
 }
 .btn-outline:hover{background:var(--gold);color:#1c2540;}
-.rating-badge{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;}
-.rating-badge svg{width:16px;height:16px;flex-shrink:0;}
-.rating-badge b{color:var(--brown-heading);font-weight:800;}
-.rating-badge span{color:var(--muted);}
-.rating-badge:hover span{color:var(--gold-dim);text-decoration:underline;}
+
+
 .empty-state svg{width:44px;height:44px;stroke:var(--gold-dim);margin:0 auto 14px;}
 
 /* ---------------- policy modal ---------------- */
@@ -819,7 +816,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 
 .app-shell > *{padding-left:var(--app-gutter);padding-right:var(--app-gutter);}
 .app-shell > .carrusel{padding-left:0;padding-right:0;}
-.app-shell > .cat-barra{padding-left:0;padding-right:0;}
+
 
 /* ---------------- cabecera de pantalla ----------------
    Sticky arriba del todo. El handoff usa padding-top:62px para dejar libre
@@ -856,7 +853,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
     }
   }
 }
-.app-head-logo{width:36px;height:36px;border-radius:50%;object-fit:cover;flex:none;}
+
 .app-head-texto{flex:1;min-width:0;}
 .app-head-nombre{
   font:600 15px/1.2 var(--app-sans);color:var(--app-ink);
@@ -906,30 +903,6 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .buscador-falso:active{opacity:.88;}
 .buscador-falso svg{width:16px;height:16px;flex:none;stroke:var(--app-faint);stroke-width:2;}
 
-/* ---------------- portada ---------------- */
-.hero-app{padding-top:16px;padding-bottom:6px;}
-/* El titular del hero, el más pesado de la página. */
-.hero-eyebrow{
-  display:block;margin-bottom:9px;
-  font:700 9.5px/1.3 var(--app-sans);letter-spacing:.12em;
-  text-transform:uppercase;color:var(--app-ink);
-}
-.hero-app h1{
-  font-family:var(--app-sans);font-weight:800;
-  font-size:29px;line-height:1.05;letter-spacing:-.03em;color:var(--app-ink);
-}
-.hero-app p{
-  margin-top:10px;
-  font:400 13px/1.5 var(--app-sans);color:var(--app-ink-70);text-wrap:pretty;
-}
-/* Los tres datos duros, en fila de tres. */
-.hero-datos{display:flex;gap:14px;margin-top:16px;}
-.hero-datos span{flex:1;min-width:0;}
-.hero-datos b{display:block;font:800 14px/1.15 var(--app-sans);color:var(--app-ink);}
-.hero-datos i{
-  display:block;margin-top:3px;
-  font:400 10px/1.25 var(--app-sans);font-style:normal;color:var(--app-muted-2);
-}
 
 /* Carrusel horizontal. scroll-snap para que las tarjetas queden alineadas al
    soltar, y la barra de scroll oculta porque en el teléfono no se usa. */
@@ -1612,44 +1585,7 @@ body.con-barra-compra{padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-
   padding-top:12px;
 }
 
-/* ---------------- banda "para colegio" ---------------- */
-.banda-colegio{
-  margin-top:22px;
-  display:flex;align-items:center;gap:14px;
-  padding-top:16px;padding-bottom:16px;
-  border-radius:var(--app-r-card);
-  background:var(--app-green);
-  text-decoration:none;touch-action:manipulation;
-}
-.banda-colegio:active{opacity:.88;}
-.banda-texto{flex:1;min-width:0;}
-.banda-eyebrow{
-  display:block;
-  font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;
-  color:rgba(15,46,27,.72);
-}
-.banda-titulo{
-  display:block;margin-top:7px;
-  font:700 17px/1.25 var(--app-sans);letter-spacing:-.02em;color:var(--app-on-green);
-}
-.banda-copy{
-  display:block;margin-top:6px;
-  font:400 12px/1.45 var(--app-sans);color:rgba(15,46,27,.78);text-wrap:pretty;
-}
-.banda-chevron{
-  flex:none;width:34px;height:34px;border-radius:50%;
-  background:rgba(15,46,27,.14);
-  display:flex;align-items:center;justify-content:center;
-  font:600 16px/1 var(--app-sans);color:var(--app-on-green);padding-bottom:2px;
-}
 
-/* ---------------- tarjeta "visítanos" ---------------- */
-.tarjeta-visitanos{
-  margin-top:24px;
-  padding-top:16px;padding-bottom:16px;
-  border-radius:var(--app-r-card);
-  background:var(--app-surface);border:1px solid var(--app-line);
-}
 .eyebrow-terracota{
   font:600 10px/1 var(--app-sans);letter-spacing:.09em;text-transform:uppercase;
   color:var(--app-ink);
@@ -1667,20 +1603,7 @@ a.eyebrow-terracota:active{opacity:.6;}
 @media (hover: hover){
   a.eyebrow-terracota:hover{text-decoration:underline;text-underline-offset:3px;}
 }
-.visitanos-dir{margin-top:9px;font:500 14px/1.4 var(--app-sans);color:var(--app-ink);}
-.visitanos-horario{margin-top:5px;font:400 12.5px/1.45 var(--app-sans);color:var(--app-muted);}
-/* La valoración real de Google. Vivía en la portada anterior y se quedó sin
-   sitio con el rediseño; aquí acompaña a la dirección, que es donde importa
-   saber si vale la pena ir. */
-.rating-badge{
-  margin-top:9px;
-  display:inline-flex;align-items:center;gap:6px;
-  font:400 12px/1 var(--app-sans);color:var(--app-muted-2);
-  text-decoration:none;
-}
-.rating-badge svg{width:13px;height:13px;}
-.rating-badge b{font-weight:700;color:var(--app-ink);}
-.visitanos-botones{margin-top:12px;display:flex;gap:9px;}
+
 
 .btn-app{
   flex:1;min-height:44px;
@@ -3497,10 +3420,6 @@ footer.site .footer-bottom{
 
   nav.carrusel,div.carrusel,.grid-app{grid-template-columns:repeat(3,minmax(0,1fr));}
 
-  .hero-editorial h1{font-size:46px;}
-  .hero-editorial p{font-size:14.5px;}
-  .hero-datos{gap:20px;}
-  .hero-mosaico{height:380px;}
 
   .cat-layout{grid-template-columns:200px minmax(0,1fr);gap:24px;}
   .cat-lista .grid-app{grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -3516,7 +3435,6 @@ footer.site .footer-bottom{
   .ped-titulo{font-size:34px;}
   .ped-izq .linea-thumb{width:96px;height:96px;}
 
-  .tarjeta-visitanos{grid-template-columns:minmax(0,320px) minmax(0,1fr);column-gap:28px;}
 
   /* Portada: entre 900 y 1200 la columna de texto del hero baja de 300px y
      "Comprar por WhatsApp" se partía en dos líneas. Menos aire y menos cuerpo
@@ -5196,28 +5114,6 @@ function productosDeCategoria(catKey){
   return PRODUCTS.filter(p => productInCat(p, catKey));
 }
 
-/* Las ofertas se ordenan por cuánto se ahorra, no por precio: la portada
-   enseña primero el descuento más grande, que es lo que hace parar el dedo. */
-function ofertasDeLaSemana(limite){
-  return PRODUCTS.filter(p => enOferta(p) && (p.stock||0) > 0)
-    .sort((a,b) => pctDescuento(b) - pctDescuento(a))
-    .slice(0, limite);
-}
-
-/* La base no guarda fecha de alta, pero el id es autoincremental: el más alto
-   es el último producto que se cargó. Es el mejor "recién llegado" que
-   podemos dar sin inventarnos una fecha.
-
-   Se dejan fuera los accesorios. No es un capricho: las últimas altas del
-   catálogo son resinas, aceite de diapasón y adaptadores, así que la portada
-   abría "Recién llegados" con seis repuestos. Los accesorios se compran
-   cuando ya sabes qué instrumento tienes; tienen su propia categoría y salen
-   igual en el buscador y en las ofertas. */
-function recienLlegados(limite){
-  return PRODUCTS.filter(p => (p.stock||0) > 0 && p.cat !== 'accesorios')
-    .slice().sort((a,b) => b.id - a.id)
-    .slice(0, limite);
-}
 
 /* La tienda abre todos los días de 9:30 a 21:00. Decirlo en tiempo real evita
    el "abierto hasta las 9:00 p.m." a las dos de la mañana. Se calcula sobre
@@ -7473,11 +7369,6 @@ function cerrarBuscadorAgencia(){
   state.buscandoAgencia = false;
   render();
 }
-function quitarAgencia(){
-  leerDatosDelFormulario();
-  state.agencia = null;
-  render();
-}
 function elegirAgencia(i){
   leerDatosDelFormulario();
   state.agencia = AGENCIAS_SHALOM[i];
@@ -7897,12 +7788,6 @@ const STORE_HOURS = 'Lunes a domingo, 9:30 a.m. – 9:00 p.m.';
 /* Calificación real en Google — actualízala cuando cambie tu promedio/reseñas */
 const STORE_RATING = 4.6;
 const STORE_REVIEW_COUNT = 99;
-const ratingStarSvg = '<svg viewBox="0 0 24 24" fill="#d6a13c"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>';
-function ratingBadgeHTML(){
-  return `<a class="rating-badge" href="${STORE_MAPS_LINK}" target="_blank" rel="noopener">
-    ${ratingStarSvg}<b>${STORE_RATING}</b><span>· ${STORE_REVIEW_COUNT} reseñas en Google</span>
-  </a>`;
-}
 
 /* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
 
