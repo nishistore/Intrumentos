@@ -6898,7 +6898,9 @@ function renderProductDetail(){
      archivo de cada foto (ver colorFromImageUrl), así que cada swatch es a la
      vez un color y la foto que le corresponde. */
   const colores = images.map(colorFromImageUrl);
-  const hayColores = colores.filter(Boolean).length >= 2;
+  /* Hacen falta dos colores DISTINTOS: un violin con cuatro fotos que se llaman
+     todas 'violeta 1..4' es un solo producto con varias fotos, no cuatro colores. */
+  const hayColores = new Set(colores.filter(Boolean)).size >= 2;
   const colorActivo = colores[pdState.activeIndex];
 
   let galeria;
