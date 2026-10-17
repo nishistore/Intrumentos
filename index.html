@@ -1530,6 +1530,8 @@ body.con-barra-compra{padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-
   touch-action:manipulation;
 }
 .pcard:active{opacity:.88;}
+.pcard,.pcard-wrap{transition:transform .15s ease-out,box-shadow .15s ease-out;}
+@media (prefers-reduced-motion: reduce){.pcard,.pcard-wrap{transition:none !important;}}
 .pcard-foto{
   position:relative;
   border-radius:var(--app-r-img);
@@ -3130,6 +3132,11 @@ footer.site .footer-bottom{
   @media (hover: hover){
     .tv:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.09);}
     .btn-comprar:hover{background:#000;transform:translateY(-1px);}
+    /* Mismo hover que .tv, en las tarjetas de las secciones. Con 'Agregar' se
+       sube el envoltorio entero, para que el boton no se quede atras. */
+    .pcard:hover,.pcard-wrap:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.09);}
+    .pcard-wrap:hover{border-radius:var(--app-r-card);}
+    .pcard-wrap > .pcard:hover{transform:none;box-shadow:none;}
     .enlace-sub:hover{border-bottom-color:var(--app-ink);}
     /* Un gris más claro que --app-sunken: el hundido es el de la fila puesta,
        y si el hover usara el mismo, pasar por encima parecería haberla puesto. */
