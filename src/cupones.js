@@ -17,7 +17,7 @@ export const SORTEO = {
      21:00 de Lima: una compra después de que empieza el vivo ya no entra. */
   desde_ms: Date.UTC(2026, 9, 18, 5, 0),
   hasta_ms: Date.UTC(2026, 11, 25, 2, 0),
-  premios: 3,
+  premios: 2,
   minimo: 20,
   doble_desde: 100,
   fecha_texto: '24 de diciembre de 2026, 9:00 pm',

@@ -180,7 +180,7 @@ const PAGINA = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sorteo navideño | Chipao Music</title>
-<meta name="description" content="Compra en Chipao Music hasta el 24 de diciembre de 2026 y participa en el sorteo navideño de 3 premios sorpresa, en vivo por TikTok.">
+<meta name="description" content="Compra en Chipao Music hasta el 24 de diciembre de 2026 y participa en el sorteo navideño de 2 premios sorpresa, en vivo por TikTok.">
 <link rel="canonical" href="https://chipaomusic.com/sorteo">
 <style>
 :root{
@@ -223,7 +223,7 @@ input{flex:1;min-width:200px;font:inherit;padding:12px;border-radius:10px;border
 <a class="volver" href="/">&larr; Volver a la tienda</a>
 <div class="portada">
   <div class="etiqueta">SORTEO NAVIDEÑO</div>
-  <h1>3 premios sorpresa</h1>
+  <h1>2 premios sorpresa</h1>
   <p class="fecha">24 de diciembre de 2026, 9:00 pm</p>
   <p class="sub">En vivo por TikTok de Chipao Music</p>
   <div class="reloj" id="reloj" aria-live="off"></div>
