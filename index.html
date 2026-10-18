@@ -250,6 +250,16 @@ body[data-tema="halloween"] .pcard-off::before{
   font-size:22px;line-height:24px;text-shadow:0 1px 2px rgba(0,0,0,.35);
 }
 body[data-tema="halloween"] .badge-dto::before{content:"🎃 ";}
+/* "Ofertas de la semana": la tarjeta verde pasa a anaranjado. Los textos
+   verdes oscuros de esa tarjeta se cambian por tonos café/ciruela para que no
+   se vean verdosos sobre el naranja (contraste medido: la tinta #241019 sobre
+   #F08A2C da ~7:1). */
+body[data-tema="halloween"] .hv-of.verde{background:#F08A2C;}
+body[data-tema="halloween"] .hv-of.verde .hv-of-eyebrow,
+body[data-tema="halloween"] .hv-of.verde .hv-of-linea{color:#4a2108;}
+body[data-tema="halloween"] .hv-of.verde .hv-of-titulo,
+body[data-tema="halloween"] .hv-of.verde .hv-of-precio{color:#241019;}
+body[data-tema="halloween"] .hv-of.verde .hv-of-precios s{color:#7a3d12;}
 
 /* El vaivén del emoji de temporada. Solo transform, un único elemento (el
    ::before), nada de JS ni de reflow: no debería tocar el INP que costó
