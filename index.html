@@ -6914,7 +6914,7 @@ function renderProductDetail(){
     galeria = `<span class="ficha-sinfoto">${iconSvg(iconFor(p))}</span>`;
   }else if(activo.type === 'image'){
     galeria = `<button type="button" class="ficha-foto-zoom-btn" onclick="abrirFotoZoom()" aria-label="Ampliar foto">
-      <img src="${fotoUrl(activo.url, ANCHO_GALERIA)}" alt="${escapeHtml(p.name)}${colorActivo ? ' — ' + escapeHtml(colorActivo) : ''}" decoding="async">
+      <img src="${fotoUrl(activo.url, ANCHO_GALERIA)}" alt="${escapeHtml(p.name)}${colorActivo ? ' — ' + escapeHtml(colorActivo) : ''}" decoding="async" fetchpriority="high">
     </button>`;
   }else{
     const embed = toEmbedUrl(activo.url);

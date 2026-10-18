@@ -1050,7 +1050,7 @@ function productBody(p, products = []) {
   partes.push(`<p>${(p.stock || 0) > 0 ? 'Disponible en tienda y con envío a todo el Perú.' : 'Temporalmente agotado.'}</p>`);
 
   if (p.images && p.images[0]) {
-    partes.push(`<img src="${escapeHtml(fotoUrl(p.images[0], ANCHO_FICHA))}" alt="${escapeHtml(p.name)}" style="max-width:100%;height:auto;">`);
+    partes.push(`<img src="${escapeHtml(fotoUrl(p.images[0], ANCHO_FICHA))}" alt="${escapeHtml(p.name)}" fetchpriority="high" style="max-width:100%;height:auto;">`);
   }
 
   if (p.description) {
@@ -1230,7 +1230,11 @@ const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
    pedimos a Cloudflare que la reescale y la sirva en AVIF o WebP según lo que
    acepte quien la pide. Ver el comentario largo de index.html para los anchos
    y lo que cuesta cada uno. */
-const ANCHO_FICHA = 800;
+/* Tiene que ser IGUAL a ANCHO_GALERIA de index.html (1200): la foto del HTML
+   que manda el Worker y la que pinta el JS de la ficha son entonces la misma
+   URL y el navegador la baja una sola vez. Con 800 se bajaba dos veces
+   (28 KB + 45 KB, medido el 2026-10-18 en el producto 248). */
+const ANCHO_FICHA = 1200;
 
 function fotoUrl(u, ancho) {
   const ruta = (typeof u === 'string' && u.startsWith(R2_PUBLICO))
