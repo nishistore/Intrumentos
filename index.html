@@ -7291,9 +7291,13 @@ const iconoBanco = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
    La transferencia no lleva logo de marca a propósito: vale para BCP y para
    Interbank, así que enseña un dibujo genérico de banco.
 
-   'regalo' pinta la etiqueta roja "Incluye regalo sorpresa": va en los
-   medios que se cobran sin pasarela, para que se elijan antes que Mercado
-   Pago, que se lleva comisión. */
+   'regalo' pinta la etiqueta roja "Participas en el sorteo navideño": va en
+   los medios que se cobran sin pasarela, para que se elijan antes que
+   Mercado Pago, que se lleva comisión. Mercado Pago también participa pero
+   no lleva etiqueta (decisión del dueño). La etiqueta se apaga sola cuando
+   empieza el sorteo (ver SORTEO_HASTA). */
+/* 24-dic-2026 21:00 hora de Lima: el sorteo navideño (src/cupones.js, SORTEO). */
+const SORTEO_HASTA = Date.UTC(2026, 11, 25, 2, 0);
 const MEDIOS_PAGO = [
   { key:'yape',     label:'Yape',                       nota:'Pagas desde tu app y validamos al instante',     logo:'/pagos/yape.png', regalo:true },
   { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', logo:'/pagos/mercadopago.png' },
@@ -7571,7 +7575,7 @@ function filaRadio(sel, titulo, nota, coste, accion, logo, regalo){
     <span class="opcion-texto">
       <span class="opcion-titulo">${escapeHtml(titulo)}</span>
       ${nota?`<span class="opcion-nota">${escapeHtml(nota)}</span>`:''}
-      ${regalo?'<span class="opcion-regalo">Incluye regalo sorpresa</span>':''}
+      ${regalo && Date.now() < SORTEO_HASTA ? '<span class="opcion-regalo">Participas en el sorteo navideño</span>':''}
     </span>
     ${coste?`<span class="opcion-coste">${escapeHtml(coste)}</span>`:''}
   </button>`;
@@ -8034,7 +8038,7 @@ ${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fm
 Total: ${fmt(total)}
 
 Entrega: ${entregaTexto}
-Medio de pago: ${medio.label}${medio.regalo ? ' (incluye regalo sorpresa)' : ''}
+Medio de pago: ${medio.label}${medio.regalo && Date.now() < SORTEO_HASTA ? ' (participa en el sorteo navideño)' : ''}
 
 Cliente: ${datos.nombre}
 Teléfono: ${datos.telefono}
