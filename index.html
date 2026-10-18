@@ -3515,7 +3515,8 @@ footer.site .footer-bottom{
   footer.site #footerCats{display:block;}
   footer.site .store-maps-btn:hover{border-color:var(--app-green-mint);color:var(--app-green-mint);}
   footer.site .footer-pagos{display:block;}
-  .footer-pagos span{display:block;margin-bottom:9px;font:400 13px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
+  .footer-pagos span,.footer-pagos a{display:block;margin-bottom:9px;font:400 13px/1.5 var(--app-sans);color:rgba(255,255,255,.72);}
+  .footer-pagos a:hover{color:#fff;text-decoration:underline;}
   /* El teléfono va pegado al horario y el mapa no vuelve: la portada ya
      tiene uno grande en "Visítanos". */
   footer.site .footer-tienda{display:flex;flex-direction:column;}
@@ -3863,29 +3864,29 @@ if(location.hostname === 'chipaomusic.com' && !new URLSearchParams(location.sear
          lo mismo ya está en el carrito y en la ficha, al lado del precio. -->
     <div class="footer-col footer-pagos">
       <h4>Pagos y envíos</h4>
-      <span>Yape</span>
-      <span>Visa y Mastercard</span>
-      <span>Envío gratis desde S/ 100</span>
-      <span>Recojo en tienda en 1 hora</span>
+      <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Yape</a>
+      <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Visa y Mastercard</a>
+      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Envío gratis desde S/ 100</a>
+      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Recojo en tienda en 1 hora</a>
     </div>
     <div class="footer-legal">
       <div class="footer-col">
         <h4>Ayuda</h4>
-        <button class="link" onclick="openPolicy('envios')">Política de envíos</button>
+        <a class="link" href="/politica-de-envios" onclick="goPolicy('envios');return false;">Política de envíos</a>
         <!-- Enlace de verdad, no botón: esta política tiene página propia
              (/cambios-y-devoluciones), así que se puede abrir en otra pestaña
              y el rastreador ve a dónde lleva. -->
         <a class="link" href="/cambios-y-devoluciones" onclick="goPolicy('cambios');return false;">Cambios y devoluciones</a>
-        <button class="link" onclick="openPolicy('pagos')">Medios de pago</button>
-        <button class="link" onclick="openPolicy('garantia')">Garantía de productos</button>
+        <a class="link" href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Medios de pago</a>
+        <a class="link" href="/garantia-de-productos" onclick="goPolicy('garantia');return false;">Garantía de productos</a>
         <a class="link" href="/taller" onclick="goTaller();return false;">Taller de reparación</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
-        <button class="link" onclick="openPolicy('terminos')">Términos y condiciones</button>
-        <button class="link" onclick="openPolicy('privacidad')">Política de privacidad</button>
+        <a class="link" href="/terminos-y-condiciones" onclick="goPolicy('terminos');return false;">Términos y condiciones</a>
+        <a class="link" href="/politica-de-privacidad" onclick="goPolicy('privacidad');return false;">Política de privacidad</a>
         <a class="link" href="/libro-de-reclamaciones" onclick="goPolicy('reclamaciones');return false;">Libro de reclamaciones</a>
-        <button class="link" onclick="openPolicy('contacto')">Contáctanos</button>
+        <a class="link" href="/contacto" onclick="goPolicy('contacto');return false;">Contáctanos</a>
       </div>
     </div>
   </div>
@@ -4568,7 +4569,7 @@ function renderPieMovil(){
   const estado = estadoTienda();
   const abierto = estado.startsWith('abierto');
   const pol = (clave, texto) =>
-    `<button type="button" class="pm-link" onclick="openPolicy('${clave}')">${texto}</button>`;
+    `<a class="pm-link" href="${POLICIES[clave].path}" onclick="goPolicy('${clave}');return false;">${texto}</a>`;
 
   el.innerHTML = `
     <a class="pm-marca" href="/" onclick="goHome();return false;">
@@ -8748,13 +8749,18 @@ function renderTaller(){
    POLICY MODALS
    ====================================================================== */
 const POLICIES = {
-  envios:{title:'Política de envíos', body:`
-    <p>Realizamos envíos a todo el país a través de couriers aliados. El tiempo estimado de entrega es de 2 a 5 días hábiles en ciudades principales y de 5 a 8 días hábiles en provincias.</p>
-    <h4>Costos de envío</h4>
-    <ul><li>Envío gratuito en compras mayores a S/ 100.</li><li>Costo fijo de S/ 15 según destino para compras menores.</li><li>Recojo en tienda disponible sin costo adicional.</li></ul>
-    <h4>Seguimiento</h4>
-    <p>Una vez despachado tu pedido recibirás un código de seguimiento por WhatsApp.</p>`},
-  /* La única con `path`: no se abre en el modal, se abre como página. Quien
+  envios:{title:"Política de envíos", path:"/politica-de-envios",
+    desc:"Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos y envío gratis desde S/ 100.",
+    body:`<p>Enviamos a todo el Perú y también puedes recoger tu pedido en nuestra tienda de San Juan de Miraflores. Esto es lo que debes saber antes de comprar.</p>
+<h2>Formas de recibir tu pedido</h2>
+<ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 4 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>
+<h2>Costos de envío</h2>
+<ul><li>Envío gratis en compras desde S/ 100 en productos.</li><li>En compras menores a S/ 100: S/ 10 a Lima Metropolitana y S/ 15 al resto del Perú.</li><li>El recojo en tienda siempre es gratis.</li></ul>
+<h2>Seguimiento</h2>
+<p>Cuando despachamos tu pedido te avisamos por WhatsApp o por correo. Si necesitas ayuda, escríbenos al +51 921 317 384 con tu código de pedido.</p>
+<h2>Si tu pedido llega con algún problema</h2>
+<p>Revisa el producto al recibirlo. Si llega dañado o no es lo que pediste, escríbenos el mismo día. Mira también nuestra política de <a href="/cambios-y-devoluciones">cambios y devoluciones</a>.</p>`},
+  /* Todas las políticas tienen `path`: no se abren en el modal, se abren como página. Quien
      duda si puede devolver algo lo pregunta en Google antes de comprar, y un
      texto encerrado en un modal no tiene dirección que dar ni que indexar.
      Sus encabezados son <h2> y no <h4> porque van debajo del <h1> de la
@@ -8774,27 +8780,69 @@ const POLICIES = {
     body:`
     <p>Conforme al Código de Protección y Defensa del Consumidor, ponemos a tu disposición nuestro Libro de Reclamaciones virtual. Si tienes un reclamo o una queja sobre un producto o servicio, regístralo aquí.</p>
     <p>Te respondemos en un plazo máximo de 15 días hábiles, y recibirás una copia de tu hoja de reclamación en el correo que indiques.</p>`},
-  pagos:{title:'Medios de pago', body:`
-    <p>Aceptamos los siguientes medios de pago:</p>
-    <ul><li>Tarjetas de crédito y débito Visa, Mastercard y American Express.</li><li>Yape.</li><li>Recojo en tienda, pagando ahí mismo (según disponibilidad).</li></ul>
-    <p>Todas las transacciones con tarjeta son procesadas mediante pasarelas de pago seguras y encriptadas.</p>`},
-  garantia:{title:'Garantía de productos', body:`
-    <p>Todos nuestros instrumentos cuentan con garantía contra defectos de fábrica:</p>
-    <ul><li>Todos los instrumentos: 6 meses.</li><li>Accesorios y consumibles (cuerdas, cañas, baquetas): sin garantía por desgaste natural de uso.</li></ul>
-    <p>La garantía no cubre daños por mal uso, caídas, humedad o modificaciones realizadas por terceros no autorizados.</p>`},
-  terminos:{title:'Términos y condiciones', body:`
-    <p>Al utilizar esta tienda virtual aceptas los presentes términos y condiciones. Los precios, promociones y disponibilidad de stock pueden variar sin previo aviso.</p>
-    <p>Las imágenes de los productos son referenciales; el color o acabado real puede presentar ligeras variaciones respecto a la imagen mostrada.</p>
-    <p>Nos reservamos el derecho de cancelar pedidos ante indicios de fraude o error evidente en el precio publicado.</p>`},
-  privacidad:{title:'Política de privacidad', body:`
-    <p>La información personal que nos proporcionas (nombre, teléfono y dirección) se utiliza únicamente para procesar tus pedidos, brindarte soporte y, si lo autorizas, enviarte promociones.</p>
-    <p>No compartimos tus datos con terceros salvo lo necesario para la entrega del pedido (courier) o por requerimiento legal.</p>
-    <p>Puedes solicitar la actualización o eliminación de tus datos escribiéndonos a nuestro correo de contacto.</p>`},
-  contacto:{title:'Contáctanos', body:`
-    <p>Estamos para ayudarte con cualquier consulta sobre nuestros productos o tu pedido.</p>
-    <ul><li>WhatsApp: +51 921 317 384</li><li>Correo: contacto@chipaomusic.com</li><li>Horario de atención: ${STORE_HOURS}</li></ul>
-    <h4 style="margin:18px 0 8px;font-size:13px;color:var(--brown-heading);">Nuestra tienda</h4>
-    ${storeLocationHTML(220)}`}
+  pagos:{title:"Medios de pago", path:"/medios-de-pago",
+    desc:"Paga en Chipao Music con Yape, tarjeta Visa o Mastercard, coordinando por WhatsApp o al recoger en tienda. Así validamos tu pago y confirmamos tu pedido.",
+    body:`<p>Estos son los medios de pago que aceptamos en la tienda en línea y en nuestro local.</p>
+<h2>Formas de pago</h2>
+<ul><li><b>Yape:</b> yapeas al número que te mostramos al finalizar la compra, subes la captura del comprobante y la validamos al instante. Tienes 10 minutos para pagar y te llega la confirmación por correo.</li><li><b>Tarjeta de crédito o débito (Visa y Mastercard):</b> pagas en línea en la plataforma segura de Mercado Pago. Chipao Music no guarda los datos de tu tarjeta.</li><li><b>Coordinar el pago por WhatsApp:</b> tu pedido llega armado al chat y un asesor te guía con el pago.</li><li><b>Pago en tienda:</b> si recoges tu pedido, puedes pagar en efectivo o por Yape al recogerlo.</li></ul>
+<h2>Cómo validamos tu pago</h2>
+<p>Los pagos con Yape se verifican con la captura del comprobante: revisamos el monto, el destinatario y el número de operación. En compras de montos altos podemos revisar el pago manualmente antes de confirmarlo.</p>
+<h2>Seguridad</h2>
+<p>Nunca te pediremos la clave ni el código de seguridad de tu tarjeta por WhatsApp ni por correo.</p>`},
+  garantia:{title:"Garantía de productos", path:"/garantia-de-productos",
+    desc:"Todos los instrumentos de Chipao Music tienen 6 meses de garantía contra defectos de fábrica. Qué cubre, qué no cubre y cómo hacerla valer.",
+    body:`<p>Todos nuestros instrumentos tienen 6 meses de garantía contra defectos de fábrica, contados desde la fecha de compra.</p>
+<h2>Qué cubre</h2>
+<ul><li>Defectos de fabricación o de funcionamiento que no se deban al uso.</li><li>Instrumentos: 6 meses.</li></ul>
+<h2>Qué no cubre</h2>
+<ul><li>Accesorios y consumibles (cuerdas, cañas, baquetas): no tienen garantía por desgaste natural de uso.</li><li>Daños por mal uso, caídas, golpes, humedad o modificaciones hechas por terceros no autorizados.</li></ul>
+<h2>Cómo hacer valer tu garantía</h2>
+<ul><li>Escríbenos por WhatsApp al +51 921 317 384 con tu número de pedido y una descripción del problema. Si puedes, envía fotos o un video.</li><li>Evaluamos el producto y, si el defecto está cubierto, te ofrecemos su reparación o cambio.</li></ul>
+<p>Esta garantía no afecta los derechos que la ley te da como consumidor. Si prefieres, también puedes pedir un cambio o devolución dentro de los 7 días: mira <a href="/cambios-y-devoluciones">Cambios y devoluciones</a>.</p>`},
+  terminos:{title:"Términos y condiciones", path:"/terminos-y-condiciones",
+    desc:"Términos y condiciones de compra en Chipao Music: precios, stock, pedidos y pagos, cancelaciones, promociones y reclamos.",
+    body:`<p>Última actualización: 19 de octubre de 2026.</p>
+<p>Al usar esta tienda virtual aceptas estos términos y condiciones. Si no estás de acuerdo con alguno, te pedimos que no realices compras.</p>
+<h2>Quiénes somos</h2>
+<p>Chipao Music es una tienda de instrumentos musicales con RUC 10772011348, ubicada en Av. Los Héroes 382, San Juan de Miraflores, Lima 15801, Perú. Puedes escribirnos por WhatsApp al +51 921 317 384 o al correo contacto@chipaomusic.com.</p>
+<h2>Precios, stock e imágenes</h2>
+<ul><li>Los precios están en soles (S/) y pueden cambiar sin previo aviso. Vale el precio que ves al finalizar tu compra.</li><li>La disponibilidad depende del stock. Si un producto no estuviera disponible después de tu compra, te avisamos y coordinamos contigo su cambio o la devolución de tu dinero.</li><li>Las imágenes son referenciales: el color o acabado real puede variar ligeramente.</li></ul>
+<h2>Pedidos y pagos</h2>
+<p>Tu pedido queda confirmado cuando validamos tu pago. Los medios de pago están en <a href="/medios-de-pago">Medios de pago</a> y las formas de entrega en la <a href="/politica-de-envios">Política de envíos</a>.</p>
+<h2>Cancelaciones</h2>
+<p>Nos reservamos el derecho de cancelar pedidos ante indicios de fraude o error evidente en el precio publicado. En ese caso te devolvemos el dinero que hayas pagado.</p>
+<h2>Cambios, devoluciones y garantía</h2>
+<p>Se rigen por nuestras políticas de <a href="/cambios-y-devoluciones">cambios y devoluciones</a> y de <a href="/garantia-de-productos">garantía de productos</a>.</p>
+<h2>Promociones y sorteos</h2>
+<p>Las promociones y los sorteos tienen sus propias bases, publicadas en la página de cada uno. Por ejemplo, las del sorteo navideño están en <a href="/sorteo">chipaomusic.com/sorteo</a>.</p>
+<h2>Reclamos</h2>
+<p>Tienes a tu disposición nuestro <a href="/libro-de-reclamaciones">Libro de Reclamaciones</a> virtual.</p>
+<h2>Ley aplicable</h2>
+<p>Estos términos se rigen por las leyes de la República del Perú, incluido el Código de Protección y Defensa del Consumidor.</p>`},
+  privacidad:{title:"Política de privacidad", path:"/politica-de-privacidad",
+    desc:"Qué datos personales recopila Chipao Music, para qué los usa, con quién los comparte y cómo puedes acceder a ellos, corregirlos o pedir que los eliminemos.",
+    body:`<p>Última actualización: 19 de octubre de 2026.</p>
+<p>En Chipao Music (RUC 10772011348) cuidamos tus datos personales conforme a la Ley N.º 29733, Ley de Protección de Datos Personales, y su reglamento.</p>
+<h2>Qué datos recopilamos</h2>
+<ul><li>Datos de tu pedido: nombre, teléfono, correo electrónico, dirección o agencia de entrega y los productos que compras.</li><li>Comprobante de pago: si pagas con Yape, la captura que subes.</li><li>Los mensajes que nos envías por WhatsApp o por el Libro de Reclamaciones.</li><li>Datos de navegación: las páginas que visitas y datos técnicos de tu dispositivo, mediante cookies y herramientas de analítica.</li></ul>
+<h2>Para qué los usamos</h2>
+<ul><li>Procesar y entregar tus pedidos, y validar tus pagos.</li><li>Enviarte la confirmación de tu compra y comunicarnos contigo sobre tu pedido.</li><li>Atender tus consultas, garantías, cambios y reclamos.</li><li>Gestionar tu participación en los sorteos y promociones en los que participas al comprar.</li><li>Mejorar la tienda y medir nuestra publicidad.</li><li>Si lo autorizas, enviarte promociones o notificaciones.</li></ul>
+<h2>Con quién los compartimos</h2>
+<p>No vendemos tus datos. Solo los compartimos con quienes hacen posible el servicio:</p>
+<ul><li>Agencias de transporte (por ejemplo Shalom), para entregar tu pedido.</li><li>Mercado Pago, si pagas con tarjeta: el pago se procesa en su plataforma y nosotros no guardamos los datos de tu tarjeta.</li><li>Proveedores tecnológicos: Cloudflare (alojamiento del sitio), Resend (envío de correos) y Google (lectura automática del comprobante de Yape con su servicio de inteligencia artificial Gemini, y analítica y publicidad).</li><li>Microsoft Clarity y OneSignal, para analizar el uso del sitio y enviarte notificaciones si las aceptas.</li><li>Las autoridades, cuando la ley lo exija.</li></ul>
+<h2>Cookies y analítica</h2>
+<p>Usamos cookies, el almacenamiento de tu navegador y herramientas como Google Ads y Microsoft Clarity para recordar tu carrito, entender cómo se usa la tienda y medir anuncios. Puedes bloquear las cookies desde la configuración de tu navegador; algunas funciones de la tienda podrían dejar de funcionar.</p>
+<h2>Cuánto tiempo los conservamos</h2>
+<p>Mientras sean necesarios para atender tu pedido, tu garantía y nuestras obligaciones legales y tributarias.</p>
+<h2>Tus derechos</h2>
+<p>Puedes acceder a tus datos, actualizarlos, rectificarlos o pedir que los eliminemos, y oponerte a su uso, escribiéndonos a <a href="mailto:contacto@chipaomusic.com">contacto@chipaomusic.com</a> o por WhatsApp al +51 921 317 384. Si consideras que no atendimos tu solicitud, puedes acudir a la Autoridad Nacional de Protección de Datos Personales.</p>`},
+  contacto:{title:"Contáctanos", path:"/contacto",
+    desc:"Escríbenos por WhatsApp al +51 921 317 384 o al correo contacto@chipaomusic.com. Tienda en Av. Los Héroes 382, San Juan de Miraflores. Abierto todos los días.",
+    body:`<p>Estamos para ayudarte con cualquier consulta sobre nuestros productos, tu pedido o la reparación de tu instrumento.</p>
+<h2>Canales de atención</h2>
+<ul><li><b>WhatsApp:</b> <a href="https://wa.me/51921317384">+51 921 317 384</a></li><li><b>Correo:</b> <a href="mailto:contacto@chipaomusic.com">contacto@chipaomusic.com</a></li><li><b>Horario de atención:</b> ${STORE_HOURS}</li><li><b>Redes sociales:</b> <a href="https://www.facebook.com/instrumentoschipao/">Facebook</a>, <a href="https://www.instagram.com/instrumentos_chipao/">Instagram</a> y <a href="https://www.tiktok.com/@instrumentosmusicale">TikTok</a></li></ul>
+<h2>Nuestra tienda</h2>
+${storeLocationHTML(220)}`}
 };
 function openPolicy(key){
   const p = POLICIES[key];
@@ -8828,15 +8876,20 @@ function goPolicy(key, push){
 function renderPolitica(){
   const p = POLICIES[state.politica];
   if(!p || !p.path){ state.view = 'home'; return renderHome(); }
+  /* El recuadro de WhatsApp del final: el de cambios habla de pedidos; el resto, de dudas en general. */
+  const AYUDA_POLITICA = {
+    cambios:{titulo:'¿Tienes un pedido que cambiar?', texto:'Ten a mano tu número de pedido y te decimos en el momento si aplica.', msg:'Hola, quiero solicitar un cambio o devolución de un pedido.'},
+  };
+  const ay = AYUDA_POLITICA[state.politica] || {titulo:'¿Tienes alguna duda?', texto:'Escríbenos por WhatsApp y te respondemos en el momento.', msg:'Hola, tengo una consulta.'};
   const cuerpo = state.politica === 'reclamaciones' ? `
     <div class="politica-cuerpo">${p.body}</div>
     ${reclamoHtml()}` : `
     <div class="politica-cuerpo">${p.body}</div>
     <div class="politica-ayuda">
-      <b>¿Tienes un pedido que cambiar?</b>
-      <p>Ten a mano tu número de pedido y te decimos en el momento si aplica.</p>
+      <b>${ay.titulo}</b>
+      <p>${ay.texto}</p>
       <a class="btn-app verde" target="_blank" rel="noopener"
-         href="${waHref('Hola, quiero solicitar un cambio o devolución de un pedido.')}"
+         href="${waHref(ay.msg)}"
          onclick="trackAdsConversion('whatsapp')">Escríbenos por WhatsApp</a>
     </div>`;
   return esEscritorio()
