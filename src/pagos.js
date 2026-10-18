@@ -317,6 +317,18 @@ export function lecturaIncompleta(l) {
 }
 
 /* ------------------------------ correo ------------------------------ */
+/* La versión de texto plano que acompaña al HTML. Un correo solo-HTML puntúa
+   peor en los filtros de spam. */
+export function textoDeHtml(html) {
+  return String(html || '')
+    .replace(/<(br|\/p|\/li|\/div|\/h2|\/tr)\b[^>]*>/gi, '\n')
+    .replace(/<li\b[^>]*>/gi, '- ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&')
+    .replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 export async function enviarCorreo(env, { para, asunto, html }) {
   if (!env.RESEND_API_KEY) {
     console.log('[pagos] sin RESEND_API_KEY, no se envía:', asunto, '->', para);
@@ -328,7 +340,7 @@ export async function enviarCorreo(env, { para, asunto, html }) {
       headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.RESEND_API_KEY },
       body: JSON.stringify({
         from: env.CORREO_DE || 'Chipao Music <onboarding@resend.dev>',
-        to: [para], subject: asunto, html,
+        to: [para], subject: asunto, html, text: textoDeHtml(html),
       }),
     });
     if (!r.ok) console.log('[pagos] Resend', r.status, (await r.text()).slice(0, 300));

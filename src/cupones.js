@@ -96,16 +96,13 @@ export async function anularCuponesDelPedido(env, pedidoId) {
 export function ticketHtml(cupones) {
   const vivos = (cupones || []).filter(c => !c.anulado);
   if (!vivos.length) return '';
-  const numeros = vivos.map(c =>
-    `<span style="display:inline-block;background:#fff;border:1.5px solid #6b0f8a;border-radius:8px;padding:8px 14px;margin:4px;font-size:20px;font-weight:700;letter-spacing:1px;color:#6b0f8a;font-family:monospace">${codigoCupon(c.numero)}</span>`
-  ).join('');
-  const tiktok = SORTEO.tiktok ? ` por <a href="${SORTEO.tiktok}" style="color:#6b0f8a">TikTok</a>` : ' por TikTok';
-  return `<div style="border:2px dashed #6b0f8a;border-radius:10px;background:#f7eefb;padding:14px;margin:16px 0;text-align:center">
-  <div style="font-size:12px;letter-spacing:2px;color:#6b0f8a;font-weight:700">SORTEO NAVIDEÑO CHIPAO</div>
-  <div style="font-size:14px;margin:6px 0">${vivos.length === 1 ? 'Tu número de la suerte' : 'Tus números de la suerte'}</div>
-  <div>${numeros}</div>
-  <div style="font-size:12px;color:#555;margin-top:6px">${SORTEO.premios} premios sorpresa · 1 premio por cliente</div>
-  <div style="font-size:13px;color:#222;margin-top:4px"><b>${SORTEO.fecha_texto}, en vivo${tiktok}</b></div>
-  <p style="margin:12px 0 0"><a href="${SITE}/sorteo" style="background:#6b0f8a;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;text-decoration:none;display:inline-block">Ver mis números en chipaomusic.com/sorteo</a></p>
+  /* Sobrio a propósito: un recuadro de colores, mayúsculas y un botón grande
+     hacen que el correo parezca publicidad y los filtros lo mandan a spam. */
+  const numeros = vivos.map(c => `<b>${codigoCupon(c.numero)}</b>`).join(' &nbsp; ');
+  const tiktok = SORTEO.tiktok ? ` por TikTok (${SORTEO.tiktok})` : ' por TikTok';
+  return `<div style="border:1px solid #ddd;border-radius:8px;padding:12px 14px;margin:16px 0">
+  <p style="margin:0 0 6px;font-size:14px">Sorteo navideño de Chipao Music. ${vivos.length === 1 ? 'Tu número' : 'Tus números'}:</p>
+  <p style="margin:0 0 8px;font-size:18px;font-family:monospace">${numeros}</p>
+  <p style="margin:0;font-size:13px;color:#555">${SORTEO.premios} premios sorpresa, 1 por cliente. Sorteo en vivo el ${SORTEO.fecha_texto}${tiktok}. Puedes consultar tus números en ${SITE}/sorteo</p>
 </div>`;
 }
