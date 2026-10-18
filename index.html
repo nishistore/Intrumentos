@@ -2037,6 +2037,7 @@ a.eyebrow-terracota:active{opacity:.6;}
 body.en-ficha footer.site{display:none;}
 /* Y en el panel tampoco, ni en escritorio: no es una pantalla de tienda. */
 body.en-panel footer.site,
+body.en-panel .franja-sorteo,
 body.en-panel .franja-util{display:none !important;}
 
 
@@ -2419,7 +2420,21 @@ footer.site .footer-bottom{
 .envio-prog.ok .envio-barra i{background:var(--app-green);}
 .envio-prog.ok small{color:var(--app-green-ink);}
 .envio-prog + .bloque-titulo,
-.ped-panel .envio-prog + .bloque-titulo{margin-top:20px;}
+.sorteo-prog + .bloque-titulo,
+.ped-panel .envio-prog + .bloque-titulo,
+.ped-panel .sorteo-prog + .bloque-titulo{margin-top:20px;}
+/* Cupones del sorteo en el carrito: mismo molde que el envío gratis, en verde. */
+.sorteo-prog{margin-top:10px;padding:12px 14px;border-radius:12px;background:#E4F2E9;}
+.sorteo-prog p{margin:0;font:600 13px/1.35 var(--app-sans);color:#0F5C33;}
+.sorteo-prog .envio-barra{background:#c5e0cf;}
+.sorteo-prog .envio-barra i{background:#0F5C33;}
+.sorteo-prog small{display:block;margin-top:7px;font:400 11.5px/1.3 var(--app-sans);color:#0F5C33;}
+.sorteo-prog small a{color:inherit;font-weight:700;text-underline-offset:2px;}
+body[data-tema="halloween"] .sorteo-prog{background:#FCE9D6;}
+body[data-tema="halloween"] .sorteo-prog p,
+body[data-tema="halloween"] .sorteo-prog small{color:#7A3410;}
+body[data-tema="halloween"] .sorteo-prog .envio-barra{background:#F3CFA8;}
+body[data-tema="halloween"] .sorteo-prog .envio-barra i{background:#B84A12;}
 .ped-panel .envio-prog:first-child{margin-top:0;}
 .opcion-regalo{
   display:inline-block;margin-top:6px;padding:3px 7px;border-radius:6px;
@@ -2729,6 +2744,21 @@ footer.site .footer-bottom{
    Todas nacen apagadas. Por debajo de 900px manda la barra inferior del
    teléfono y ninguna de estas existe; se encienden dentro del @media, que va
    más abajo y por tanto gana. */
+
+/* ---------------- franja del sorteo navideño ----------------
+   Va arriba de todo, en escritorio y en teléfono, en todas las páginas. Se
+   apaga sola cuando empieza el sorteo (script justo debajo de ella). */
+.franja-sorteo{
+  display:block;background:#0F5C33;color:#fff;text-align:center;
+  padding:9px 14px;font:600 12.5px/1.35 var(--app-sans);text-decoration:none;
+}
+.franja-sorteo b{font-weight:800;}
+.franja-sorteo u{margin-left:6px;text-underline-offset:2px;white-space:nowrap;}
+.franja-sorteo:hover u{text-decoration-thickness:2px;}
+body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
+@media (max-width:899px){
+  .franja-sorteo{padding:7px 12px;font-size:11.5px;}
+}
 
 /* ---------------- franja utilitaria ---------------- */
 .franja-util{display:none;background:var(--app-ink);}
@@ -3772,6 +3802,11 @@ if(location.hostname === 'chipaomusic.com' && !new URLSearchParams(location.sear
 <!-- ============ FRANJA UTILITARIA (ESCRITORIO) ============
      Texto fijo: no depende de datos, así que no pasa por JS. Se esconde por
      debajo de 900px con CSS. -->
+<a class="franja-sorteo" id="franjaSorteo" href="/sorteo"><b>Sorteo navideño:</b> compra desde S/ 20 y participa por un teclado o un violín completo.<u>Ver premios &rsaquo;</u></a>
+<script>
+/* 24-dic-2026 21:00 hora de Lima: empieza el sorteo y la franja ya no hace falta. Mismo instante que SORTEO.hasta_ms en src/cupones.js. */
+if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSorteo').style.display = 'none';
+</script>
 <div class="franja-util">
   <div class="franja-util-inner">
     <span><b class="franja-gratis">Envío gratis desde S/ 100</b> · a todo el Perú · Yape o tarjeta</span>
@@ -7596,6 +7631,28 @@ function progresoEnvioHtml(subtotal){
   </div>`;
 }
 
+/* Cuántos cupones del sorteo da esta compra y cuánto falta para el siguiente.
+   Las mismas reglas que src/cupones.js (cuponesPorSubtotal): de S/ 20 a
+   S/ 99.99 un cupón, desde S/ 100 dos, contando solo los productos. Aplica a
+   cualquier medio de pago. Se apaga solo cuando empieza el sorteo. */
+const SORTEO_MINIMO = 20, SORTEO_DOBLE = 100;
+function sorteoCuponesHtml(subtotal){
+  if(subtotal <= 0 || Date.now() >= SORTEO_HASTA) return '';
+  const n = subtotal >= SORTEO_DOBLE ? 2 : subtotal >= SORTEO_MINIMO ? 1 : 0;
+  const meta = n === 0 ? SORTEO_MINIMO : SORTEO_DOBLE;
+  const pct = n === 2 ? 100 : Math.max(4, Math.min(100, Math.round(subtotal * 100 / meta)));
+  const texto = n === 2
+    ? '<b>Esta compra te da 2 cupones del sorteo navideño.</b>'
+    : n === 1
+      ? `<b>Esta compra te da 1 cupón del sorteo navideño.</b> Agrega ${fmt(SORTEO_DOBLE - subtotal)} más y recibes 2.`
+      : `Agrega <b>${fmt(SORTEO_MINIMO - subtotal)}</b> más y participas en el sorteo navideño.`;
+  return `<div class="sorteo-prog" role="status">
+    <p>${texto}</p>
+    <div class="envio-barra"><i style="width:${pct}%"></i></div>
+    <small>Teclado o violín completo · 24 de diciembre · <a href="/sorteo" target="_blank" rel="noopener">Ver premios</a></small>
+  </div>`;
+}
+
 function filaRadio(sel, titulo, nota, coste, accion, logo, regalo){
   return `
   <button type="button" class="opcion${sel?' sel':''}" aria-pressed="${sel?'true':'false'}" onclick="${accion}">
@@ -7700,6 +7757,7 @@ function renderCarrito(){
 
   const entregaHtml = `
     ${progresoEnvioHtml(subtotal)}
+    ${sorteoCuponesHtml(subtotal)}
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
       ${filaRadio(state.entrega==='tienda' && state.motoPropio, 'Mando mi motorizado',
