@@ -18,6 +18,8 @@
    bucket COMPROBANTES (privado, distinto de FOTOS, que sí es público por
    r2.dev) y los secretos GEMINI_API_KEY y RESEND_API_KEY. Ver wrangler.jsonc. */
 
+import { asignarCupones, cuponesDelPedido, ticketHtml } from './cupones.js';
+
 /* ------------------------------ ajustes ------------------------------ */
 export const YAPE = {
   numero: '921317384',
@@ -68,7 +70,7 @@ function sinTildes(s) {
   return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
-function soles(n) {
+export function soles(n) {
   return 'S/ ' + (Math.round(n * 100) % 100 === 0 ? String(Math.round(n)) : n.toFixed(2));
 }
 
@@ -93,7 +95,7 @@ function base64(buffer) {
    URL (/pedido/CH-XXXXXX), así que además de legible tiene que ser difícil
    de adivinar: son ~10^9 combinaciones. */
 const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-function nuevoId() {
+export function nuevoId() {
   const b = crypto.getRandomValues(new Uint8Array(6));
   return 'CH-' + [...b].map(x => ALFABETO[x % ALFABETO.length]).join('');
 }
@@ -353,7 +355,9 @@ export function entregaTexto(p) {
   }
   if (p.entrega === 'lima') return 'Envío a domicilio en Lima Metropolitana';
   const a = p.agencia ? JSON.parse(p.agencia) : null;
-  return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a domicilio';
+  if (a) return `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}`;
+  /* Las ventas por WhatsApp elegen 'peru' sin agencia: la dirección es texto libre. */
+  return p.entrega === 'peru' ? 'Envío a provincia' : 'Envío a domicilio';
 }
 
 export function marco(titulo, cuerpo) {
@@ -362,15 +366,28 @@ export function marco(titulo, cuerpo) {
 <p style="color:#888;font-size:12px;margin-top:24px">Chipao Music · Av. Los Héroes 382, San Juan de Miraflores</p></div>`;
 }
 
-async function correoAlCliente(env, p) {
+/* La confirmación al cliente, con sus cupones del sorteo si tiene. La web la
+   manda sola al validarse el pago; la de una venta por WhatsApp la manda el
+   dueño con un botón de /pedidos. Devuelve si Resend la aceptó. */
+export async function correoAlCliente(env, p) {
   const items = JSON.parse(p.items);
-  await enviarCorreo(env, {
+  let ticket = '';
+  try { ticket = ticketHtml(await cuponesDelPedido(env, p.id)); }
+  catch (err) { console.log('[sorteo] no se pudieron leer los cupones del correo', String(err)); }
+  const wa = p.canal === 'whatsapp';
+  const intro = wa
+    ? `gracias por tu compra. Tu pedido <b>${p.id}</b> está confirmado.`
+    : `recibimos tu Yape de <b>${soles(p.total)}</b>. Tu pedido <b>${p.id}</b> está confirmado.`;
+  return enviarCorreo(env, {
     para: p.email,
-    asunto: `Pago confirmado — pedido ${p.id}`,
-    html: marco('¡Pago confirmado!', `
-      <p>Hola ${escapeHtml(p.nombre)}, recibimos tu Yape de <b>${soles(p.total)}</b>. Tu pedido <b>${p.id}</b> está confirmado.</p>
+    asunto: wa ? `Pedido confirmado — ${p.id}` : `Pago confirmado — pedido ${p.id}`,
+    html: marco(wa ? '¡Pedido confirmado!' : '¡Pago confirmado!', `
+      <p>Hola ${escapeHtml(p.nombre)}, ${intro}</p>
       <ul>${lineasHtml(items)}</ul>
+      ${p.envio || p.provincia ? `<p>Envío: ${soles(p.envio + p.provincia)}</p>` : ''}
+      <p><b>Total: ${soles(p.total)}</b></p>
       <p><b>Entrega:</b> ${escapeHtml(entregaTexto(p))}</p>
+      ${ticket}
       <p>Cualquier consulta, escríbenos por WhatsApp al +51 921 317 384 con tu código <b>${p.id}</b>.</p>`),
   });
 }
@@ -427,6 +444,19 @@ export async function leerPedido(env, id) {
   return env.DB.prepare('SELECT * FROM pedidos WHERE id = ?').bind(id).first();
 }
 
+/* Baja el stock de cada línea; devuelve los nombres de las que no alcanzaron
+   (no se descuentan: el stock nunca queda negativo). */
+export async function descontarStock(env, items) {
+  const faltantes = [];
+  for (const i of items) {
+    const d = await env.DB.prepare(
+      'UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?'
+    ).bind(i.qty, i.id, i.qty).run();
+    if (!d.meta || d.meta.changes !== 1) faltantes.push(i.name);
+  }
+  return faltantes;
+}
+
 /* Marca como pagado y descuenta el stock. Idempotente: el UPDATE solo
    prospera una vez, así que un doble clic en "aprobar" no descuenta dos
    veces. */
@@ -439,17 +469,14 @@ export async function marcarPagado(env, ctx, id, extra) {
   if (!r.meta || r.meta.changes !== 1) return false;
 
   const p = await leerPedido(env, id);
-  const items = JSON.parse(p.items);
-  const faltantes = [];
-  for (const i of items) {
-    const d = await env.DB.prepare(
-      'UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?'
-    ).bind(i.qty, i.id, i.qty).run();
-    if (!d.meta || d.meta.changes !== 1) faltantes.push(i.name);
-  }
+  const faltantes = await descontarStock(env, JSON.parse(p.items));
   await env.DB.prepare(
     'UPDATE pedidos SET stock_descontado = 1, nota = COALESCE(nota, ?) WHERE id = ?'
   ).bind(faltantes.length ? 'Ojo: no alcanzó el stock de ' + faltantes.join(', ') : null, id).run();
+
+  /* Un fallo del sorteo no debe frenar un pago ya validado: el cliente pagó. */
+  try { await asignarCupones(env, p); }
+  catch (err) { console.log('[sorteo] no se pudieron dar los cupones de ' + id, String(err)); }
 
   const final = await leerPedido(env, id);
   const trabajo = Promise.all([correoAlCliente(env, final), avisoPagadoAlDueno(env, final)]);

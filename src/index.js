@@ -21,6 +21,7 @@
 import { manejaPagos } from './pagos.js';
 import { manejaReclamos } from './reclamos.js';
 import { manejaPanelPedidos } from './pedidos-panel.js';
+import { manejaSorteo } from './sorteo.js';
 
 const SITE_ORIGIN = 'https://chipaomusic.com';
 const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
@@ -1443,6 +1444,12 @@ export default {
     if (url.pathname === '/pedidos' || url.pathname.startsWith('/api/pedidos-admin')) {
       const panel = await manejaPanelPedidos(request, env, ctx, claveDeAdminValida);
       if (panel) return panel;
+    }
+    /* Sorteo navideño: la página pública /sorteo, su consulta de cupones y el
+       sorteo desde el panel. */
+    if (url.pathname === '/sorteo' || url.pathname.startsWith('/api/sorteo')) {
+      const sorteo = await manejaSorteo(request, env, ctx, claveDeAdminValida);
+      if (sorteo) return sorteo;
     }
     if (url.pathname.startsWith('/api/pedido') || url.pathname.startsWith('/pedido-admin')) {
       const pago = await manejaPagos(request, env, ctx);
