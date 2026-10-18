@@ -4059,10 +4059,19 @@ const R2_PUBLICO = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/';
 
    onerror=redirect es el seguro: si la transformacion falla, Cloudflare sirve
    la original en vez de devolver un error y dejar el hueco vacio. */
-const ANCHO_MINIATURA = 200;   // miniaturas del carrito, buscador y galeria
-/* En el telefono la tarjeta mide ~170px (~340 reales con pantalla retina), asi
-   que 400 sobra y pesa bastante menos. En escritorio se queda en 700. */
-const ANCHO_TARJETA_MOVIL = 400;
+/* OJO con estos dos anchos. Las fotos de 1254x1254 (casi todo lo subido desde el
+   producto 244 en adelante) salen del reescalador de Cloudflare con la ULTIMA
+   COLUMNA de pixeles corrupta -una linea verdosa en el borde derecho- cuando se
+   piden entre ~200 y ~520 de ancho (menos 240-300). Medido el 2026-10-18 con
+   canvas sobre 34 productos: con 200, 320-520 la columna sale 60-100 niveles
+   fuera de tono; con 240-300 y desde 550 sale limpia. Por eso la miniatura es
+   256 (no 200) y la tarjeta del movil 560 (no 400). Si cambias un ancho, mide el
+   borde derecho de una foto de 1254px antes de desplegar. */
+const ANCHO_MINIATURA = 256;   // miniaturas del carrito, buscador y galeria
+/* En el telefono la tarjeta mide ~170px (~340 reales con pantalla retina). 560 es
+   mas de lo que hace falta pero es el ancho mas pequeno por encima de 340 que no
+   da la linea en el borde (ver arriba). En escritorio se queda en 700. */
+const ANCHO_TARJETA_MOVIL = 560;
 const ANCHO_TARJETA   = 700;   // tarjetas del catalogo y portada
 const ANCHO_GALERIA   = 1200;  // la foto grande de la ficha
 const ANCHO_ZOOM       = 1600; // la foto ampliada a pantalla completa
