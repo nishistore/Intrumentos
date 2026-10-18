@@ -242,6 +242,14 @@ body[data-tema="halloween"] .cab-franja::before{content:"🎃 ";}
 body[data-tema="halloween"] .franja-util-inner>span:first-child::before{content:"🎃 ";}
 body[data-tema="halloween"] .pc-cuadro{border-color:#E8641C;}
 body[data-tema="halloween"] .pc-tile:hover .pc-cuadro{border-color:#2B1B4A;}
+/* Calabaza al costado del descuento: en la tarjeta va fuera de la píldora,
+   a su izquierda (la píldora ya es absolute, así que el ::before se coloca
+   contra ella); en los demás avisos de descuento va dentro, antes del número. */
+body[data-tema="halloween"] .pcard-off::before{
+  content:"🎃";position:absolute;right:100%;top:50%;margin:-12px 3px 0 0;
+  font-size:22px;line-height:24px;text-shadow:0 1px 2px rgba(0,0,0,.35);
+}
+body[data-tema="halloween"] .badge-dto::before{content:"🎃 ";}
 
 /* El vaivén del emoji de temporada. Solo transform, un único elemento (el
    ::before), nada de JS ni de reflow: no debería tocar el INP que costó
@@ -255,7 +263,8 @@ body[data-tema="halloween"] .pc-tile:hover .pc-cuadro{border-color:#2B1B4A;}
   body[data-tema="halloween"] .urg-label::before,
   body[data-tema="halloween"] .urg-label-movil::before,
   body[data-tema="halloween"] .cab-franja::before,
-  body[data-tema="halloween"] .franja-util-inner>span:first-child::before{
+  body[data-tema="halloween"] .franja-util-inner>span:first-child::before,
+  body[data-tema="halloween"] .pcard-off::before{
     display:inline-block;transform-origin:70% 85%;
     animation:tema-vaiven 2.2s ease-in-out infinite;
   }
