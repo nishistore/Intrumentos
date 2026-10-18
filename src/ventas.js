@@ -15,6 +15,13 @@ import { asignarCupones, anularCuponesDelPedido, cuponesDelPedido, normalizaEmai
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const ENTREGAS = ['tienda', 'lima', 'peru'];
 
+/* "Producto tienda física": algo que se vende solo en la tienda y no está en el
+   catálogo. Va con id 0: se cobra el precio que escriba el dueño, no baja ni
+   devuelve stock (no hay de dónde) y cuenta para los cupones como cualquier otro.
+   El campo "color" de la línea sirve de detalle libre ("cuerdas de arpa"). */
+export const ID_TIENDA_FISICA = 0;
+export const NOMBRE_TIENDA_FISICA = 'Producto tienda física';
+
 function limpio(v, max) {
   return String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, max);
 }
@@ -25,6 +32,7 @@ function redondea(n) {
 
 export async function devolverStock(env, items) {
   for (const i of items) {
+    if (i.id === ID_TIENDA_FISICA) continue;
     await env.DB.prepare('UPDATE products SET stock = stock + ? WHERE id = ?').bind(i.qty, i.id).run();
   }
 }
@@ -59,16 +67,24 @@ export async function registrarVentaWhatsapp(env, cuerpo, ahora = Date.now()) {
       if (!Number.isFinite(precio) || precio <= 0 || precio > 100000) return { error: 'Hay un precio inválido.', status: 400 };
       precio = redondea(precio);
     }
-    lineas.push({ id, qty, precio, color: limpio(x.color, 40) || null });
+    if (id === ID_TIENDA_FISICA && precio == null) return { error: 'Escribe el precio del producto de tienda física.', status: 400 };
+    lineas.push({ id, qty, precio, color: limpio(x.color, id === ID_TIENDA_FISICA ? 80 : 40) || null });
   }
 
-  const ids = [...new Set(lineas.map(l => l.id))];
-  const { results } = await env.DB.prepare(
-    'SELECT id, name, price FROM products WHERE id IN (' + ids.map(() => '?').join(',') + ')'
-  ).bind(...ids).all();
-  const productos = new Map(results.map(r => [r.id, r]));
+  const ids = [...new Set(lineas.map(l => l.id).filter(id => id !== ID_TIENDA_FISICA))];
+  const productos = new Map();
+  if (ids.length) {
+    const { results } = await env.DB.prepare(
+      'SELECT id, name, price FROM products WHERE id IN (' + ids.map(() => '?').join(',') + ')'
+    ).bind(...ids).all();
+    for (const r of results) productos.set(r.id, r);
+  }
   const items = [];
   for (const l of lineas) {
+    if (l.id === ID_TIENDA_FISICA) {
+      items.push({ id: ID_TIENDA_FISICA, name: NOMBRE_TIENDA_FISICA, price: l.precio, qty: l.qty, color: l.color });
+      continue;
+    }
     const p = productos.get(l.id);
     if (!p) return { error: 'Un producto ya no existe en el catálogo.', status: 409 };
     items.push({ id: l.id, name: p.name, price: l.precio == null ? p.price : l.precio, qty: l.qty, color: l.color });
@@ -84,7 +100,7 @@ export async function registrarVentaWhatsapp(env, cuerpo, ahora = Date.now()) {
   ).bind(id, ahora, ahora, total, subtotal, envio, JSON.stringify(items),
     entrega, nombre, telefono, email, direccion, ahora).run();
 
-  const faltantes = await descontarStock(env, items);
+  const faltantes = await descontarStock(env, items.filter(i => i.id !== ID_TIENDA_FISICA));
   await env.DB.prepare(
     'UPDATE pedidos SET stock_descontado = 1, nota = ? WHERE id = ?'
   ).bind('Venta por WhatsApp' + (faltantes.length ? ' · Ojo: no alcanzó el stock de ' + faltantes.join(', ') : ''), id).run();

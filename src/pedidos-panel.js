@@ -436,7 +436,9 @@ function especial(p, accion, boton) {
 function cargarProductos() {
   if (PRODUCTOS) return;
   api('/api/pedidos-admin/productos').then(function (r) { return r.json(); }).then(function (d) {
-    PRODUCTOS = d.productos || [];
+    /* El primero de la lista es siempre "Producto tienda física" (id 0): algo que
+       se vende solo en la tienda y no está en el catálogo. */
+    PRODUCTOS = [{ id: 0, name: 'Producto tienda física', price: 0, stock: null }].concat(d.productos || []);
     var dl = document.getElementById('dlProductos');
     if (dl) dl.innerHTML = opcionesProductos();
   }).catch(function () {});
@@ -472,7 +474,7 @@ function formWa() {
     h += '<div class="linea"><input list="dlProductos" placeholder="Producto" data-l="' + i + '" data-c="texto" value="' + esc(l.texto) + '">'
       + '<input type="number" min="1" max="50" placeholder="Cant." data-l="' + i + '" data-c="qty" value="' + esc(l.qty) + '">'
       + '<input inputmode="decimal" placeholder="Precio" data-l="' + i + '" data-c="price" value="' + esc(l.price) + '">'
-      + '<input placeholder="Color" data-l="' + i + '" data-c="color" value="' + esc(l.color) + '">'
+      + '<input placeholder="' + (l.id === 0 ? 'Detalle (opcional)' : 'Color') + '" data-l="' + i + '" data-c="color" value="' + esc(l.color) + '">'
       + '<button class="btn" data-quitar="' + i + '" aria-label="Quitar producto">×</button></div>';
   });
   h += '<datalist id="dlProductos">' + opcionesProductos() + '</datalist>'
@@ -509,7 +511,9 @@ function enlazarForm() {
       if (c === 'texto') {
         var p = productoPorNombre(el.value);
         l.id = p ? p.id : null;
-        if (p && !l.tocado) {
+        var cajaDetalle = document.querySelector('[data-l="' + i + '"][data-c="color"]');
+        if (cajaDetalle) cajaDetalle.placeholder = l.id === 0 ? 'Detalle (opcional)' : 'Color';
+        if (p && p.price > 0 && !l.tocado) {
           l.price = String(p.price);
           var cajaPrecio = document.querySelector('[data-l="' + i + '"][data-c="price"]');
           if (cajaPrecio) cajaPrecio.value = l.price;
@@ -540,7 +544,7 @@ function guardarVentaWa() {
   var items = [];
   for (var i = 0; i < f.lineas.length; i++) {
     var l = f.lineas[i];
-    if (!l.id) return fallo('Elige el producto de la lista en la línea ' + (i + 1) + '.');
+    if (l.id === null || l.id === undefined) return fallo('Elige el producto de la lista en la línea ' + (i + 1) + '.');
     if (!(Number(l.qty) >= 1)) return fallo('Revisa la cantidad de la línea ' + (i + 1) + '.');
     if (!(Number(l.price) > 0)) return fallo('Falta el precio de la línea ' + (i + 1) + '.');
     items.push({ id: l.id, qty: Number(l.qty), price: Number(l.price), color: l.color });
