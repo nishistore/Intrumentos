@@ -26,6 +26,23 @@ export const SORTEO = {
   tiktok: 'https://www.tiktok.com/@instrumentosmusicale',
 };
 
+/* Los premios que se anuncian en /sorteo y en el correo. Las fotos viven en el
+   repo (sorteo/), no en R2. 'resumen' va en el correo; 'incluye' en la página. */
+export const PREMIOS = [
+  {
+    n: 1, titulo: 'Teclado Vozzex completo', foto: '/sorteo/premio-1.jpg',
+    resumen: 'un teclado Vozzex con atril, micrófono, adaptador, método y estuche',
+    incluye: ['Teclado Vozzex', 'Atril en X', 'Método básico de música para órgano electrónico "Papayita"',
+      'Adaptador de corriente', 'Micrófono', 'Soporte para partituras', 'Estuche'],
+  },
+  {
+    n: 2, titulo: 'Violín 4/4 completo', foto: '/sorteo/premio-2.jpg',
+    resumen: 'un violín 4/4 con arco, estuche, cuerdas, resina, hombrera, afinador y guía de dedos',
+    incluye: ['Violín 4/4', 'Arco', 'Estuche rígido', 'Juego de cuerdas', 'Resina', 'Hombrera',
+      'Afinador de clip', 'Guía de posición de dedos'],
+  },
+];
+
 const SITE = 'https://chipaomusic.com';
 const MAX_REINTENTOS = 6;
 
@@ -103,6 +120,7 @@ export function ticketHtml(cupones) {
   return `<div style="border:1px solid #ddd;border-radius:8px;padding:12px 14px;margin:16px 0">
   <p style="margin:0 0 6px;font-size:14px">Sorteo navideño de Chipao Music. ${vivos.length === 1 ? 'Tu número' : 'Tus números'}:</p>
   <p style="margin:0 0 8px;font-size:18px;font-family:monospace">${numeros}</p>
-  <p style="margin:0;font-size:13px;color:#555">${SORTEO.premios} premios sorpresa, 1 por cliente. Sorteo en vivo el ${SORTEO.fecha_texto}${tiktok}. Puedes consultar tus números en ${SITE}/sorteo</p>
+  <p style="margin:0 0 6px;font-size:13px;color:#555">${PREMIOS.map(p => `Premio ${p.n}: ${p.resumen}.`).join(' ')} Un premio por cliente.</p>
+  <p style="margin:0;font-size:13px;color:#555">Sorteo en vivo el ${SORTEO.fecha_texto}${tiktok}. Puedes consultar tus números y ver los premios en ${SITE}/sorteo</p>
 </div>`;
 }

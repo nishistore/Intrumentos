@@ -16,7 +16,7 @@
    barras invertidas: va dentro de un template literal de este archivo y
    cualquiera de las dos se comería o rompería el código. */
 import { json } from './pagos.js';
-import { SORTEO, codigoCupon, normalizaEmail } from './cupones.js';
+import { SORTEO, PREMIOS, codigoCupon, normalizaEmail } from './cupones.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -180,7 +180,7 @@ const PAGINA = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sorteo navideño | Chipao Music</title>
-<meta name="description" content="Compra en Chipao Music hasta el 24 de diciembre de 2026 y participa en el sorteo navideño de 2 premios sorpresa, en vivo por TikTok.">
+<meta name="description" content="Compra en Chipao Music hasta el 24 de diciembre de 2026 y participa en el sorteo navideño: un teclado Vozzex completo y un violín 4/4 completo, en vivo por TikTok.">
 <link rel="canonical" href="https://chipaomusic.com/sorteo">
 <style>
 :root{
@@ -206,6 +206,11 @@ h1{font-size:26px;line-height:1.15;margin:6px 0 8px;}
 .btn{display:inline-block;border:0;border-radius:10px;background:var(--morado);color:var(--on);font:inherit;font-weight:700;padding:12px 18px;cursor:pointer;text-decoration:none;}
 .seccion{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:18px;margin-top:14px;}
 h2{font-size:18px;margin:0 0 10px;}
+.premios{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media (max-width:560px){.premios{grid-template-columns:1fr;}}
+.premio img{width:100%;height:auto;border-radius:10px;background:#fff;border:1px solid var(--linea);}
+.premio h3{font-size:15px;margin:8px 0 2px;}
+.premio p{margin:0;font-size:13px;color:var(--suave);}
 .seccion ul{margin:0;padding-left:20px;}
 .seccion li{margin:5px 0;}
 form{display:flex;gap:8px;flex-wrap:wrap;}
@@ -223,12 +228,23 @@ input{flex:1;min-width:200px;font:inherit;padding:12px;border-radius:10px;border
 <a class="volver" href="/">&larr; Volver a la tienda</a>
 <div class="portada">
   <div class="etiqueta">SORTEO NAVIDEÑO</div>
-  <h1>2 premios sorpresa</h1>
+  <h1>Dos premios: un teclado y un violín</h1>
   <p class="fecha">24 de diciembre de 2026, 9:00 pm</p>
   <p class="sub">En vivo por TikTok de Chipao Music</p>
   <div class="reloj" id="reloj" aria-live="off"></div>
   <p class="sub" id="estado"></p>
   <p style="margin:14px 0 0" id="tiktok"></p>
+</div>
+
+<div class="seccion">
+  <h2>Los premios</h2>
+  <div class="premios">
+${PREMIOS.map(p => `    <div class="premio">
+      <img src="/cdn-cgi/image/width=800,format=auto,onerror=redirect${p.foto}" alt="Premio ${p.n}: ${p.titulo}" width="800" height="953" loading="lazy" decoding="async">
+      <h3>Premio ${p.n}: ${p.titulo}</h3>
+      <p>Incluye: ${p.incluye.join(', ')}.</p>
+    </div>`).join('\n')}
+  </div>
 </div>
 
 <div class="seccion">
