@@ -184,26 +184,31 @@ const PAGINA = `<!doctype html>
 <link rel="canonical" href="https://chipaomusic.com/sorteo">
 <style>
 :root{
-  --fondo:#F7F2FA;--tarjeta:#fff;--tinta:#1B1320;--suave:#6B5F73;--linea:#E6DCEC;
-  --morado:#6B0F8A;--morado-f:#F1E4F7;--on:#fff;--verde:#1B7F3B;--rojo:#B3261E;
+  --fondo:#F6EFE4;--tarjeta:#fff;--tinta:#1B1320;--suave:#6B5F73;--linea:#E6DCCB;
+  --verde:#0F5C33;--verde-f:#E4F2E9;--rojo-nav:#B0142B;--on:#fff;--rojo:#B3261E;--nieve:#fff;
 }
 @media (prefers-color-scheme:dark){
-  :root{--fondo:#150F1A;--tarjeta:#201729;--tinta:#F4EEF7;--suave:#B1A4BA;--linea:#3A2D45;--morado:#C98BE3;--morado-f:#30203B;--on:#1B1320;--verde:#6FD08A;--rojo:#FF8F86;}
+  :root{--fondo:#10241A;--tarjeta:#17382A;--tinta:#F3EEE4;--suave:#B9C7BD;--linea:#2A4A39;--verde:#7FD49C;--verde-f:#1F4A33;--rojo-nav:#D8324A;--on:#fff;--rojo:#FF8F86;--nieve:rgba(255,255,255,.16);}
 }
 *{box-sizing:border-box;}
-body{margin:0;background:var(--fondo);color:var(--tinta);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+body{margin:0;color:var(--tinta);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background-color:var(--fondo);
+  background-image:radial-gradient(circle at 20px 30px,var(--nieve) 3px,transparent 4px),radial-gradient(circle at 120px 90px,var(--nieve) 2px,transparent 3px),radial-gradient(circle at 200px 160px,var(--nieve) 4px,transparent 5px),radial-gradient(circle at 70px 200px,var(--nieve) 2.5px,transparent 3.5px);
+  background-size:240px 240px;}
+/* Franja roja y verde arriba, como un lazo de regalo. */
+body::before{content:"";display:block;height:9px;background:linear-gradient(var(--rojo-nav) 0,var(--rojo-nav) 6px,var(--verde) 6px,var(--verde) 9px);}
 .caja{max-width:640px;margin:0 auto;padding:18px 16px 48px;}
 .volver{display:inline-block;color:var(--suave);text-decoration:none;font-size:14px;margin-bottom:14px;}
 .portada{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:22px 18px;text-align:center;}
-.etiqueta{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--morado);}
+.etiqueta{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--verde);}
 h1{font-size:26px;line-height:1.15;margin:6px 0 8px;}
 .fecha{font-weight:700;margin:0;}
 .sub{color:var(--suave);font-size:14px;margin:4px 0 0;}
 .reloj{display:flex;gap:8px;justify-content:center;margin:16px 0 4px;}
-.reloj div{background:var(--morado-f);border-radius:12px;padding:10px 0;min-width:70px;}
-.reloj b{display:block;font-size:26px;line-height:1.1;color:var(--morado);}
+.reloj div{background:var(--verde-f);border-radius:12px;padding:10px 0;min-width:70px;}
+.reloj b{display:block;font-size:26px;line-height:1.1;color:var(--verde);}
 .reloj span{font-size:12px;color:var(--suave);}
-.btn{display:inline-block;border:0;border-radius:10px;background:var(--morado);color:var(--on);font:inherit;font-weight:700;padding:12px 18px;cursor:pointer;text-decoration:none;}
+.btn{display:inline-block;border:0;border-radius:10px;background:var(--rojo-nav);color:var(--on);font:inherit;font-weight:700;padding:12px 18px;cursor:pointer;text-decoration:none;}
 .seccion{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:18px;margin-top:14px;}
 h2{font-size:18px;margin:0 0 10px;}
 .premios{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -215,12 +220,12 @@ h2{font-size:18px;margin:0 0 10px;}
 .seccion li{margin:5px 0;}
 form{display:flex;gap:8px;flex-wrap:wrap;}
 input{flex:1;min-width:200px;font:inherit;padding:12px;border-radius:10px;border:1px solid var(--linea);background:var(--fondo);color:var(--tinta);}
-.num{display:inline-block;border:1.5px solid var(--morado);color:var(--morado);border-radius:8px;padding:6px 12px;margin:4px 6px 4px 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:18px;}
+.num{display:inline-block;border:1.5px solid var(--rojo-nav);color:var(--rojo-nav);border-radius:8px;padding:6px 12px;margin:4px 6px 4px 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:18px;}
 .msg{margin:12px 0 0;color:var(--suave);font-size:14px;}
 .msg.err{color:var(--rojo);}
 .gan{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--linea);}
 .gan:first-of-type{border-top:0;}
-.gan b{color:var(--morado);}
+.gan b{color:var(--verde);}
 </style>
 </head>
 <body>
