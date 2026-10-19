@@ -634,6 +634,25 @@ function nombreParaTitulo(nombre) {
   return (corte || nombre.slice(0, MAX)).replace(/[\s,;:(\-–—]+$/, '') + '…';
 }
 
+/* La meta descripción de una ficha: nombre y precio, y detrás el principio de
+   la descripción real del producto en vez de la frase de tienda que se repetía
+   en las 134 fichas. Google corta hacia los 155 caracteres, así que se corta
+   en una palabra completa. Si el producto no tiene descripción útil, queda la
+   frase de tienda de siempre. */
+function productDescription(p, priceLine) {
+  const cabeza = `${p.name} — ${priceLine}.`;
+  let limpia = String(p.description || '').replace(/\s+/g, ' ').trim();
+  /* Si la descripción empieza repitiendo el nombre (pasa con varias), esa
+     parte ya está en la cabeza y no aporta nada nuevo. */
+  if (limpia.toLowerCase().startsWith(p.name.toLowerCase())) limpia = limpia.slice(p.name.length).replace(/^[\s.,;:\-–—]+/, '');
+  const resto = 155 - cabeza.length - 1;
+  if (limpia.length >= 40 && resto >= 40) {
+    let corte = limpia.length <= resto ? limpia : limpia.slice(0, resto).replace(/\s+\S*$/, '').replace(/[\s,;:(\-–—.]+$/, '') + '…';
+    return `${cabeza} ${corte}`;
+  }
+  return `${cabeza} Tienda de instrumentos musicales en San Juan de Miraflores, Lima, con envíos a todo el Perú.`;
+}
+
 function productMeta(p) {
   const path = productPath(p);
   const cat = CATEGORIES.find(c => c.key === p.cat);
@@ -644,7 +663,7 @@ function productMeta(p) {
 
   return {
     title: `${nombreParaTitulo(p.name)} | Chipao Music`,
-    description: `${p.name} — ${priceLine}. Tienda de instrumentos musicales en San Juan de Miraflores, Lima, con envíos a todo el Perú.`,
+    description: productDescription(p, priceLine),
     image: (p.images && p.images[0]) || DEFAULT_OG_IMAGE,
     type: 'product',
     path,
