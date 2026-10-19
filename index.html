@@ -4004,19 +4004,21 @@ function productInCat(p, catKey){
     || (p.extraCats || []).includes(catKey);
 }
 
-/* La barra lateral de la tienda agrupa Accesorios por INSTRUMENTO en vez de por tipo
-   (así el cliente encuentra más rápido los accesorios de lo que toca). "matches" lista
-   las subcategorías reales (las de arriba, las que usa el panel de administrador) que
-   caen bajo ese grupo — por eso un capo o una púa puede aparecer tanto en "Guitarra
-   Acústica" como en "Guitarra Eléctrica" sin duplicar el producto. */
+/* La barra lateral de Accesorios agrupa por TIPO de producto (cuerdas de guitarra,
+   capotrastes, afinadores...), que es como busca la gente. "matches" lista las
+   subcategorías reales (las que usa el panel de administrador) bajo ese grupo: las
+   cuerdas acústicas y eléctricas comparten el grupo "Cuerdas de guitarra". */
 const ACCESORIOS_FILTER_GROUPS = [
-  {key:'accGrpGuitarraAcustica', seo:'Accesorios para guitarra acústica y clásica', label:'Guitarra Acústica y Clásica', fotoId:185, matches:['accCuerdasAcustica','accCapotrastes','accPuas']},
-  {key:'accGrpGuitarraElectrica', seo:'Accesorios para guitarra eléctrica', label:'Guitarra Eléctrica', fotoId:170, matches:['accCuerdasElectrica','accCapotrastes','accPuas']},
+  {key:'accGrpCuerdasGuitarra', seo:'Cuerdas de guitarra', label:'Cuerdas de guitarra', fotoId:185, matches:['accCuerdasAcustica','accCuerdasElectrica']},
+  {key:'accGrpCapotrastes', seo:'Capotrastes para guitarra', label:'Capotrastes', matches:['accCapotrastes']},
+  {key:'accGrpPuas', seo:'Púas para guitarra', label:'Púas y pines', matches:['accPuas']},
+  {key:'accGrpAfinadores', seo:'Afinadores de guitarra', label:'Afinadores', matches:['accAfinadores']},
+  {key:'accGrpAtriles', seo:'Atriles y pedestales', label:'Atriles y pedestales', matches:['accAtriles']},
   {key:'accGrpPercusion', seo:'Accesorios de percusión', label:'Percusión', matches:['accBaquetas']},
   {key:'accGrpViento', seo:'Accesorios para instrumentos de viento', label:'Viento', matches:['accCanas']},
   {key:'accGrpTeclados', seo:'Accesorios para teclado y piano', label:'Teclado y Piano', matches:['accTeclados']},
   {key:'accGrpViolin', seo:'Accesorios para violín', label:'Violín y cuerda frotada', matches:['accViolin']},
-  {key:'accGrpGenerales', seo:'Accesorios para instrumentos musicales', label:'Generales (cualquier instrumento)', matches:['accAfinadores','accAtriles','accCuidado']},
+  {key:'accGrpCuidado', seo:'Limpieza y repuestos para instrumentos', label:'Limpieza y repuestos', matches:['accCuidado']},
 ];
 
 /* Para Colegio funciona igual: casi todo lo que muestra es de otra categoría
@@ -6339,12 +6341,11 @@ function sidebarCategoriaHtml(){
           cuentaFiltro('stock', p => (p.stock||0) > 0))}
     </div>`;
 
-  /* En Accesorios las filas no son tipos de instrumento sino PARA qué
-     instrumento sirve el accesorio: unas cuerdas de acústica no son una
-     clase de accesorio, son las que le van a esa guitarra. */
+  /* En Accesorios las filas son tipos de accesorio (cuerdas, capotrastes,
+     afinadores...), que es como los busca la gente. */
   const bloqueSubs = subs.length ? `
     <div class="side-bloque">
-      ${tituloBloqueHtml(cat.key==='accesorios' ? 'Para qué instrumento' : 'Tipo de instrumento',
+      ${tituloBloqueHtml(cat.key==='accesorios' ? 'Tipo de accesorio' : 'Tipo de instrumento',
           state.activeSubs.size ? 'limpiarSubs()' : '')}
       ${subs.map(s=>filaFiltroHtml(s.label, state.activeSubs.has(s.key), `toggleChipSub('${s.key}')`,
           cuentaFiltro('subs', p => s.matches ? s.matches.includes(p.sub) : p.sub===s.key),

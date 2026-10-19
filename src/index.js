@@ -76,13 +76,16 @@ function productInCat(p, catKey) {
    instrumento, porque un mismo capo sirve para acústica y para eléctrica. Si
    cambias uno allá, cámbialo aquí: son las URLs que indexa Google. */
 const ACCESORIOS_FILTER_GROUPS = [
-  { key: 'accGrpGuitarraAcustica', seo: 'Accesorios para guitarra acústica y clásica', label: 'Guitarra Acústica y Clásica', matches: ['accCuerdasAcustica', 'accCapotrastes', 'accPuas'] },
-  { key: 'accGrpGuitarraElectrica', seo: 'Accesorios para guitarra eléctrica', label: 'Guitarra Eléctrica', matches: ['accCuerdasElectrica', 'accCapotrastes', 'accPuas'] },
+  { key: 'accGrpCuerdasGuitarra', seo: 'Cuerdas de guitarra', label: 'Cuerdas de guitarra', desc: 'Cuerdas para guitarra acústica, clásica (nylon) y eléctrica de D’Addario, Ernie Ball y Romeo, en todos los calibres: 09-42, 10-46, 11-49 y más.', matches: ['accCuerdasAcustica', 'accCuerdasElectrica'] },
+  { key: 'accGrpCapotrastes', seo: 'Capotrastes para guitarra', label: 'Capotrastes', desc: 'Capotrastes (cejillas o capos) para guitarra acústica, clásica y eléctrica: de gatillo, de tornillo y con púa.', matches: ['accCapotrastes'] },
+  { key: 'accGrpPuas', seo: 'Púas para guitarra', label: 'Púas y pines', desc: 'Púas (plectros) para guitarra y bajo, y pines para cuerdas.', matches: ['accPuas'] },
+  { key: 'accGrpAfinadores', seo: 'Afinadores de guitarra', label: 'Afinadores', desc: 'Afinadores cromáticos de clip para guitarra, bajo, ukelele y violín.', matches: ['accAfinadores'] },
+  { key: 'accGrpAtriles', seo: 'Atriles y pedestales', label: 'Atriles y pedestales', desc: 'Atriles de partituras, pedestales de micrófono, soportes de pared para guitarra y parantes para teclado.', matches: ['accAtriles'] },
   { key: 'accGrpPercusion', seo: 'Accesorios de percusión', label: 'Percusión', matches: ['accBaquetas'] },
   { key: 'accGrpViento', seo: 'Accesorios para instrumentos de viento', label: 'Viento', matches: ['accCanas'] },
   { key: 'accGrpTeclados', seo: 'Accesorios para teclado y piano', label: 'Teclado y Piano', matches: ['accTeclados'] },
   { key: 'accGrpViolin', seo: 'Accesorios para violín', label: 'Violín y cuerda frotada', matches: ['accViolin'] },
-  { key: 'accGrpGenerales', seo: 'Accesorios para instrumentos musicales', label: 'Generales (cualquier instrumento)', matches: ['accAfinadores', 'accAtriles', 'accCuidado'] },
+  { key: 'accGrpCuidado', seo: 'Limpieza y repuestos para instrumentos', label: 'Limpieza y repuestos', matches: ['accCuidado'] },
 ];
 
 /* Copia de COLEGIO_FILTER_GROUPS de index.html: Para Colegio agrupa subs de
@@ -606,7 +609,9 @@ function subcategoryMeta(cat, sub, products) {
   /* `seo` es el nombre de los grupos de Accesorios y Para Colegio: su
      etiqueta sola repetía el título de otra categoría. */
   const nombre = sub.seo || sub.label;
-  const description = `${nombre} en Lima${desde ? `, desde S/ ${desde}` : ''}. ${cat.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`;
+  const description = sub.desc
+    ? `${nombre} en Lima${desde ? `, desde S/ ${desde}` : ''}. ${sub.desc} Envíos a todo el Perú.`
+    : `${nombre} en Lima${desde ? `, desde S/ ${desde}` : ''}. ${cat.label} en Chipao Music: tienda en San Juan de Miraflores con envíos a todo el Perú.`;
   return {
     title: `${nombre} en Lima | Chipao Music`,
     description,
@@ -692,7 +697,7 @@ const PRODUCTOS_RETIRADOS = {
   '149': '/categoria/cuerda/guitarras-acusticas',   // guitarra clásica Freeman naranja
   '45': '/categoria/cuerda/ukeleles',               // ukelele concierto Vozzex
   '31': '/categoria/percusion/bombos',              // bombito escolar con palillo
-  '79': '/categoria/accesorios/guitarra-acustica-y-clasica',  // capotraste Romeo
+  '79': '/categoria/accesorios/capotrastes',  // capotraste Romeo
 };
 
 /* Productos con id viejo. Entre el 14 y el 19-09-2026 el catálogo se unificó
@@ -707,9 +712,10 @@ const PRODUCTOS_RETIRADOS = {
    que coincide gana, y 'guitarra-electrica' va antes que 'guitarra'. Solo se
    usa cuando el id NO está en el catálogo, y si nada coincide sigue el 404. */
 const DESTINOS_POR_NOMBRE = [
-  [/^(cejilla|capo|capotraste)/, '/categoria/accesorios/guitarra-acustica-y-clasica'],
-  [/^(cuerdas?|juego-de-cuerdas)/, '/categoria/accesorios/guitarra-acustica-y-clasica'],
-  [/^(afinador|atril|soporte|pedestal)/, '/categoria/accesorios/generales-cualquier-instrumento'],
+  [/^(cejilla|capo|capotraste)/, '/categoria/accesorios/capotrastes'],
+  [/^(cuerdas?|juego-de-cuerdas)/, '/categoria/accesorios/cuerdas-de-guitarra'],
+  [/^afinador/, '/categoria/accesorios/afinadores'],
+  [/^(atril|soporte|pedestal)/, '/categoria/accesorios/atriles-y-pedestales'],
   [/^boquilla/, '/categoria/accesorios/viento'],
   [/^ukulele/, '/categoria/cuerda/ukeleles'],
   [/^guitarra-electrica/, '/categoria/cuerda/guitarras-electricas'],
@@ -748,6 +754,11 @@ const RUTAS_MOVIDAS = {
   /* La clave sigue siendo `charangos` (las filas de D1 no se tocan); solo la
      etiqueta pasó a "Andinos", y con ella la URL. */
   '/categoria/cuerda/charangos': '/categoria/cuerda/andinos',
+  /* 2026-10-19: Accesorios pasó de agruparse por instrumento a agruparse por
+     tipo de producto (cuerdas, capotrastes...), que es lo que se busca. */
+  '/categoria/accesorios/guitarra-acustica-y-clasica': '/categoria/accesorios/cuerdas-de-guitarra',
+  '/categoria/accesorios/guitarra-electrica': '/categoria/accesorios/cuerdas-de-guitarra',
+  '/categoria/accesorios/generales-cualquier-instrumento': '/categoria/accesorios/afinadores',
 };
 
 /* <head> de un producto que ya no está en el catálogo. Va con noindex y la
