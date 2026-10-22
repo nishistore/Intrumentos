@@ -3,3 +3,6 @@ node_modules/
 # Herramientas locales de Claude Code (servidor de previsualización, etc.).
 # No se despliegan: .assetsignore ya las excluye de los assets del Worker.
 .claude/
+
+# Informes de auditoria de seguridad: son un mapa de puntos debiles, no se suben.
+SECURITY-AUDIT-*.md

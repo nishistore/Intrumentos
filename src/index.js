@@ -1551,7 +1551,7 @@ function agregaListaDeProductos(route, products) {
   });
 }
 
-export default {
+const sitio = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
@@ -1676,5 +1676,41 @@ export default {
       return new Response(salida.body, { status: 404, headers: salida.headers });
     }
     return salida;
+  },
+};
+
+/* Cabeceras de seguridad que el sitio no mandaba. Se ponen al final, sobre
+   cualquier respuesta del Worker (redirecciones, 404, API, fotos, HTML), en
+   vez de en cada return. Si una respuesta ya trae la suya, se respeta.
+   - X-Frame-Options: nadie puede incrustar chipaomusic.com en un iframe, que
+     es como se monta el clickjacking sobre /pedidos o el pago. El sitio solo
+     incrusta iframes de otros (Maps, vídeos), eso no cambia.
+   - nosniff: el navegador no adivina el tipo de un archivo; todo se sirve ya
+     con el suyo (comprobado el 2026-10-22).
+   - Referrer-Policy: es lo que los navegadores ya hacen por defecto, pero así
+     deja de depender del navegador. */
+const CABECERAS_SEGURAS = {
+  'x-frame-options': 'DENY',
+  'x-content-type-options': 'nosniff',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+};
+
+function conCabecerasSeguras(respuesta) {
+  const cabeceras = new Headers(respuesta.headers);
+  for (const [nombre, valor] of Object.entries(CABECERAS_SEGURAS)) {
+    if (!cabeceras.has(nombre)) cabeceras.set(nombre, valor);
+  }
+  /* Se copia en una Response nueva: las de Response.redirect y las que vienen
+     de ASSETS tienen las cabeceras congeladas. */
+  return new Response(respuesta.body, {
+    status: respuesta.status,
+    statusText: respuesta.statusText,
+    headers: cabeceras,
+  });
+}
+
+export default {
+  async fetch(request, env, ctx) {
+    return conCabecerasSeguras(await sitio.fetch(request, env, ctx));
   },
 };
