@@ -634,23 +634,45 @@ function nombreParaTitulo(nombre) {
   return (corte || nombre.slice(0, MAX)).replace(/[\s,;:(\-–—]+$/, '') + '…';
 }
 
-/* La meta descripción de una ficha: nombre y precio, y detrás el principio de
-   la descripción real del producto en vez de la frase de tienda que se repetía
-   en las 134 fichas. Google corta hacia los 155 caracteres, así que se corta
-   en una palabra completa. Si el producto no tiene descripción útil, queda la
-   frase de tienda de siempre. */
+/* La meta descripción de una ficha. Google corta hacia los 155 caracteres y lo
+   que se ve primero decide el clic, así que va en este orden: nombre y precio,
+   disponibilidad y envío, y al final el principio de la descripción real (que
+   es lo que Google puede cortar sin que se pierda nada importante). Hay
+   descripciones escritas en mayúsculas; los tramos de tres o más palabras en
+   mayúsculas se pasan a minúsculas con la inicial de cada oración. Sin
+   descripción útil, queda la frase de la tienda. */
+function pasarAOracion(t, nombre) {
+  /* Las palabras que ya están en el nombre (marcas, modelos) conservan su forma. */
+  const del = new Map(String(nombre || '').split(/\s+/).map(w => [w.toLowerCase(), w]));
+  const sinGritos = t.replace(/(?:\b[A-ZÁÉÍÓÚÑÜ0-9\/]{2,}\b[\s,.()]*){3,}/g, m => m.toLowerCase().replace(/[a-záéíóúñü0-9\/]+/g, w => del.get(w) || w));
+  return sinGritos.replace(/(^|[.!?]\s+)([a-záéíóúñü])/g, (m, a, b) => a + b.toUpperCase());
+}
+
 function productDescription(p, priceLine) {
-  const cabeza = `${p.name} — ${priceLine}.`;
-  let limpia = String(p.description || '').replace(/\s+/g, ' ').trim();
+  const MAX = 155;
+  const disponible = (p.stock || 0) > 0 ? 'En stock' : 'Bajo pedido';
+  const envio = p.price >= 100 ? 'envío gratis' : 'recojo en 1 hora';
+  const base = `${p.name} — ${priceLine}. ${disponible} · ${envio}.`;
+  let limpia = pasarAOracion(String(p.description || '').replace(/\s+/g, ' ').trim(), p.name);
   /* Si la descripción empieza repitiendo el nombre (pasa con varias), esa
      parte ya está en la cabeza y no aporta nada nuevo. */
   if (limpia.toLowerCase().startsWith(p.name.toLowerCase())) limpia = limpia.slice(p.name.length).replace(/^[\s.,;:\-–—]+/, '');
-  const resto = 155 - cabeza.length - 1;
+  const resto = MAX - base.length - 1;
   if (limpia.length >= 40 && resto >= 40) {
-    let corte = limpia.length <= resto ? limpia : limpia.slice(0, resto).replace(/\s+\S*$/, '').replace(/[\s,;:(\-–—.]+$/, '') + '…';
-    return `${cabeza} ${corte}`;
+    let gancho;
+    if (limpia.length <= resto) {
+      gancho = limpia;
+    } else {
+      const corte = limpia.slice(0, resto);
+      const punto = Math.max(corte.lastIndexOf('. '), corte.lastIndexOf('! '), corte.lastIndexOf('? '));
+      gancho = punto >= 40
+        ? corte.slice(0, punto + 1)
+        : corte.replace(/\s+\S*$/, '').replace(/[\s,;:(\-–—.]+$/, '') + '…';
+    }
+    return `${base} ${gancho}`;
   }
-  return `${cabeza} Tienda de instrumentos musicales en San Juan de Miraflores, Lima, con envíos a todo el Perú.`;
+  const tienda = ' Tienda de instrumentos musicales en San Juan de Miraflores, Lima.';
+  return base.length + tienda.length <= MAX + 5 ? base + tienda : base;
 }
 
 function productMeta(p) {
