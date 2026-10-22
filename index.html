@@ -1925,6 +1925,21 @@ a.eyebrow-terracota:active{opacity:.6;}
   font:700 11px/1 var(--app-sans);color:var(--peru-rojo);
 }
 
+.ficha-pago{margin-top:12px;display:grid;gap:7px;}
+.ficha-pago-fila{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 11px;border:1px solid var(--app-ink-10,#e6e6e6);border-radius:9px;
+  font:500 13px/1.35 var(--app-sans);color:var(--app-ink-70);
+}
+.ficha-pago-fila strong{color:var(--app-ink);font-weight:700;}
+.ficha-pago-ico{
+  flex:none;width:26px;height:26px;border-radius:7px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font:800 11px/1 var(--app-sans);color:#fff;background:#742284;
+}
+.ficha-pago-ico.tarjeta{background:#2b2b2b;}
+.ficha-pago-ico.mp{background:#009ee3;}
+
 .ficha-chips{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
 .ficha-chip{
   height:28px;padding:0 10px;border-radius:7px;
@@ -3702,6 +3717,36 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
 }
 .tl-btn:hover{background:#e6d19b;}
 .tl-pie{display:flex;justify-content:space-between;gap:16px;padding-top:22px;border-top:1px solid #332d24;font:400 12.5px/1.4 var(--app-sans);color:#948d80;}
+/* Banner del sorteo navideño en la portada: mismo verde que la franja de arriba. */
+.banner-sorteo{
+  margin:24px var(--app-gutter) 0;display:flex;align-items:center;gap:26px;
+  padding:22px 32px;border-radius:14px;text-decoration:none;color:#fff;
+  background:#0F5C33;
+}
+.bs-fotos{flex:none;display:flex;gap:10px;}
+.bs-foto{
+  width:128px;aspect-ratio:1/1;border-radius:10px;overflow:hidden;
+  background:#fff;display:block;
+}
+.bs-foto img{width:100%;height:100%;object-fit:contain;display:block;}
+.bs-texto{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;}
+.bs-sobre{font:700 11px/1 var(--app-sans);letter-spacing:.22em;text-transform:uppercase;color:#bfe8cf;}
+.bs-titulo{font:400 30px/1.08 var(--app-black);letter-spacing:-.01em;}
+.bs-sub{font:400 14px/1.4 var(--app-sans);color:#d9efe2;}
+.bs-btn{
+  flex:none;padding:14px 22px;border-radius:9px;background:#fff;color:#0F5C33;
+  font:700 13.5px/1 var(--app-sans);
+}
+.banner-sorteo:hover .bs-btn{background:#e8f5ed;}
+@media (max-width:899px){
+  .banner-sorteo{margin-top:18px;padding:18px;gap:14px;flex-wrap:wrap;}
+  .bs-fotos{flex-direction:column;gap:6px;}
+  .bs-foto{width:64px;}
+  .bs-texto{gap:5px;}
+  .bs-titulo{font-size:19px;}
+  .bs-sub{font-size:12.5px;}
+  .bs-btn{width:100%;text-align:center;padding:12px;}
+}
 /* Recuadro de la portada. */
 .banner-taller{
   margin:24px var(--app-gutter) 0;display:flex;align-items:center;gap:22px;
@@ -5455,7 +5500,21 @@ function appProductCard(p, altoFoto, conAgregar){
    trae líneas de cuotas en todas las tarjetas; la tienda no las ofrece
    todavía, así que nacen apagadas. Las de escasez sí, porque el stock es
    real y sale de la base. */
-const FLAGS = { showCuotas: false, showStock: true };
+const FLAGS = { showCuotas: false, showStock: true, fichaPago: true };
+
+/* Formas de pago bajo el precio de la ficha: las mismas que ofrece el checkout. */
+function pagoFichaHtml(p){
+  if(!FLAGS.fichaPago || !(p.price > 0)) return '';
+  return `
+      <div class="ficha-pago">
+        <div class="ficha-pago-fila"><span class="ficha-pago-ico">Y</span>
+          <span><strong>Paga con Yape</strong> en 2 minutos, sin salir de la web</span></div>
+        <div class="ficha-pago-fila"><span class="ficha-pago-ico tarjeta">&#9645;</span>
+          <span>También con <strong>Plin o transferencia</strong> por WhatsApp</span></div>
+        <div class="ficha-pago-fila"><span class="ficha-pago-ico mp">MP</span>
+          <span><strong>Paga con Mercado Pago</strong> con tarjeta Visa o Mastercard</span></div>
+      </div>`;
+}
 
 /* Los accesorios quedan fuera de la portada a propósito: el rediseño existe
    justo para que la home deje de abrir con cuerdas y púas de S/ 10. */
@@ -6094,6 +6153,7 @@ function renderHome(){
   <div class="app-shell portada">
     ${H1_PORTADA}
     ${heroVentasHtml()}
+    ${bannerSorteoHtml()}
     ${categoriasPortadaHtml()}
     ${beneficiosMovilHtml()}
     ${bannerTallerHtml()}
@@ -6109,6 +6169,7 @@ function renderHome(){
   <div class="app-shell portada">
     ${H1_PORTADA}
     ${heroVentasHtml()}
+    ${bannerSorteoHtml()}
     ${categoriasPortadaHtml()}
     ${franjaConfianzaHtml()}
     ${bannerTallerHtml()}
@@ -7035,7 +7096,7 @@ function renderProductDetail(){
         ${enOferta(p) ? `
           <span class="ficha-antes">${fmt(p.old)}</span>
           <span class="ficha-ahorras">Ahorras ${fmt(ahorro)}</span>` : ''}
-      </div>`;
+      </div>${pagoFichaHtml(p)}`;
 
     const thumbs = slides.length > 1 ? `
       <div class="fe-thumbs">
@@ -7165,6 +7226,7 @@ function renderProductDetail(){
           <span class="ficha-antes">${fmt(p.old)}</span>
           <span class="ficha-ahorras">Ahorras ${fmt(ahorro)}</span>` : ''}
       </div>
+      ${pagoFichaHtml(p)}
 
       <div class="ficha-chips">
         ${stock > 0
@@ -8679,6 +8741,30 @@ function goTaller(push){
 
 /* Recuadro de la portada que lleva al taller: la única pieza negra y dorada
    de la tienda, así que se ve sin necesidad de ser grande. */
+/* El sorteo termina el 24-dic a las 21:00 de Lima; se apaga igual que la franja. */
+function bannerSorteoHtml(){
+  if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) return '';
+  /* Fotos limpias del catálogo (teclado Vozzex 245, violín 48); si faltan, la imagen del sorteo. */
+  const foto = (id, n) => {
+    const p = PRODUCTS.find(x => x.id === id);
+    return p && (p.images||[]).length ? fotoUrl(p.images[0], 400)
+      : `/cdn-cgi/image/width=400,format=auto,onerror=redirect/sorteo/premio-${n}.jpg`;
+  };
+  return `
+  <a class="banner-sorteo" href="/sorteo">
+    <span class="bs-fotos">
+      <span class="bs-foto"><img src="${foto(245, 1)}" alt="Teclado Vozzex completo" loading="lazy" decoding="async"></span>
+      <span class="bs-foto"><img src="${foto(48, 2)}" alt="Violín 4/4 completo" loading="lazy" decoding="async"></span>
+    </span>
+    <span class="bs-texto">
+      <span class="bs-sobre">Sorteo navideño · 24 de diciembre</span>
+      <span class="bs-titulo">Gana un teclado o un violín completo</span>
+      <span class="bs-sub">Con cada compra desde S/ 20 recibes un cupón; desde S/ 100, dos. Sorteo en vivo por TikTok.</span>
+    </span>
+    <span class="bs-btn">Ver premios ›</span>
+  </a>`;
+}
+
 function bannerTallerHtml(){
   cargarFuenteTaller();
   return `
