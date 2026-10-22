@@ -23,7 +23,7 @@
              {target: img.closest('.hero-venta'), offset:['start start','end start']});
     });
     // Secciones: aparecen con fade + desplazamiento ligado al scroll
-    document.querySelectorAll('.portada-cats,.vitrina,.prueba,.kit,.cierre,.reco').forEach(s=>
+    document.querySelectorAll('.vitrina,.prueba,.kit,.cierre,.reco').forEach(s=>
       reveal(s,{opacity:[0,1],transform:['translateY(60px)','translateY(0px)']}));
     // Tarjetas con escalonado: cada una empieza un poco más tarde
     document.querySelectorAll('.vitrina .tv, .reco .tv').forEach((c,i)=>{
