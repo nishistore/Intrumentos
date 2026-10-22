@@ -1696,28 +1696,24 @@ const CABECERAS_SEGURAS = {
 };
 
 /* Política de contenido en modo "solo avisar" (Report-Only): el navegador NO
-   bloquea nada, solo anota en la consola lo que bloquearía. Se deja así hasta
-   comprobar que ninguna pantalla real (tienda, carrito, pago, paneles) genera
-   avisos; entonces se pasa a Content-Security-Policy a secas.
+   bloquea nada, solo anota en la consola lo que bloquearía.
 
-   Lo que de verdad aporta: connect-src fija a dónde puede mandar datos una
-   página comprometida (la clave de administrador viaja por fetch), y
-   object-src, base-uri, form-action y frame-ancestors cierran puertas
-   clásicas. NO frena scripts inline: el sitio los usa, así que script-src
-   necesita 'unsafe-inline'. Orígenes medidos en la página real el 2026-10-22:
-   Google Tag Manager y Ads, Clarity, OneSignal, Google Fonts y la API de
-   productos. */
+   Se dejan SOLO las reglas que no dependen de qué terceros cargue la página:
+   object-src, base-uri, form-action y frame-ancestors. El 2026-10-22 una
+   versión más larga (default-src, script-src, connect-src...) dio avisos
+   reales en el navegador: OneSignal carga de api.onesignal.com y
+   onesignal.com, y la conversión de Google Ads se manda a www.google.<país>
+   (google.se, google.com.pe...), dominios que no se pueden enumerar. Forzar
+   eso habría cortado las notificaciones y la medición de ventas.
+
+   Tampoco hay default-src: sin él, lo que no se nombra (connect, script,
+   img...) queda libre. Con 'unsafe-inline' obligatorio en script-src (el
+   sitio usa scripts en el HTML), una lista de orígenes no frenaba nada y solo
+   añadía riesgo de romper cosas.
+
+   Antes de pasar a Content-Security-Policy a secas, recorrer en el navegador
+   tienda, carrito, pago, /pedidos y /sorteo sin avisos en la consola. */
 const CSP_SOLO_AVISAR = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms https://cdn.onesignal.com https://*.googleadservices.com https://*.google.com https://*.doubleclick.net https://*.google-analytics.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https:",
-  "media-src 'self' https:",
-  "connect-src 'self' https://chipao-productos-api.nishistore.workers.dev https://*.clarity.ms https://*.onesignal.com https://onesignal.com https://*.google.com https://*.googleadservices.com https://*.doubleclick.net https://*.google-analytics.com https://*.googletagmanager.com",
-  "frame-src https://*.google.com https://www.youtube.com https://www.youtube-nocookie.com https://*.onesignal.com https://*.doubleclick.net https://www.googletagmanager.com",
-  "worker-src 'self' blob:",
-  "manifest-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
