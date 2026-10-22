@@ -32,12 +32,6 @@
       scroll(animate(c,{opacity:[0,1],transform:['translateY(50px) scale(.94)','translateY(0) scale(1)']},{ease:'linear'}),
              {target:c, offset:['start end', `start ${0.85-o}`]});
     });
-    // Categorías: entran desde los lados alternando
-    document.querySelectorAll('.pc-tile').forEach((t,i)=>{
-      if(done.has(t)) return; done.add(t);
-      scroll(animate(t,{opacity:[0,1],transform:[`translateX(${i%2?40:-40}px)`,'translateX(0)']},{ease:'linear'}),
-             {target:t, offset:['start end','start 0.8']});
-    });
     // Bloque oscuro de cierre: zoom suave
     document.querySelectorAll('.cierre,.kit').forEach(s=>{
       scroll(animate(s,{transform:['scale(.94)','scale(1)']},{ease:'linear'}),{target:s,offset:['start end','center center']});
