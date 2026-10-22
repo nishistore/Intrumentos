@@ -3858,7 +3858,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
 </script>
 <div class="franja-util">
   <div class="franja-util-inner">
-    <span><b class="franja-gratis">Envío gratis desde S/ 100</b> · a todo el Perú · Yape o tarjeta</span>
+    <span><b class="franja-gratis">Envío gratis desde S/ 150</b> · a todo el Perú · Yape o tarjeta</span>
     <div class="franja-derecha">
       <a class="franja-taller" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
       <span>Av. Los Héroes 382, San Juan de Miraflores</span>
@@ -3950,7 +3950,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
       <h4>Pagos y envíos</h4>
       <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Yape</a>
       <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Visa y Mastercard</a>
-      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Envío gratis desde S/ 100</a>
+      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Envío gratis desde S/ 150</a>
       <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Recojo en tienda en 1 hora</a>
     </div>
     <div class="footer-legal">
@@ -7416,7 +7416,7 @@ function updateCartCount(){
      punto donde hace falta guardarlo. */
   saveCart();
 }
-const FREE_SHIPPING_THRESHOLD = 100;
+const FREE_SHIPPING_THRESHOLD = 150;
 const SHIPPING_FEE_LIMA = 10;   // envio a domicilio en Lima Metropolitana
 const SHIPPING_FEE = 15;        // envio al resto del Peru (agencia Shalom)
 /* Adicional por mandar a una agencia Shalom de provincia. Hasta el 2026-10-04
@@ -8927,12 +8927,12 @@ function renderTaller(){
    ====================================================================== */
 const POLICIES = {
   envios:{title:"Política de envíos", path:"/politica-de-envios",
-    desc:"Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos y envío gratis desde S/ 100.",
+    desc:"Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos y envío gratis desde S/ 150.",
     body:`<p>Enviamos a todo el Perú y también puedes recoger tu pedido en nuestra tienda de San Juan de Miraflores. Esto es lo que debes saber antes de comprar.</p>
 <h2>Formas de recibir tu pedido</h2>
 <ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 4 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>
 <h2>Costos de envío</h2>
-<ul><li>Envío gratis en compras desde S/ 100 en productos.</li><li>En compras menores a S/ 100: S/ 10 a Lima Metropolitana y S/ 15 al resto del Perú.</li><li>El recojo en tienda siempre es gratis.</li></ul>
+<ul><li>Envío gratis en compras desde S/ 150 en productos.</li><li>En compras menores a S/ 150: S/ 10 a Lima Metropolitana y S/ 15 al resto del Perú.</li><li>El recojo en tienda siempre es gratis.</li></ul>
 <h2>Seguimiento</h2>
 <p>Cuando despachamos tu pedido te avisamos por WhatsApp o por correo. Si necesitas ayuda, escríbenos al +51 921 317 384 con tu código de pedido.</p>
 <h2>Si tu pedido llega con algún problema</h2>

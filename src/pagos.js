@@ -47,7 +47,7 @@ const MAX_PEDIDOS_POR_IP = 6;     // pedidos abiertos por IP en una ventana
 const MAX_PEDIDOS_SIN_PAGAR_POR_DIA = 30;
 const MAX_BYTES_CAPTURA = 1.5 * 1024 * 1024;
 
-const FREE_SHIPPING_THRESHOLD = 100;   // iguales a las de index.html
+const FREE_SHIPPING_THRESHOLD = 150;   // iguales a las de index.html
 const SHIPPING_FEE_LIMA = 10;
 const SHIPPING_FEE = 15;
 const PROVINCE_SURCHARGE = 0;   // eran 5 hasta el 2026-10-04; "todo el Perú" cuesta 15 en total
