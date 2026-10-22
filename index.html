@@ -1595,7 +1595,10 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    para siempre — no es que taparan algo mientras bajas, es que ya no hay
    más scroll que dar. En pantalla se ve como una página cortada a media
    frase. Una clase normal la entiende cualquier navegador. */
-body.con-barra-compra{padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-area-inset-bottom));}
+body.con-barra-compra.barra-activa{padding-bottom:calc(var(--app-tabbar-h) + 77px + env(safe-area-inset-bottom));}
+/* El hueco solo existe mientras la barra se ve (.barra-activa, la pone el JS a
+   la vez que .visible). Antes se reservaba siempre y, si la barra no llegaba a
+   asomar, debajo del pie quedaba un espacio en blanco de 77px sin nada dentro. */
 
 /* ---- CTA flotante de WhatsApp (solo escritorio, ver @media) ---- */
 .wa-flotante{display:none;}
@@ -6163,9 +6166,12 @@ function prepararBarraCompra(){
      —cualquier pantalla que no sea la portada en teléfono— hay que quitarla,
      o el hueco se queda puesto donde no hace falta. */
   document.body.classList.toggle('con-barra-compra', Boolean(barra));
+  if(!barra) document.body.classList.remove('barra-activa');
   if(!barra || !ctas) return;
   vigiaBarraCompra = new IntersectionObserver(([e]) => {
-    barra.classList.toggle('visible', !e.isIntersecting && e.boundingClientRect.top < 0);
+    const ver = !e.isIntersecting && e.boundingClientRect.top < 0;
+    barra.classList.toggle('visible', ver);
+    document.body.classList.toggle('barra-activa', ver);
   }, { threshold: 0 });
   vigiaBarraCompra.observe(ctas);
 }
