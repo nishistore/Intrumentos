@@ -1695,10 +1695,44 @@ const CABECERAS_SEGURAS = {
   'referrer-policy': 'strict-origin-when-cross-origin',
 };
 
+/* Política de contenido en modo "solo avisar" (Report-Only): el navegador NO
+   bloquea nada, solo anota en la consola lo que bloquearía. Se deja así hasta
+   comprobar que ninguna pantalla real (tienda, carrito, pago, paneles) genera
+   avisos; entonces se pasa a Content-Security-Policy a secas.
+
+   Lo que de verdad aporta: connect-src fija a dónde puede mandar datos una
+   página comprometida (la clave de administrador viaja por fetch), y
+   object-src, base-uri, form-action y frame-ancestors cierran puertas
+   clásicas. NO frena scripts inline: el sitio los usa, así que script-src
+   necesita 'unsafe-inline'. Orígenes medidos en la página real el 2026-10-22:
+   Google Tag Manager y Ads, Clarity, OneSignal, Google Fonts y la API de
+   productos. */
+const CSP_SOLO_AVISAR = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms https://cdn.onesignal.com https://*.googleadservices.com https://*.google.com https://*.doubleclick.net https://*.google-analytics.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com data:",
+  "img-src 'self' data: blob: https:",
+  "media-src 'self' https:",
+  "connect-src 'self' https://chipao-productos-api.nishistore.workers.dev https://*.clarity.ms https://*.onesignal.com https://onesignal.com https://*.google.com https://*.googleadservices.com https://*.doubleclick.net https://*.google-analytics.com https://*.googletagmanager.com",
+  "frame-src https://*.google.com https://www.youtube.com https://www.youtube-nocookie.com https://*.onesignal.com https://*.doubleclick.net https://www.googletagmanager.com",
+  "worker-src 'self' blob:",
+  "manifest-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+].join('; ');
+
 function conCabecerasSeguras(respuesta) {
   const cabeceras = new Headers(respuesta.headers);
   for (const [nombre, valor] of Object.entries(CABECERAS_SEGURAS)) {
     if (!cabeceras.has(nombre)) cabeceras.set(nombre, valor);
+  }
+  /* La política solo tiene sentido en páginas; en fotos, JSON y scripts sobra. */
+  if ((cabeceras.get('content-type') || '').includes('text/html')
+      && !cabeceras.has('content-security-policy-report-only')) {
+    cabeceras.set('content-security-policy-report-only', CSP_SOLO_AVISAR);
   }
   /* Se copia en una Response nueva: las de Response.redirect y las que vienen
      de ASSETS tienen las cabeceras congeladas. */

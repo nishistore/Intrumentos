@@ -10,3 +10,8 @@ wrangler.jsonc
 .gitignore
 
 productos-api
+
+# Archivos de trabajo y auditoria: no son del sitio.
+ads-imagenes
+descripciones-propuestas.md
+SECURITY-AUDIT-*.md

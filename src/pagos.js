@@ -40,6 +40,11 @@ const TOLERANCIA_RELOJ_MS = 60 * 1000;
 const REVISION_DESDE = 200;       // soles: de aquí para arriba decide el dueño
 const MAX_INTENTOS = 3;           // capturas por pedido antes de pasar a revisión
 const MAX_PEDIDOS_POR_IP = 6;     // pedidos abiertos por IP en una ventana
+/* El tope de arriba solo cuenta los que esperan pago: uno que pasa a revisión
+   deja de contar y esa IP podía abrir otro, cada uno con su lectura de Gemini
+   y su correo al dueño. Este tope cuenta TODO lo no pagado en 24 horas. Es
+   holgado a propósito: muchos celulares comparten IP (CGNAT). */
+const MAX_PEDIDOS_SIN_PAGAR_POR_DIA = 30;
 const MAX_BYTES_CAPTURA = 1.5 * 1024 * 1024;
 
 const FREE_SHIPPING_THRESHOLD = 100;   // iguales a las de index.html
@@ -574,6 +579,12 @@ async function crearPedido(request, env) {
     ).bind(ip, ahora - MINUTOS_PARA_PAGAR * 60000).first();
     if (abiertos && abiertos.n >= MAX_PEDIDOS_POR_IP) {
       return json({ error: 'Demasiados pedidos seguidos. Espera unos minutos.' }, 429);
+    }
+    const delDia = await env.DB.prepare(
+      "SELECT COUNT(*) AS n FROM pedidos WHERE ip = ? AND creado_ms > ? AND estado IN ('pendiente','expirado','revision','rechazado')"
+    ).bind(ip, ahora - 24 * 3600000).first();
+    if (delDia && delDia.n >= MAX_PEDIDOS_SIN_PAGAR_POR_DIA) {
+      return json({ error: 'Hiciste muchos pedidos hoy sin pagar. Escríbenos por WhatsApp y lo resolvemos.' }, 429);
     }
   }
 
