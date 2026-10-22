@@ -1362,6 +1362,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .vitrina-head p{margin-top:4px;font:400 13px/1.45 var(--app-sans);color:var(--app-muted);}
 .vitrina-head .enlace-sub{display:none;}
 .vitrina-grid{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.empezar{padding:26px var(--app-gutter) 0;}
 
 /* Texto propio de cada categoría, debajo del título. Además de servirle al
    que llega buscando, es lo que le da a la página algo que no dice ninguna
@@ -3131,7 +3132,7 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
   .conf-sub{font-size:12.5px;}
 
   /* ---- vitrina ---- */
-  .vitrina{padding:34px var(--app-gutter) 0;}
+  .vitrina,.empezar{padding:34px var(--app-gutter) 0;}
   .vitrina-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;}
   .vitrina-head h2{font-size:29px;}
   .vitrina-head p{margin-top:5px;font-size:14.5px;}
@@ -6004,6 +6005,29 @@ function recomendadosHtml(p){
   </section>`;
 }
 
+/* "Para empezar": un instrumento de cada familia que un principiante puede
+   tocar sin saber nada. Los ids son fijos a propósito (los elige el dueño, no
+   el azar); si uno se agota o pierde la foto, simplemente no sale. */
+const IDS_PARA_EMPEZAR = [2, 44, 245, 209]; // guitarra Vozzex, ukelele, teclado Vozzex 54 teclas, flauta dulce Hohner
+function empezarHtml(){
+  const lista = IDS_PARA_EMPEZAR
+    .map(id => PRODUCTS.find(x => x.id === id))
+    .filter(x => x && (x.stock||0) > 0 && (x.images||[]).length);
+  if(lista.length < 2) return '';
+  const desde = Math.min(...lista.map(x => x.price));
+  return `
+  <section class="empezar">
+    <header class="vitrina-head">
+      <div>
+        <h2>Para empezar a tocar</h2>
+        <p>Instrumentos fáciles para principiantes, desde ${fmt(desde)}</p>
+      </div>
+      <a class="enlace-sub" href="/tienda" onclick="goShop(null);return false;">Ver catálogo completo ›</a>
+    </header>
+    <div class="vitrina-grid">${lista.map(tarjetaVentaHtml).join('')}</div>
+  </section>`;
+}
+
 function vitrinaHtml(){
   const lista = vitrinaDestacados();
   if(!lista.length) return '';
@@ -6157,6 +6181,7 @@ function renderHome(){
     ${categoriasPortadaHtml()}
     ${beneficiosMovilHtml()}
     ${bannerTallerHtml()}
+    ${empezarHtml()}
     ${vitrinaHtml()}
     ${secundariasMovilHtml()}
     ${pruebaSocialHtml()}
@@ -6173,6 +6198,7 @@ function renderHome(){
     ${categoriasPortadaHtml()}
     ${franjaConfianzaHtml()}
     ${bannerTallerHtml()}
+    ${empezarHtml()}
     ${vitrinaHtml()}
     ${pruebaSocialHtml()}
     ${kitEscolarHtml()}
