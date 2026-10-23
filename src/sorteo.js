@@ -194,7 +194,11 @@ a{color:inherit;}
 .hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:22px 16px 62px;
   background:radial-gradient(circle at 18% 10%,rgba(255,190,60,.5),transparent 42%),radial-gradient(rgba(255,255,255,.08) 2px,transparent 2.5px) 0 0/22px 22px,linear-gradient(160deg,#e8452c 0%,#c4191f 50%,#7d0d1c 100%);}
 .volver{position:absolute;left:16px;top:14px;font-size:13px;font-weight:600;color:#ffe9e4;text-decoration:none;z-index:3;}
-.fecha{font-weight:800;font-size:13px;letter-spacing:.2em;margin:26px 0 0;}
+.marca{position:relative;display:block;width:72px;height:72px;margin:50px auto 0;border-radius:50%;background:#fff;padding:5px;box-shadow:0 6px 0 rgba(0,0,0,.25),0 10px 20px rgba(0,0,0,.3);}
+.marca img{display:block;width:100%;height:100%;border-radius:50%;}
+/* Gorro de Papá Noel sobre el logo (SVG en línea, sin imagen aparte). */
+.marca::after{content:"";position:absolute;pointer-events:none;left:-9%;top:-50%;width:104%;height:68%;transform:rotate(-12deg);background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 70'><path d='M12 54 C14 22 40 6 64 10 C80 13 90 26 92 38 L90 54 Z' fill='%23D3202A'/><path d='M64 10 C80 13 90 26 92 38 L90 54 L74 54 C78 34 74 20 64 10 Z' fill='%23A5141C'/><rect x='4' y='48' width='92' height='18' rx='9' fill='%23fff'/><circle cx='91' cy='38' r='9' fill='%23fff'/></svg>") center/contain no-repeat;}'
+.fecha{font-weight:800;font-size:13px;letter-spacing:.2em;margin:14px 0 0;}
 h1.titulo{font:400 clamp(54px,17vw,76px)/1 Lobster,cursive;-webkit-text-stroke:8px #15120d;paint-order:stroke fill;transform:rotate(-3deg);margin:6px 0 0;}
 h1.titulo b{display:block;font-weight:400;color:var(--oro);margin-top:-14px;font-size:.9em;}
 .dos{font-weight:700;font-size:15px;margin:10px 0 0;color:#fff;}
@@ -237,12 +241,16 @@ input{flex:1;min-width:210px;max-width:340px;font:inherit;padding:13px 16px;bord
 .gan{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--linea);}
 .gan:first-of-type{border-top:0;}
 .gan b{color:var(--rojo);}
+.quienes{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:30px;padding-top:24px;border-top:1px solid var(--linea);text-align:center;font-size:13px;color:var(--suave);}
+.quienes img{border-radius:50%;margin-bottom:6px;}
+.quienes b{font-size:15px;color:var(--tinta);}
 .wa{display:flex;align-items:center;justify-content:center;margin-top:26px;padding:16px;border-radius:16px;background:var(--wa);color:#06210f;font-weight:800;text-decoration:none;}
 </style>
 </head>
 <body>
 <header class="hero">
   <a class="volver" href="/">&larr; Volver a la tienda</a>
+  <a class="marca" href="/" aria-label="Chipao Music, ir a la tienda"><img src="/img/logo-redondo.webp" alt="Chipao Music" width="64" height="64" decoding="async"></a>
   <p class="fecha">24 DE DICIEMBRE &middot; 9:00 P.M.</p>
   <h1 class="titulo">Sorteo<b>Navideño</b></h1>
   <p class="dos">Dos premios: un teclado y un violín</p>
@@ -287,6 +295,12 @@ ${PREMIOS.map(p => `    <div class="premio">
   </div>
 
   <a class="wa" href="https://wa.me/51921317384" target="_blank" rel="noopener">¿Dudas? Escríbenos por WhatsApp</a>
+  <div class="quienes">
+    <img src="/img/logo-redondo.webp" alt="" width="56" height="56" loading="lazy" decoding="async">
+    <b>Chipao Music</b>
+    <span>Av. Los Héroes 382, San Juan de Miraflores, Lima</span>
+    <span>WhatsApp +51 921 317 384</span>
+  </div>
 </main>
 <script>
 var INFO = null, T0 = Date.now();
