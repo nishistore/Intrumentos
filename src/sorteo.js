@@ -198,13 +198,6 @@ a{color:inherit;}
 h1.titulo{font:400 clamp(54px,17vw,76px)/1 Lobster,cursive;-webkit-text-stroke:8px #15120d;paint-order:stroke fill;transform:rotate(-3deg);margin:6px 0 0;}
 h1.titulo b{display:block;font-weight:400;color:var(--oro);margin-top:-14px;font-size:.9em;}
 .dos{font-weight:700;font-size:15px;margin:10px 0 0;color:#fff;}
-.prem{position:relative;max-width:560px;width:100%;height:0;padding-top:50%;margin:10px auto 0;}
-.prem img{position:absolute;filter:drop-shadow(0 16px 16px rgba(0,0,0,.45));}
-.prem .v{height:94%;width:auto;left:6%;top:0;}
-.prem .t{width:58%;height:auto;right:0;top:20%;transform:rotate(-6deg);}
-.etq{position:absolute;background:var(--oro);color:#15120d;font-weight:800;font-size:12px;letter-spacing:.14em;padding:7px 12px;border-radius:7px;box-shadow:0 4px 0 rgba(0,0,0,.35);z-index:2;}
-.etq.a{left:0;top:68%;transform:rotate(-6deg);}
-.etq.b{right:4%;top:10%;transform:rotate(5deg);}
 .vivo{font-weight:600;font-size:14px;margin:6px 0 0;color:#ffe9e4;}
 .reloj{display:flex;gap:10px;justify-content:center;margin:16px 0 0;}
 .reloj div{min-width:78px;padding:10px 0;border-radius:12px;background:rgba(60,0,10,.55);border:1.5px solid rgba(255,210,63,.6);}
@@ -253,10 +246,6 @@ input{flex:1;min-width:210px;max-width:340px;font:inherit;padding:13px 16px;bord
   <p class="fecha">24 DE DICIEMBRE &middot; 9:00 P.M.</p>
   <h1 class="titulo">Sorteo<b>Navideño</b></h1>
   <p class="dos">Dos premios: un teclado y un violín</p>
-  <div class="prem">
-    <img class="v" src="/sorteo/sorteo-violin.png" alt="Violín 4/4 completo" width="424" height="600" decoding="async"><span class="etq a">PREMIO 2</span>
-    <img class="t" src="/sorteo/sorteo-teclado.png" alt="Teclado Vozzex completo" width="700" height="368" decoding="async"><span class="etq b">PREMIO 1</span>
-  </div>
   <p class="vivo">En vivo por TikTok de Chipao Music</p>
   <div class="reloj" id="reloj" aria-live="off"></div>
   <p class="estado" id="estado"></p>
