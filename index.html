@@ -1583,6 +1583,23 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
   display:flex;align-items:center;justify-content:center;color:var(--wa-ink);
 }
 .bc-wa svg{width:26px;height:26px;}
+@keyframes waPulso{
+  0%{transform:scale(.95);opacity:.8;}
+  50%{transform:scale(1.3);opacity:0;}
+  100%{transform:scale(1.3);opacity:0;}
+}
+/* Mismo anillo que late en .wa-flotante (escritorio), para el botón de WhatsApp
+   de las dos barras fijas del teléfono. */
+.bc-wa,.btn-wa-cuadrado{position:relative;}
+.bc-wa::after,.btn-wa-cuadrado::after{
+  content:"";position:absolute;top:-4px;left:-4px;right:-4px;bottom:-4px;
+  border-radius:15px;border:2px solid var(--wa);
+  opacity:0;pointer-events:none;
+  animation:waPulso 2.4s cubic-bezier(.4,0,.6,1) infinite;
+}
+@media (prefers-reduced-motion: reduce){
+  .bc-wa::after,.btn-wa-cuadrado::after{animation:none;}
+}
 /* Hueco para que la barra no tape el final del documento. Va en el body y no
    en la portada: debajo de la portada está el pie, y ahí es donde la barra se
    apoya de verdad.
@@ -3219,6 +3236,17 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
   }
   .wa-flotante .ico-wa svg{width:20px;height:20px;}
   .wa-flotante:hover{background:#1fb855;}
+  /* Anillo que late alrededor del botón (como el widget de Music Market).
+     top/left/right/bottom y no inset: los Safari viejos no lo entienden. */
+  .wa-flotante::after{
+    content:"";position:absolute;top:-4px;left:-4px;right:-4px;bottom:-4px;
+    border-radius:999px;border:2px solid var(--wa);
+    opacity:0;pointer-events:none;
+    animation:waPulso 2.4s cubic-bezier(.4,0,.6,1) infinite;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wa-flotante::after{animation:none;}
+  }
 
   /* ---- hover, solo con ratón ---- */
   @media (hover: hover){
