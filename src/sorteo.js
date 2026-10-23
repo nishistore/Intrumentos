@@ -182,100 +182,123 @@ const PAGINA = `<!doctype html>
 <title>Sorteo navideño | Chipao Music</title>
 <meta name="description" content="Compra en Chipao Music hasta el 24 de diciembre de 2026 y participa en el sorteo navideño: un teclado Vozzex completo y un violín 4/4 completo, en vivo por TikTok.">
 <link rel="canonical" href="https://chipaomusic.com/sorteo">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --fondo:#F6EFE4;--tarjeta:#fff;--tinta:#1B1320;--suave:#6B5F73;--linea:#E6DCCB;
-  --verde:#0F5C33;--verde-f:#E4F2E9;--rojo-nav:#B0142B;--on:#fff;--rojo:#B3261E;--nieve:#fff;
-}
-@media (prefers-color-scheme:dark){
-  :root{--fondo:#10241A;--tarjeta:#17382A;--tinta:#F3EEE4;--suave:#B9C7BD;--linea:#2A4A39;--verde:#7FD49C;--verde-f:#1F4A33;--rojo-nav:#D8324A;--on:#fff;--rojo:#FF8F86;--nieve:rgba(255,255,255,.16);}
-}
+:root{--rojo:#c4191f;--rojo2:#7d0d1c;--naranja:#e8452c;--oro:#ffd23f;--crema:#fff7ec;--tinta:#1b1320;--suave:#6b5f73;--linea:#ecd9c4;--wa:#25D366;--sans:Poppins,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
 *{box-sizing:border-box;}
-body{margin:0;color:var(--tinta);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background-color:var(--fondo);
-  background-image:radial-gradient(circle at 20px 30px,var(--nieve) 3px,transparent 4px),radial-gradient(circle at 120px 90px,var(--nieve) 2px,transparent 3px),radial-gradient(circle at 200px 160px,var(--nieve) 4px,transparent 5px),radial-gradient(circle at 70px 200px,var(--nieve) 2.5px,transparent 3.5px);
-  background-size:240px 240px;}
-/* Franja roja y verde arriba, como un lazo de regalo. */
-body::before{content:"";display:block;height:9px;background:linear-gradient(var(--rojo-nav) 0,var(--rojo-nav) 6px,var(--verde) 6px,var(--verde) 9px);}
-.caja{max-width:640px;margin:0 auto;padding:18px 16px 48px;}
-.volver{display:inline-block;color:var(--suave);text-decoration:none;font-size:14px;margin-bottom:14px;}
-.portada{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:22px 18px;text-align:center;}
-.etiqueta{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--verde);}
-h1{font-size:26px;line-height:1.15;margin:6px 0 8px;}
-.fecha{font-weight:700;margin:0;}
-.sub{color:var(--suave);font-size:14px;margin:4px 0 0;}
-.reloj{display:flex;gap:8px;justify-content:center;margin:16px 0 4px;}
-.reloj div{background:var(--verde-f);border-radius:12px;padding:10px 0;min-width:70px;}
-.reloj b{display:block;font-size:26px;line-height:1.1;color:var(--verde);}
-.reloj span{font-size:12px;color:var(--suave);}
-.btn{display:inline-block;border:0;border-radius:10px;background:var(--rojo-nav);color:var(--on);font:inherit;font-weight:700;padding:12px 18px;cursor:pointer;text-decoration:none;}
-.seccion{background:var(--tarjeta);border:1px solid var(--linea);border-radius:16px;padding:18px;margin-top:14px;}
-h2{font-size:18px;margin:0 0 10px;}
-.premios{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+body{margin:0;color:var(--tinta);font:16px/1.5 var(--sans);background:var(--crema);}
+a{color:inherit;}
+/* Portada: el mismo degradado, puntos y tipografía que los banners de la tienda. */
+.hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:22px 16px 62px;
+  background:radial-gradient(circle at 18% 10%,rgba(255,190,60,.5),transparent 42%),radial-gradient(rgba(255,255,255,.08) 2px,transparent 2.5px) 0 0/22px 22px,linear-gradient(160deg,#e8452c 0%,#c4191f 50%,#7d0d1c 100%);}
+.volver{position:absolute;left:16px;top:14px;font-size:13px;font-weight:600;color:#ffe9e4;text-decoration:none;z-index:3;}
+.fecha{font-weight:800;font-size:13px;letter-spacing:.2em;margin:26px 0 0;}
+h1.titulo{font:400 clamp(54px,17vw,76px)/1 Lobster,cursive;-webkit-text-stroke:8px #15120d;paint-order:stroke fill;transform:rotate(-3deg);margin:6px 0 0;}
+h1.titulo b{display:block;font-weight:400;color:var(--oro);margin-top:-14px;font-size:.9em;}
+.dos{font-weight:700;font-size:15px;margin:10px 0 0;color:#fff;}
+.prem{position:relative;max-width:560px;width:100%;height:0;padding-top:50%;margin:10px auto 0;}
+.prem img{position:absolute;filter:drop-shadow(0 16px 16px rgba(0,0,0,.45));}
+.prem .v{height:94%;width:auto;left:6%;top:0;}
+.prem .t{width:58%;height:auto;right:0;top:20%;transform:rotate(-6deg);}
+.etq{position:absolute;background:var(--oro);color:#15120d;font-weight:800;font-size:12px;letter-spacing:.14em;padding:7px 12px;border-radius:7px;box-shadow:0 4px 0 rgba(0,0,0,.35);z-index:2;}
+.etq.a{left:0;top:68%;transform:rotate(-6deg);}
+.etq.b{right:4%;top:10%;transform:rotate(5deg);}
+.vivo{font-weight:600;font-size:14px;margin:6px 0 0;color:#ffe9e4;}
+.reloj{display:flex;gap:10px;justify-content:center;margin:16px 0 0;}
+.reloj div{min-width:78px;padding:10px 0;border-radius:12px;background:rgba(60,0,10,.55);border:1.5px solid rgba(255,210,63,.6);}
+.reloj b{display:block;font:800 30px/1.1 var(--sans);color:var(--oro);}
+.reloj span{font-size:12px;color:#ffe9e4;}
+.estado{font-size:13px;margin:10px 0 0;color:#ffe9e4;}
+.btn{display:inline-block;border:0;border-radius:999px;padding:13px 26px;font:800 15px var(--sans);text-decoration:none;cursor:pointer;background:linear-gradient(#3a5bff,#1c2fa8);color:#fff;box-shadow:0 5px 0 #101c6b,0 10px 18px rgba(0,0,0,.3);}
+#tiktok{margin:16px 0 0;}
+.ola{position:absolute;left:0;right:0;bottom:-1px;height:34px;background:var(--crema);border-radius:34px 34px 0 0;}
+main{max-width:720px;margin:0 auto;padding:0 16px 50px;}
+h2{font:800 22px/1.2 var(--sans);margin:30px 0 14px;text-align:center;}
+h2 em{font:400 32px Lobster,cursive;color:var(--rojo);font-style:normal;}
+.premios{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media (max-width:560px){.premios{grid-template-columns:1fr;}}
-.premio img{width:100%;height:auto;border-radius:10px;background:#fff;border:1px solid var(--linea);}
-.premio h3{font-size:15px;margin:8px 0 2px;}
-.premio p{margin:0;font-size:13px;color:var(--suave);}
-.seccion ul{margin:0;padding-left:20px;}
-.seccion li{margin:5px 0;}
-form{display:flex;gap:8px;flex-wrap:wrap;}
-input{flex:1;min-width:200px;font:inherit;padding:12px;border-radius:10px;border:1px solid var(--linea);background:var(--fondo);color:var(--tinta);}
-.num{display:inline-block;border:1.5px solid var(--rojo-nav);color:var(--rojo-nav);border-radius:8px;padding:6px 12px;margin:4px 6px 4px 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:18px;}
+.premio{position:relative;background:#fff;border:1px solid var(--linea);border-radius:18px;padding:10px 10px 16px;box-shadow:0 10px 24px rgba(125,13,28,.08);}
+.premio img{width:100%;height:auto;border-radius:12px;display:block;}
+.premio .n{position:absolute;left:-6px;top:-8px;z-index:2;background:var(--rojo);color:#fff;font:800 13px var(--sans);letter-spacing:.12em;padding:7px 14px;border-radius:8px;transform:rotate(-4deg);box-shadow:0 4px 0 var(--rojo2);}
+.premio h3{font:800 16px/1.25 var(--sans);margin:12px 6px 4px;}
+.premio p{font-size:13px;color:var(--suave);margin:0 6px;}
+.pasos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media (max-width:560px){.pasos{grid-template-columns:1fr;}}
+.paso{background:#fff;border:1px solid var(--linea);border-radius:18px;padding:18px 14px;text-align:center;}
+.paso i{display:inline-flex;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--naranja),var(--rojo));color:#fff;font:400 26px Lobster,cursive;font-style:normal;box-shadow:0 4px 0 var(--rojo2);}
+.paso b{display:block;margin-top:10px;font-weight:800;font-size:15px;line-height:1.3;}
+.paso span{display:block;font-size:13px;color:var(--suave);margin-top:4px;}
+.paso .grande{font:800 24px/1.15 var(--sans);color:var(--rojo);margin-top:6px;}
+.reglas{margin:12px 0 0;font-size:13px;color:var(--suave);text-align:center;}
+.busca{background:linear-gradient(160deg,#fff,#fff0e0);border:1.5px solid var(--linea);border-radius:20px;padding:22px 18px;text-align:center;}
+.busca p.ayuda{font-size:14px;color:var(--suave);margin:0 0 12px;}
+form{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+input{flex:1;min-width:210px;max-width:340px;font:inherit;padding:13px 16px;border-radius:999px;border:1.5px solid var(--linea);background:#fff;color:var(--tinta);}
+.num{display:inline-block;margin:12px 6px 0;padding:8px 14px;border-radius:10px;background:#fff;border:2px dashed var(--rojo);color:var(--rojo);font:800 18px ui-monospace,Menlo,Consolas,monospace;}
 .msg{margin:12px 0 0;color:var(--suave);font-size:14px;}
-.msg.err{color:var(--rojo);}
+.msg.err{color:#b3261e;}
+.ganadores{background:#fff;border:1px solid var(--linea);border-radius:18px;padding:16px 18px;margin-top:14px;}
+.ganadores h2{margin-top:0;}
 .gan{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--linea);}
 .gan:first-of-type{border-top:0;}
-.gan b{color:var(--verde);}
+.gan b{color:var(--rojo);}
+.wa{display:flex;align-items:center;justify-content:center;margin-top:26px;padding:16px;border-radius:16px;background:var(--wa);color:#06210f;font-weight:800;text-decoration:none;}
 </style>
 </head>
 <body>
-<div class="caja">
-<a class="volver" href="/">&larr; Volver a la tienda</a>
-<div class="portada">
-  <div class="etiqueta">SORTEO NAVIDEÑO</div>
-  <h1>Dos premios: un teclado y un violín</h1>
-  <p class="fecha">24 de diciembre de 2026, 9:00 pm</p>
-  <p class="sub">En vivo por TikTok de Chipao Music</p>
+<header class="hero">
+  <a class="volver" href="/">&larr; Volver a la tienda</a>
+  <p class="fecha">24 DE DICIEMBRE &middot; 9:00 P.M.</p>
+  <h1 class="titulo">Sorteo<b>Navideño</b></h1>
+  <p class="dos">Dos premios: un teclado y un violín</p>
+  <div class="prem">
+    <img class="v" src="/sorteo/sorteo-violin.png" alt="Violín 4/4 completo" width="424" height="600" decoding="async"><span class="etq a">PREMIO 2</span>
+    <img class="t" src="/sorteo/sorteo-teclado.png" alt="Teclado Vozzex completo" width="700" height="368" decoding="async"><span class="etq b">PREMIO 1</span>
+  </div>
+  <p class="vivo">En vivo por TikTok de Chipao Music</p>
   <div class="reloj" id="reloj" aria-live="off"></div>
-  <p class="sub" id="estado"></p>
-  <p style="margin:14px 0 0" id="tiktok"></p>
-</div>
-
-<div class="seccion">
-  <h2>Los premios</h2>
+  <p class="estado" id="estado"></p>
+  <p id="tiktok"></p>
+  <div class="ola"></div>
+</header>
+<main>
+  <h2><em>Los premios</em></h2>
   <div class="premios">
 ${PREMIOS.map(p => `    <div class="premio">
+      <span class="n">PREMIO ${p.n}</span>
       <img src="/cdn-cgi/image/width=800,format=auto,onerror=redirect${p.foto}" alt="Premio ${p.n}: ${p.titulo}" width="800" height="953" loading="lazy" decoding="async">
-      <h3>Premio ${p.n}: ${p.titulo}</h3>
+      <h3>${p.titulo}</h3>
       <p>Incluye: ${p.incluye.join(', ')}.</p>
     </div>`).join('\n')}
   </div>
-</div>
 
-<div class="seccion">
-  <h2>Cómo participar</h2>
-  <ul>
-    <li>Compra en la web o por WhatsApp desde el 18 de octubre hasta el 24 de diciembre de 2026, 9:00 pm.</li>
-    <li>De S/ 20 a S/ 99.99 en productos recibes <b>1 cupón</b>. Desde S/ 100, <b>2 cupones</b>. El envío no cuenta.</li>
-    <li>Tu cupón es un número (por ejemplo CHIPAO-01042) y te llega en el correo de confirmación.</li>
-    <li>Cada cliente puede ganar un solo premio.</li>
-  </ul>
-</div>
+  <h2><em>Cómo participar</em></h2>
+  <div class="pasos">
+    <div class="paso"><i>1</i><b>Compra en la web o por WhatsApp</b><span>Del 18 de octubre al 24 de diciembre de 2026, 9:00 pm.</span></div>
+    <div class="paso"><i>2</i><b>Suma cupones</b><div class="grande">S/ 20 = 1 cupón</div><div class="grande">S/ 100 = 2 cupones</div><span>El envío no cuenta.</span></div>
+    <div class="paso"><i>3</i><b>Recibe tu número</b><span>Un código como CHIPAO-01042, en tu correo de confirmación.</span></div>
+  </div>
+  <p class="reglas">De S/ 20 a S/ 99.99 en productos recibes 1 cupón; desde S/ 100, 2 cupones. Cada cliente puede ganar un solo premio.</p>
 
-<div class="seccion">
-  <h2>Consulta tus números</h2>
-  <form id="f">
-    <input id="q" type="text" placeholder="Tu correo o el código de tu pedido" autocomplete="email" required>
-    <button class="btn" type="submit">Ver mis cupones</button>
-  </form>
-  <div id="res"></div>
-</div>
+  <h2><em>Consulta tus números</em></h2>
+  <div class="busca">
+    <p class="ayuda">Escribe tu correo o el código de tu pedido.</p>
+    <form id="f">
+      <input id="q" type="text" placeholder="Tu correo o el código de tu pedido" autocomplete="email" required>
+      <button class="btn" type="submit">Ver mis cupones</button>
+    </form>
+    <div id="res"></div>
+  </div>
 
-<div class="seccion" id="ganadores" hidden>
-  <h2>Ganadores</h2>
-  <div id="listaGan"></div>
-</div>
-</div>
+  <div class="ganadores" id="ganadores" hidden>
+    <h2><em>Ganadores</em></h2>
+    <div id="listaGan"></div>
+  </div>
+
+  <a class="wa" href="https://wa.me/51921317384" target="_blank" rel="noopener">¿Dudas? Escríbenos por WhatsApp</a>
+</main>
 <script>
 var INFO = null, T0 = Date.now();
 function esc(s) {
