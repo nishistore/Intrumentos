@@ -3812,7 +3812,7 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
 .bt2-cifra sup{font-size:.46em;vertical-align:top;position:relative;top:.22em;}
 .bt2-dsct{font:italic 400 2.4em/1 'Archivo Black',var(--app-black);text-transform:uppercase;letter-spacing:.03em;margin-top:-.1em;white-space:nowrap;display:inline-block !important;padding-right:.06em;}
 .bt2-cinta{display:inline-block !important;margin-top:1.2em;padding:.6em 1.2em;border-left:.25em solid #d4b066;background:rgba(43,36,24,.9);font:800 1.5em/1.1 var(--app-sans);font-style:italic;}
-.bt2-cond{left:5%;width:40%;bottom:1.9em;text-align:left;font:500 .95em/1 var(--app-sans);color:#b9ad92;z-index:3;pointer-events:none;}
+.bn-css .bt2-cond{position:static;margin-top:1.1em;text-align:left;font:500 .95em/1 var(--app-sans);color:#b9ad92;z-index:3;pointer-events:none;}
 @media (max-width:899px){
   .banner-carrusel{margin-top:18px;}
   .bn-flecha{display:none;}
@@ -3828,7 +3828,7 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
   .bn-css .bt2-cifra{font-size:6.6em;}
   .bn-css .bt2-dsct{font-size:1.5em;}
   .bt2-cinta{display:none !important;}
-  .bt2-cond{left:0;right:0;width:auto;text-align:center;bottom:1.5em;font-size:1em;}
+  .bn-css .bt2-cond{position:absolute;left:0;right:0;margin:0;text-align:center;bottom:1.5em;font-size:1em;}
 }
 @media (max-width:899px){
   .banner-sorteo{margin-top:18px;padding:18px;gap:14px;flex-wrap:wrap;}
@@ -8899,6 +8899,7 @@ function bannerTallerSlideHtml(){
           <span class="bt2-titulo">${t.titulo}</span>
           <span class="bt2-serv">${t.servicios}</span>
           <a class="bt2-btn" target="_blank" rel="noopener" href="${waHref(t.mensaje)}" onclick="trackAdsConversion('whatsapp')">${t.boton}</a>
+          <span class="bt2-cond">${t.condicion}</span>
         </div>
         <img class="bt2-guitarra" src="/sorteo/taller-guitarra.png" alt="" width="240" height="690" loading="lazy" decoding="async">
         <div class="bt2-der">
@@ -8907,7 +8908,6 @@ function bannerTallerSlideHtml(){
           <span class="bt2-dsct">${t.cifraTexto}</span>
           <span class="bt2-cinta">${t.detalle}</span>
         </div>
-        <span class="bt2-cond">${t.condicion}</span>
       </div>`;
 }
 
