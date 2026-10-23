@@ -3770,6 +3770,66 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
   font:700 13.5px/1 var(--app-sans);
 }
 .banner-sorteo:hover .bs-btn{background:#e8f5ed;}
+/* Carrusel de banners de la portada. Scroll-snap: sin librerías y el dedo lo
+   desliza solo en el teléfono. Los puntos van debajo, no sobre la imagen. */
+.banner-carrusel{margin:24px 0 0;}
+.bn-marco{position:relative;border-radius:14px;overflow:hidden;}
+.bn-pista{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.bn-pista::-webkit-scrollbar{display:none;}
+.bn-slide{flex:none;width:100%;scroll-snap-align:start;display:block;position:relative;}
+.bn-slide img{display:block;width:100%;height:auto;}
+.bn-flecha{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:46px;height:46px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.88);color:#15120d;font:400 32px/1 var(--app-sans);padding:0 0 4px;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);}
+.bn-prev{left:14px;}.bn-next{right:14px;}
+.bn-puntos{display:flex;justify-content:center;gap:9px;margin-top:12px;}
+.bn-punto{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:#cfcfd4;cursor:pointer;}
+.bn-punto.act{background:#2f4bd8;}
+
+/* Banner del taller hecho en CSS. Todo va en em y el cuerpo se escala con el
+   ancho de la pantalla: 80em de ancho en escritorio, 30em en el teléfono. */
+.bn-css{
+  height:0;padding-top:35%;overflow:hidden;color:#f4ecd8;
+  font-size:calc(min(100vw - 95px,1280px) / 80);
+  background:radial-gradient(circle at 68% 45%,rgba(201,168,94,.26),transparent 45%),
+    linear-gradient(100deg,#0f0d0a 0%,#1d1810 55%,#0b0907 100%);
+}
+.bn-css::before{content:"";position:absolute;top:.9em;left:.9em;right:.9em;bottom:.9em;border:.12em solid rgba(201,168,94,.5);border-radius:.6em;pointer-events:none;z-index:1;}
+.bn-css > *{position:absolute;}
+.bn-css .bn-todo{top:0;left:0;right:0;bottom:0;z-index:2;}
+.bn-css span{display:block;}
+.bt2-oro,.bt2-titulo,.bt2-cifra,.bt2-dsct{background:linear-gradient(180deg,#f7e5b0,#d4b066 55%,#9c7b3c);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+.bt2-izq{left:5%;top:3.6em;width:42%;z-index:3;pointer-events:none;}
+.bt2-sobre{font:800 1.15em/1 var(--app-sans);letter-spacing:.3em;text-transform:uppercase;color:#d4b066;}
+.bt2-titulo{font:italic 600 7.6em/1.05 'Cormorant Garamond',Georgia,serif;margin-top:.1em;padding:0 .1em .08em 0;white-space:nowrap;display:inline-block !important;}
+.bt2-serv{font:600 1.45em/1.4 var(--app-sans);color:#e9dfc6;width:78%;margin-top:.3em;}
+.bt2-btn{display:inline-block;margin-top:1.1em;padding:.8em 1.8em;border-radius:999px;pointer-events:auto;text-decoration:none;
+  background:#25D366;color:#06210f;font:800 1.5em/1 var(--app-sans);box-shadow:0 .25em 0 #0d6b35,0 .5em 1em rgba(0,0,0,.4);}
+.bn-css .bt2-guitarra{left:44%;top:.2em;height:27em;width:auto;transform:rotate(8deg);transform-origin:50% 60%;filter:drop-shadow(0 1em 1.2em rgba(0,0,0,.6));z-index:2;pointer-events:none;}
+.bt2-der{right:4.5%;top:2.6em;width:30%;text-align:center;z-index:3;pointer-events:none;}
+.bt2-insig{display:inline-block !important;background:#d4b066;color:#15120d;font:800 1.2em/1 var(--app-sans);letter-spacing:.12em;text-transform:uppercase;padding:.55em 1.2em;border-radius:.4em;transform:rotate(-3deg);box-shadow:0 .3em 0 rgba(0,0,0,.5);}
+.bt2-cifra{font:italic 400 10.5em/1 'Archivo Black',var(--app-black);margin-top:.05em;display:inline-block !important;padding-right:.08em;}
+.bt2-cifra sup{font-size:.46em;vertical-align:top;position:relative;top:.22em;}
+.bt2-dsct{font:italic 400 2.4em/1 'Archivo Black',var(--app-black);text-transform:uppercase;letter-spacing:.03em;margin-top:-.1em;white-space:nowrap;display:inline-block !important;padding-right:.06em;}
+.bt2-cinta{display:inline-block !important;margin-top:1.2em;padding:.6em 1.2em;border-left:.25em solid #d4b066;background:rgba(43,36,24,.9);font:800 1.5em/1.1 var(--app-sans);font-style:italic;}
+.bt2-cond{left:5%;width:40%;bottom:1.9em;text-align:left;font:500 .95em/1 var(--app-sans);color:#b9ad92;z-index:3;pointer-events:none;}
+@media (max-width:899px){
+  .banner-carrusel{margin-top:18px;}
+  .bn-flecha{display:none;}
+  .bn-css{padding-top:120%;font-size:calc((min(100vw,480px) - 36px) / 30);}
+  .bt2-izq{left:0;right:0;top:0;bottom:0;width:auto;padding-top:3.3em;text-align:center;}
+  .bt2-sobre{font-size:.95em;}
+  .bn-css .bt2-titulo{font-size:5em;}
+  .bn-css .bt2-serv{display:none;}
+  .bt2-btn{position:absolute;left:auto;right:5%;bottom:5.4em;margin:0;transform:none;white-space:nowrap;font-size:1.3em;padding:.75em 1.3em;}
+  .bn-css .bt2-guitarra{left:3%;top:9.6em;height:21em;transform:rotate(-6deg);}
+  .bt2-der{right:3%;top:10.8em;width:52%;}
+  .bt2-insig{font-size:.9em;}
+  .bn-css .bt2-cifra{font-size:6.6em;}
+  .bn-css .bt2-dsct{font-size:1.5em;}
+  .bt2-cinta{display:none !important;}
+  .bt2-cond{left:0;right:0;width:auto;text-align:center;bottom:1.5em;font-size:1em;}
+}
 @media (max-width:899px){
   .banner-sorteo{margin-top:18px;padding:18px;gap:14px;flex-wrap:wrap;}
   .bs-fotos{flex-direction:column;gap:6px;}
@@ -8802,28 +8862,116 @@ function goTaller(push){
 /* Recuadro de la portada que lleva al taller: la única pieza negra y dorada
    de la tienda, así que se ve sin necesidad de ser grande. */
 /* El sorteo termina el 24-dic a las 21:00 de Lima; se apaga igual que la franja. */
-function bannerSorteoHtml(){
-  if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) return '';
-  /* Fotos limpias del catálogo (teclado Vozzex 245, violín 48); si faltan, la imagen del sorteo. */
-  const foto = (id, n) => {
-    const p = PRODUCTS.find(x => x.id === id);
-    return p && (p.images||[]).length ? fotoUrl(p.images[0], 400)
-      : `/cdn-cgi/image/width=400,format=auto,onerror=redirect/sorteo/premio-${n}.jpg`;
-  };
+/* Carrusel de banners de la portada. Cada banner lleva su imagen de escritorio
+   y la cuadrada del teléfono, su enlace y, si la tiene, la fecha en que se apaga
+   (hora de Lima, en UTC). Para agregar o cambiar uno, se edita esta lista. */
+const BANNERS_PORTADA = [
+  { href:'/sorteo', hasta:Date.UTC(2026, 11, 25, 2, 0),
+    img:'/sorteo/banner-sorteo.jpg', movil:'/sorteo/banner-sorteo-movil.jpg',
+    alt:'Sorteo navideño: gana un violín 4/4 completo o un teclado Vozzex' },
+  { tipo:'taller', hasta:null },
+];
+
+/* Banner del taller, dibujado con HTML y CSS (no imagen): el texto se ve nítido
+   en cualquier pantalla, el botón es un WhatsApp de verdad y para cambiar la
+   promoción basta con editar estas líneas. */
+const BANNER_TALLER = {
+  sobre:'Taller de luthería',
+  titulo:'Inauguramos',
+  insignia:'¡Primeros 100 clientes!',
+  cifra:'30',
+  cifraTexto:'de descuento',
+  detalle:'Por inauguración',
+  servicios:'Calibración, cuerdas y mantenimiento · guitarras y bajos',
+  condicion:'Válido para los primeros 100 clientes · cupos limitados',
+  boton:'Reserva por WhatsApp',
+  mensaje:'Hola, quiero reservar el taller de luthería con el 30% de descuento por inauguración.',
+};
+
+function bannerTallerSlideHtml(){
+  const t = BANNER_TALLER;
+  cargarFuenteTaller();
   return `
-  <a class="banner-sorteo" href="/sorteo">
-    <span class="bs-fotos">
-      <span class="bs-foto"><img src="${foto(245, 1)}" alt="Teclado Vozzex completo" loading="lazy" decoding="async"></span>
-      <span class="bs-foto"><img src="${foto(48, 2)}" alt="Violín 4/4 completo" loading="lazy" decoding="async"></span>
-    </span>
-    <span class="bs-texto">
-      <span class="bs-sobre">Sorteo navideño · 24 de diciembre</span>
-      <span class="bs-titulo">Gana un teclado o un violín completo</span>
-      <span class="bs-sub">Con cada compra desde S/ 20 recibes un cupón; desde S/ 100, dos. Sorteo en vivo por TikTok.</span>
-    </span>
-    <span class="bs-btn">Ver premios ›</span>
-  </a>`;
+      <div class="bn-slide bn-css bn-css-taller">
+        <a class="bn-todo" href="/taller" onclick="goTaller();return false;" aria-label="Taller de luthería: ${t.cifra}% de descuento por inauguración"></a>
+        <div class="bt2-izq">
+          <span class="bt2-sobre">${t.sobre}</span>
+          <span class="bt2-titulo">${t.titulo}</span>
+          <span class="bt2-serv">${t.servicios}</span>
+          <a class="bt2-btn" target="_blank" rel="noopener" href="${waHref(t.mensaje)}" onclick="trackAdsConversion('whatsapp')">${t.boton}</a>
+        </div>
+        <img class="bt2-guitarra" src="/sorteo/taller-guitarra.png" alt="" width="240" height="690" loading="lazy" decoding="async">
+        <div class="bt2-der">
+          <span class="bt2-insig">${t.insignia}</span>
+          <span class="bt2-cifra">${t.cifra}<sup>%</sup></span>
+          <span class="bt2-dsct">${t.cifraTexto}</span>
+          <span class="bt2-cinta">${t.detalle}</span>
+        </div>
+        <span class="bt2-cond">${t.condicion}</span>
+      </div>`;
 }
+
+function bannerSorteoHtml(){
+  const vigentes = BANNERS_PORTADA.filter(b => !b.hasta || Date.now() < b.hasta);
+  if(!vigentes.length) return '';
+  const slides = vigentes.map((b, n) => b.tipo === 'taller' ? bannerTallerSlideHtml() : `
+      <a class="bn-slide" href="${b.href}" aria-label="${b.alt}">
+        <picture>
+          <source media="(max-width:899px)" srcset="${b.movil}">
+          <img src="${b.img}" width="1600" height="560" alt="${b.alt}" ${n ? 'loading="lazy"' : ''} decoding="async">
+        </picture>
+      </a>`).join('');
+  const control = vigentes.length > 1 ? `
+      <button type="button" class="bn-flecha bn-prev" aria-label="Banner anterior" data-bn="-1">‹</button>
+      <button type="button" class="bn-flecha bn-next" aria-label="Banner siguiente" data-bn="1">›</button>` : '';
+  const puntos = vigentes.length > 1 ? `
+    <div class="bn-puntos">${vigentes.map((b, n) => `<button type="button" class="bn-punto${n ? '' : ' act'}" aria-label="Ir al banner ${n + 1}" data-bn-ir="${n}"></button>`).join('')}</div>` : '';
+  return `
+  <div class="banner-carrusel" role="region" aria-roledescription="carrusel" aria-label="Promociones">
+    <div class="bn-marco">
+      <div class="bn-pista">${slides}</div>${control}
+    </div>${puntos}
+  </div>`;
+}
+
+/* Flechas, puntos y paso automático del carrusel. Va delegado en document porque
+   la portada se vuelve a pintar entera y los botones se recrean. El scroll no
+   burbujea: se escucha en captura. */
+(function(){
+  let ultimo = 0;
+  const pista = el => el.closest('.banner-carrusel').querySelector('.bn-pista');
+  const ir = (c, n) => {
+    const p = c.querySelector('.bn-pista'), k = p.children.length;
+    n = (n + k) % k;
+    p.scrollTo({ left: n * p.clientWidth, behavior: 'smooth' });
+  };
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-bn],[data-bn-ir]');
+    if(!b) return;
+    const c = b.closest('.banner-carrusel'), p = c.querySelector('.bn-pista');
+    const actual = Math.round(p.scrollLeft / p.clientWidth);
+    ultimo = Date.now();
+    ir(c, b.hasAttribute('data-bn') ? actual + Number(b.dataset.bn) : Number(b.dataset.bnIr));
+  });
+  document.addEventListener('scroll', e => {
+    const p = e.target;
+    if(!p || !p.classList || !p.classList.contains('bn-pista')) return;
+    const n = Math.round(p.scrollLeft / p.clientWidth);
+    p.closest('.banner-carrusel').querySelectorAll('.bn-punto').forEach((d, k) => d.classList.toggle('act', k === n));
+  }, true);
+  ['touchstart','pointerdown','wheel'].forEach(ev => document.addEventListener(ev, e => {
+    if(e.target.closest && e.target.closest('.banner-carrusel')) ultimo = Date.now();
+  }, { passive:true }));
+  const quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!quieto) setInterval(() => {
+    const c = document.querySelector('.banner-carrusel');
+    if(!c || document.hidden || Date.now() - ultimo < 9000) return;
+    const r = c.getBoundingClientRect();
+    if(r.bottom < 0 || r.top > innerHeight) return;
+    const p = c.querySelector('.bn-pista');
+    ir(c, Math.round(p.scrollLeft / p.clientWidth) + 1);
+  }, 6000);
+})();
 
 function bannerTallerHtml(){
   cargarFuenteTaller();
