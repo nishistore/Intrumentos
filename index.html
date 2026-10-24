@@ -1385,6 +1385,8 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
    recomendados. La mide el JS igual que hace con --nav-real, porque su alto
    depende del botón, del gutter y de la franja de gestos del teléfono. */
 .app-shell.ficha > .reco{margin-bottom:calc(var(--ficha-barra-real, 96px) + 24px);}
+.app-shell.ficha > .reco-comp{margin-bottom:0;}
+.reco-sub{font-size:13px;color:var(--app-muted);}
 .tv{
   display:flex;flex-direction:column;
   background:#fff;border:1px solid var(--app-line);
@@ -6096,6 +6098,68 @@ function recomendadosHtml(p){
   </section>`;
 }
 
+/* "Completa tu compra": accesorios que le sirven a ESTE instrumento, para
+   llevarlos en el mismo pedido. Distinto de "Más en…", que enseña alternativas
+   del mismo tipo.
+
+   Cada regla es una subcategoría de Accesorios y, si hace falta, una
+   expresión sobre el nombre para no mezclar (unas cuerdas de nylon en una
+   guitarra eléctrica son un error caro). De cada regla sale un producto, el
+   más barato con stock, y las reglas van por orden de importancia. */
+const COMPLEMENTOS = {
+  guitarras:          ['cuerdasGuitarra', {sub:'accCapotrastes'}, {sub:'accAfinadores'}, {sub:'accPuas', re:/p[uú]as/i}, {sub:'accAtriles', re:/colgador/i}],
+  electroacusticos:   ['cuerdasGuitarra', {sub:'accCapotrastes'}, {sub:'accAfinadores'}, {sub:'accPuas', re:/p[uú]as/i}],
+  guitarrasElectricas:[{sub:'accCuerdasElectrica'}, {sub:'accPuas', re:/p[uú]as/i}, {sub:'accAfinadores'}, {sub:'accAtriles', re:/colgador/i}],
+  bajos:              [{sub:'accAfinadores'}, {sub:'accAtriles', re:/colgador/i}],
+  ukeleles:           [{sub:'accAfinadores'}, {sub:'accAtriles', re:/colgador/i}],
+  charangos:          [{sub:'accAfinadores'}, {sub:'accPuas', re:/p[uú]as/i}],
+  violines:           [{sub:'accViolin', re:/resina/i}, {sub:'accAfinadores'}, {sub:'accAtriles', re:/atril/i}, {sub:'accViolin', re:/sticker/i}],
+  bombos:             [{sub:'accBaquetas', re:/mazo/i}, {sub:'accBaquetas', re:/baqueta/i}],
+  tambores:           [{sub:'accBaquetas'}],
+  tarolas:            [{sub:'accBaquetas', re:/baqueta/i}],
+  timbales:           [{sub:'accBaquetas', re:/baqueta/i}],
+  zamponas:           [{sub:'accCanas', re:/zampo/i}],
+  microfonos:         [{sub:'accAtriles', re:/pedestal/i}, {sub:'accCuidado', re:/cable/i}],
+  interfaces:         [{sub:'accCuidado', re:/cable/i}],
+  amplificadores:     [{sub:'accCuidado', re:/cable/i}],
+  teclados:           [{sub:'accAtriles', re:/teclado/i}, {sub:'accCuidado', re:/teclado/i}],
+  colXilofonos:       [{sub:'accBaquetas', re:/baqueta/i}],
+  colPercusion:       [{sub:'accBaquetas', re:/baqueta/i}],
+};
+
+function complementosDeFicha(p){
+  if(p.cat === 'accesorios') return [];
+  const reglas = COMPLEMENTOS[p.sub];
+  if(!reglas) return [];
+  const clasica = /cl[aá]sica/i.test(p.name);
+  const vivos = PRODUCTS.filter(x => x.cat === 'accesorios' && (x.stock||0) > 0 && (x.images||[]).length);
+  const usados = new Set(), lista = [];
+  for(const r0 of reglas){
+    const r = r0 === 'cuerdasGuitarra'
+      ? {sub:'accCuerdasAcustica', re: clasica ? /cl[aá]sica|nylon/i : /bronce|bronze|ac[uú]stica/i, no: clasica ? null : /cl[aá]sica|nylon|arpa/i}
+      : r0;
+    const x = vivos
+      .filter(y => y.sub === r.sub && (!r.re || r.re.test(y.name)) && !(r.no && r.no.test(y.name)) && !usados.has(y.id))
+      .sort((a,b) => a.price - b.price)[0];
+    if(x){ usados.add(x.id); lista.push(x); }
+    if(lista.length === RECO_MAX) break;
+  }
+  return lista;
+}
+
+function complementosHtml(p){
+  const lista = complementosDeFicha(p);
+  if(!lista.length) return '';
+  return `
+  <section class="reco reco-comp">
+    <div class="reco-head">
+      <h2>Completa tu compra</h2>
+      <span class="reco-sub">Accesorios que le sirven, en el mismo pedido. Envío gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)}</span>
+    </div>
+    <div class="reco-grid">${lista.map(tarjetaVentaHtml).join('')}</div>
+  </section>`;
+}
+
 /* "Para empezar": un instrumento de cada familia que un principiante puede
    tocar sin saber nada. Los ids son fijos a propósito (los elige el dueño, no
    el azar); si uno se agota o pierde la foto, simplemente no sale. */
@@ -7303,7 +7367,7 @@ function renderProductDetail(){
           ${asesorHtml}
         </div>
       </div>
-      ${recomendadosHtml(p)}
+      ${complementosHtml(p)}${recomendadosHtml(p)}
     </div>`;
   }
 
@@ -7379,7 +7443,7 @@ function renderProductDetail(){
       ${asesorHtml}
     </div>
 
-    ${recomendadosHtml(p)}
+    ${complementosHtml(p)}${recomendadosHtml(p)}
 
     <div class="ficha-barra">
       ${stock > 0
