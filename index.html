@@ -181,6 +181,7 @@
   --app-cat-audio:#17140F;
   --app-cat-colegio:#17140F;
   --app-cat-accesorios:#17140F;
+  --app-cat-packs:#17140F;
 
   /* --- tipografía --- */
   --app-sans:'Archivo',system-ui,sans-serif;      /* toda la interfaz */
@@ -3021,6 +3022,9 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
 }
 /* Con fotos la fila pide los 1280px enteros. Por debajo, las fotos se van
    y los nombres (que no se acortan: ver renderNavEscritorio) siguen cabiendo. */
+@media (max-width:1439px){
+  .nav-cat-link{padding-right:8px;}
+}
 @media (max-width:1279px){
   .nav-cat-foto{display:none;}
   .nav-cat-link{padding:0 12px;}
@@ -3994,6 +3998,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
 <li><a href="/categoria/audio">Micrófono y Audio</a></li>
 <li><a href="/categoria/colegio">Para Colegio</a></li>
 <li><a href="/categoria/accesorios">Accesorios</a></li>
+<li><a href="/categoria/packs">Packs</a></li>
 <li><a href="/tienda">Ver toda la tienda</a></li>
 <li><a href="/ofertas">Ofertas</a></li>
 </ul></nav>
@@ -4025,6 +4030,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
         <a class="link" href="/categoria/audio">Micrófono y Audio</a>
         <a class="link" href="/categoria/colegio">Para Colegio</a>
         <a class="link" href="/categoria/accesorios">Accesorios</a>
+        <a class="link" href="/categoria/packs">Packs</a>
       </div>
     </div>
     <div class="footer-col footer-tienda">
@@ -4117,6 +4123,9 @@ const CATEGORIES = [
       {key:'accCuidado',label:'Limpieza y repuestos'},
       {key:'accFundas',label:'Fundas'},
     ]},
+  {key:'packs', label:'Packs',
+    intro: "Instrumento y accesorios juntos en un solo precio, listos para empezar: guitarra con funda y afinador, ukelele con funda, y más. Estamos armando los packs; si quieres uno a tu medida, escríbenos por WhatsApp y te lo cotizamos.", icon:'pack', desc:'Packs de instrumento más accesorios en un solo precio: guitarra, ukelele y más, listos para empezar. Tienda en San Juan de Miraflores, Lima, con envíos a todo el Perú.',
+    subs:[]},
 ];
 
 /* Productos que, además de su categoría real, se listan en otra categoría.
@@ -4290,7 +4299,7 @@ const MAX_PRODUCT_IMAGES = 7;
 /* Ícono decorativo por defecto según la categoría */
 const ICON_BY_CAT = {
   cuerda:'string', teclados:'keyboard', percusion:'drum', viento:'wind',
-  audio:'mic', colegio:'school', accesorios:'accessory'
+  audio:'mic', colegio:'school', accesorios:'accessory', packs:'pack'
 };
 function iconFor(p){ return ICON_BY_CAT[p.cat] || 'accessory'; }
 
@@ -4393,6 +4402,7 @@ const ICONS = {
   wind:'<path d="M3 12h16a2.5 2.5 0 1 0-2.5-2.5"/><circle cx="8" cy="12" r=".6" fill="currentColor"/><circle cx="11" cy="12" r=".6" fill="currentColor"/><circle cx="14" cy="12" r=".6" fill="currentColor"/>',
   mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M9 22h6"/>',
   school:'<path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z"/><path d="M6 10.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/>',
+  pack:'<path d="M3 8l9-4 9 4-9 4-9-4z"/><path d="M3 8v8l9 4 9-4V8M12 12v8"/>',
   accessory:'<path d="M12 3c4 0 6 4 6 7.5S14 21 12 21s-6-4.5-6-10.5S8 3 12 3z"/><circle cx="12" cy="9" r="1.4" fill="currentColor"/>',
   home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
   tag:'<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="8" cy="8.5" r="1.3" fill="currentColor"/>',
@@ -5892,7 +5902,7 @@ function fotosBarraCategorias(usados){
 const RESUMEN_CATEGORIA = {
   cuerda:'Guitarras, ukeleles', teclados:'Teclados y pianos', percusion:'Bombos, cajones',
   viento:'Flautas, melódicas', audio:'Micrófonos, amplis', colegio:'Lista escolar',
-  accesorios:'Cuerdas, púas'
+  accesorios:'Cuerdas, púas', packs:'Todo en uno'
 };
 
 /* La misma cuadrícula en el teléfono (4 × 2, nombres cortos) y en
@@ -5900,7 +5910,7 @@ const RESUMEN_CATEGORIA = {
 function categoriasPortadaHtml(){
   const escritorio = esEscritorio();
   const cortos = {cuerda:'Cuerda', teclados:'Teclados', percusion:'Percusión',
-                  viento:'Viento', audio:'Audio', colegio:'Colegio', accesorios:'Accesorios'};
+                  viento:'Viento', audio:'Audio', colegio:'Colegio', accesorios:'Accesorios', packs:'Packs'};
   const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
   const maxDto = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
   const usados = new Set();
