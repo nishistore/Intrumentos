@@ -2807,7 +2807,7 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
   padding:0 var(--app-gutter);
 }
 .franja-util span{font:400 12px/1 var(--app-sans);color:rgba(255,255,255,.72);}
-/* El monto lo pinta render() desde FREE_SHIPPING_THRESHOLD; el texto fijo del
+/* Texto fijo del
    HTML es solo lo que se ve antes de que cargue el JS. */
 .franja-util b.franja-gratis{font-weight:700;color:var(--app-green-mint);}
 .franja-util-inner > span:first-child{white-space:nowrap;}
@@ -3952,7 +3952,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
 </script>
 <div class="franja-util">
   <div class="franja-util-inner">
-    <span><b class="franja-gratis">Envío gratis desde S/ 150</b> · a todo el Perú · Yape o tarjeta</span>
+    <span><b class="franja-gratis">Envío a todo el Perú</b> · Yape o tarjeta · Recojo en 1 hora</span>
     <div class="franja-derecha">
       <a class="franja-taller" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
       <span>Av. Los Héroes 382, San Juan de Miraflores</span>
@@ -4046,7 +4046,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
       <h4>Pagos y envíos</h4>
       <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Yape</a>
       <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Visa y Mastercard</a>
-      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Envío gratis desde S/ 150</a>
+      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Costos y tiempos de envío</a>
       <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Recojo en tienda en 1 hora</a>
     </div>
     <div class="footer-legal">
@@ -5705,7 +5705,7 @@ function lineaStock(x){
   const n = x.stock || 0;
   if(n <= 0) return '';
   if(n <= 5) return `<span class="stock-linea escasez">Quedan ${n} en tienda</span>`;
-  return `<span class="stock-linea bien">En stock${x.price >= FREE_SHIPPING_THRESHOLD ? ' · envío gratis' : ' · listo para recojo'}</span>`;
+  return `<span class="stock-linea bien">En stock · listo para recojo</span>`;
 }
 
 function badgeDescuento(x, clase){
@@ -6011,7 +6011,7 @@ function secundariasHtml(){
             <span class="hv-of-precio">${fmt(o.price)}</span>
             ${enOferta(o) ? `<s>${fmt(o.old)}</s>` : ''}
           </div>
-          <span class="hv-of-linea">${(o.stock||0) > 5 ? 'En stock' : 'Quedan ' + (o.stock||0)}${o.price >= FREE_SHIPPING_THRESHOLD ? ' · envío gratis' : ''}</span>
+          <span class="hv-of-linea">${(o.stock||0) > 5 ? 'En stock' : 'Quedan ' + (o.stock||0)}</span>
           <button type="button" class="hv-of-btn" onclick="addToCart(${o.id}, this)">Agregar</button>
         </div>
       </article>`).join('')}
@@ -6023,7 +6023,7 @@ function secundariasHtml(){
    lo ofrece, así que esa celda dice los medios de pago que sí existen. */
 function franjaConfianzaHtml(){
   const celdas = [
-    ['Envío gratis', 'en compras desde ' + fmt(FREE_SHIPPING_THRESHOLD)],
+    ['Envío a todo el Perú', 'por agencia Shalom, 1 a 4 días'],
     ['Yape o tarjeta', 'paga como te quede mejor'],
     ['Garantía de 6 meses', 'contra defectos de fábrica'],
     ['Recojo en 1 hora', 'Av. Los Héroes 382, S.J.M.'],
@@ -6166,7 +6166,7 @@ function complementosHtml(p){
   <section class="reco reco-comp">
     <div class="reco-head">
       <h2>Completa tu compra</h2>
-      <span class="reco-sub">Accesorios que le sirven, en el mismo pedido. Envío gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)}</span>
+      <span class="reco-sub">Accesorios que le sirven, en el mismo pedido.</span>
     </div>
     <div class="reco-grid">${lista.map(tarjetaVentaHtml).join('')}</div>
   </section>`;
@@ -7371,7 +7371,7 @@ function renderProductDetail(){
 
             <div class="fe-datos">
               <span><b>Recojo en tienda</b> listo en 1 hora</span>
-              <span><b>Envío a todo el Perú</b> gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)}</span>
+              <span><b>Envío a todo el Perú</b> desde ${fmt(SHIPPING_FEE)}</span>
               <span><b>Pagas como quieras</b> Yape o tarjeta</span>
             </div>
           </div>
@@ -7580,7 +7580,6 @@ function updateCartCount(){
      punto donde hace falta guardarlo. */
   saveCart();
 }
-const FREE_SHIPPING_THRESHOLD = 150;
 const SHIPPING_FEE_LIMA = 10;   // envio a domicilio en Lima Metropolitana
 const SHIPPING_FEE = 15;        // envio al resto del Peru (agencia Shalom)
 /* Adicional por mandar a una agencia Shalom de provincia. Hasta el 2026-10-04
@@ -7664,8 +7663,8 @@ function cartSubtotal(){
 }
 
 /* Tres formas de recibir: 'lima' (a domicilio), 'peru' (agencia Shalom) y
-   'tienda'. Recoger en tienda no cuesta nada; los dos envíos son gratis desde
-   FREE_SHIPPING_THRESHOLD y si no cuestan SHIPPING_FEE_LIMA o SHIPPING_FEE.
+   'tienda'. Recoger en tienda no cuesta nada; los envíos cuestan
+   SHIPPING_FEE_LIMA o SHIPPING_FEE (no hay envío gratis desde 2026-10-29).
    Estos números están repetidos en src/pagos.js (el servidor recalcula el
    total): si los cambias aquí, cámbialos allá. */
 function conEnvio(entrega){
@@ -7676,7 +7675,6 @@ function shippingCost(subtotal, entrega){
   if(subtotal <= 0) return 0;
   const e = entrega || state.entrega;
   if(e === 'tienda') return 0;
-  if(subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
   return e === 'lima' ? SHIPPING_FEE_LIMA : SHIPPING_FEE;
 }
 
@@ -7868,28 +7866,6 @@ function costeEnvioTexto(subtotal, entrega){
   return c > 0 ? fmt(c) : 'Gratis';
 }
 
-/* Cuánto falta para el envío gratis, con barra, encima de las opciones de
-   entrega: es donde la persona decide si suma otro producto. Con recojo en
-   tienda no hay envío que ahorrar y no se enseña. Sin :has() ni color-mix,
-   por los iPhones viejos de los clientes. */
-function progresoEnvioHtml(subtotal){
-  if(!conEnvio() || subtotal <= 0) return '';
-  const falta = FREE_SHIPPING_THRESHOLD - subtotal;
-  if(falta <= 0){
-    return `<div class="envio-prog ok" role="status">
-      <p>¡Tienes envío gratis!</p>
-      <div class="envio-barra"><i style="width:100%"></i></div>
-      <small>Tu pedido llega sin costo de envío</small>
-    </div>`;
-  }
-  const pct = Math.max(4, Math.min(100, Math.round(subtotal * 100 / FREE_SHIPPING_THRESHOLD)));
-  return `<div class="envio-prog" role="status">
-    <p>Te faltan <b>${fmt(falta)}</b> para el envío gratis</p>
-    <div class="envio-barra"><i style="width:${pct}%"></i></div>
-    <small>${fmt(subtotal)} de ${fmt(FREE_SHIPPING_THRESHOLD)}</small>
-  </div>`;
-}
-
 /* Cuántos cupones del sorteo da esta compra y cuánto falta para el siguiente.
    Las mismas reglas que src/cupones.js (cuponesPorSubtotal): de S/ 20 a
    S/ 99.99 un cupón, desde S/ 100 dos, contando solo los productos. Aplica a
@@ -8015,7 +7991,6 @@ function renderCarrito(){
   }).join('');
 
   const entregaHtml = `
-    ${progresoEnvioHtml(subtotal)}
     ${sorteoCuponesHtml(subtotal)}
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
@@ -9179,12 +9154,12 @@ function renderTaller(){
    ====================================================================== */
 const POLICIES = {
   envios:{title:"Política de envíos", path:"/politica-de-envios",
-    desc:"Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos y envío gratis desde S/ 150.",
+    desc:"Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos desde S/ 10.",
     body:`<p>Enviamos a todo el Perú y también puedes recoger tu pedido en nuestra tienda de San Juan de Miraflores. Esto es lo que debes saber antes de comprar.</p>
 <h2>Formas de recibir tu pedido</h2>
 <ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 4 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>
 <h2>Costos de envío</h2>
-<ul><li>Envío gratis en compras desde S/ 150 en productos.</li><li>En compras menores a S/ 150: S/ 10 a Lima Metropolitana y S/ 15 al resto del Perú.</li><li>El recojo en tienda siempre es gratis.</li></ul>
+<ul><li>Envío a Lima Metropolitana: S/ 10.</li><li>Envío al resto del Perú: S/ 15.</li><li>El recojo en tienda siempre es gratis.</li></ul>
 <h2>Seguimiento</h2>
 <p>Cuando despachamos tu pedido te avisamos por WhatsApp o por correo. Si necesitas ayuda, escríbenos al +51 921 317 384 con tu código de pedido.</p>
 <h2>Si tu pedido llega con algún problema</h2>
@@ -10786,7 +10761,7 @@ function renderCabeceraMovil(){
      de debajo del producto destacado (categoriasPortadaHtml). */
   el.innerHTML = `
   <div class="cab-movil">
-    <div class="cab-franja">Envío gratis desde ${fmt(FREE_SHIPPING_THRESHOLD)} · Recojo en 1 hora</div>
+    <div class="cab-franja">Envío a todo el Perú · Recojo en 1 hora</div>
     <div class="cab-fila">
       <logo-gorro><img class="cab-logo" src="/img/logo-redondo.webp"
            alt="Chipao Music" width="34" height="34"></logo-gorro>
@@ -10864,9 +10839,6 @@ function render(){
   renderNavEscritorio();
   renderCabeceraMovil();
   renderBandaOferta();
-  /* El umbral del envío gratis tiene una sola fuente: la constante. */
-  const franjaGratis = document.querySelector('.franja-gratis');
-  if(franjaGratis) franjaGratis.textContent = 'Envío gratis desde ' + fmt(FREE_SHIPPING_THRESHOLD);
   renderWaFlotante();
   prepararBarraCompra();
   montarVitrina();

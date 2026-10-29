@@ -653,7 +653,7 @@ function pasarAOracion(t, nombre) {
 function productDescription(p, priceLine) {
   const MAX = 155;
   const disponible = (p.stock || 0) > 0 ? 'En stock' : 'Bajo pedido';
-  const envio = p.price >= 150 ? 'envío gratis' : 'recojo en 1 hora';
+  const envio = 'recojo en 1 hora';
   const base = `${p.name} — ${priceLine}. ${disponible} · ${envio}.`;
   let limpia = pasarAOracion(String(p.description || '').replace(/\s+/g, ' ').trim(), p.name);
   /* Si la descripción empieza repitiendo el nombre (pasa con varias), esa
@@ -874,13 +874,13 @@ const PAGINAS_DE_AYUDA = {
   "/politica-de-envios": {
     title: "Política de envíos | Chipao Music",
     h1: "Política de envíos",
-    description: "Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos y envío gratis desde S/ 150.",
+    description: "Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos desde S/ 10.",
     body: [
       "<p>Enviamos a todo el Perú y también puedes recoger tu pedido en nuestra tienda de San Juan de Miraflores. Esto es lo que debes saber antes de comprar.</p>",
       "<h2>Formas de recibir tu pedido</h2>",
       "<ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 4 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>",
       "<h2>Costos de envío</h2>",
-      "<ul><li>Envío gratis en compras desde S/ 150 en productos.</li><li>En compras menores a S/ 150: S/ 10 a Lima Metropolitana y S/ 15 al resto del Perú.</li><li>El recojo en tienda siempre es gratis.</li></ul>",
+      "<ul><li>Envío a Lima Metropolitana: S/ 10.</li><li>Envío al resto del Perú: S/ 15.</li><li>El recojo en tienda siempre es gratis.</li></ul>",
       "<h2>Seguimiento</h2>",
       "<p>Cuando despachamos tu pedido te avisamos por WhatsApp o por correo. Si necesitas ayuda, escríbenos al +51 921 317 384 con tu código de pedido.</p>",
       "<h2>Si tu pedido llega con algún problema</h2>",
@@ -1222,8 +1222,8 @@ function productBody(p, products = []) {
      sin descripción propia, quedaba con un par de líneas. */
   if ((p.stock || 0) > 0) {
     partes.push(`<h2>Cómo recibir ${escapeHtml(p.name)}</h2><ul>`
-      + '<li>Envío a Lima Metropolitana: S/ 10, gratis desde S/ 150. Recíbelo en menos de 24 horas.</li>'
-      + '<li>Envío a todo el Perú: S/ 15, gratis desde S/ 150, para recoger en una agencia Shalom. Tarda de 1 a 4 días útiles.</li>'
+      + '<li>Envío a Lima Metropolitana: S/ 10. Recíbelo en menos de 24 horas.</li>'
+      + '<li>Envío a todo el Perú: S/ 15, para recoger en una agencia Shalom. Tarda de 1 a 4 días útiles.</li>'
       + '<li>Recojo en tienda: gratis, en Av. Los Héroes 382, San Juan de Miraflores, listo en 1 hora.</li>'
       + '<li>Pagas con Yape o con tarjeta de crédito o débito.</li></ul>');
   }
