@@ -1653,6 +1653,16 @@ body.con-barra-compra.barra-activa{padding-bottom:calc(var(--app-tabbar-h) + 77p
   overflow:hidden;
 }
 .pcard-foto img{width:100%;height:100%;object-fit:contain;background:#fff;}
+/* Segunda foto al pasar el ratón: va encima de la primera, invisible, y solo
+   se descarga la primera vez que el ratón entra en la tarjeta (ver el
+   mouseover de más abajo). En pantallas táctiles no existe el "pasar por
+   encima", así que ahí ni se enseña ni se descarga. */
+.pcard-foto2{display:none;}
+@media (hover:hover){
+  .pcard-foto > img.pcard-foto2{display:block;position:absolute;left:0;top:0;opacity:0;transition:opacity .25s ease;}
+  .pcard:hover .pcard-foto2.lista{opacity:1;}
+}
+@media (prefers-reduced-motion: reduce){.pcard-foto2{transition:none !important;}}
 .pcard-sinfoto{
   display:flex;align-items:center;justify-content:center;height:100%;
 }
@@ -5540,6 +5550,17 @@ function guiaGuitarrasHtml(){
 }
 function toggleEtiqueta(t){ state.etiqueta = state.etiqueta === t ? null : t; render(); }
 
+/* Al entrar el ratón en una tarjeta se baja su segunda foto; cuando carga se
+   le pone .lista y el CSS la funde sobre la primera. */
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest && e.target.closest('.pcard');
+  const img = t && t.querySelector('img.pcard-foto2[data-src]');
+  if(!img) return;
+  img.addEventListener('load', () => img.classList.add('lista'), {once:true});
+  img.src = img.getAttribute('data-src');
+  img.removeAttribute('data-src');
+});
+
 function appProductCard(p, altoFoto, conAgregar){
   const href = hrefProducto(p);
   const foto = (p.images || [])[0];
@@ -5551,6 +5572,7 @@ function appProductCard(p, altoFoto, conAgregar){
       ${foto
         ? `<img src="${fotoUrl(foto, ANCHO_TARJETA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
         : `<span class="pcard-sinfoto">${iconSvg(iconFor(p))}</span>`}
+      ${foto && (p.images || [])[1] ? `<img class="pcard-foto2" data-src="${fotoUrl(p.images[1], ANCHO_TARJETA)}" alt="" decoding="async">` : ''}
       ${enOferta(p) ? `<span class="pcard-off">-${pctDescuento(p)}%</span>` : ''}
     </div>
     <div class="pcard-nombre">${escapeHtml(p.name)}</div>
