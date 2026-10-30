@@ -1735,6 +1735,24 @@ body.con-barra-compra.barra-activa{padding-bottom:calc(var(--app-tabbar-h) + 77p
   gap:var(--app-grid-gap);
   padding-top:12px;
 }
+/* Anuncio vertical dentro de la grilla: flota unos píxeles y, cada 7 s, una
+   franja de luz lo cruza en diagonal. Con "reducir movimiento" se queda quieto. */
+.anuncio-grid{position:relative;z-index:0;display:block;align-self:start;text-decoration:none;
+  animation:anuncio-flotar 3.6s cubic-bezier(.37,0,.63,1) infinite alternate;}
+.anuncio-grid::before{content:"";position:absolute;left:7%;right:7%;top:12%;bottom:0;z-index:-1;pointer-events:none;
+  box-shadow:0 22px 38px rgba(255,110,10,.45);opacity:.55;
+  animation:anuncio-sombra 3.6s cubic-bezier(.37,0,.63,1) infinite alternate;}
+.anuncio-marco{position:relative;display:block;overflow:hidden;border-radius:14px;}
+.anuncio-marco img{display:block;width:100%;height:auto;}
+.anuncio-marco::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;
+  background:linear-gradient(112deg,transparent 38%,rgba(255,255,255,.55) 50%,transparent 62%);
+  transform:translateX(-120%);animation:anuncio-destello 7s cubic-bezier(.22,.61,.36,1) infinite;}
+@keyframes anuncio-flotar{to{transform:translateY(-8px);}}
+@keyframes anuncio-sombra{from{opacity:.4;}to{opacity:1;}}
+@keyframes anuncio-destello{0%,76%{transform:translateX(-120%);}92%,100%{transform:translateX(120%);}}
+@media (prefers-reduced-motion:reduce){
+  .anuncio-grid,.anuncio-grid::before,.anuncio-marco::after{animation:none;}
+}
 
 
 .eyebrow-terracota{
@@ -6669,6 +6687,20 @@ function chipsOrdenHtml(){
     </div>`;
 }
 
+/* Anuncio vertical del Marshall MG15G-E dentro de la grilla de Audio. Es una
+   imagen (/banners/marshall-mg15g.jpg) con destello y flote en CSS. Solo sale si
+   el producto 216 está en la lista ya filtrada y con stock, así que si se agota
+   o se retira desaparece solo. */
+function anuncioMarshallHtml(list){
+  if(state.activeCat!=='audio' || state.search || state.offersOnly) return '';
+  const p = list.find(x=>x.id===216);
+  if(!p || !(p.stock>0)) return '';
+  return `
+  <a class="anuncio-grid" href="${hrefProducto(p)}" onclick="openProductDetail(${p.id});return false;" aria-label="Anuncio: ${escapeHtml(p.name)}">
+    <span class="anuncio-marco"><img src="/banners/marshall-mg15g.jpg" width="864" height="1080" alt="${escapeHtml(p.name)}, ${fmt(p.price)}" loading="lazy" decoding="async"></span>
+  </a>`;
+}
+
 function renderShop(){
   const list = getFilteredProducts();
   const cat = CATEGORIES.find(c=>c.key===state.activeCat);
@@ -6740,7 +6772,10 @@ function renderShop(){
         <button type="button" class="btn-app contorno" onclick="clearFilters()">Limpiar filtros</button>
       </div>`;
   }else{
-    cuerpo = `<div class="grid-app">${list.map(p=>appProductCard(p, 118, esEscritorio())).join('')}</div>`;
+    const tarjetas = list.map(p=>appProductCard(p, 118, esEscritorio()));
+    const anuncio = anuncioMarshallHtml(list);
+    if(anuncio) tarjetas.splice(Math.min(2, tarjetas.length), 0, anuncio);
+    cuerpo = `<div class="grid-app">${tarjetas.join('')}</div>`;
   }
 
   /* En escritorio la pantalla es otra: migas, título grande con los chips de
