@@ -6687,18 +6687,25 @@ function chipsOrdenHtml(){
     </div>`;
 }
 
-/* Anuncio vertical del Marshall MG15G-E dentro de la grilla de Audio. Es una
-   imagen (/banners/marshall-mg15g.jpg) con destello y flote en CSS. Solo sale si
-   el producto 216 está en la lista ya filtrada y con stock, así que si se agota
-   o se retira desaparece solo. */
-function anuncioMarshallHtml(list){
-  if(state.activeCat!=='audio' || state.search || state.offersOnly) return '';
-  const p = list.find(x=>x.id===216);
-  if(!p || !(p.stock>0)) return '';
-  return `
+/* Anuncios verticales dentro de la grilla de su categoría: una imagen en
+   /banners/ con destello y flote en CSS. Cada uno lleva al producto `id` y solo
+   sale si ese producto está en la lista ya filtrada y con stock, así que si se
+   agota o se retira desaparece solo. Para sumar uno: subir la imagen a banners/
+   y agregar una línea aquí. */
+const ANUNCIOS_GRILLA = [
+  { id:216, cat:'audio',  img:'/banners/marshall-mg15g.jpg' },
+  { id:249, cat:'cuerda', img:'/banners/ltd-blanca.jpg' },
+];
+function anunciosGrillaHtml(list){
+  if(state.search || state.offersOnly) return [];
+  return ANUNCIOS_GRILLA.filter(a=>a.cat===state.activeCat).map(a=>{
+    const p = list.find(x=>x.id===a.id);
+    if(!p || !(p.stock>0)) return '';
+    return `
   <a class="anuncio-grid" href="${hrefProducto(p)}" onclick="openProductDetail(${p.id});return false;" aria-label="Anuncio: ${escapeHtml(p.name)}">
-    <span class="anuncio-marco"><img src="/banners/marshall-mg15g.jpg" width="864" height="1080" alt="${escapeHtml(p.name)}, ${fmt(p.price)}" loading="lazy" decoding="async"></span>
+    <span class="anuncio-marco"><img src="${a.img}" width="864" height="1080" alt="${escapeHtml(p.name)}, ${fmt(p.price)}" loading="lazy" decoding="async"></span>
   </a>`;
+  }).filter(Boolean);
 }
 
 function renderShop(){
@@ -6773,8 +6780,7 @@ function renderShop(){
       </div>`;
   }else{
     const tarjetas = list.map(p=>appProductCard(p, 118, esEscritorio()));
-    const anuncio = anuncioMarshallHtml(list);
-    if(anuncio) tarjetas.splice(Math.min(2, tarjetas.length), 0, anuncio);
+    anunciosGrillaHtml(list).forEach((a,k)=>tarjetas.splice(Math.min(2+k, tarjetas.length), 0, a));
     cuerpo = `<div class="grid-app">${tarjetas.join('')}</div>`;
   }
 
