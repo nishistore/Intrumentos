@@ -6702,11 +6702,11 @@ function anunciosGrillaHtml(list){
   if(state.search || state.offersOnly) return [];
   return ANUNCIOS_GRILLA.filter(a=>a.cat===state.activeCat).map(a=>{
     const p = list.find(x=>x.id===a.id);
-    if(!p || !(p.stock>0)) return '';
-    return `
+    if(!p || !(p.stock>0)) return null;
+    return { id:p.id, html:`
   <a class="anuncio-grid" href="${hrefProducto(p)}" onclick="openProductDetail(${p.id});return false;" aria-label="Anuncio: ${escapeHtml(p.name)}">
     <span class="anuncio-marco"><img src="${a.img}" width="864" height="1080" alt="${escapeHtml(p.name)}, ${fmt(p.price)}" loading="lazy" decoding="async"></span>
-  </a>`;
+  </a>` };
   }).filter(Boolean);
 }
 
@@ -6781,8 +6781,12 @@ function renderShop(){
         <button type="button" class="btn-app contorno" onclick="clearFilters()">Limpiar filtros</button>
       </div>`;
   }else{
-    const tarjetas = list.map(p=>appProductCard(p, 118, esEscritorio()));
-    anunciosGrillaHtml(list).forEach((a,k)=>tarjetas.splice(Math.min(2+k, tarjetas.length), 0, a));
+    /* El producto que tiene anuncio no sale además como tarjeta normal: el
+       anuncio ocupa su lugar y lleva a la misma ficha. */
+    const anuncios = anunciosGrillaHtml(list);
+    const conAnuncio = new Set(anuncios.map(a=>a.id));
+    const tarjetas = list.filter(p=>!conAnuncio.has(p.id)).map(p=>appProductCard(p, 118, esEscritorio()));
+    anuncios.forEach((a,k)=>tarjetas.splice(Math.min(2+k, tarjetas.length), 0, a.html));
     cuerpo = `<div class="grid-app">${tarjetas.join('')}</div>`;
   }
 
