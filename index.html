@@ -2504,11 +2504,15 @@ footer.site .footer-bottom{
    las cuatro filas queden alineadas aunque los logos vengan en distinto
    tamano, y la foto dentro en contain para no recortar ninguno. */
 .opcion-logo{
-  width:46px;height:30px;flex:none;border-radius:6px;overflow:hidden;
+  width:56px;height:42px;flex:none;border-radius:8px;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   background:var(--app-surface);border:1px solid var(--app-line);
 }
 .opcion-logo img{width:100%;height:100%;object-fit:contain;background:#fff;}
+/* El logo de Yape es un cuadrado morado: sobre blanco se veía chiquito con
+   franjas a los lados. Con el mismo morado de fondo la caja entera es el logo. */
+.opcion-logo.yape{background:#742385;border-color:#742385;}
+.opcion-logo.yape img{background:transparent;}
 /* Marcador de la maqueta, mientras no estan los archivos de verdad. */
 .opcion-logo.marcador{
   border:none;font:700 10px/1 var(--app-sans);letter-spacing:.01em;
@@ -5705,7 +5709,7 @@ function pagoFichaHtml(p){
   if(!FLAGS.fichaPago || !(p.price > 0)) return '';
   return `
       <div class="ficha-pago">
-        <div class="ficha-pago-fila"><span class="ficha-pago-ico">Y</span>
+        <div class="ficha-pago-fila"><img class="ficha-pago-ico" src="/pagos/yape.png" alt="" width="26" height="26" loading="lazy">
           <span><strong>Paga con Yape</strong> en 2 minutos, sin salir de la web</span></div>
         <div class="ficha-pago-fila"><span class="ficha-pago-ico tarjeta">&#9645;</span>
           <span>También con <strong>Plin o transferencia</strong> por WhatsApp</span></div>
@@ -7793,7 +7797,7 @@ const MEDIOS_PAGO = [
    nada y la fila se queda como estaba. */
 function logoPagoHtml(m){
   if(m.logo){
-    return `<span class="opcion-logo"><img src="${m.logo}" alt="" loading="lazy" decoding="async"></span>`;
+    return `<span class="opcion-logo${m.key==='yape'?' yape':''}"><img src="${m.logo}" alt="" loading="lazy" decoding="async"></span>`;
   }
   if(m.marcador){
     /* La transferencia no tiene marca que enseñar -son varios bancos- asi que
