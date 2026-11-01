@@ -677,6 +677,38 @@ function productDescription(p, priceLine) {
   return base.length + tienda.length <= MAX + 5 ? base + tienda : base;
 }
 
+/* Preguntas frecuentes de la ficha. Las mismas frases viven en index.html
+   (faqFicha): lo que ve el cliente, lo que lee el rastreador y el schema
+   FAQPage tienen que decir exactamente lo mismo. Las respuestas salen de las
+   páginas de envíos, pagos, garantía y cambios y de lo que dijo el dueño el
+   2026-11-01 (boleta/factura a pedido en la compra, cuerdas sin afinar a
+   provincia por la altura, bajo pedido 1 a 2 días hábiles, solo Perú). */
+function faqProducto(p) {
+  const lista = [
+    ['¿Cuánto cuesta el envío y en cuánto tiempo llega?',
+      'A Lima Metropolitana el envío cuesta S/ 10 y lo recibes en menos de 24 horas. Al resto del Perú cuesta S/ 15 y llega en 1 a 3 días hábiles a la agencia Shalom que elijas, donde lo recoges. Solo enviamos dentro del Perú.'],
+    ['¿Puedo recogerlo o probarlo en la tienda?',
+      'Sí. El recojo en tienda es gratis y, si hay stock, tu pedido está listo en 1 hora. También puedes visitarnos y probar el instrumento antes de comprar, en nuestro horario de atención: de lunes a domingo, de 9:30 a.m. a 9:00 p.m., en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.'],
+    ['¿Cómo puedo pagar?',
+      'Con Yape (subes la captura del comprobante y la validamos), con tarjeta de crédito o débito Visa y Mastercard por Mercado Pago, o coordinando el pago por WhatsApp o al recoger en tienda.'],
+    ['¿Dan boleta o factura?',
+      'Sí, emitimos boleta o factura. Indícanos cuál necesitas al hacer tu compra.'],
+    ['¿Tiene garantía?',
+      'Sí, 6 meses de garantía contra defectos de fábrica, contados desde la fecha de compra.'],
+    ['¿Puedo devolverlo?',
+      'Sí. Tienes hasta 15 días calendario desde que lo recibes, con su embalaje original y accesorios, y sin signos de uso. El costo del envío de la devolución lo paga el cliente.'],
+  ];
+  if (p.cat === 'cuerda') {
+    lista.push(['¿El instrumento se entrega afinado?',
+      'Sale afinado de la tienda. En los envíos a provincia recomendamos mandarlo sin afinar, porque la altura puede dañar las cuerdas si van tensadas; lo afinas al recibirlo.']);
+  }
+  if ((p.stock || 0) <= 0) {
+    lista.push(['¿Cuánto demora si el producto está bajo pedido?',
+      'Lo conseguimos en 1 a 2 días hábiles. Escríbenos por WhatsApp y te confirmamos.']);
+  }
+  return lista;
+}
+
 /* Marcas que aparecen en el nombre del producto. El catálogo no tiene campo
    de marca; solo se declara una cuando el nombre la dice tal cual, para no
    inventarla. Lo que no esté aquí sale sin `brand`. */
@@ -778,6 +810,12 @@ function productMeta(p) {
           },
         },
         breadcrumbSchema(trail),
+        {
+          '@type': 'FAQPage',
+          mainEntity: faqProducto(p).map(([q, a]) => ({
+            '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a },
+          })),
+        },
       ],
     },
   };
@@ -1289,6 +1327,9 @@ function productBody(p, products = []) {
       + '<li>Recojo en tienda: gratis, en Av. Los Héroes 382, San Juan de Miraflores, listo en 1 hora.</li>'
       + '<li>Pagas con Yape o con tarjeta de crédito o débito.</li></ul>');
   }
+
+  partes.push('<h2>Preguntas frecuentes</h2>'
+    + faqProducto(p).map(([q, a]) => `<h3>${escapeHtml(q)}</h3><p>${escapeHtml(a)}</p>`).join(''));
 
   /* Productos parecidos: mismo tipo primero, luego misma categoría. Son los
      enlaces que hacen que una ficha cuelgue de otras fichas y no solo del

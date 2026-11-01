@@ -2038,6 +2038,16 @@ a.eyebrow-terracota:active{opacity:.6;}
 }
 .ficha-desc p + p{margin-top:10px;}
 
+.ficha-faq{margin-top:26px;}
+.ficha-faq h2{font:700 16px/1.3 var(--app-sans);color:var(--app-ink);margin-bottom:8px;}
+.ficha-faq details{border-top:1px solid var(--app-ink-10, rgba(0,0,0,.1));padding:11px 0;}
+.ficha-faq details:last-child{border-bottom:1px solid var(--app-ink-10, rgba(0,0,0,.1));}
+.ficha-faq summary{cursor:pointer;font:600 13.5px/1.45 var(--app-sans);color:var(--app-ink);list-style:none;}
+.ficha-faq summary::-webkit-details-marker{display:none;}
+.ficha-faq summary::after{content:"+";float:right;margin-left:12px;font-weight:400;}
+.ficha-faq details[open] summary::after{content:"\2212";}
+.ficha-faq details p{margin-top:8px;font:400 13.5px/1.6 var(--app-sans);color:var(--app-ink-70);text-wrap:pretty;}
+
 .ficha-specs{
   margin-top:20px;
   border-radius:var(--app-r-card);
@@ -7279,6 +7289,42 @@ function cambiarQtyFicha(delta){
   render();
 }
 
+/* Preguntas frecuentes de la ficha. Las mismas frases viven en src/index.js
+   (faqProducto): lo que ve el cliente y lo que lee el rastreador, con el
+   schema FAQPage, tienen que decir exactamente lo mismo. Si cambias una,
+   cambia la otra. */
+function faqFicha(p){
+  const lista = [
+    ['¿Cuánto cuesta el envío y en cuánto tiempo llega?',
+      'A Lima Metropolitana el envío cuesta S/ 10 y lo recibes en menos de 24 horas. Al resto del Perú cuesta S/ 15 y llega en 1 a 3 días hábiles a la agencia Shalom que elijas, donde lo recoges. Solo enviamos dentro del Perú.'],
+    ['¿Puedo recogerlo o probarlo en la tienda?',
+      'Sí. El recojo en tienda es gratis y, si hay stock, tu pedido está listo en 1 hora. También puedes visitarnos y probar el instrumento antes de comprar, en nuestro horario de atención: de lunes a domingo, de 9:30 a.m. a 9:00 p.m., en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.'],
+    ['¿Cómo puedo pagar?',
+      'Con Yape (subes la captura del comprobante y la validamos), con tarjeta de crédito o débito Visa y Mastercard por Mercado Pago, o coordinando el pago por WhatsApp o al recoger en tienda.'],
+    ['¿Dan boleta o factura?',
+      'Sí, emitimos boleta o factura. Indícanos cuál necesitas al hacer tu compra.'],
+    ['¿Tiene garantía?',
+      'Sí, 6 meses de garantía contra defectos de fábrica, contados desde la fecha de compra.'],
+    ['¿Puedo devolverlo?',
+      'Sí. Tienes hasta 15 días calendario desde que lo recibes, con su embalaje original y accesorios, y sin signos de uso. El costo del envío de la devolución lo paga el cliente.'],
+  ];
+  if(p.cat === 'cuerda'){
+    lista.push(['¿El instrumento se entrega afinado?',
+      'Sale afinado de la tienda. En los envíos a provincia recomendamos mandarlo sin afinar, porque la altura puede dañar las cuerdas si van tensadas; lo afinas al recibirlo.']);
+  }
+  if((p.stock || 0) <= 0){
+    lista.push(['¿Cuánto demora si el producto está bajo pedido?',
+      'Lo conseguimos en 1 a 2 días hábiles. Escríbenos por WhatsApp y te confirmamos.']);
+  }
+  return lista;
+}
+function faqFichaHtml(p){
+  return `<section class="ficha-faq">
+    <h2>Preguntas frecuentes</h2>
+    ${faqFicha(p).map(([q, a]) => `<details><summary>${escapeHtml(q)}</summary><p>${escapeHtml(a)}</p></details>`).join('')}
+  </section>`;
+}
+
 function renderProductDetail(){
   const p = PRODUCTS.find(x => x.id === pdState.productId);
   if(!p){
@@ -7422,6 +7468,7 @@ function renderProductDetail(){
                 </div>`).join('')}
               </div>
             </section>` : ''}
+            ${faqFichaHtml(p)}
           </div>
         </div>
 
@@ -7533,6 +7580,8 @@ function renderProductDetail(){
         <div class="incluye-titulo">Incluye</div>
         ${incluye.map(i => `<div class="incluye-item"><span class="incluye-punto"></span>${escapeHtml(i)}</div>`).join('')}
       </div>` : ''}
+
+      ${faqFichaHtml(p)}
 
       ${avisoTallerHtml(p)}
       ${asesorHtml}
