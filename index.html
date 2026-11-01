@@ -2509,10 +2509,25 @@ footer.site .footer-bottom{
   background:var(--app-surface);border:1px solid var(--app-line);
 }
 .opcion-logo img{width:100%;height:100%;object-fit:contain;background:#fff;}
-/* El logo de Yape es un cuadrado morado: sobre blanco se veía chiquito con
-   franjas a los lados. Con el mismo morado de fondo la caja entera es el logo. */
-.opcion-logo.yape{background:#742385;border-color:#742385;}
-.opcion-logo.yape img{background:transparent;}
+/* Medios de pago con su color de marca (Yape morado, Mercado Pago azul,
+   WhatsApp verde): tarjeta de color liso y letras blancas. La etiqueta del
+   sorteo va blanca con letras rojas, porque el rojo sobre estos fondos no se
+   lee. La elegida lleva un doble anillo; sin :has() por los Safari viejos. */
+.opcion.marca{color:#fff;border-color:transparent;background:var(--m1);}
+.opcion.marca-yape{--m1:#742385;}
+.opcion.marca-tarjeta{--m1:#0a74b8;}
+.opcion.marca-whatsapp{--m1:#0f7a3f;}
+.opcion.marca.sel{border-color:var(--app-ink);box-shadow:0 0 0 2px #fff,0 0 0 4px var(--app-ink);}
+.opcion.marca .opcion-radio{border-color:#fff;}
+.opcion.marca .opcion-punto{background:#fff;}
+.opcion.marca .opcion-titulo{color:#fff;}
+.opcion.marca .opcion-nota{color:rgba(255,255,255,.88);}
+.opcion.marca .opcion-regalo{background:#fff;color:#a3201a;}
+.opcion.marca .opcion-logo{
+  width:56px;height:56px;border:none;border-radius:12px;
+  background:transparent;box-shadow:0 0 0 2px rgba(255,255,255,.28);
+}
+.opcion.marca .opcion-logo img{background:transparent;}
 /* Marcador de la maqueta, mientras no estan los archivos de verdad. */
 .opcion-logo.marcador{
   border:none;font:700 10px/1 var(--app-sans);letter-spacing:.01em;
@@ -7797,7 +7812,7 @@ const MEDIOS_PAGO = [
    nada y la fila se queda como estaba. */
 function logoPagoHtml(m){
   if(m.logo){
-    return `<span class="opcion-logo${m.key==='yape'?' yape':''}"><img src="${m.logo}" alt="" loading="lazy" decoding="async"></span>`;
+    return `<span class="opcion-logo"><img src="${m.logo}" alt="" loading="lazy" decoding="async"></span>`;
   }
   if(m.marcador){
     /* La transferencia no tiene marca que enseñar -son varios bancos- asi que
@@ -8053,9 +8068,9 @@ function sorteoCuponesHtml(subtotal){
   </div>`;
 }
 
-function filaRadio(sel, titulo, nota, coste, accion, logo, regalo){
+function filaRadio(sel, titulo, nota, coste, accion, logo, regalo, marca){
   return `
-  <button type="button" class="opcion${sel?' sel':''}" aria-pressed="${sel?'true':'false'}" onclick="${accion}">
+  <button type="button" class="opcion${marca?` marca marca-${marca}`:''}${sel?' sel':''}" aria-pressed="${sel?'true':'false'}" onclick="${accion}">
     <span class="opcion-radio">${sel?'<span class="opcion-punto"></span>':''}</span>
     ${logo || ''}
     <span class="opcion-texto">
@@ -8288,8 +8303,8 @@ function renderCheckout(){
             <div class="opciones rejilla">
               ${mediosDisponibles().map(m => filaRadio(
                   state.pago===m.key, m.label, m.nota,
-                  '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo)).join('')}
-            </div>
+                  '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo, m.logo && m.key)).join('')}
+</div>
           </div>
 
           <div class="ped-card datos">
@@ -8323,7 +8338,7 @@ function renderCheckout(){
     <div class="opciones">
       ${mediosDisponibles().map(m => filaRadio(
           state.pago===m.key, m.label, m.nota,
-          '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo)).join('')}
+          '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo, m.logo && m.key)).join('')}
     </div>
 
     <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)">
