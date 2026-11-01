@@ -233,6 +233,21 @@ body[data-tema="navidad"] .cab-franja::before{content:"❄ ";}
 body[data-tema="navidad"] .franja-util-inner>span:first-child::before{content:"❄ ";}
 body[data-tema="navidad"] .pc-cuadro{border-color:#d6a13c;}
 body[data-tema="navidad"] .pc-tile:hover .pc-cuadro{border-color:#0F5C33;}
+/* Mini panettón al costado del descuento (no existe emoji, así que va como SVG):
+   mismo sitio que la calabaza de Halloween. En la tarjeta, fuera de la píldora
+   y a su izquierda; en los demás avisos de descuento, dentro, antes del número. */
+body[data-tema="navidad"] .pcard-off::before,
+body[data-tema="navidad"] .badge-dto::before{
+  content:"";
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 64'><path d='M8 40 Q5 8 30 7 Q55 8 52 40 Z' fill='%23D9962F'/><path d='M14 36 Q13 16 30 13 Q22 18 22 36 Z' fill='%23EDB84F'/><path d='M12 22 Q20 5 40 9 Q50 13 50 22 Q40 14 30 14 Q20 14 12 22 Z' fill='%23fff' opacity='.9'/><circle cx='22' cy='28' r='2.6' fill='%23C8102E'/><circle cx='36' cy='24' r='2.4' fill='%230F5C33'/><circle cx='42' cy='33' r='2.6' fill='%23C8102E'/><circle cx='29' cy='35' r='2.2' fill='%236B3A1A'/><circle cx='18' cy='36' r='2' fill='%236B3A1A'/><path d='M9 38 L51 38 L49 58 Q30 61 11 58 Z' fill='%23C8102E'/><rect x='10' y='44' width='40' height='4' fill='%23F4C542'/></svg>") center/contain no-repeat;
+}
+body[data-tema="navidad"] .pcard-off::before{
+  position:absolute;right:100%;top:50%;width:24px;height:25px;margin:-13px 3px 0 0;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.3));
+}
+body[data-tema="navidad"] .badge-dto::before{
+  display:inline-block;width:1.35em;height:1.35em;margin:-.35em 4px -.2em 0;vertical-align:-.3em;
+}
 
 body[data-tema="halloween"] .cab-franja,
 body[data-tema="halloween"] .franja-util{background:#241019;}
@@ -270,6 +285,12 @@ body[data-tema="halloween"] .badge-dto::before{content:"🎃 ";}
   body[data-tema="halloween"] .franja-util-inner>span:first-child::before,
   body[data-tema="halloween"] .pcard-off::before{
     display:inline-block;transform-origin:70% 85%;
+    animation:tema-vaiven 2.2s ease-in-out infinite;
+  }
+}
+@media (prefers-reduced-motion: no-preference){
+  body[data-tema="navidad"] .pcard-off::before{
+    transform-origin:50% 90%;
     animation:tema-vaiven 2.2s ease-in-out infinite;
   }
 }
