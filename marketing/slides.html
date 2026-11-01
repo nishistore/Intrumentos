@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Chipao Music · Piezas</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#001840;--navy2:#00102b;--ink:#000a1c;--gold:#D89000;--gold2:#F2B52E;--white:#fff;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#222;font-family:Archivo,Arial,sans-serif;color:#fff}
+.slide{width:1280px;height:1600px;position:relative;overflow:hidden;margin:0 0 20px;
+  background:radial-gradient(ellipse 80% 45% at 50% 0%,#0a2a63 0%,var(--navy) 38%,var(--ink) 100%)}
+.slide.centro{text-align:center}
+.h{font-family:'Archivo Black',Arial,sans-serif;text-transform:uppercase;color:var(--gold2);line-height:.98;letter-spacing:-.5px}
+.brush{position:absolute;left:320px;width:640px;height:26px}
+.txt{font-weight:500;font-size:62px;line-height:1.18;color:#fff}
+.txt b{font-weight:800;color:var(--gold2)}
+.lockup{position:absolute;left:0;right:0;bottom:200px;display:flex;align-items:center;justify-content:center;gap:34px}
+.lockup img{width:178px;height:178px;border-radius:50%}
+.lockup .w{text-align:left;font-family:'Archivo Black';text-transform:uppercase;font-size:96px;line-height:.9;color:#fff;letter-spacing:-1px}
+.lockup .w i{font-style:normal;color:var(--gold2)}
+.url{position:absolute;left:0;right:0;bottom:110px;text-align:center;font-size:40px;font-weight:500;color:#dfe6f5;letter-spacing:1px}
+.tt{position:absolute;right:30px;bottom:30px;display:flex;align-items:center;gap:10px;font-size:30px;font-weight:700;color:#fff}
+.tt svg{width:34px;height:34px}
+.icon{position:absolute;left:50%;transform:translateX(-50%);top:210px}
+/* slide 1 */
+.foto{position:absolute;inset:0 0 auto 0;height:760px;overflow:hidden;
+  background:linear-gradient(180deg,#0b2d6b 0%,#05204f 55%,#031230 100%)}
+.foto::before{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent 0 78px,rgba(216,144,0,.22) 78px 82px)}
+.foto::after{content:"";position:absolute;inset:auto 0 0 0;height:300px;background:linear-gradient(180deg,transparent,var(--ink))}
+.banda{position:absolute;left:0;right:0;top:150px;height:22px;background:var(--gold);transform:skewY(-3deg);box-shadow:0 0 40px rgba(216,144,0,.6)}
+.letrero{position:absolute;left:150px;right:150px;top:215px;height:330px;border-radius:26px;transform:skewY(-3deg);
+  background:linear-gradient(180deg,#00205a,#00122e);border:6px solid var(--gold);box-shadow:0 0 70px rgba(216,144,0,.45),inset 0 0 60px rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;gap:40px}
+.letrero img{width:230px;height:230px;border-radius:50%}
+.letrero span{font-family:'Archivo Black';font-size:112px;line-height:.92;color:#fff;text-transform:uppercase;text-align:left}
+.letrero span i{font-style:normal;color:var(--gold2)}
+.la{position:absolute;left:300px;top:772px;font-family:'Archivo Black';font-size:120px;color:#fff;transform:rotate(-3deg)}
+.vent{position:absolute;left:0;right:0;top:880px;text-align:center;font-family:'Archivo Black';font-size:212px;line-height:1;color:var(--gold2);
+  transform:rotate(-3deg) skewX(-4deg);text-shadow:0 8px 0 rgba(0,0,0,.35)}
+.s1 .lockup{bottom:210px}.s1 .lockup img{width:150px;height:150px}.s1 .lockup .w{font-size:82px}.s1 .url{bottom:110px}
+</style></head><body>
+
+<!-- 1 -->
+<section class="slide s1" id="s1">
+  <div class="foto"></div><div class="banda"></div>
+  <div class="letrero"><img src="logo.png" alt=""><span>Chipao<br><i>Music</i></span></div>
+  <div class="la">LA</div>
+  <svg class="brush" style="top:790px;left:470px;width:520px;transform:rotate(-3deg)" viewBox="0 0 520 26"><path d="M2 16 C90 6 200 4 330 9 C420 12 480 8 518 12 C470 18 400 22 300 20 C180 22 80 24 2 16Z" fill="#D89000"/></svg>
+  <div class="vent">VENTAJA</div>
+  <div class="lockup"><img src="logo.png" alt=""><div class="w">Chipao<br><i>Music</i></div></div>
+  <div class="url">chipaomusic.com</div>
+  <div class="tt">TT</div>
+</section>
+
+<!-- 2 -->
+<section class="slide centro" id="s2">
+  <svg class="icon" width="420" height="420" viewBox="0 0 420 420" style="top:150px">
+    <defs><path id="arcT" d="M70 210 A140 140 0 0 1 350 210"/><path id="arcB" d="M62 210 A148 148 0 0 0 358 210"/></defs>
+    <circle cx="210" cy="210" r="198" fill="none" stroke="#D89000" stroke-width="12"/>
+    <circle cx="210" cy="210" r="182" fill="none" stroke="#D89000" stroke-width="3" stroke-dasharray="3 7"/>
+    <circle cx="210" cy="210" r="104" fill="#D89000"/>
+    <image href="logo.png" x="118" y="118" width="184" height="184"/>
+    <text font-family="Archivo Black" font-size="46" fill="#F2B52E" letter-spacing="3"><textPath href="#arcT" startOffset="50%" text-anchor="middle" dy="-4">PRECIO JUSTO</textPath></text>
+    <text font-family="Archivo Black" font-size="42" fill="#F2B52E" letter-spacing="3"><textPath href="#arcB" startOffset="50%" text-anchor="middle" dy="40">GARANTIZADO</textPath></text>
+    <circle cx="48" cy="210" r="9" fill="#D89000"/><circle cx="372" cy="210" r="9" fill="#D89000"/>
+  </svg>
+  <div class="h" style="position:absolute;top:650px;left:0;right:0;font-size:104px">Mejores<br>precios</div>
+  <svg class="brush" style="top:880px" viewBox="0 0 640 26"><path d="M2 16 C100 6 240 4 400 9 C500 12 590 8 638 12 C580 18 500 22 380 20 C220 22 90 24 2 16Z" fill="#D89000"/></svg>
+  <div class="txt" style="position:absolute;top:960px;left:0;right:0">El mejor precio<br>del mercado,<br><b>GARANTIZADO.</b></div>
+  <div class="lockup"><img src="logo.png" alt=""><div class="w">Chipao<br><i>Music</i></div></div>
+  <div class="url">chipaomusic.com</div><div class="tt">TT</div>
+</section>
+
+<!-- 3 -->
+<section class="slide centro" id="s3">
+  <svg class="icon" width="520" height="360" viewBox="0 0 520 360" style="top:190px">
+    <circle cx="120" cy="82" r="76" fill="#D89000"/><path d="M80 82 l30 30 l56 -64" fill="none" stroke="#001840" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M150 140 h170 c20 0 30 10 34 28 l8 44 h58 c22 0 38 14 38 36 v40 c0 14 -8 22 -22 22 h-30 a40 40 0 0 0 -80 0 h-110 a40 40 0 0 0 -80 0 h-24 c-10 0 -16 -6 -16 -16 V168 c0 -18 10 -28 26 -28Z" fill="#D89000" transform="translate(30 0)"/>
+    <path d="M242 160 h46 l16 60 h-62Z" fill="#001840" transform="translate(30 0)"/>
+    <circle cx="208" cy="318" r="40" fill="#D89000"/><circle cx="208" cy="318" r="18" fill="#001840"/>
+    <circle cx="408" cy="318" r="40" fill="#D89000"/><circle cx="408" cy="318" r="18" fill="#001840"/>
+    <rect x="196" y="262" width="120" height="14" rx="7" fill="#001840" opacity=".0"/>
+  </svg>
+  <div class="h" style="position:absolute;top:650px;left:0;right:0;font-size:104px">Envíos a<br>todo el Perú</div>
+  <svg class="brush" style="top:880px" viewBox="0 0 640 26"><path d="M2 16 C100 6 240 4 400 9 C500 12 590 8 638 12 C580 18 500 22 380 20 C220 22 90 24 2 16Z" fill="#D89000"/></svg>
+  <div class="txt" style="position:absolute;top:960px;left:0;right:0">Dejamos tu producto<br>en <b>CUALQUIER PUNTO</b><br>del país.</div>
+  <div class="lockup"><img src="logo.png" alt=""><div class="w">Chipao<br><i>Music</i></div></div>
+  <div class="url">chipaomusic.com</div><div class="tt">TT</div>
+</section>
+
+<!-- 4 -->
+<section class="slide centro" id="s4">
+  <svg class="icon" width="460" height="400" viewBox="0 0 460 400" style="top:200px">
+    <rect x="260" y="10" width="170" height="130" rx="26" fill="#D89000"/>
+    <g stroke="#001840" stroke-width="12" stroke-linecap="round"><path d="M290 48h110M290 75h110M290 102h110"/></g>
+    <path d="M290 138 l-4 44 l46 -44Z" fill="#D89000"/>
+    <circle cx="170" cy="130" r="72" fill="#D89000"/>
+    <path d="M20 390 v-80 c0 -50 40 -84 90 -84 h120 c50 0 90 34 90 84 v80Z" fill="#D89000"/>
+    <path d="M150 226 l20 50 l20 -50Z" fill="#001840"/>
+  </svg>
+  <div class="h" style="position:absolute;top:650px;left:0;right:0;font-size:104px">Canales de<br>atención</div>
+  <svg class="brush" style="top:880px" viewBox="0 0 640 26"><path d="M2 16 C100 6 240 4 400 9 C500 12 590 8 638 12 C580 18 500 22 380 20 C220 22 90 24 2 16Z" fill="#D89000"/></svg>
+  <div class="txt" style="position:absolute;top:940px;left:0;right:0;font-size:56px;line-height:1.22">
+    <b>Vía web:</b> chipaomusic.com<br><b>WhatsApp:</b> 921 317 384<br><b>Presencial:</b> Av. Los Héroes 382,<br>San Juan de Miraflores.</div>
+  <div class="lockup"><img src="logo.png" alt=""><div class="w">Chipao<br><i>Music</i></div></div>
+  <div class="url">chipaomusic.com</div><div class="tt">TT</div>
+</section>
+
+<script>
+document.querySelectorAll('.tt').forEach(e=>e.innerHTML='<svg viewBox="0 0 24 24" fill="#fff"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.7 5.7 0 1 0 4.9 5.7V9a7.4 7.4 0 0 0 4.3 1.4V7.3a4.3 4.3 0 0 1-3.2-1.5Z"/></svg>@instrumentosmusicale')
+</script>
+</body></html>
