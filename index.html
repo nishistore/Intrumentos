@@ -6077,7 +6077,7 @@ function secundariasHtml(){
    lo ofrece, así que esa celda dice los medios de pago que sí existen. */
 function franjaConfianzaHtml(){
   const celdas = [
-    ['Envío a todo el Perú', 'por agencia Shalom, 1 a 4 días'],
+    ['Envío a todo el Perú', 'por agencia Shalom, 1 a 3 días'],
     ['Yape o tarjeta', 'paga como te quede mejor'],
     ['Garantía de 6 meses', 'contra defectos de fábrica'],
     ['Recojo en 1 hora', 'Av. Los Héroes 382, S.J.M.'],
@@ -8081,7 +8081,7 @@ function renderCarrito(){
          'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)")}
       ${filaRadio(state.entrega==='lima', 'Envío a Lima Metropolitana', 'Recíbelo en menos de 24h',
          costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')")}
-      ${filaRadio(state.entrega==='peru', 'Envío a todo el Perú', '1 a 4 días útiles · recoges en agencia Shalom',
+      ${filaRadio(state.entrega==='peru', 'Envío a todo el Perú', '1 a 3 días útiles · recoges en agencia Shalom',
          costeEnvioTexto(subtotal,'peru'), "setEntrega('peru')")}
       ${filaRadio(state.entrega==='tienda' && !state.motoPropio, 'Recojo en tienda',
          'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',false)")}
@@ -9237,10 +9237,10 @@ function renderTaller(){
    ====================================================================== */
 const POLICIES = {
   envios:{title:"Política de envíos", path:"/politica-de-envios",
-    desc:"Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos desde S/ 10.",
+    desc:"Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 3 días útiles y recojo en tienda en 1 hora. Costos desde S/ 10.",
     body:`<p>Enviamos a todo el Perú y también puedes recoger tu pedido en nuestra tienda de San Juan de Miraflores. Esto es lo que debes saber antes de comprar.</p>
 <h2>Formas de recibir tu pedido</h2>
-<ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 4 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>
+<ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 3 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>
 <h2>Costos de envío</h2>
 <ul><li>Envío a Lima Metropolitana: S/ 10.</li><li>Envío al resto del Perú: S/ 15.</li><li>El recojo en tienda siempre es gratis.</li></ul>
 <h2>Seguimiento</h2>
@@ -9254,11 +9254,11 @@ const POLICIES = {
      página. El mismo texto lo sirve el Worker: ver PAGINAS_DE_AYUDA en
      src/index.js, y las dos copias tienen que decir lo mismo. */
   cambios:{title:'Cambios y devoluciones', path:'/cambios-y-devoluciones',
-    desc:'Tienes 7 días para cambiar o devolver lo que compraste en Chipao Music, con su embalaje y sin señales de uso. Cómo solicitarlo y en cuánto tiempo te devolvemos el dinero.',
+    desc:'Tienes 15 días para cambiar o devolver lo que compraste en Chipao Music, con su embalaje y sin señales de uso. Cómo solicitarlo y en cuánto tiempo te devolvemos el dinero.',
     body:`
-    <p>Tienes hasta 7 días calendario desde la recepción del producto para solicitar un cambio o devolución, siempre que el producto conserve su embalaje original, accesorios y no presente signos de uso.</p>
+    <p>Tienes hasta 15 días calendario desde la recepción del producto para solicitar un cambio o devolución, siempre que el producto conserve su embalaje original, accesorios y no presente signos de uso.</p>
     <h2>¿Cómo solicitarlo?</h2>
-    <ul><li>Escríbenos indicando tu número de pedido y motivo del cambio.</li><li>Coordinamos la recolección o el envío del producto.</li><li>Una vez verificado, procesamos el cambio o la devolución del dinero en un máximo de 10 días hábiles.</li></ul>
+    <ul><li>Escríbenos indicando tu número de pedido y motivo del cambio.</li><li>Coordinamos la recolección o el envío del producto; el costo del envío de la devolución lo paga el cliente.</li><li>Una vez verificado, procesamos el cambio o la devolución del dinero en un máximo de 10 días hábiles.</li></ul>
     <p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>`},
   /* Con `path`, como la anterior, pero su pantalla no es solo texto: lleva el
      formulario (renderPolitica). El texto de aquí es el que sirve el Worker. */
@@ -9285,7 +9285,7 @@ const POLICIES = {
 <ul><li>Accesorios y consumibles (cuerdas, cañas, baquetas): no tienen garantía por desgaste natural de uso.</li><li>Daños por mal uso, caídas, golpes, humedad o modificaciones hechas por terceros no autorizados.</li></ul>
 <h2>Cómo hacer valer tu garantía</h2>
 <ul><li>Escríbenos por WhatsApp al +51 921 317 384 con tu número de pedido y una descripción del problema. Si puedes, envía fotos o un video.</li><li>Evaluamos el producto y, si el defecto está cubierto, te ofrecemos su reparación o cambio.</li></ul>
-<p>Esta garantía no afecta los derechos que la ley te da como consumidor. Si prefieres, también puedes pedir un cambio o devolución dentro de los 7 días: mira <a href="/cambios-y-devoluciones">Cambios y devoluciones</a>.</p>`},
+<p>Esta garantía no afecta los derechos que la ley te da como consumidor. Si prefieres, también puedes pedir un cambio o devolución dentro de los 15 días: mira <a href="/cambios-y-devoluciones">Cambios y devoluciones</a>.</p>`},
   terminos:{title:"Términos y condiciones", path:"/terminos-y-condiciones",
     desc:"Términos y condiciones de compra en Chipao Music: precios, stock, pedidos y pagos, cancelaciones, promociones y reclamos.",
     body:`<p>Última actualización: 19 de octubre de 2026.</p>

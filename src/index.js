@@ -677,8 +677,68 @@ function productDescription(p, priceLine) {
   return base.length + tienda.length <= MAX + 5 ? base + tienda : base;
 }
 
+/* Marcas que aparecen en el nombre del producto. El catálogo no tiene campo
+   de marca; solo se declara una cuando el nombre la dice tal cual, para no
+   inventarla. Lo que no esté aquí sale sin `brand`. */
+const MARCAS_CONOCIDAS = [
+  ['D\'Addario', /d.?addario/i], ['Ernie Ball', /ernie ball/i], ['Yamaha', /yamaha/i],
+  ['Vozzex', /vozzex/i], ['Smigger', /smigger/i], ['Joyo', /\bjoyo\b/i],
+  ['Marshall', /marshall/i], ['Fever', /\bfever\b/i], ['Freeman', /freeman/i],
+  ['Casio', /casio/i], ['Fender', /fender/i], ['Squier', /squier/i],
+  ['Roland', /roland/i], ['Korg', /\bkorg\b/i], ['Ibanez', /ibanez/i],
+  ['Epiphone', /epiphone/i], ['Zildjian', /zildjian/i], ['Behringer', /behringer/i],
+  ['JBL', /\bjbl\b/i], ['LTD', /\bltd\b/i],
+];
+
+function marcaDelProducto(nombre) {
+  const m = MARCAS_CONOCIDAS.find(([, re]) => re.test(nombre));
+  return m ? m[0] : null;
+}
+
+/* Envío y devolución dentro de la oferta. Los números salen de /politica-de-envios
+   y /cambios-y-devoluciones (Lima S/ 10 en menos de 24 h; resto del Perú S/ 15
+   por agencia Shalom en 1 a 3 días hábiles; 15 días calendario para devolver).
+   Si cambias esas páginas, cambia esto. */
+function envioYDevolucionSchema() {
+  const destino = (pais) => ({ '@type': 'DefinedRegion', addressCountry: pais });
+  const tiempo = (tMin, tMax) => ({
+    '@type': 'ShippingDeliveryTime',
+    handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+    transitTime: { '@type': 'QuantitativeValue', minValue: tMin, maxValue: tMax, unitCode: 'DAY' },
+  });
+  return {
+    /* Recojo en tienda (gratis, también si lo recoge un motorizado). No es un
+       envío, así que no va en shippingDetails. */
+    availableDeliveryMethod: ['https://schema.org/OnSitePickup', 'https://schema.org/ParcelService'],
+    shippingDetails: [
+      {
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', value: 10, currency: 'PEN' },
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'PE', addressRegion: 'Lima' },
+        deliveryTime: tiempo(0, 1),
+      },
+      {
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', value: 15, currency: 'PEN' },
+        shippingDestination: destino('PE'),
+        deliveryTime: tiempo(1, 3),
+      },
+    ],
+    hasMerchantReturnPolicy: {
+      '@type': 'MerchantReturnPolicy',
+      applicableCountry: 'PE',
+      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      merchantReturnDays: 15,
+      returnMethod: 'https://schema.org/ReturnByMail',
+      returnFees: 'https://schema.org/ReturnShippingFees',
+      url: SITE_ORIGIN + '/cambios-y-devoluciones',
+    },
+  };
+}
+
 function productMeta(p) {
   const path = productPath(p);
+  const marca = marcaDelProducto(p.name);
   const cat = CATEGORIES.find(c => c.key === p.cat);
   const priceLine = `S/ ${p.price}${p.old ? ` (antes S/ ${p.old})` : ''}`;
   const trail = [{ name: 'Inicio', path: '/' }];
@@ -700,8 +760,10 @@ function productMeta(p) {
           image: (p.images && p.images.length) ? p.images : [DEFAULT_OG_IMAGE],
           description: p.description || `${p.name} en Chipao Music, tienda de instrumentos musicales en San Juan de Miraflores, Lima.`,
           sku: String(p.id),
+          ...(marca ? { brand: { '@type': 'Brand', name: marca } } : {}),
           category: cat ? cat.label : 'Instrumentos musicales',
           offers: {
+            ...envioYDevolucionSchema(),
             '@type': 'Offer',
             url: SITE_ORIGIN + path,
             priceCurrency: 'PEN',
@@ -853,11 +915,11 @@ const PAGINAS_DE_AYUDA = {
   '/cambios-y-devoluciones': {
     title: 'Cambios y devoluciones | Chipao Music',
     h1: 'Cambios y devoluciones',
-    description: 'Tienes 7 días para cambiar o devolver lo que compraste en Chipao Music, con su embalaje y sin señales de uso. Cómo solicitarlo y en cuánto tiempo te devolvemos el dinero.',
+    description: 'Tienes 15 días para cambiar o devolver lo que compraste en Chipao Music, con su embalaje y sin señales de uso. Cómo solicitarlo y en cuánto tiempo te devolvemos el dinero.',
     body: [
-      '<p>Tienes hasta 7 días calendario desde la recepción del producto para solicitar un cambio o devolución, siempre que el producto conserve su embalaje original, accesorios y no presente signos de uso.</p>',
+      '<p>Tienes hasta 15 días calendario desde la recepción del producto para solicitar un cambio o devolución, siempre que el producto conserve su embalaje original, accesorios y no presente signos de uso.</p>',
       '<h2>¿Cómo solicitarlo?</h2>',
-      '<ul><li>Escríbenos indicando tu número de pedido y motivo del cambio.</li><li>Coordinamos la recolección o el envío del producto.</li><li>Una vez verificado, procesamos el cambio o la devolución del dinero en un máximo de 10 días hábiles.</li></ul>',
+      '<ul><li>Escríbenos indicando tu número de pedido y motivo del cambio.</li><li>Coordinamos la recolección o el envío del producto; el costo del envío de la devolución lo paga el cliente.</li><li>Una vez verificado, procesamos el cambio o la devolución del dinero en un máximo de 10 días hábiles.</li></ul>',
       '<p>Los instrumentos de viento con boquilla usada y productos personalizados no aplican para devolución por higiene, salvo defecto de fábrica.</p>',
     ].join(''),
   },
@@ -874,11 +936,11 @@ const PAGINAS_DE_AYUDA = {
   "/politica-de-envios": {
     title: "Política de envíos | Chipao Music",
     h1: "Política de envíos",
-    description: "Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 4 días útiles y recojo en tienda en 1 hora. Costos desde S/ 10.",
+    description: "Envío a Lima en menos de 24 horas, a todo el Perú por agencia Shalom en 1 a 3 días útiles y recojo en tienda en 1 hora. Costos desde S/ 10.",
     body: [
       "<p>Enviamos a todo el Perú y también puedes recoger tu pedido en nuestra tienda de San Juan de Miraflores. Esto es lo que debes saber antes de comprar.</p>",
       "<h2>Formas de recibir tu pedido</h2>",
-      "<ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 4 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>",
+      "<ul><li><b>Recojo en tienda:</b> sin costo. Tu pedido está listo en 1 hora en Av. Los Héroes 382, San Juan de Miraflores. Si lo recoge un motorizado, indícanos sus datos al comprar.</li><li><b>Envío a Lima Metropolitana:</b> lo recibes en menos de 24 horas.</li><li><b>Envío a todo el Perú:</b> tu pedido llega en 1 a 3 días útiles a la agencia Shalom que elijas al comprar, y lo recoges ahí.</li></ul>",
       "<h2>Costos de envío</h2>",
       "<ul><li>Envío a Lima Metropolitana: S/ 10.</li><li>Envío al resto del Perú: S/ 15.</li><li>El recojo en tienda siempre es gratis.</li></ul>",
       "<h2>Seguimiento</h2>",
@@ -913,7 +975,7 @@ const PAGINAS_DE_AYUDA = {
       "<ul><li>Accesorios y consumibles (cuerdas, cañas, baquetas): no tienen garantía por desgaste natural de uso.</li><li>Daños por mal uso, caídas, golpes, humedad o modificaciones hechas por terceros no autorizados.</li></ul>",
       "<h2>Cómo hacer valer tu garantía</h2>",
       "<ul><li>Escríbenos por WhatsApp al +51 921 317 384 con tu número de pedido y una descripción del problema. Si puedes, envía fotos o un video.</li><li>Evaluamos el producto y, si el defecto está cubierto, te ofrecemos su reparación o cambio.</li></ul>",
-      "<p>Esta garantía no afecta los derechos que la ley te da como consumidor. Si prefieres, también puedes pedir un cambio o devolución dentro de los 7 días: mira <a href=\"/cambios-y-devoluciones\">Cambios y devoluciones</a>.</p>",
+      "<p>Esta garantía no afecta los derechos que la ley te da como consumidor. Si prefieres, también puedes pedir un cambio o devolución dentro de los 15 días: mira <a href=\"/cambios-y-devoluciones\">Cambios y devoluciones</a>.</p>",
     ].join(''),
   },
   "/terminos-y-condiciones": {
@@ -1223,7 +1285,7 @@ function productBody(p, products = []) {
   if ((p.stock || 0) > 0) {
     partes.push(`<h2>Cómo recibir ${escapeHtml(p.name)}</h2><ul>`
       + '<li>Envío a Lima Metropolitana: S/ 10. Recíbelo en menos de 24 horas.</li>'
-      + '<li>Envío a todo el Perú: S/ 15, para recoger en una agencia Shalom. Tarda de 1 a 4 días útiles.</li>'
+      + '<li>Envío a todo el Perú: S/ 15, para recoger en una agencia Shalom. Tarda de 1 a 3 días útiles.</li>'
       + '<li>Recojo en tienda: gratis, en Av. Los Héroes 382, San Juan de Miraflores, listo en 1 hora.</li>'
       + '<li>Pagas con Yape o con tarjeta de crédito o débito.</li></ul>');
   }
