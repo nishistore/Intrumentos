@@ -222,8 +222,9 @@
    selector `body[data-tema=…] .clase` ya gana sobre la regla sin tema sin
    importar el orden, así que este bloque puede ir aquí arriba, junto a los
    demás tokens, aunque las clases que toca se definan más abajo. */
-body[data-tema="navidad"] .cab-franja,
-body[data-tema="navidad"] .franja-util{background:#0F5C33;}
+body[data-tema="navidad"] .cab-franja{background:#0F5C33;}
+/* La franja de datos va en tinta oscura: con la del sorteo también verde, todo el tope se veía de un solo color. */
+body[data-tema="navidad"] .franja-util{background:var(--app-ink);}
 body[data-tema="navidad"] .urgencia{background:#B0142B;}
 body[data-tema="navidad"] .urg-cel{background:#0B3F23;}
 body[data-tema="navidad"] .urg-label::before,
@@ -320,6 +321,13 @@ body[data-tema="halloween"] logo-gorro::after{
   left:-16%;top:-52%;width:100%;height:76%;
   background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 80'><ellipse cx='50' cy='68' rx='47' ry='10' fill='%231A1024'/><path d='M25 66 L43 16 Q47 4 61 8 Q55 15 60 26 L77 66 Z' fill='%232B1B4A'/><path d='M30 54 L72 54 L76 64 L26 64 Z' fill='%23E8641C'/><rect x='46' y='53' width='10' height='11' rx='2' fill='%23F4C542'/><rect x='49' y='56' width='4' height='5' fill='%23E8641C'/></svg>") center/contain no-repeat;
   transform:rotate(-16deg);
+}
+/* Gorro de Papá Noel sobre el logo en modo navidad: rojo, ribete y pompón blancos. */
+body[data-tema="navidad"] logo-gorro::after{
+  content:"";position:absolute;pointer-events:none;
+  left:-14%;top:-42%;width:100%;height:68%;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 70'><path d='M22 52 Q24 12 56 10 Q70 10 80 26 Q86 20 90 26 Q86 40 78 52 Z' fill='%23C8102E'/><circle cx='88' cy='24' r='9' fill='%23fff'/><rect x='14' y='48' width='72' height='15' rx='7.5' fill='%23fff' stroke='%23e4e4e4' stroke-width='1'/></svg>") center/contain no-repeat;
+  transform:rotate(-14deg);
 }
 /* Tema criolla: sombrero de paja con cinta roja y blanca sobre el logo, quieto,
    y un poco más de aire entre el logo y el nombre. */
