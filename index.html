@@ -1855,6 +1855,14 @@ a.eyebrow-terracota:active{opacity:.6;}
 /* ---------------- subcategorías en el teléfono ---------------- */
 .subs-bloque{margin-top:14px;}
 .subs-eyebrow{font:700 11px/1 var(--app-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--app-muted);margin-bottom:9px;}
+/* Fila que reemplaza a los mosaicos cuando ya hay un tipo elegido. */
+.sub-elegido{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 10px 9px 14px;border:1.5px solid var(--app-ink);border-radius:var(--app-r-card);background:var(--app-surface);}
+.se-texto{min-width:0;display:flex;align-items:baseline;gap:8px;}
+.se-texto em{font:700 11px/1 var(--app-sans);letter-spacing:.08em;text-transform:uppercase;font-style:normal;color:var(--app-muted);flex:none;}
+.se-texto b{font:700 14px/1.25 var(--app-sans);color:var(--app-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.se-cambiar{flex:none;padding:7px 12px;border:1px solid var(--app-line);border-radius:999px;background:var(--app-sunken);
+  font:600 12.5px/1 var(--app-sans);color:var(--app-ink);touch-action:manipulation;}
 /* Mosaicos con la foto de un producto de cada tipo. */
 .subs-mosaicos{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .sub-mosaico{
@@ -5601,11 +5609,13 @@ const ETIQUETAS_GUITARRA = {
   243: ['Para empezar'],
   252: ['Floyd Rose'],
 };
-/* Las tres que tiene la guía. Cada una es una etiqueta de la tabla. */
+/* Las dos opciones de la guía. 'Para empezar' es una etiqueta de la tabla;
+   'Con más experiencia' no lo es: son las guitarras que NO llevan 'Para
+   empezar' (ver pasaFiltros), así que no hay que etiquetarlas una por una. */
+const ETIQUETA_EXPERIENCIA = 'Con más experiencia';
 const GUIA_GUITARRAS = [
-  { etiqueta:'Para empezar',     texto:'Fáciles de tocar y con precio accesible' },
-  { etiqueta:'Cuerdas de nylon', texto:'Suaves para los dedos, sonido clásico' },
-  { etiqueta:'Cuerdas de metal', texto:'Sonido brillante y fuerte, para acompañar' },
+  { etiqueta:'Para empezar',          texto:'Fáciles de tocar y con precio accesible' },
+  { etiqueta:ETIQUETA_EXPERIENCIA,    texto:'Si ya tocas y quieres más sonido' },
 ];
 const SUBS_GUITARRA = ['guitarras', 'guitarrasElectricas', 'electroacusticos'];
 function etiquetasDeGuitarra(p){ return ETIQUETAS_GUITARRA[p.id] || []; }
@@ -6521,7 +6531,9 @@ function pasaFiltros(p, omitir){
   if(omitir!=='precio' && state.rangosPrecio.size && !RANGOS_PRECIO.some(r =>
       state.rangosPrecio.has(r.key) && p.price >= r.min && p.price < r.max)) return false;
   if(state.search && !p.name.toLowerCase().includes(state.search.toLowerCase())) return false;
-  if(state.etiqueta && !etiquetasDeGuitarra(p).includes(state.etiqueta)) return false;
+  if(state.etiqueta === ETIQUETA_EXPERIENCIA){
+    if(etiquetasDeGuitarra(p).includes('Para empezar')) return false;
+  }else if(state.etiqueta && !etiquetasDeGuitarra(p).includes(state.etiqueta)) return false;
   return true;
 }
 
@@ -6587,6 +6599,20 @@ function subsMovilHtml(){
   const cuantos = s => PRODUCTS.filter(p => productInCat(p, cat.key) && (p.sub === s.key || (s.matches||[]).includes(p.sub)));
   const todo = productosDeCategoria(cat.key).length;
   const ningunaPuesta = !state.activeSubs.size;
+
+  /* Con un tipo ya elegido los mosaicos sobran: ocupaban media pantalla antes
+     de llegar al primer producto. Queda una sola fila con lo elegido y la salida
+     para cambiar de tipo. */
+  if(!ningunaPuesta){
+    const elegidos = subs.filter(s => state.activeSubs.has(s.key)).map(s => s.label).join(', ');
+    return `
+  <div class="subs-bloque">
+    <div class="sub-elegido">
+      <span class="se-texto"><em>Tipo</em><b>${escapeHtml(elegidos)}</b></span>
+      <button type="button" class="se-cambiar" onclick="quitarSubs()">Cambiar tipo</button>
+    </div>
+  </div>`;
+  }
 
   const mosaicos = subs.map(s=>{
     const lista = cuantos(s);
