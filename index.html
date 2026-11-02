@@ -222,8 +222,8 @@
    selector `body[data-tema=…] .clase` ya gana sobre la regla sin tema sin
    importar el orden, así que este bloque puede ir aquí arriba, junto a los
    demás tokens, aunque las clases que toca se definan más abajo. */
-body[data-tema="navidad"] .cab-franja{background:#0F5C33;}
-/* La franja de datos va en tinta oscura: con la del sorteo también verde, todo el tope se veía de un solo color. */
+/* Las franjas de datos (móvil y escritorio) van en tinta oscura: con la del sorteo también verde, todo el tope se veía de un solo color. */
+body[data-tema="navidad"] .cab-franja{background:var(--app-ink);}
 body[data-tema="navidad"] .franja-util{background:var(--app-ink);}
 body[data-tema="navidad"] .urgencia{background:#B0142B;}
 body[data-tema="navidad"] .urg-cel{background:#0B3F23;}
@@ -1254,7 +1254,7 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .hv-of.verde .hv-of-btn{background:var(--app-ink);color:#fff;}
 .hv-of .badge-dto.esquina{top:11px;right:11px;left:auto;padding:4px 7px;font-size:11px;}
 /* Escenario de las ofertas: cono de luz sobre la foto, piso iluminado, marco
-   dorado fino y un destello que cruza cada 7 s. Es solo fondo (no toca medidas
+   dorado fino. Es solo fondo (no toca medidas
    ni textos) y sirve para cualquier foto, así que no hay que editar nada por
    producto. */
 .hv-of{overflow:hidden;isolation:isolate;box-shadow:inset 0 0 0 1px rgba(255,180,80,.6);}
@@ -1265,12 +1265,6 @@ body{padding-bottom:calc(var(--app-tabbar-h) + env(safe-area-inset-bottom));}
 .hv-fx::after{content:"";position:absolute;left:0;bottom:0;width:150px;height:18px;
   background:linear-gradient(180deg,rgba(255,255,255,.25),transparent);border-top:1px solid rgba(255,230,190,.6);}
 .hv-of.oscura .hv-of-precio{color:#ffd9a8;}
-.hv-of::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;z-index:5;
-  background:linear-gradient(112deg,transparent 38%,rgba(255,255,255,.35) 50%,transparent 62%);
-  transform:translateX(-120%);animation:hv-destello 7s cubic-bezier(.22,.61,.36,1) infinite;}
-.hv-of + .hv-of::after{animation-delay:1.2s;}
-@keyframes hv-destello{0%,76%{transform:translateX(-120%);}92%,100%{transform:translateX(120%);}}
-@media (prefers-reduced-motion:reduce){.hv-of::after{animation:none;}}
 
 /* ---- franja de confianza ---- */
 .confianza{
@@ -5746,10 +5740,17 @@ function heroProducto(){
   return c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0] || null;
 }
 
+/* Las dos tarjetas junto al gancho cambian en cada visita. El sorteo se hace una
+   vez por carga y se recuerda: con Math.random en cada repintado saltarían al
+   agregar algo al carrito. */
+let _secundariasIds = null;
 function ofertasSecundarias(){
   const hero = heroProducto();
-  return [...candidatosPortada()].sort((a,b) => b.price - a.price)
-    .filter(x => !hero || x.id !== hero.id).slice(0, 2);
+  const c = candidatosPortada().filter(x => !hero || x.id !== hero.id);
+  if(!_secundariasIds || _secundariasIds.some(id => !c.some(x => x.id === id))){
+    _secundariasIds = [...c].sort(() => Math.random() - .5).slice(0, 2).map(x => x.id);
+  }
+  return _secundariasIds.map(id => c.find(x => x.id === id));
 }
 
 /* Barajado estable: cambia cada día pero no en cada repintado. Con Math.random
@@ -6459,8 +6460,8 @@ function renderHome(){
   <div class="app-shell portada">
     ${H1_PORTADA}
     ${heroVentasHtml()}
-    ${bannerSorteoHtml()}
     ${categoriasPortadaHtml()}
+    ${bannerSorteoHtml()}
     ${beneficiosMovilHtml()}
     ${bannerTallerHtml()}
     ${empezarHtml()}
