@@ -4019,21 +4019,6 @@ body.en-taller footer.site{margin-top:0;}
   .tl-pie{flex-direction:column;gap:6px;}
 }
 </style>
-<!-- OneSignal: notificaciones push. Solo en el dominio real y fuera del panel
-     (la app de OneSignal esta atada a chipaomusic.com). El service worker es
-     OneSignalSDKWorker.js, en la raiz. -->
-<script>
-if(location.hostname === 'chipaomusic.com' && !new URLSearchParams(location.search).has('panel')){
-  var s = document.createElement('script');
-  s.src = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
-  s.defer = true;
-  document.head.appendChild(s);
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal){
-    await OneSignal.init({ appId: "02dfa5b2-266b-497e-a13c-c4951ca591e7" });
-  });
-}
-</script>
 </head>
 <body>
 
@@ -9442,7 +9427,7 @@ const POLICIES = {
 <ul><li>Procesar y entregar tus pedidos, y validar tus pagos.</li><li>Enviarte la confirmación de tu compra y comunicarnos contigo sobre tu pedido.</li><li>Atender tus consultas, garantías, cambios y reclamos.</li><li>Gestionar tu participación en los sorteos y promociones en los que participas al comprar.</li><li>Mejorar la tienda y medir nuestra publicidad.</li><li>Si lo autorizas, enviarte promociones o notificaciones.</li></ul>
 <h2>Con quién los compartimos</h2>
 <p>No vendemos tus datos. Solo los compartimos con quienes hacen posible el servicio:</p>
-<ul><li>Agencias de transporte (por ejemplo Shalom), para entregar tu pedido.</li><li>Mercado Pago, si pagas con tarjeta: el pago se procesa en su plataforma y nosotros no guardamos los datos de tu tarjeta.</li><li>Proveedores tecnológicos: Cloudflare (alojamiento del sitio), Resend (envío de correos) y Google (lectura automática del comprobante de Yape con su servicio de inteligencia artificial Gemini, y analítica y publicidad).</li><li>Microsoft Clarity y OneSignal, para analizar el uso del sitio y enviarte notificaciones si las aceptas.</li><li>Las autoridades, cuando la ley lo exija.</li></ul>
+<ul><li>Agencias de transporte (por ejemplo Shalom), para entregar tu pedido.</li><li>Mercado Pago, si pagas con tarjeta: el pago se procesa en su plataforma y nosotros no guardamos los datos de tu tarjeta.</li><li>Proveedores tecnológicos: Cloudflare (alojamiento del sitio), Resend (envío de correos) y Google (lectura automática del comprobante de Yape con su servicio de inteligencia artificial Gemini, y analítica y publicidad).</li><li>Microsoft Clarity, para analizar el uso del sitio.</li><li>Las autoridades, cuando la ley lo exija.</li></ul>
 <h2>Cookies y analítica</h2>
 <p>Usamos cookies, el almacenamiento de tu navegador y herramientas como Google Ads y Microsoft Clarity para recordar tu carrito, entender cómo se usa la tienda y medir anuncios. Puedes bloquear las cookies desde la configuración de tu navegador; algunas funciones de la tienda podrían dejar de funcionar.</p>
 <h2>Cuánto tiempo los conservamos</h2>

@@ -1054,7 +1054,7 @@ const PAGINAS_DE_AYUDA = {
       "<ul><li>Procesar y entregar tus pedidos, y validar tus pagos.</li><li>Enviarte la confirmación de tu compra y comunicarnos contigo sobre tu pedido.</li><li>Atender tus consultas, garantías, cambios y reclamos.</li><li>Gestionar tu participación en los sorteos y promociones en los que participas al comprar.</li><li>Mejorar la tienda y medir nuestra publicidad.</li><li>Si lo autorizas, enviarte promociones o notificaciones.</li></ul>",
       "<h2>Con quién los compartimos</h2>",
       "<p>No vendemos tus datos. Solo los compartimos con quienes hacen posible el servicio:</p>",
-      "<ul><li>Agencias de transporte (por ejemplo Shalom), para entregar tu pedido.</li><li>Mercado Pago, si pagas con tarjeta: el pago se procesa en su plataforma y nosotros no guardamos los datos de tu tarjeta.</li><li>Proveedores tecnológicos: Cloudflare (alojamiento del sitio), Resend (envío de correos) y Google (lectura automática del comprobante de Yape con su servicio de inteligencia artificial Gemini, y analítica y publicidad).</li><li>Microsoft Clarity y OneSignal, para analizar el uso del sitio y enviarte notificaciones si las aceptas.</li><li>Las autoridades, cuando la ley lo exija.</li></ul>",
+      "<ul><li>Agencias de transporte (por ejemplo Shalom), para entregar tu pedido.</li><li>Mercado Pago, si pagas con tarjeta: el pago se procesa en su plataforma y nosotros no guardamos los datos de tu tarjeta.</li><li>Proveedores tecnológicos: Cloudflare (alojamiento del sitio), Resend (envío de correos) y Google (lectura automática del comprobante de Yape con su servicio de inteligencia artificial Gemini, y analítica y publicidad).</li><li>Microsoft Clarity, para analizar el uso del sitio.</li><li>Las autoridades, cuando la ley lo exija.</li></ul>",
       "<h2>Cookies y analítica</h2>",
       "<p>Usamos cookies, el almacenamiento de tu navegador y herramientas como Google Ads y Microsoft Clarity para recordar tu carrito, entender cómo se usa la tienda y medir anuncios. Puedes bloquear las cookies desde la configuración de tu navegador; algunas funciones de la tienda podrían dejar de funcionar.</p>",
       "<h2>Cuánto tiempo los conservamos</h2>",
@@ -1828,8 +1828,8 @@ const CABECERAS_SEGURAS = {
    Se dejan SOLO las reglas que no dependen de qué terceros cargue la página:
    object-src, base-uri, form-action y frame-ancestors. El 2026-10-22 una
    versión más larga (default-src, script-src, connect-src...) dio avisos
-   reales en el navegador: OneSignal carga de api.onesignal.com y
-   onesignal.com, y la conversión de Google Ads se manda a www.google.<país>
+   reales en el navegador: OneSignal (quitado el 2026-11-07) cargaba de
+   api.onesignal.com y onesignal.com, y la conversión de Google Ads se manda a www.google.<país>
    (google.se, google.com.pe...), dominios que no se pueden enumerar. Forzar
    eso habría cortado las notificaciones y la medición de ventas.
 
