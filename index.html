@@ -4449,7 +4449,6 @@ function arrancarConProductos(lista){
   PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
   state.priceMax = PRICE_MAX;
   loadCart();
-  loadEntrega();
   render();
   checkPaymentReturnStatus();
   checkAdminUrlTrigger();
@@ -4570,7 +4569,7 @@ const state = {
   sort:'relevancia',
   search:'',
   cart:[],           // {id, qty, color}
-  entrega:'lima',    // 'lima' | 'peru' | 'tienda' — se guarda en localStorage
+  entrega:'peru',    // 'lima' | 'peru' (agencia Shalom, la predeterminada) | 'tienda'
   motoPropio:false,  // con 'tienda': true si manda su propio motorizado a recoger
   /* Literal a propósito: MEDIOS_PAGO y PAGO_INICIAL se declaran más abajo
      con const, y leerlos aquí reventaría con ReferenceError al cargar. */
@@ -7913,25 +7912,13 @@ function cartTotal(){
   return computeOrderTotals().total;
 }
 
-/* Guarda la modalidad de entrega junto al carrito, para que quien vuelve
-   mañana no tenga que volver a elegirla. */
-const ENTREGA_STORAGE_KEY = 'chipao-entrega-v1';
-function saveEntrega(){
-  try{ localStorage.setItem(ENTREGA_STORAGE_KEY, state.entrega === 'tienda' && state.motoPropio ? 'moto' : state.entrega); }catch(err){}
-}
-function loadEntrega(){
-  try{
-    let v = localStorage.getItem(ENTREGA_STORAGE_KEY);
-    if(v === 'moto'){ v = 'tienda'; state.motoPropio = true; }
-    if(v === 'lima' || v === 'peru' || v === 'tienda') state.entrega = v;
-    else if(v === 'envio') state.entrega = 'lima';   // valor de antes de separar Lima y provincia
-  }catch(err){}
-}
+/* Desde el 2026-11-08 la entrega ya no se recuerda entre visitas: el dueño
+   pidió que cada visita arranque siempre en "Recojo en agencia Shalom"
+   (state.entrega inicial). Dentro de la misma visita se mantiene lo elegido. */
 
 function setEntrega(valor, moto){
   state.entrega = valor;
   state.motoPropio = valor === 'tienda' && !!moto;
-  saveEntrega();
   /* Si dejó de recoger, "pago en tienda" ya no existe: se vuelve al inicial
      en vez de quedarse con un medio que no se puede elegir. */
   if(valor !== 'tienda' && state.pago === 'tienda') state.pago = PAGO_INICIAL;
