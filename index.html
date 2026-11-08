@@ -2537,6 +2537,12 @@ footer.site .footer-bottom{
   border:none;font:700 10px/1 var(--app-sans);letter-spacing:.01em;
 }
 .opcion-logo.marcador svg{width:19px;height:19px;}
+/* Entrega (carrito): Shalom con su logo en blanco sobre su rojo y las otras
+   tres con un dibujo sencillo, para que la lista se lea de un vistazo. */
+.opcion-logo.entrega-ico{color:var(--app-muted);background:var(--app-sunken);}
+.opcion-logo.entrega-ico svg{width:22px;height:22px;}
+.opcion-logo.entrega-ico.shalom{background:#e2231a;border-color:#e2231a;padding:0 4px;}
+.opcion-logo.entrega-ico.shalom img{background:transparent;-webkit-filter:brightness(0) invert(1);filter:brightness(0) invert(1);}
 .opcion.sel{border-color:var(--app-ink);}
 .opcion-radio{
   width:18px;height:18px;flex:none;
@@ -8138,6 +8144,17 @@ function sorteoCuponesHtml(subtotal){
   </div>`;
 }
 
+/* Íconos de las formas de entrega. El de Shalom es su logotipo oficial
+   (shalom.com.pe/img/instagram/logo-shalom-300x60.png, sin los márgenes
+   transparentes para que se vea más grande), guardado en /pagos/
+   junto a los de los medios de pago; los demás son dibujos de línea propios. */
+const svgEntrega = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICONO_ENTREGA = {
+  shalom: `<span class="opcion-logo entrega-ico shalom"><img src="/pagos/shalom.png" alt="Shalom" loading="lazy" decoding="async"></span>`,
+  moto:   `<span class="opcion-logo entrega-ico">${svgEntrega('<circle cx="5.5" cy="16.5" r="3"/><circle cx="18.5" cy="16.5" r="3"/><path d="M8.5 16.5h5l3-6h-4"/><path d="M14.5 7h2.5l1.5 3.5"/><path d="M5.5 16.5 8 11h5"/>')}</span>`,
+  tienda: `<span class="opcion-logo entrega-ico">${svgEntrega('<path d="M3.5 9 5 4.5h14L20.5 9"/><path d="M3.5 9h17v1.5a2.8 2.8 0 0 1-5.6 0 2.8 2.8 0 0 1-5.8 0 2.8 2.8 0 0 1-5.6 0z"/><path d="M5 13v7h14v-7"/><path d="M10 20v-4h4v4"/>')}</span>`,
+  camion: `<span class="opcion-logo entrega-ico">${svgEntrega('<path d="M2.5 6.5h11v9.5h-11z"/><path d="M13.5 9.5h4l3 3.5v3h-7"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/>')}</span>`,
+};
 function filaRadio(sel, titulo, nota, coste, accion, logo, regalo, marca){
   return `
   <button type="button" class="opcion${marca?` marca marca-${marca}`:''}${sel?' sel':''}" aria-pressed="${sel?'true':'false'}" onclick="${accion}">
@@ -8254,13 +8271,13 @@ function renderCarrito(){
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
       ${filaRadio(state.entrega==='peru', 'Recojo en agencia Shalom', 'En Lima, Callao o provincia · lo recoges en la agencia',
-         costeEnvioTexto(subtotal,'peru'), "setEntrega('peru')")}
+         costeEnvioTexto(subtotal,'peru'), "setEntrega('peru')", ICONO_ENTREGA.shalom)}
       ${filaRadio(state.entrega==='tienda' && state.motoPropio, 'Mando mi motorizado',
-         'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)")}
+         'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)", ICONO_ENTREGA.moto)}
       ${filaRadio(state.entrega==='tienda' && !state.motoPropio, 'Recojo en tienda',
-         'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',false)")}
+         'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',false)", ICONO_ENTREGA.tienda)}
       ${filaRadio(state.entrega==='lima', 'Envío a Lima Metropolitana', 'Recíbelo en menos de 24h',
-         costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')")}
+         costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')", ICONO_ENTREGA.camion)}
     </div>`;
 
   /* Escritorio: las líneas a la izquierda y el panel de entrega y totales
