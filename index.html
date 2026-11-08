@@ -2687,6 +2687,21 @@ body[data-tema="halloween"] .sorteo-prog .envio-barra i{background:#B84A12;}
 .lr-gracias b{display:block;font:700 16px/1.3 var(--app-sans);color:var(--app-ink);}
 .lr-gracias p{margin-top:8px;font:400 13px/1.6 var(--app-sans);color:var(--app-ink-70);}
 .campo input:invalid:not(:placeholder-shown){border-color:var(--app-ink);}
+/* Checkout sin rellenar: el campo vacío en rojo con su mensaje debajo, y un
+   aviso rojo encima del botón de pagar (ver avisarDatosFaltantes). */
+.campo .campo-error,.campo .campo-error:focus,.agencia-invita.campo-error{border-color:#c62828;background:#fdecec;}
+.campo-msg,.campo > span.campo-msg{display:block;margin:5px 0 0;font:500 12.5px/1.35 var(--app-sans);letter-spacing:0;text-transform:none;color:#b71c1c;}
+.aviso-datos{
+  display:flex;gap:8px;align-items:flex-start;
+  padding:10px 12px;border-radius:11px;
+  background:#fdecec;border:1px solid #f3b4b4;
+  font:500 13px/1.4 var(--app-sans);color:#b71c1c;
+}
+.aviso-datos::before{content:"!";flex:none;width:18px;height:18px;border-radius:50%;background:#c62828;color:#fff;font:700 12px/18px var(--app-sans);text-align:center;}
+.aviso-datos[hidden]{display:none;}
+.ped-panel .aviso-datos{margin-top:16px;}
+.barra-fija.con-aviso{flex-wrap:wrap;}
+.barra-fija .aviso-datos{flex:1 1 100%;}
 .campo-resumen{
   margin-top:9px;
   min-height:46px;padding:14px 13px;
@@ -8319,9 +8334,9 @@ function renderCheckout(){
       ${state.entrega==='peru' ? agenciaShalomHtml() : ''}
       <label class="campo">
         <span>${state.entrega==='tienda' ? (state.motoPropio ? 'Datos del motorizado y a qué hora llega' : 'Quién lo recoge y cuándo')
-              : conAgencia ? 'Quién recoge en la agencia' : 'Dirección de entrega'}</span>
+              : state.entrega==='peru' ? 'Quién recoge en la agencia' : 'Dirección de entrega'}</span>
         <textarea id="coDireccion" rows="2" placeholder="${state.entrega==='tienda' ? (state.motoPropio ? 'Ej. Nombre y celular del motorizado, llega a las 4 p.m.' : 'Ej. Paso yo mañana por la tarde')
-              : conAgencia ? 'Nombre y DNI, como figura en el documento' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
+              : state.entrega==='peru' ? 'Nombre y DNI, como figura en el documento' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
       </label>`;
 
   const notaCierre = medio.key === 'tarjeta'
@@ -8360,7 +8375,7 @@ function renderCheckout(){
     return `
     <div class="app-shell ped-esc">
       ${cabeceraPedidoEscritorio('Pago y confirmación','Pago')}
-      <form id="pedidoForm" class="ped-layout" onsubmit="submitOrder(event)">
+      <form id="pedidoForm" class="ped-layout" onsubmit="submitOrder(event)" oninput="limpiarErrorCampo(event)" novalidate>
         <div class="ped-izq">
           <div class="ped-card">
             <div class="bloque-titulo">Medio de pago</div>
@@ -8386,6 +8401,7 @@ function renderCheckout(){
             <div class="bloque-titulo">Tu pedido</div>
             <div class="res-items">${items}</div>
             ${resumenTotalesHtml('Total a pagar')}
+            <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
             <button type="submit" class="btn-app ${ctaClase} ped-cta" id="btnConfirmar">${ctaTexto}</button>
             <p class="ped-nota">${notaCierre}</p>
           </div>
@@ -8405,7 +8421,7 @@ function renderCheckout(){
           '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo, m.logo && m.key)).join('')}
     </div>
 
-    <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)">
+    <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)" oninput="limpiarErrorCampo(event)" novalidate>
       <div class="bloque-titulo">Tus datos</div>
       ${camposHtml}
       <div class="campo-resumen">${escapeHtml(entregaResumen)}</div>
@@ -8414,7 +8430,8 @@ function renderCheckout(){
 
       <p class="nota-cierre">${notaCierre}</p>
 
-      <div class="barra-fija">
+      <div class="barra-fija con-aviso">
+        <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
         <button type="submit" class="btn-app ${ctaClase}" id="btnConfirmar">${ctaTexto}</button>
       </div>
     </form>
@@ -8559,8 +8576,85 @@ function leerDatosDelFormulario(){
   return state.datos;
 }
 
+/* ---------------- datos que faltan al pagar ----------------
+   El formulario va con novalidate: el globito nativo del navegador sale en
+   el idioma del navegador y, en escritorio, lejos del botón (que está en la
+   columna derecha), así que casi nadie lo veía. En su lugar: cada campo
+   vacío en rojo con su mensaje, la página sube al primero, y un aviso rojo
+   encima del botón dice qué falta. */
+function datosFaltantes(){
+  const falta = [];
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  if(!val('coNombre')) falta.push({ id:'coNombre', nombre:'nombre', msg:'Escribe tu nombre y apellido' });
+  const tel = val('coTelefono');
+  if(!tel) falta.push({ id:'coTelefono', nombre:'teléfono', msg:'Escribe tu celular' });
+  else if(!/^[0-9]{9}$/.test(tel)) falta.push({ id:'coTelefono', nombre:'teléfono', msg:'El celular debe tener 9 dígitos, como 987654321' });
+  if(document.getElementById('coEmail')){
+    const mail = val('coEmail');
+    if(!mail) falta.push({ id:'coEmail', nombre:'correo', msg:'Escribe tu correo: ahí te llega la confirmación' });
+    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) falta.push({ id:'coEmail', nombre:'correo', msg:'Revisa tu correo, parece que le falta algo' });
+  }
+  if(state.entrega === 'peru' && !state.agencia){
+    falta.push({ id: state.buscandoAgencia ? 'agBuscar' : null, sel:'.agencia-invita', nombre:'agencia Shalom', msg:'Elige la agencia Shalom donde recoges tu pedido' });
+  }
+  if(!val('coDireccion')){
+    const msg = state.entrega === 'tienda' ? (state.motoPropio ? 'Escribe los datos del motorizado' : 'Escribe quién lo recoge y cuándo')
+      : state.entrega === 'peru' ? 'Escribe quién recoge en la agencia (nombre y DNI)' : 'Escribe la dirección de entrega';
+    falta.push({ id:'coDireccion', nombre: state.entrega === 'lima' ? 'dirección' : 'quién recoge', msg });
+  }
+  return falta;
+}
+function limpiarErroresDatos(){
+  document.querySelectorAll('#pedidoForm .campo-error').forEach(el => el.classList.remove('campo-error'));
+  document.querySelectorAll('#pedidoForm .campo-msg').forEach(el => el.remove());
+  const aviso = document.getElementById('avisoDatos');
+  if(aviso){ aviso.hidden = true; aviso.textContent = ''; }
+}
+/* Al escribir en un campo marcado se le quita el rojo; si ya no queda
+   ninguno, también se va el aviso del botón. */
+function limpiarErrorCampo(e){
+  const el = e.target;
+  if(!el || !el.classList || !el.classList.contains('campo-error')) return;
+  el.classList.remove('campo-error');
+  el.parentElement?.querySelector('.campo-msg')?.remove();
+  textoAvisoDatos();
+}
+/* El aviso del botón nombra solo lo que sigue marcado en rojo. */
+function textoAvisoDatos(){
+  const aviso = document.getElementById('avisoDatos');
+  if(!aviso) return;
+  const nombres = [...document.querySelectorAll('#pedidoForm .campo-error')].map(el => el.dataset.falta).filter(Boolean);
+  if(!nombres.length){ aviso.hidden = true; return; }
+  const lista = nombres.length > 1 ? nombres.slice(0, -1).join(', ') + ' y ' + nombres[nombres.length - 1] : nombres[0];
+  aviso.textContent = `Rellena tus datos primero: falta ${lista}.`;
+  aviso.hidden = false;
+}
+function avisarDatosFaltantes(falta){
+  limpiarErroresDatos();
+  let primero = null;
+  falta.forEach(f => {
+    const el = f.id ? document.getElementById(f.id) : document.querySelector(f.sel);
+    if(!el) return;
+    el.classList.add('campo-error');
+    el.dataset.falta = f.nombre;
+    const msg = document.createElement('span');
+    msg.className = 'campo-msg';
+    msg.textContent = f.msg;
+    el.insertAdjacentElement('afterend', msg);
+    if(!primero) primero = el;
+  });
+  textoAvisoDatos();
+  if(primero){
+    primero.scrollIntoView({ behavior:'smooth', block:'center' });
+    if(primero.focus && primero.tagName !== 'DIV') primero.focus({ preventScroll:true });
+  }
+}
+
 async function submitOrder(e){
   e.preventDefault();
+  const falta = datosFaltantes();
+  if(falta.length){ avisarDatosFaltantes(falta); return; }
+  limpiarErroresDatos();
   let datos = leerDatosDelFormulario();
   if(!datos.nombre || !datos.telefono || !datos.direccion) return;
   /* El pedido y el WhatsApp tienen que decir que viene un motorizado. */
