@@ -8251,14 +8251,14 @@ function renderCarrito(){
     ${sorteoCuponesHtml(subtotal)}
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
-      ${filaRadio(state.entrega==='tienda' && state.motoPropio, 'Mando mi motorizado',
-         'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)")}
-      ${filaRadio(state.entrega==='lima', 'Envío a Lima Metropolitana', 'Recíbelo en menos de 24h',
-         costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')")}
       ${filaRadio(state.entrega==='peru', 'Recojo en agencia Shalom', 'En Lima, Callao o provincia · lo recoges en la agencia',
          costeEnvioTexto(subtotal,'peru'), "setEntrega('peru')")}
+      ${filaRadio(state.entrega==='tienda' && state.motoPropio, 'Mando mi motorizado',
+         'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)")}
       ${filaRadio(state.entrega==='tienda' && !state.motoPropio, 'Recojo en tienda',
          'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',false)")}
+      ${filaRadio(state.entrega==='lima', 'Envío a Lima Metropolitana', 'Recíbelo en menos de 24h',
+         costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')")}
     </div>`;
 
   /* Escritorio: las líneas a la izquierda y el panel de entrega y totales
