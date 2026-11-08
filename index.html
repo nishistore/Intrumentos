@@ -2710,6 +2710,21 @@ body[data-tema="halloween"] .sorteo-prog .envio-barra i{background:#B84A12;}
   font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
 }
 .agencia-buscador{margin-top:3px;}
+/* Dos pestañas: Lima y Callao (S/ 10) y Provincias (S/ 15). */
+.agencia-tabs{
+  display:flex;gap:4px;margin:12px 0 10px;padding:4px;border-radius:12px;
+  background:var(--app-sunken);border:1px solid var(--app-line);
+}
+.agencia-tab{
+  flex:1 1 0;padding:9px 6px;border:0;border-radius:9px;cursor:pointer;background:none;
+  font:600 12.5px/1.2 var(--app-sans);color:var(--app-muted);text-align:center;
+}
+.agencia-tab small{display:block;margin-top:2px;font-weight:400;font-size:11.5px;}
+.agencia-tab.sel{background:var(--app-surface);color:var(--app-ink);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+.agencia-otra{
+  display:block;margin:0 13px 12px;padding:0;border:0;background:none;cursor:pointer;
+  font:600 12.5px/1.4 var(--app-sans);color:var(--app-ink);text-decoration:underline;
+}
 .agencia-resultados{
   margin-top:8px;max-height:320px;overflow-y:auto;
   border:1px solid var(--app-line);border-radius:11px;background:var(--app-surface);
@@ -4563,6 +4578,7 @@ const state = {
   datos:{nombre:'', telefono:'', email:'', direccion:''},
   agencia:null,      // agencia Shalom elegida para envío a provincia: [departamento, nombre, dirección]
   buscandoAgencia:false,
+  agenciaSeccion:'lima', // pestaña del buscador de agencias: 'lima' (Lima y Callao) o 'provincia'
   orderPlaced:false,
   orderId:null,      // número del último pedido enviado, para /pedido/<id>
   pedidoEnviado:null,// {total, entrega} congelado al cerrar, para la confirmación
@@ -7865,18 +7881,25 @@ function conEnvio(entrega){
   const e = entrega || state.entrega;
   return e === 'lima' || e === 'peru';
 }
+/* 'peru' es "recojo en agencia Shalom": desde el 2026-11-08 incluye agencias
+   de Lima y Callao, que cuestan como el envío a Lima. Se sabe por el grupo de
+   la agencia (ver shalom-agencias.json y agenciaEnLima en src/pagos.js). */
+function agenciaEnLima(a){
+  const g = a ? String(a[0] || '') : '';
+  return g.startsWith('Lima Metropolitana') || g.startsWith('Callao');
+}
 function shippingCost(subtotal, entrega){
   if(subtotal <= 0) return 0;
   const e = entrega || state.entrega;
   if(e === 'tienda') return 0;
+  if(e === 'peru' && agenciaEnLima(state.agencia)) return SHIPPING_FEE_LIMA;
   return e === 'lima' ? SHIPPING_FEE_LIMA : SHIPPING_FEE;
 }
 
-/* El adicional de la agencia Shalom se cobra siempre que se envíe al resto del
-   Perú, aunque el envío sea gratis. */
+/* El adicional de la agencia Shalom se cobra solo en agencias de provincia. */
 function provinceSurcharge(subtotal, entrega){
   if(subtotal <= 0) return 0;
-  return (entrega || state.entrega) === 'peru' ? PROVINCE_SURCHARGE : 0;
+  return (entrega || state.entrega) === 'peru' && !agenciaEnLima(state.agencia) ? PROVINCE_SURCHARGE : 0;
 }
 
 function computeOrderTotals(pagoKey, entrega){
@@ -7914,12 +7937,14 @@ function setEntrega(valor, moto){
   if(valor !== 'tienda' && state.pago === 'tienda') state.pago = PAGO_INICIAL;
   render();
 }
-/* ---------------- agencia Shalom (envío a provincia) ----------------
-   La lista sale de shalom.com.pe/agencias y vive en /shalom-agencias.json:
-   solo las de provincia (sin Lima Metropolitana ni Callao), cada una como
-   [departamento, nombre, dirección]. Es una foto fija: si Shalom abre o
-   cierra agencias hay que volver a sacarla. Se pide solo cuando alguien abre
-   el buscador, así no pesa en la carga de ninguna otra página. */
+/* ---------------- agencia Shalom (Lima, Callao y provincia) ----------------
+   La lista sale de shalom.com.pe/agencias y vive en /shalom-agencias.json,
+   cada una como [grupo, nombre, dirección]. El grupo es "Lima Metropolitana ·
+   <distrito>", "Callao · <distrito>" o el departamento de provincia: eso
+   decide la pestaña del buscador y el precio. Es una foto fija (última:
+   2026-11-08): si Shalom abre o cierra agencias, se vuelve a sacar con
+   .claude/shalom-agencias.mjs. Se pide solo cuando alguien abre el buscador,
+   así no pesa en la carga de ninguna otra página. */
 let AGENCIAS_SHALOM = null;
 const MAX_AGENCIAS_VISIBLES = 40;
 
@@ -7930,7 +7955,7 @@ function textoEntrega(){
   if(state.entrega === 'tienda') return state.motoPropio ? 'Recojo con mi motorizado (Av. Los Héroes 382)' : 'Recojo en tienda (Av. Los Héroes 382)';
   if(state.entrega === 'lima') return 'Envío a domicilio en Lima Metropolitana';
   const a = agenciaActiva();
-  return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a provincia (agencia Shalom por elegir)';
+  return a ? `Envío a agencia Shalom ${a[1]} (${a[0]}): ${a[2]}` : 'Envío a agencia Shalom (por elegir)';
 }
 
 function agenciaShalomHtml(){
@@ -7941,18 +7966,25 @@ function agenciaShalomHtml(){
         <span class="agencia-eyebrow">Agencia Shalom · ${escapeHtml(a[0])}</span>
         <span class="agencia-nombre">${escapeHtml(a[1])}</span>
         <span class="agencia-dir">${escapeHtml(a[2])}</span>
-        ${PROVINCE_SURCHARGE > 0 ? `<span class="agencia-adicional">Envío a provincia: adicional de ${fmt(PROVINCE_SURCHARGE)}</span>` : ''}
+        ${PROVINCE_SURCHARGE > 0 && !agenciaEnLima(a) ? `<span class="agencia-adicional">Envío a provincia: adicional de ${fmt(PROVINCE_SURCHARGE)}</span>` : ''}
         <span class="agencia-acciones">
           <button type="button" onclick="abrirBuscadorAgencia()">Cambiar</button>
         </span>
       </div>`;
   }
   if(state.buscandoAgencia){
+    const enLima = state.agenciaSeccion !== 'provincia';
     return `
       <div class="agencia-buscador">
+        <div class="agencia-tabs" role="tablist">
+          <button type="button" role="tab" class="agencia-tab${enLima?' sel':''}" aria-selected="${enLima}" onclick="elegirSeccionAgencia('lima')">
+            Lima y Callao<small>${fmt(SHIPPING_FEE_LIMA)}</small></button>
+          <button type="button" role="tab" class="agencia-tab${enLima?'':' sel'}" aria-selected="${!enLima}" onclick="elegirSeccionAgencia('provincia')">
+            Provincias<small>${fmt(SHIPPING_FEE + PROVINCE_SURCHARGE)} · 1 a 3 días útiles</small></button>
+        </div>
         <label class="campo">
           <span>Busca tu agencia Shalom</span>
-          <input id="agBuscar" type="search" autocomplete="off" placeholder="Tu ciudad, provincia o departamento"
+          <input id="agBuscar" type="search" autocomplete="off" placeholder="${enLima ? 'Tu distrito, avenida o zona' : 'Tu ciudad, provincia o departamento'}"
                  oninput="filtrarAgencias(this.value)"
                  onkeydown="if(event.key==='Enter') event.preventDefault()">
         </label>
@@ -7970,6 +8002,8 @@ function agenciaShalomHtml(){
 async function abrirBuscadorAgencia(){
   leerDatosDelFormulario();
   state.buscandoAgencia = true;
+  /* Al cambiar de agencia se abre en la pestaña de la que ya tenía. */
+  if(state.agencia) state.agenciaSeccion = agenciaEnLima(state.agencia) ? 'lima' : 'provincia';
   render();
   document.getElementById('agBuscar')?.focus();
   if(!AGENCIAS_SHALOM){
@@ -7984,6 +8018,16 @@ async function abrirBuscadorAgencia(){
   filtrarAgencias(document.getElementById('agBuscar')?.value || '');
 }
 
+/* Cambia de pestaña sin perder lo escrito en el buscador. */
+function elegirSeccionAgencia(seccion){
+  const q = document.getElementById('agBuscar')?.value || '';
+  leerDatosDelFormulario();
+  state.agenciaSeccion = seccion;
+  render();
+  const input = document.getElementById('agBuscar');
+  if(input){ input.value = q; input.focus(); }
+  filtrarAgencias(q);
+}
 function cerrarBuscadorAgencia(){
   leerDatosDelFormulario();
   state.buscandoAgencia = false;
@@ -8007,13 +8051,20 @@ function filtrarAgencias(q){
   const cont = document.getElementById('agResultados');
   if(!cont || !AGENCIAS_SHALOM) return;
   const palabras = sinTildes(q).split(/\s+/).filter(Boolean);
+  const enLima = state.agenciaSeccion !== 'provincia';
   const hallados = [];
+  let enLaOtra = 0;
   AGENCIAS_SHALOM.forEach((a, i) => {
     const texto = sinTildes(a.join(' '));
-    if(palabras.every(w => texto.includes(w))) hallados.push(i);
+    if(!palabras.every(w => texto.includes(w))) return;
+    if(agenciaEnLima(a) === enLima) hallados.push(i); else enLaOtra++;
   });
+  /* Quien escribe "Huacho" en Lima y Callao (o "Ate" en Provincias) no se
+     queda en blanco: se le ofrece la otra pestaña. */
+  const otra = enLaOtra && palabras.length
+    ? `<button type="button" class="agencia-otra" onclick="elegirSeccionAgencia('${enLima ? 'provincia' : 'lima'}')">Ver ${enLaOtra} en ${enLima ? 'Provincias' : 'Lima y Callao'}</button>` : '';
   if(!hallados.length){
-    cont.innerHTML = '<p class="agencia-vacio">No encontramos una agencia con ese nombre. Prueba con tu provincia o departamento.</p>';
+    cont.innerHTML = `<p class="agencia-vacio">No encontramos una agencia con ese nombre en ${enLima ? 'Lima y Callao. Prueba con tu distrito' : 'provincia. Prueba con tu provincia o departamento'}.</p>${otra}`;
     return;
   }
   const filas = hallados.slice(0, MAX_AGENCIAS_VISIBLES).map(i => {
@@ -8026,7 +8077,7 @@ function filtrarAgencias(q){
   }).join('');
   const resto = hallados.length - MAX_AGENCIAS_VISIBLES;
   cont.innerHTML = filas + (resto > 0
-    ? `<p class="agencia-vacio">Y ${resto} más. Escribe tu ciudad para encontrar la tuya.</p>` : '');
+    ? `<p class="agencia-vacio">Y ${resto} más. Escribe tu ${enLima ? 'distrito' : 'ciudad'} para encontrar la tuya.</p>` : '') + otra;
 }
 
 function setPago(valor){
@@ -8056,6 +8107,9 @@ function cabeceraPedido(titulo, alVolver){
    gratis": el handoff ya reserva esa línea para explicar el umbral, así que
    el aviso va donde la persona está decidiendo, no en un cartel aparte. */
 function costeEnvioTexto(subtotal, entrega){
+  /* La agencia cuesta S/ 10 en Lima y Callao y S/ 15 en provincia: hasta que
+     elija una, el radio dice desde cuánto. */
+  if(entrega === 'peru' && subtotal > 0 && !state.agencia) return 'Desde ' + fmt(SHIPPING_FEE_LIMA);
   const c = shippingCost(subtotal, entrega) + provinceSurcharge(subtotal, entrega);
   return c > 0 ? fmt(c) : 'Gratis';
 }
@@ -8096,20 +8150,29 @@ function filaRadio(sel, titulo, nota, coste, accion, logo, regalo, marca){
   </button>`;
 }
 
+/* Agencia Shalom sin elegir: todavía no se sabe si es de Lima (S/ 10) o de
+   provincia (S/ 15), así que el resumen y el botón enseñan "Desde" con el
+   precio de Lima. Solo es lo que se ve: no se puede pagar sin elegir agencia,
+   y al elegirla sale el total exacto. */
+function totalesParaMostrar(){
+  const t = computeOrderTotals();
+  if(state.entrega !== 'peru' || state.agencia || t.subtotal <= 0) return { ...t, desde:'' };
+  return { ...t, ship:SHIPPING_FEE_LIMA, provincia:0, total:t.subtotal + SHIPPING_FEE_LIMA, desde:'Desde ' };
+}
 function resumenTotalesHtml(etiquetaTotal){
-  const { subtotal, ship, provincia, total } = computeOrderTotals();
+  const { subtotal, ship, provincia, total, desde } = totalesParaMostrar();
   const unidades = state.cart.reduce((s,c)=>s+c.qty, 0);
   return `
   <div class="resumen">
     <div class="resumen-fila"><span>${unidades} producto${unidades!==1?'s':''}</span><span>${fmt(subtotal)}</span></div>
     <div class="resumen-fila">
       <span>${state.entrega==='tienda' ? 'Recojo en tienda' : 'Envío'}</span>
-      <span>${ship > 0 ? fmt(ship) : 'Gratis'}</span>
+      <span>${ship > 0 ? desde + fmt(ship) : 'Gratis'}</span>
     </div>
     ${provincia > 0 ? `<div class="resumen-fila"><span>Adicional envío a provincia</span><span>${fmt(provincia)}</span></div>` : ''}
     <div class="resumen-total">
       <span>${escapeHtml(etiquetaTotal)}</span>
-      <span class="resumen-cifra">${fmt(total)}</span>
+      <span class="resumen-cifra">${desde ? '<small style="font-size:.5em;font-weight:500">Desde </small>' : ''}${fmt(total)}</span>
     </div>
   </div>`;
 }
@@ -8150,7 +8213,7 @@ function renderCarrito(){
       : `<div class="app-shell">${cabeceraPedido('Tu carrito', 'goHome()')}${vacio}</div>`;
   }
 
-  const { subtotal, total } = computeOrderTotals();
+  const { subtotal, total, desde } = totalesParaMostrar();
 
   const lineas = state.cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
@@ -8192,7 +8255,7 @@ function renderCarrito(){
          'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)")}
       ${filaRadio(state.entrega==='lima', 'Envío a Lima Metropolitana', 'Recíbelo en menos de 24h',
          costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')")}
-      ${filaRadio(state.entrega==='peru', 'Envío a todo el Perú', '1 a 3 días útiles · recoges en agencia Shalom',
+      ${filaRadio(state.entrega==='peru', 'Recojo en agencia Shalom', 'En Lima, Callao o provincia · lo recoges en la agencia',
          costeEnvioTexto(subtotal,'peru'), "setEntrega('peru')")}
       ${filaRadio(state.entrega==='tienda' && !state.motoPropio, 'Recojo en tienda',
          'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',false)")}
@@ -8232,7 +8295,7 @@ function renderCarrito(){
 
     <div class="barra-fija">
       <button type="button" class="btn-app terracota" onclick="goCheckout()">
-        Continuar <span class="btn-cifra">${fmt(total)}</span>
+        Continuar <span class="btn-cifra">${desde}${fmt(total)}</span>
       </button>
     </div>
   </div>`;
@@ -8246,7 +8309,7 @@ function renderCheckout(){
   const conAgencia = state.entrega==='peru' && !!state.agencia;
   const entregaResumen = state.entrega==='tienda'
     ? (state.motoPropio ? 'Recoge tu motorizado · Av. Los Héroes 382' : 'Recojo en tienda · Av. Los Héroes 382')
-    : state.entrega==='peru' ? (conAgencia ? `Envío a agencia Shalom · ${state.agencia[1]}` : 'Envío a provincia · falta elegir la agencia')
+    : state.entrega==='peru' ? (conAgencia ? `Envío a agencia Shalom · ${state.agencia[1]}` : 'Agencia Shalom · falta elegir la agencia')
     : 'Envío a domicilio · Lima Metropolitana';
 
   const camposHtml = `

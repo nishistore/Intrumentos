@@ -143,13 +143,20 @@ async function firmaValida(env, id, t) {
 }
 
 /* ------------------------------ totales ------------------------------ */
-/* entrega: 'lima' (a domicilio), 'peru' (agencia Shalom) o 'tienda'. El
-   adicional de la agencia se cobra siempre que sea 'peru', aunque el envío
-   sea gratis. */
-export function calcularTotales(subtotal, entrega) {
+/* entrega: 'lima' (a domicilio), 'peru' (agencia Shalom) o 'tienda'.
+   Desde el 2026-11-08 'peru' también vale para agencias de Lima y Callao, que
+   cuestan como el envío a Lima: se sabe por el grupo de la agencia
+   ("Lima Metropolitana · …" o "Callao · …", ver shalom-agencias.json). El
+   adicional de provincia solo se cobra en agencias de provincia. */
+export function agenciaEnLima(agencia) {
+  const g = Array.isArray(agencia) ? String(agencia[0] || '') : '';
+  return g.startsWith('Lima Metropolitana') || g.startsWith('Callao');
+}
+export function calcularTotales(subtotal, entrega, agencia) {
   if (subtotal <= 0 || entrega === 'tienda') return { subtotal, envio: 0, provincia: 0, total: subtotal };
-  const envio = entrega === 'lima' ? SHIPPING_FEE_LIMA : SHIPPING_FEE;
-  const provincia = entrega === 'peru' ? PROVINCE_SURCHARGE : 0;
+  const enLima = entrega === 'lima' || (entrega === 'peru' && agenciaEnLima(agencia));
+  const envio = enLima ? SHIPPING_FEE_LIMA : SHIPPING_FEE;
+  const provincia = entrega === 'peru' && !enLima ? PROVINCE_SURCHARGE : 0;
   return { subtotal, envio, provincia, total: subtotal + envio + provincia };
 }
 
@@ -568,7 +575,7 @@ async function crearPedido(request, env) {
   }
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-  const t = calcularTotales(subtotal, entrega);
+  const t = calcularTotales(subtotal, entrega, agencia);
 
   const ip = request.headers.get('cf-connecting-ip') || '';
   const ahora = Date.now();
