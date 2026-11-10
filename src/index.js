@@ -836,7 +836,7 @@ const PRODUCTOS_RETIRADOS = {
   '43': '/categoria/cuerda/guitarras-acusticas',  // guitarra acústica Fever
   /* 2026-10-04, tras ver en Search Console que Google seguía visitándolos y
      recibiendo 404: cada uno va a su sustituto o a su subcategoría. */
-  '35': '/producto/208-xilofono-infantil-de-8-notas-con-baquetas',  // xilófono escolar 8 notas
+  '35': '/producto/208-xilofono-de-juguete-1-8',  // xilófono escolar 8 notas
   '149': '/categoria/cuerda/guitarras-acusticas',   // guitarra clásica Freeman naranja
   '45': '/categoria/cuerda/ukeleles',               // ukelele concierto Vozzex
   '31': '/categoria/percusion/bombos',              // bombito escolar con palillo
@@ -860,7 +860,13 @@ const DESTINOS_POR_NOMBRE = [
   [/^afinador/, '/categoria/accesorios/afinadores'],
   [/^(atril|soporte|pedestal)/, '/categoria/accesorios/atriles-y-pedestales'],
   [/^boquilla/, '/categoria/accesorios/viento'],
-  [/^ukulele/, '/categoria/cuerda/ukeleles'],
+  [/^uk[eu]lele/, '/categoria/cuerda/ukeleles'],
+  /* 2026-11-10: ids viejos que Search Console seguía viendo en 404. */
+  [/^organo/, '/categoria/teclados'],
+  [/^parante/, '/categoria/accesorios/atriles-y-pedestales'],
+  [/^cana-para/, '/categoria/accesorios/viento'],
+  [/^correa/, '/categoria/accesorios'],
+  [/^lira/, '/categoria/colegio/xilofonos-y-metalofonos'],
   [/^guitarra-electrica/, '/categoria/cuerda/guitarras-electricas'],
   [/^guitarra/, '/categoria/cuerda/guitarras-acusticas'],
   [/^bajo/, '/categoria/cuerda/bajos'],
@@ -879,7 +885,8 @@ const DESTINOS_POR_NOMBRE = [
   [/^kalimba/, '/categoria/percusion/kalimbas'],
   [/^pandereta/, '/categoria/percusion/panderetas'],
   [/^(xilofono|metalofono)/, '/categoria/percusion/metalofono'],
-  [/^(cajon|baqueta|clave|tambor)/, '/categoria/percusion'],
+  [/^cajon/, '/categoria/percusion/cajones'],
+  [/^(baqueta|clave|tambor)/, '/categoria/percusion'],
 ];
 
 function destinoPorNombre(pathname) {
