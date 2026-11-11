@@ -65,8 +65,8 @@
   },
   "aggregateRating": {
     "@type": "AggregateRating",
-    "ratingValue": "4.6",
-    "reviewCount": "99"
+    "ratingValue": "4.7",
+    "reviewCount": "108"
   },
   "sameAs": [
     "https://www.facebook.com/instrumentoschipao/",
@@ -2011,6 +2011,9 @@ a.eyebrow-terracota:active{opacity:.6;}
   text-wrap:pretty;
 }
 .ficha-precios{margin-top:12px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.ficha-resenas{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:14px;line-height:1.3;color:#6b6b6b;text-decoration:none;}
+.ficha-resenas-estrellas{color:#f5a623;font-size:16px;letter-spacing:1px;}
+.ficha-resenas b{color:#1a1a1a;}
 .ficha-precio{font:700 28px/1 var(--app-sans);color:var(--app-ink);}
 .ficha-antes{font:400 14px/1 var(--app-sans);color:var(--app-faint);text-decoration:line-through;}
 .ficha-ahorras{
@@ -5746,6 +5749,17 @@ function appProductCard(p, altoFoto, conAgregar){
    real y sale de la base. */
 const FLAGS = { showCuotas: false, showStock: true, fichaPago: true };
 
+/* Reseñas de Google pegadas al precio. Son de la tienda, no del producto, y
+   por eso lo dice: el enlace lleva a la ficha de Maps para comprobarlas. */
+function resenasFichaHtml(){
+  return `
+      <a class="ficha-resenas" href="${STORE_MAPS_LINK}" target="_blank" rel="noopener">
+        <span class="ficha-resenas-estrellas" aria-hidden="true">★★★★★</span>
+        <b>${String(STORE_RATING).replace('.', ',')}</b>
+        <span>· ${STORE_REVIEW_COUNT} reseñas de la tienda en Google ›</span>
+      </a>`;
+}
+
 /* Formas de pago bajo el precio de la ficha: las mismas que ofrece el checkout. */
 function pagoFichaHtml(p){
   if(!FLAGS.fichaPago || !(p.price > 0)) return '';
@@ -7519,7 +7533,7 @@ function renderProductDetail(){
         ${enOferta(p) ? `
           <span class="ficha-antes">${fmt(p.old)}</span>
           <span class="ficha-ahorras">Ahorras ${fmt(ahorro)}</span>` : ''}
-      </div>${pagoFichaHtml(p)}`;
+      </div>${resenasFichaHtml()}${pagoFichaHtml(p)}`;
 
     const thumbs = slides.length > 1 ? `
       <div class="fe-thumbs">
@@ -7650,6 +7664,7 @@ function renderProductDetail(){
           <span class="ficha-antes">${fmt(p.old)}</span>
           <span class="ficha-ahorras">Ahorras ${fmt(ahorro)}</span>` : ''}
       </div>
+      ${resenasFichaHtml()}
       ${pagoFichaHtml(p)}
 
       <div class="ficha-chips">
@@ -7708,7 +7723,9 @@ function stockOf(id){ const p = PRODUCTS.find(x=>x.id===id); return p ? (p.stock
 function addFromDetail(id){
   const p = PRODUCTS.find(x=>x.id===id);
   const color = p ? (p.images||[]).map(colorFromImageUrl)[pdState.activeIndex] : null;
-  for(let i=0;i<pdState.qty;i++) addToCart(id, null, color);
+  let agregado = false;
+  for(let i=0;i<pdState.qty;i++) agregado = addToCart(id, null, color, true) || agregado;
+  if(agregado) goCart();
 }
 
 /* Cada línea del carrito es un producto Y un color: la misma guitarra en rojo
@@ -7718,24 +7735,24 @@ function addFromDetail(id){
 function mismaLinea(c, id, color){
   return c.id === id && (c.color || null) === (color || null);
 }
-function addToCart(id, btnEl, color){
+/* Agregar lleva directo al carrito, que es el primer paso del pago: antes
+   salía un aviso de 2,6 s y el cliente se quedaba sin saber qué seguía. Desde
+   el carrito se vuelve al catálogo con «Seguir viendo». `sinIr` lo usa la
+   ficha, que agrega varias unidades y navega una sola vez. Devuelve true si
+   agregó. */
+function addToCart(id, btnEl, color, sinIr){
   const available = stockOf(id);
-  if(available <= 0){ showToast('Este producto está agotado'); return; }
+  if(available <= 0){ showToast('Este producto está agotado'); return false; }
   const existing = state.cart.find(c=>mismaLinea(c, id, color));
   /* El stock es del producto, no del color, así que se cuentan todas sus
      líneas juntas para no pasarse. */
   const yaEnCarrito = state.cart.filter(c=>c.id===id).reduce((s,c)=>s+c.qty, 0);
-  if(yaEnCarrito >= available){ showToast(`Solo hay ${available} unidad(es) disponibles`); return; }
+  if(yaEnCarrito >= available){ showToast(`Solo hay ${available} unidad(es) disponibles`); return false; }
   if(existing) existing.qty++; else state.cart.push({ id, qty:1, color: color || null });
   updateCartCount();
-  showToast('Producto agregado al carrito', true);
   trackAdsConversion('addToCart');
-  if(btnEl){
-    btnEl.classList.add('added');
-    const original = btnEl.innerHTML;
-    btnEl.innerHTML = '✓ Agregado';
-    setTimeout(()=>{btnEl.classList.remove('added'); btnEl.innerHTML = original;}, 1200);
-  }
+  if(!sinIr) goCart();
+  return true;
 }
 function changeQty(id, color, delta){
   const item = state.cart.find(c=>mismaLinea(c, id, color));
@@ -8359,7 +8376,7 @@ function renderCheckout(){
   const notaCierre = medio.key === 'tarjeta'
     ? 'Al continuar te llevamos a Mercado Pago para pagar con tarjeta. Al volver te confirmamos el pedido.'
     : medio.key === 'yape'
-    ? 'Al continuar te mostramos el número de Yape. Tienes 10 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante y te llega la confirmación por correo.'
+    ? 'Al continuar te mostramos el número de Yape. Tienes 30 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante y te llega la confirmación por correo.'
     : 'Al confirmar, tu pedido llega armado al WhatsApp de la tienda con productos, color y forma de entrega. Un asesor valida el stock y te da los datos para pagar.';
   const ctaTexto = medio.key === 'tarjeta' ? 'Pagar con Mercado Pago'
     : medio.key === 'yape' ? 'Continuar al pago con Yape' : 'Confirmar pedido por WhatsApp';
@@ -8490,8 +8507,8 @@ const STORE_MAPS_LINK = 'https://maps.app.goo.gl/y722ggq4K2s6Q5pK9';
 const STORE_HOURS = 'Lunes a domingo, 9:30 a.m. – 9:00 p.m.';
 
 /* Calificación real en Google — actualízala cuando cambie tu promedio/reseñas */
-const STORE_RATING = 4.6;
-const STORE_REVIEW_COUNT = 99;
+const STORE_RATING = 4.7;
+const STORE_REVIEW_COUNT = 108;
 
 /* Envío: gratis a partir de este monto (S/); si no llega, se cobra el costo fijo indicado */
 
@@ -9543,7 +9560,7 @@ const POLICIES = {
     desc:"Paga en Chipao Music con Yape, tarjeta Visa o Mastercard, coordinando por WhatsApp o al recoger en tienda. Así validamos tu pago y confirmamos tu pedido.",
     body:`<p>Estos son los medios de pago que aceptamos en la tienda en línea y en nuestro local.</p>
 <h2>Formas de pago</h2>
-<ul><li><b>Yape:</b> yapeas al número que te mostramos al finalizar la compra, subes la captura del comprobante y la validamos al instante. Tienes 10 minutos para pagar y te llega la confirmación por correo.</li><li><b>Tarjeta de crédito o débito (Visa y Mastercard):</b> pagas en línea en la plataforma segura de Mercado Pago. Chipao Music no guarda los datos de tu tarjeta.</li><li><b>Coordinar el pago por WhatsApp:</b> tu pedido llega armado al chat y un asesor te guía con el pago.</li><li><b>Pago en tienda:</b> si recoges tu pedido, puedes pagar en efectivo o por Yape al recogerlo.</li></ul>
+<ul><li><b>Yape:</b> yapeas al número que te mostramos al finalizar la compra, subes la captura del comprobante y la validamos al instante. Tienes 30 minutos para pagar y te llega la confirmación por correo.</li><li><b>Tarjeta de crédito o débito (Visa y Mastercard):</b> pagas en línea en la plataforma segura de Mercado Pago. Chipao Music no guarda los datos de tu tarjeta.</li><li><b>Coordinar el pago por WhatsApp:</b> tu pedido llega armado al chat y un asesor te guía con el pago.</li><li><b>Pago en tienda:</b> si recoges tu pedido, puedes pagar en efectivo o por Yape al recogerlo.</li></ul>
 <h2>Cómo validamos tu pago</h2>
 <p>Los pagos con Yape se verifican con la captura del comprobante: revisamos el monto, el destinatario y el número de operación. En compras de montos altos podemos revisar el pago manualmente antes de confirmarlo.</p>
 <h2>Seguridad</h2>

@@ -1001,7 +1001,7 @@ const PAGINAS_DE_AYUDA = {
     body: [
       "<p>Estos son los medios de pago que aceptamos en la tienda en línea y en nuestro local.</p>",
       "<h2>Formas de pago</h2>",
-      "<ul><li><b>Yape:</b> yapeas al número que te mostramos al finalizar la compra, subes la captura del comprobante y la validamos al instante. Tienes 10 minutos para pagar y te llega la confirmación por correo.</li><li><b>Tarjeta de crédito o débito (Visa y Mastercard):</b> pagas en línea en la plataforma segura de Mercado Pago. Chipao Music no guarda los datos de tu tarjeta.</li><li><b>Coordinar el pago por WhatsApp:</b> tu pedido llega armado al chat y un asesor te guía con el pago.</li><li><b>Pago en tienda:</b> si recoges tu pedido, puedes pagar en efectivo o por Yape al recogerlo.</li></ul>",
+      "<ul><li><b>Yape:</b> yapeas al número que te mostramos al finalizar la compra, subes la captura del comprobante y la validamos al instante. Tienes 30 minutos para pagar y te llega la confirmación por correo.</li><li><b>Tarjeta de crédito o débito (Visa y Mastercard):</b> pagas en línea en la plataforma segura de Mercado Pago. Chipao Music no guarda los datos de tu tarjeta.</li><li><b>Coordinar el pago por WhatsApp:</b> tu pedido llega armado al chat y un asesor te guía con el pago.</li><li><b>Pago en tienda:</b> si recoges tu pedido, puedes pagar en efectivo o por Yape al recogerlo.</li></ul>",
       "<h2>Cómo validamos tu pago</h2>",
       "<p>Los pagos con Yape se verifican con la captura del comprobante: revisamos el monto, el destinatario y el número de operación. En compras de montos altos podemos revisar el pago manualmente antes de confirmarlo.</p>",
       "<h2>Seguridad</h2>",

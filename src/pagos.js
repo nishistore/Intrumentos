@@ -29,7 +29,10 @@ export const YAPE = {
   nombrePrefijo: 'mhelisabel',
   ultimosDigitos: '384',
 };
-const MINUTOS_PARA_PAGAR = 10;
+const MINUTOS_PARA_PAGAR = 30;
+/* El freno de pedidos seguidos por IP mira una ventana propia: no crece con
+   el plazo de pago. */
+const VENTANA_PEDIDOS_SEGUIDOS_MIN = 10;
 /* Después de que vence el pedido todavía se acepta una captura si el pago
    mismo se hizo a tiempo: yapear, volver a la página y subir la foto no es
    instantáneo. */
@@ -582,7 +585,7 @@ async function crearPedido(request, env) {
   if (ip) {
     const abiertos = await env.DB.prepare(
       "SELECT COUNT(*) AS n FROM pedidos WHERE ip = ? AND creado_ms > ? AND estado IN ('pendiente','expirado')"
-    ).bind(ip, ahora - MINUTOS_PARA_PAGAR * 60000).first();
+    ).bind(ip, ahora - VENTANA_PEDIDOS_SEGUIDOS_MIN * 60000).first();
     if (abiertos && abiertos.n >= MAX_PEDIDOS_POR_IP) {
       return json({ error: 'Demasiados pedidos seguidos. Espera unos minutos.' }, 429);
     }
