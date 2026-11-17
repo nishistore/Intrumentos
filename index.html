@@ -4064,7 +4064,7 @@ body.en-taller footer.site{margin-top:0;}
 .solo-tendencia{display:none;}
 body.modo-tendencia .solo-chipao{display:none !important;}
 body.modo-tendencia .solo-tendencia{display:inline;}
-body.modo-tendencia p.solo-tendencia{display:block;}
+body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{display:block;}
 .tend-buscar-movil input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:16px;color:var(--cream);outline:none;padding:0;}
 .tend-eyebrow{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);font-weight:700;}
 .tend-head h1{margin:4px 0 6px;color:var(--brown-heading);font-size:30px;}
@@ -4204,11 +4204,12 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
     <!-- Cuarta columna del handoff de escritorio. En el teléfono no se enseña:
          lo mismo ya está en el carrito y en la ficha, al lado del precio. -->
     <div class="footer-col footer-pagos">
-      <h4>Pagos y envíos</h4>
+      <h4 class="solo-chipao">Pagos y envíos</h4>
+      <h4 class="solo-tendencia">Pagos</h4>
       <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Yape</a>
-      <a href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Visa y Mastercard</a>
-      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Costos y tiempos de envío</a>
-      <a href="/politica-de-envios" onclick="goPolicy('envios');return false;">Recojo en tienda en 1 hora</a>
+      <a class="solo-chipao" href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Visa y Mastercard</a>
+      <a class="solo-chipao" href="/politica-de-envios" onclick="goPolicy('envios');return false;">Costos y tiempos de envío</a>
+      <a class="solo-chipao" href="/politica-de-envios" onclick="goPolicy('envios');return false;">Recojo en tienda en 1 hora</a>
     </div>
     <div class="footer-legal">
       <div class="footer-col">
