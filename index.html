@@ -4087,7 +4087,8 @@ body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{displ
 .tend-foto{display:block;}
 .tend-nombre a{color:inherit;text-decoration:none;}
 .tend-video{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;}
-.tf-volver{display:inline-block;margin:0 0 14px;color:var(--ink);font-size:14px;text-decoration:none;}
+.tf-volver{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin:0 0 14px;padding:0 18px;border-radius:999px;background:var(--navy-bar);color:#fff;font-size:15px;font-weight:700;text-decoration:none;}
+.tf-volver span{font-size:22px;line-height:1;margin-top:-2px;}
 .tf-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;}
 @media (min-width:900px){.tf-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;align-items:start;}}
 .tf-principal{position:relative;padding-top:100%;background:var(--navy-mid);border-radius:var(--radius-md);overflow:hidden;}
@@ -5273,7 +5274,7 @@ function renderTendenciaProducto(){
   const agotado = (p.stock || 0) <= 0;
   const parrafos = String(p.description || '').split(/\n+/).map(t => t.trim()).filter(Boolean);
   return `<div class="app-shell tendencia tend-ficha">
-    <a class="tf-volver" href="/tendencia" onclick="goTendencia();return false;">‹ Volver a Chipao Tendencia</a>
+    <a class="tf-volver" href="/tendencia" onclick="goTendencia();return false;"><span aria-hidden="true">‹</span> Ver más productos</a>
     <div class="tf-layout">
       <div class="tf-galeria">
         <div class="tf-principal${activo && activo.type === 'video' ? ' es-video' : ''}">${principal}</div>
