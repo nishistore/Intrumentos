@@ -4951,7 +4951,7 @@ function renderPieMovil(){
     <div class="pm-tienda">
       <div class="pm-botones">
         <a class="pm-btn wa" target="_blank" rel="noopener"
-           href="${waHref('Hola, tengo una consulta sobre Chipao Tendencia.')}"
+           href="${waHref(MENSAJE_WA_TENDENCIA)}"
            onclick="trackAdsConversion('whatsapp')"><span class="ico-wa">${iconWhatsapp}</span>WhatsApp</a>
       </div>
     </div>` : `
@@ -5123,6 +5123,8 @@ function tarjetaTendenciaHtml(p){
 /* La cabecera cambia de marca -nombre, buscador y barra de abajo- mientras se
    está en /tendencia, o en el carrito y el checkout con productos de ahí. Las
    categorías de Chipao no se enseñan: esta tienda vende pocos productos. */
+/* El mismo WhatsApp de Chipao, con un mensaje que dice de dónde viene. */
+const MENSAJE_WA_TENDENCIA = 'Quisiera ayuda con este producto en tendencia';
 function modoTendencia(){
   return state.view === 'tendencia'
     || (VISTAS_DE_COMPRA.includes(state.view) && (carritoTendencia() || ultimaTienda === 'tendencia'));
@@ -11214,7 +11216,7 @@ function navTendenciaHtml(enCarrito){
       </div>
 
       <a class="nav-esc-asesor" target="_blank" rel="noopener"
-         href="${waHref('Hola, quiero hablar con un asesor sobre Chipao Tendencia.')}"
+         href="${waHref(MENSAJE_WA_TENDENCIA)}"
          onclick="trackAdsConversion('whatsapp')">
         <span class="ico-wa">${iconWhatsapp}</span>Hablar con un asesor</a>
 
@@ -11432,7 +11434,7 @@ function cabeceraMovilTendenciaHtml(){
         <b>Chipao Tendencia</b>
         <i>Productos en tendencia</i>
       </div>
-      <a class="cab-wa" href="${waHref('Hola, tengo una consulta sobre Chipao Tendencia.')}" target="_blank" rel="noopener"
+      <a class="cab-wa" href="${waHref(MENSAJE_WA_TENDENCIA)}" target="_blank" rel="noopener"
          onclick="trackAdsConversion('whatsapp')" aria-label="Escríbenos por WhatsApp">${iconWhatsapp}</a>
       <a class="cab-carrito" href="/carrito" onclick="goCart();return false;" aria-label="Ver el carrito">
         ${iconSvg('cart')}${unidades > 0 ? `<span class="cab-badge">${unidades}</span>` : ''}
@@ -11463,7 +11465,7 @@ function renderWaFlotante(){
   a.className = 'wa-flotante';
   a.target = '_blank';
   a.rel = 'noopener';
-  a.href = waHref('Hola, quiero que me ayuden a elegir un instrumento.');
+  a.href = waHref(modoTendencia() ? MENSAJE_WA_TENDENCIA : 'Hola, quiero que me ayuden a elegir un instrumento.');
   a.setAttribute('onclick', "trackAdsConversion('whatsapp')");
   a.innerHTML = `<span class="ico-wa">${iconWhatsapp}</span>Te ayudamos a elegir`;
   document.body.appendChild(a);
