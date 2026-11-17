@@ -5124,8 +5124,24 @@ function tarjetaTendenciaHtml(p){
    categorías de Chipao no se enseñan: esta tienda vende pocos productos. */
 function modoTendencia(){
   return state.view === 'tendencia'
-    || (['carrito','checkout'].includes(state.view) && carritoTendencia());
+    || (VISTAS_DE_COMPRA.includes(state.view) && (carritoTendencia() || ultimaTienda === 'tendencia'));
 }
+/* De qué tienda viene el visitante, para que el carrito, el pago y el pedido
+   lo devuelvan a esa tienda (y no a Chipao Music) aunque vacíe el carrito o
+   recargue. Se apunta en cada render (ver render()) y dura la pestaña. */
+const VISTAS_DE_COMPRA = ['carrito','checkout','pedido','politica'];
+let ultimaTienda = (() => { try{ return sessionStorage.getItem('chipao-ultima-tienda') || 'chipao'; }catch(e){ return 'chipao'; } })();
+function apuntarTienda(){
+  let t = null;
+  if(state.view === 'tendencia') t = 'tendencia';
+  else if(!VISTAS_DE_COMPRA.includes(state.view) && state.view !== 'admin' && state.view !== 'adminLogin') t = 'chipao';
+  if(!t || t === ultimaTienda) return;
+  ultimaTienda = t;
+  try{ sessionStorage.setItem('chipao-ultima-tienda', t); }catch(e){}
+}
+/* "Inicio" y "Seguir viendo el catálogo" llevan a la tienda de la que se viene. */
+function irInicioTienda(){ if(modoTendencia()) inicioTendencia(); else goHome(); }
+function irCatalogoTienda(){ if(modoTendencia()) inicioTendencia(); else goShop(null); }
 /* El buscador de la cabecera, en modo Tendencia, filtra las tarjetas de esta
    página en vez de buscar en el catálogo de Chipao. */
 let tendQuery = '';
@@ -8406,7 +8422,7 @@ function quitarLinea(id, color){
 function cabeceraPedidoEscritorio(titulo, migaTexto){
   return `
     <nav class="migas" aria-label="Ruta">
-      <a href="/" onclick="goHome();return false;">Inicio</a><span>·</span><b>${escapeHtml(migaTexto)}</b>
+      <a href="${modoTendencia() ? '/tendencia' : '/'}" onclick="irInicioTienda();return false;">Inicio</a><span>·</span><b>${escapeHtml(migaTexto)}</b>
     </nav>
     <h1 class="ped-titulo h-serif">${escapeHtml(titulo)}</h1>`;
 }
@@ -8421,12 +8437,12 @@ function renderCarrito(){
       <div class="carrito-vacio">
         <span class="vacio-cuadro"></span>
         <div class="vacio-titulo">Aún no hay nada aquí</div>
-        <p>Empieza por las ofertas de la semana.</p>
-        <button type="button" class="btn-app oscuro" onclick="goHome()">Ver catálogo</button>
+        <p>${modoTendencia() ? 'Mira los productos de Chipao Tendencia.' : 'Empieza por las ofertas de la semana.'}</p>
+        <button type="button" class="btn-app oscuro" onclick="irCatalogoTienda()">Ver catálogo</button>
       </div>`;
     return esc
       ? `<div class="app-shell ped-esc">${cabeceraPedidoEscritorio('Tu carrito','Tu carrito')}${vacio}</div>`
-      : `<div class="app-shell">${cabeceraPedido('Tu carrito', 'goHome()')}${vacio}</div>`;
+      : `<div class="app-shell">${cabeceraPedido('Tu carrito', 'irInicioTienda()')}${vacio}</div>`;
   }
 
   const { subtotal, total, desde } = totalesParaMostrar();
@@ -8487,7 +8503,7 @@ function renderCarrito(){
       <div class="ped-layout">
         <div class="ped-izq">
           <div class="lineas">${lineas}</div>
-          <a class="seguir-catalogo" href="/tienda" onclick="goShop(null);return false;">+ Seguir viendo el catálogo</a>
+          <a class="seguir-catalogo" href="${modoTendencia() ? '/tendencia' : '/tienda'}" onclick="irCatalogoTienda();return false;">+ Seguir viendo el catálogo</a>
         </div>
         <aside class="ped-der">
           <div class="ped-panel">
@@ -8502,9 +8518,9 @@ function renderCarrito(){
 
   return `
   <div class="app-shell con-barra">
-    ${cabeceraPedido('Tu carrito', 'goHome()')}
+    ${cabeceraPedido('Tu carrito', 'irInicioTienda()')}
     <div class="lineas">${lineas}</div>
-    <a class="seguir-catalogo movil" href="/tienda" onclick="goShop(null);return false;">+ Seguir viendo el catálogo</a>
+    <a class="seguir-catalogo movil" href="${modoTendencia() ? '/tendencia' : '/tienda'}" onclick="irCatalogoTienda();return false;">+ Seguir viendo el catálogo</a>
 
     ${entregaHtml}
 
@@ -8954,7 +8970,7 @@ function terminarPedido(){
   state.orderPlaced = false;
   state.orderId = null;
   state.pedidoEnviado = null;
-  goHome();
+  irInicioTienda();
 }
 
 /* ======================== PAGO CON YAPE ========================
@@ -11464,6 +11480,7 @@ window.addEventListener('resize', () => {
 });
 
 function render(){
+  apuntarTienda();
   document.getElementById('app').classList.remove('cargando');
   /* La reserva de hueco para la cabecera del teléfono solo vale hasta que el
      JS pinta por primera vez. A partir de aquí él decide si hay cabecera o
