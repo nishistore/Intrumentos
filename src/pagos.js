@@ -558,7 +558,7 @@ async function crearPedido(request, env) {
   const ids = [...new Set(lineas.map(l => l.id))];
   const marcas = ids.map(() => '?').join(',');
   const { results } = await env.DB.prepare(
-    `SELECT id, name, price, stock FROM products WHERE id IN (${marcas})`
+    `SELECT id, name, price, stock, tienda FROM products WHERE id IN (${marcas})`
   ).bind(...ids).all();
   const productos = new Map(results.map(r => [r.id, r]));
   const pedidoPorProducto = new Map();
@@ -578,7 +578,13 @@ async function crearPedido(request, env) {
   }
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-  const t = calcularTotales(subtotal, entrega, agencia);
+  /* Chipao Tendencia: envío gratis por Shalom cuando TODO el pedido es de
+     esa tienda (un carrito mezclado paga el envío normal). Misma regla que
+     carritoSoloTendencia() en index.html. */
+  const soloTendencia = items.length > 0 && items.every(i => productos.get(i.id).tienda === 'tendencia');
+  const t = soloTendencia
+    ? { subtotal, envio: 0, provincia: 0, total: subtotal }
+    : calcularTotales(subtotal, entrega, agencia);
 
   const ip = request.headers.get('cf-connecting-ip') || '';
   const ahora = Date.now();
