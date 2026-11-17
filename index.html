@@ -4086,6 +4086,13 @@ body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{displ
 .tend-agregar:disabled{background:var(--navy-line);color:var(--muted);cursor:default;}
 .tend-vacio{text-align:center;color:var(--muted);padding:48px 0;}
 /* Selector de tienda en el panel */
+/* En Chipao Tendencia no hay categorías: los campos siguen en el formulario
+   (la API pide cat y sub, y guardan lo que ya tenía), solo no se ven. */
+.admin-tendencia .admin-campo-cat,
+.admin-tendencia .admin-extra,
+.admin-tendencia #admin-cat-filtro,
+.admin-tendencia .af-donde,
+.admin-tendencia .admin-linea-meta{display:none !important;}
 .admin-tiendas{display:inline-flex;border:1px solid var(--navy-line);border-radius:999px;padding:3px;background:var(--navy-mid);}
 .admin-tienda-btn{border:0;background:transparent;border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
 .admin-tienda-btn.activa{background:var(--navy-bar);color:#fff;}
@@ -10143,12 +10150,12 @@ function renderNewProductForm(){
         </div>
       </div>
       <div class="admin-fields">
-        <label>Categoría
+        <label class="admin-campo-cat">Categoría
           <select id="cat-new" onchange="onAdminCatChange('new')">
             ${CATEGORIES.map(c=>`<option value="${c.key}">${c.label}</option>`).join('')}
           </select>
         </label>
-        <label>Subcategoría
+        <label class="admin-campo-cat">Subcategoría
           <select id="sub-new">
             ${subOptionsHtml(firstCat.key, '')}
           </select>
@@ -10308,12 +10315,12 @@ function adminEditorHtml(p){
           ${chipColoresHtml(p)}
         </div>
         <div class="admin-fields">
-          <label>Categoría
+          <label class="admin-campo-cat">Categoría
             <select id="cat-${p.id}" onchange="onAdminCatChange(${p.id})">
               ${CATEGORIES.map(c=>`<option value="${c.key}" ${p.cat===c.key?'selected':''}>${c.label}</option>`).join('')}
             </select>
           </label>
-          <label>Subcategoría
+          <label class="admin-campo-cat">Subcategoría
             <select id="sub-${p.id}">
               ${subOptionsHtml(p.cat, p.sub)}
             </select>
@@ -10462,7 +10469,7 @@ function adminMarcoHtml(titulo, cuerpo, conResumen){
   const ofertas = adminCatalogo().filter(enOferta).length;
   const vendidas = adminCatalogo().filter(x => x.featured).length;
   return `
-  <div class="app-shell admin">
+  <div class="app-shell admin${adminTienda === 'tendencia' ? ' admin-tendencia' : ''}">
     <header class="admin-head">
       <div class="admin-head-fila">
         <div class="admin-head-texto">
@@ -10614,7 +10621,7 @@ function renderAdminPanel(){
   const enTendencia = adminTienda === 'tendencia';
   return adminMarcoHtml(enOfertas ? 'Ofertas' : enTendencia ? 'Chipao Tendencia' : 'Tus productos', `
     <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
-    ${enTendencia ? '<p class="banner-nota">Estos productos solo salen en <a href="/tendencia" target="_blank" rel="noopener">chipaomusic.com/tendencia</a>, que no está enlazada desde la tienda. Usan el mismo carrito, envío por Shalom y pago con Yape. La categoría que elijas no se muestra en ningún lado.</p>' : ''}
+    ${enTendencia ? '<p class="banner-nota">Estos productos solo salen en <a href="/tendencia" target="_blank" rel="noopener">chipaomusic.com/tendencia</a>, que no está enlazada desde la tienda. Usan el mismo carrito, envío por Shalom y pago con Yape.</p>' : ''}
     ${bannerHtml}
     <div class="admin-barra">
       <input type="text" id="admin-search" placeholder="Buscar producto por nombre..." value="${escapeHtml(adminSearchQuery)}" oninput="onAdminSearchInput(this.value)">
