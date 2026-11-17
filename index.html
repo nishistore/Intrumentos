@@ -4109,6 +4109,9 @@ body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{displ
 .tf-wa svg{width:18px;height:18px;}
 .tf-desc{margin-top:20px;color:var(--ink);line-height:1.6;}
 .tf-desc p{margin:0 0 10px;}
+/* La barra de abajo de Tendencia lleva menos botones que la de Chipao (2 o 3
+   en vez de 4): van juntos y centrados en vez de pegados a la izquierda. */
+body.modo-tendencia .bottom-nav{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,120px);justify-content:center;column-gap:40px;}
 .tend-vacio{text-align:center;color:var(--muted);padding:48px 0;}
 /* Selector de tienda en el panel */
 /* En Chipao Tendencia no hay categorías: los campos siguen en el formulario
