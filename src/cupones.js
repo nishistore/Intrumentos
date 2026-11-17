@@ -81,8 +81,29 @@ export async function cuponesDelPedido(env, pedidoId) {
    más (UNIQUE pedido_id+orden), así que aprobar dos veces o reintentar no
    duplica. El número es el siguiente al más alto, empezando en 1001; la fila
    anulada conserva su número, así que nunca se reutiliza. */
+/* El sorteo es solo de Chipao Music: lo que se compra en Chipao Tendencia
+   (productos con tienda = 'tendencia') no suma para los cupones. Si no se
+   puede leer la tienda de los productos, se cuenta el subtotal entero, como
+   antes de que existiera Tendencia. */
+async function subtotalDeChipao(env, pedido) {
+  try {
+    const items = JSON.parse(pedido.items || '[]');
+    const ids = [...new Set(items.map(i => Number(i.id)).filter(n => n > 0))];
+    if (!ids.length) return pedido.subtotal;
+    const { results } = await env.DB.prepare(
+      "SELECT id FROM products WHERE tienda = 'tendencia' AND id IN (" + ids.map(() => '?').join(',') + ')'
+    ).bind(...ids).all();
+    const deTendencia = new Set(results.map(r => r.id));
+    if (!deTendencia.size) return pedido.subtotal;
+    return items.filter(i => !deTendencia.has(Number(i.id)))
+      .reduce((s, i) => s + Number(i.price) * Number(i.qty), 0);
+  } catch {
+    return pedido.subtotal;
+  }
+}
+
 export async function asignarCupones(env, pedido, ahora = Date.now()) {
-  const cuantos = cuponesPorSubtotal(pedido.subtotal);
+  const cuantos = cuponesPorSubtotal(await subtotalDeChipao(env, pedido));
   if (!cuantos || !dentroDelSorteo(ahora)) return cuponesDelPedido(env, pedido.id);
 
   for (let orden = 1; orden <= cuantos; orden++) {

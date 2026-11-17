@@ -4057,6 +4057,38 @@ body.en-taller footer.site{margin-top:0;}
   .tl-cierre h2{font-size:32px;}
   .tl-pie{flex-direction:column;gap:6px;}
 }
+
+/* ---- Chipao Tendencia (/tendencia) ---- */
+.tendencia{max-width:1100px;margin:0 auto;padding:24px 16px 48px;}
+.tend-head{text-align:center;margin:8px 0 24px;}
+.solo-tendencia{display:none;}
+body.modo-tendencia .solo-chipao{display:none !important;}
+body.modo-tendencia .solo-tendencia{display:inline;}
+body.modo-tendencia p.solo-tendencia{display:block;}
+.tend-buscar-movil input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:16px;color:var(--cream);outline:none;padding:0;}
+.tend-eyebrow{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);font-weight:700;}
+.tend-head h1{margin:4px 0 6px;color:var(--brown-heading);font-size:30px;}
+.tend-head p{margin:0;color:var(--ink);}
+.tend-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+@media (min-width:700px){.tend-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}}
+@media (min-width:1000px){.tend-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+.tend-card{display:flex;flex-direction:column;background:var(--navy-card);border:1px solid var(--navy-line);border-radius:var(--radius-md);overflow:hidden;}
+.tend-foto{position:relative;padding-top:100%;background:var(--navy-mid);}
+.tend-foto img,.tend-sinfoto{position:absolute;top:0;left:0;width:100%;height:100%;}
+.tend-foto img{object-fit:cover;}
+.tend-sinfoto{background:linear-gradient(135deg,#eef0f5,#e2e5ec);}
+.tend-info{display:flex;flex-direction:column;flex:1;padding:12px;}
+.tend-nombre{margin:0 0 4px;font-size:15px;line-height:1.3;color:var(--cream);}
+.tend-desc{margin:0 0 6px;font-size:13px;color:var(--muted);}
+.tend-precio{margin:auto 0 10px;padding-top:6px;color:var(--brown-heading);font-size:17px;}
+.tend-precio s{color:var(--muted);font-size:13px;font-weight:400;}
+.tend-agregar{width:100%;min-height:44px;border:0;border-radius:10px;background:var(--navy-bar);color:#fff;font:inherit;font-weight:700;cursor:pointer;}
+.tend-agregar:disabled{background:var(--navy-line);color:var(--muted);cursor:default;}
+.tend-vacio{text-align:center;color:var(--muted);padding:48px 0;}
+/* Selector de tienda en el panel */
+.admin-tiendas{display:inline-flex;border:1px solid var(--navy-line);border-radius:999px;padding:3px;background:var(--navy-mid);}
+.admin-tienda-btn{border:0;background:transparent;border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+.admin-tienda-btn.activa{background:var(--navy-bar);color:#fff;}
 </style>
 </head>
 <body>
@@ -4072,18 +4104,19 @@ body.en-taller footer.site{margin-top:0;}
 <!-- ============ FRANJA UTILITARIA (ESCRITORIO) ============
      Texto fijo: no depende de datos, así que no pasa por JS. Se esconde por
      debajo de 900px con CSS. -->
-<a class="franja-sorteo" id="franjaSorteo" href="/sorteo"><b>Sorteo navideño:</b> compra desde S/ 20 y participa por un teclado o un violín completo.<u>Ver premios &rsaquo;</u></a>
+<a class="franja-sorteo solo-chipao" id="franjaSorteo" href="/sorteo"><b>Sorteo navideño:</b> compra desde S/ 20 y participa por un teclado o un violín completo.<u>Ver premios &rsaquo;</u></a>
 <script>
 /* 24-dic-2026 21:00 hora de Lima: empieza el sorteo y la franja ya no hace falta. Mismo instante que SORTEO.hasta_ms en src/cupones.js. */
 if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSorteo').style.display = 'none';
 </script>
 <div class="franja-util">
   <div class="franja-util-inner">
-    <span><b class="franja-gratis">Envío a todo el Perú</b> · Yape o tarjeta · Recojo en 1 hora</span>
+    <span class="solo-chipao"><b class="franja-gratis">Envío a todo el Perú</b> · Yape o tarjeta · Recojo en 1 hora</span>
+    <span class="solo-tendencia"><b class="franja-gratis">Envío por Shalom a todo el Perú</b> · Pago con Yape</span>
     <div class="franja-derecha">
-      <a class="franja-taller" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
-      <span>Av. Los Héroes 382, San Juan de Miraflores</span>
-      <span class="franja-horario">9:30 a.m. &ndash; 9:00 p.m.</span>
+      <a class="franja-taller solo-chipao" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
+      <span class="solo-chipao">Av. Los Héroes 382, San Juan de Miraflores</span>
+      <span class="franja-horario solo-chipao">9:30 a.m. &ndash; 9:00 p.m.</span>
     </div>
   </div>
 </div>
@@ -4140,14 +4173,15 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
       <div class="logo logo-on-dark">
         <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Music" class="logo-mark"></logo-gorro>
       </div>
-      <p>Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
+      <p class="solo-chipao">Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
+      <p class="solo-tendencia"><b>Chipao Tendencia</b><br>Productos en tendencia con envío por Shalom a todo el Perú y pago con Yape.</p>
       <div class="footer-social">
         <a href="https://www.facebook.com/instrumentoschipao/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M13.5 21v-7.8h2.6l.4-3h-3v-1.9c0-.87.24-1.46 1.5-1.46h1.6V4.14C15.94 4.06 15.08 4 14.06 4c-2.13 0-3.6 1.3-3.6 3.68v2.05H7.9v3h2.56V21h3.04z"/></svg></a>
         <a href="https://www.instagram.com/instrumentos_chipao/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#e9ecf5" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1" fill="#e9ecf5" stroke="none"/></svg></a>
         <a href="https://www.tiktok.com/@instrumentosmusicale" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M16.5 2c.4 2.2 2 3.9 4.2 4.2v3.1c-1.5 0-2.9-.5-4.2-1.3v6.8a6.3 6.3 0 1 1-6.3-6.3c.3 0 .6 0 .9.1v3.2a3.1 3.1 0 1 0 2.2 3v-12.8h3.2z"/></svg></a>
       </div>
     </div>
-    <div class="footer-col">
+    <div class="footer-col solo-chipao">
       <h4>Categorías</h4>
       <div id="footerCats">
         <a class="link" href="/categoria/cuerda">Instrumentos de Cuerda</a>
@@ -4160,7 +4194,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
         <a class="link" href="/categoria/packs">Packs</a>
       </div>
     </div>
-    <div class="footer-col footer-tienda">
+    <div class="footer-col footer-tienda solo-chipao">
       <h4>Visítanos</h4>
       <div id="footerLocation">
         <p>Av. Los Héroes 382, San Juan de Miraflores, Lima</p>
@@ -4186,7 +4220,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
         <a class="link" href="/cambios-y-devoluciones" onclick="goPolicy('cambios');return false;">Cambios y devoluciones</a>
         <a class="link" href="/medios-de-pago" onclick="goPolicy('pagos');return false;">Medios de pago</a>
         <a class="link" href="/garantia-de-productos" onclick="goPolicy('garantia');return false;">Garantía de productos</a>
-        <a class="link" href="/taller" onclick="goTaller();return false;">Taller de reparación</a>
+        <a class="link solo-chipao" href="/taller" onclick="goTaller();return false;">Taller de reparación</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
@@ -4197,7 +4231,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
       </div>
     </div>
   </div>
-  <div class="footer-bottom">© 2026 Chipao Music. Todos los derechos reservados.</div>
+  <div class="footer-bottom"><span class="solo-chipao">© 2026 Chipao Music. Todos los derechos reservados.</span><span class="solo-tendencia">© 2026 Chipao Tendencia. Todos los derechos reservados.</span></div>
   <!-- Pie del teléfono: lo pinta renderPieMovil(). El de arriba se queda en
        el HTML para escritorio y para Google, y en el teléfono se oculta. -->
   <div id="pieMovil" class="pie-movil"></div>
@@ -4420,6 +4454,21 @@ function fotoUrl(u, ancho){
 }
 
 let PRODUCTS = [];
+/* La API trae los productos de DOS tiendas en la misma tabla: los de Chipao
+   Music y los de Chipao Tendencia (columna tienda = 'tendencia'), que solo se
+   ven en /tendencia, una página a la que se llega por enlace directo.
+   PRODUCTS son solo los de Chipao -todas las listas, la portada, la búsqueda y
+   las ofertas leen de ahí y no se enteran de que existe la otra tienda-, y
+   TODOS son los de las dos, para lo que busca por id: el carrito, el checkout
+   y el panel. */
+let TODOS = [];
+function esTendencia(p){ return p && p.tienda === 'tendencia'; }
+function productosTendencia(){ return TODOS.filter(esTendencia); }
+function productoPorId(id){ return TODOS.find(x => x.id === id); }
+function separarTiendas(lista){
+  TODOS = lista;
+  PRODUCTS = lista.filter(p => !esTendencia(p));
+}
 let PRICE_MAX = 3000; // valor por defecto mientras cargan los productos reales
 const MAX_PRODUCT_IMAGES = 7;
 
@@ -4469,7 +4518,7 @@ function leerBannerPromo(){
 function arrancarConProductos(lista){
   BANNER_PROMO = leerBannerPromo();
   TALLER_PRECIOS = leerTallerPrecios();
-  PRODUCTS = lista;
+  separarTiendas(lista);
   PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
   state.priceMax = PRICE_MAX;
   loadCart();
@@ -4733,6 +4782,7 @@ function productSchema(p){
 /* Reconstruye la URL/meta de la página que queda "debajo" de un modal
    de producto cerrado (según el estado actual: inicio, categoría u ofertas) */
 function currentViewPath(){
+  if(state.view==='tendencia') return '/tendencia';
   if(state.view!=='shop') return '/';
   if(state.offersOnly) return '/ofertas';
   if(state.activeCat){
@@ -4841,6 +4891,7 @@ function routeFromPath(push){
     if(sub){ goShop(catSub.key, sub.key, push); return true; }
   }
   if(path === '/ofertas'){ goOffers(push); return true; }
+  if(path === '/tendencia'){ goTendencia(push); return true; }
   if(path === '/tienda'){ goShop(null, null, push); return true; }
   if(path === '/'){ goHome(push); return true; }
   // URL desconocida (por ejemplo un producto que ya se eliminó): mostramos el
@@ -4886,7 +4937,23 @@ function renderPieMovil(){
   const pol = (clave, texto) =>
     `<a class="pm-link" href="${POLICIES[clave].path}" onclick="goPolicy('${clave}');return false;">${texto}</a>`;
 
+  /* En Chipao Tendencia el pie lleva su nombre y no la tienda física: ni
+     dirección, ni horario, ni "Cómo llegar". Queda el WhatsApp. */
+  const tend = modoTendencia();
   el.innerHTML = `
+    ${tend ? `
+    <a class="pm-marca" href="/tendencia" onclick="goTendencia();return false;">
+      <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Tendencia" width="44" height="44" loading="lazy"></logo-gorro>
+      <div><b>Chipao Tendencia</b><span>Productos en tendencia · envío a todo el Perú</span></div>
+    </a>
+
+    <div class="pm-tienda">
+      <div class="pm-botones">
+        <a class="pm-btn wa" target="_blank" rel="noopener"
+           href="${waHref('Hola, tengo una consulta sobre Chipao Tendencia.')}"
+           onclick="trackAdsConversion('whatsapp')"><span class="ico-wa">${iconWhatsapp}</span>WhatsApp</a>
+      </div>
+    </div>` : `
     <a class="pm-marca" href="/" onclick="goHome();return false;">
       <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Music" width="44" height="44" loading="lazy"></logo-gorro>
       <div><b>Chipao Music</b><span>Instrumentos musicales en Lima · +12 años</span></div>
@@ -4901,10 +4968,10 @@ function renderPieMovil(){
            onclick="trackAdsConversion('whatsapp')"><span class="ico-wa">${iconWhatsapp}</span>WhatsApp</a>
         <a class="pm-btn" target="_blank" rel="noopener" href="${STORE_MAPS_LINK}">${iconSvg('pin', 'aria-hidden="true"')}Cómo llegar</a>
       </div>
-    </div>
+    </div>`}
 
     <div class="pm-acordeon">
-      <details>
+      <details class="solo-chipao">
         <summary>Categorías</summary>
         <div class="pm-dentro">${CATEGORIES.map(c =>
           `<a class="pm-link" href="${hrefCategoria(c.key)}" onclick="goShop('${c.key}');return false;">${escapeHtml(c.label)}</a>`
@@ -4917,7 +4984,7 @@ function renderPieMovil(){
           ${pol('pagos', 'Medios de pago')}
           <a class="pm-link" href="/cambios-y-devoluciones" onclick="goPolicy('cambios');return false;">Cambios y devoluciones</a>
           ${pol('garantia', 'Garantía de productos')}
-          <a class="pm-link" href="/taller" onclick="goTaller();return false;">Taller de reparación</a>
+          <a class="pm-link solo-chipao" href="/taller" onclick="goTaller();return false;">Taller de reparación</a>
         </div>
       </details>
       <details>
@@ -4932,7 +4999,7 @@ function renderPieMovil(){
     </div>
 
     <div class="pm-redes">${document.querySelector('footer.site .footer-social').innerHTML}</div>
-    <p class="pm-copy">© 2026 Chipao Music</p>`;
+    <p class="pm-copy">© 2026 ${tend ? 'Chipao Tendencia' : 'Chipao Music'}</p>`;
 }
 
 /* Barra inferior del celular. El handoff la deja en cuatro destinos — las
@@ -4946,13 +5013,20 @@ const BOTTOM_NAV = [
   {label:'Carrito', icon:'cart',   href:'/carrito', action:'goCart()',     activa:()=> ['carrito','checkout','pedido'].includes(state.view), badge:true},
   {label:'Tienda',  icon:'store',  href:'/tienda',  action:'goShop(null)', activa:()=> state.view==='shop'},
 ];
+/* En Chipao Tendencia la barra no lleva al catálogo de Chipao. */
+const BOTTOM_NAV_TENDENCIA = [
+  {label:'Inicio',  icon:'home',   href:'/tendencia', action:'inicioTendencia()', activa:()=> state.view==='tendencia'},
+  {label:'Buscar',  icon:'search', href:'/tendencia', action:'buscarEnTendencia()', activa:()=> false},
+  {label:'Carrito', icon:'cart',   href:'/carrito',   action:'goCart()', activa:()=> ['carrito','checkout','pedido'].includes(state.view), badge:true},
+];
 function buildBottomNav(){
   const el = document.getElementById('bottomNav');
   if(!el) return;
   const enCarrito = state.cart.reduce((s,c)=>s+c.qty,0);
   /* Enlaces de verdad, no botones: así se pueden abrir en otra pestaña y el
      rastreador ve a dónde llevan. El onclick evita la recarga. */
-  el.innerHTML = BOTTOM_NAV.map(item=>{
+  const items = modoTendencia() ? BOTTOM_NAV_TENDENCIA : BOTTOM_NAV;
+  el.innerHTML = items.map(item=>{
     const badge = (item.badge && enCarrito>0)
       ? `<span class="tab-badge">${enCarrito}</span>` : '';
     return `<a class="tab-item${item.activa()?' active':''}" href="${item.href}"
@@ -5010,6 +5084,95 @@ function goOffers(push){
   render();
   if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
 }
+/* ======================================================================
+   CHIPAO TENDENCIA: /tendencia
+   Una tienda aparte que solo se abre con el enlace directo: no está en el
+   menú, ni en el sitemap, y el Worker la sirve con noindex. Sus productos no
+   tienen ficha (la ficha tiene URL indexable): se agregan al carrito desde la
+   tarjeta, y de ahí siguen el camino de siempre -carrito, checkout, Shalom,
+   Yape-. Se editan en el panel, eligiendo "Chipao Tendencia" arriba.
+   ====================================================================== */
+function goTendencia(push){
+  state.view = 'tendencia';
+  navigateTo('/tendencia', push);
+  setPageMeta('Chipao Tendencia | Chipao Music',
+    'Productos en tendencia de Chipao Music, con envío por Shalom a todo el Perú y pago con Yape.');
+  setBreadcrumbSchema(null);
+  render();
+  if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
+}
+function tarjetaTendenciaHtml(p){
+  const foto = (p.images || [])[0];
+  const agotado = (p.stock || 0) <= 0;
+  return `<article class="tend-card">
+    <div class="tend-foto">${foto
+      ? `<img src="${escapeHtml(fotoUrl(foto, ANCHO_TARJETA))}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+      : '<span class="tend-sinfoto" aria-hidden="true"></span>'}</div>
+    <div class="tend-info">
+      <h2 class="tend-nombre">${escapeHtml(p.name)}</h2>
+      ${p.description ? `<p class="tend-desc">${escapeHtml(p.description)}</p>` : ''}
+      <div class="tend-precio">
+        <b>${fmt(p.price)}</b>${enOferta(p) ? ` <s>${fmt(p.old)}</s>` : ''}
+      </div>
+      <button type="button" class="tend-agregar" ${agotado ? 'disabled' : ''}
+        onclick="addToCart(${p.id}, this)">${agotado ? 'Agotado' : 'Agregar'}</button>
+    </div>
+  </article>`;
+}
+/* La cabecera cambia de marca -nombre, buscador y barra de abajo- mientras se
+   está en /tendencia, o en el carrito y el checkout con productos de ahí. Las
+   categorías de Chipao no se enseñan: esta tienda vende pocos productos. */
+function modoTendencia(){
+  return state.view === 'tendencia'
+    || (['carrito','checkout'].includes(state.view) && carritoTendencia());
+}
+/* El buscador de la cabecera, en modo Tendencia, filtra las tarjetas de esta
+   página en vez de buscar en el catálogo de Chipao. */
+let tendQuery = '';
+function normalizaBusqueda(t){
+  return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function tendenciaFiltrada(){
+  const q = normalizaBusqueda(tendQuery).trim();
+  const lista = productosTendencia();
+  if(!q) return lista;
+  return lista.filter(p => normalizaBusqueda(p.name + ' ' + (p.description || '')).includes(q));
+}
+function tendGridHtml(){
+  const lista = tendenciaFiltrada();
+  if(lista.length) return lista.map(tarjetaTendenciaHtml).join('');
+  return tendQuery.trim()
+    ? '<p class="tend-vacio">No encontramos nada con esa búsqueda.</p>'
+    : '<p class="tend-vacio">Muy pronto, nuevos productos.</p>';
+}
+function onTendBuscar(val, input){
+  tendQuery = val;
+  if(state.view !== 'tendencia'){
+    const id = input && input.id;
+    goTendencia();
+    const nuevo = id && document.getElementById(id);
+    if(nuevo){ nuevo.focus(); nuevo.setSelectionRange(nuevo.value.length, nuevo.value.length); }
+    return;
+  }
+  const grid = document.getElementById('tendGrid');
+  if(grid) grid.innerHTML = tendGridHtml();
+}
+function inicioTendencia(){ tendQuery = ''; goTendencia(); }
+function buscarEnTendencia(){
+  if(state.view !== 'tendencia') goTendencia();
+  const input = document.getElementById('tendBuscarMovil') || document.getElementById('tendBuscarInput');
+  if(input) input.focus();
+}
+function renderTendencia(){
+  return `<div class="app-shell tendencia">
+    <header class="tend-head">
+      <h1>Chipao Tendencia</h1>
+      <p>Envío por Shalom a todo el Perú y pago con Yape.</p>
+    </header>
+    <div class="tend-grid" id="tendGrid">${tendGridHtml()}</div>
+  </div>`;
+}
+
 /* ======================================================================
    PANTALLAS DEL REDISEÑO MÓVIL: /buscar, /carrito, /checkout, /pedido/<id>
 
@@ -6338,7 +6501,7 @@ function complementosHtml(p){
 const IDS_PARA_EMPEZAR = [2, 44, 245, 209]; // guitarra Vozzex, ukelele, teclado Vozzex 54 teclas, flauta dulce Hohner
 function empezarHtml(){
   const lista = IDS_PARA_EMPEZAR
-    .map(id => PRODUCTS.find(x => x.id === id))
+    .map(id => productoPorId(id))
     .filter(x => x && (x.stock||0) > 0 && (x.images||[]).length);
   if(lista.length < 2) return '';
   const desde = Math.min(...lista.map(x => x.price));
@@ -7059,7 +7222,7 @@ function setOrden(valor){
 let pdState = { productId: null, activeIndex: 0, qty: 1 };
 
 function openProductDetail(id, push){
-  const p = PRODUCTS.find(x=>x.id===id);
+  const p = PRODUCTS.find(x => x.id === id);
   if(!p) return;
   /* La ficha dejó de ser una ventana encima del catálogo y pasó a ser una
      página con su propia URL. El modal se queda para las políticas y el
@@ -7215,7 +7378,7 @@ function setActiveSlide(i){
 /* La foto de la ficha, a pantalla completa. Solo aplica a fotos, no a video
    ni a los iframes de YouTube: esos ya tienen su propio control. */
 function abrirFotoZoom(){
-  const p = PRODUCTS.find(x => x.id === pdState.productId);
+  const p = productoPorId(pdState.productId);
   const url = p && (p.images || [])[pdState.activeIndex];
   if(!url) return;
   document.getElementById('fotoZoomImg').src = fotoUrl(url, ANCHO_ZOOM);
@@ -7363,7 +7526,7 @@ function distanciaDedos(t){
 let gestoFicha = null;
 
 function cambiarSlideFicha(paso){
-  const p = PRODUCTS.find(x => x.id === pdState.productId);
+  const p = productoPorId(pdState.productId);
   if(!p) return;
   const total = (p.images || []).length + (p.video ? 1 : 0);
   if(total < 2) return;
@@ -7438,7 +7601,7 @@ function faqFichaHtml(p){
 }
 
 function renderProductDetail(){
-  const p = PRODUCTS.find(x => x.id === pdState.productId);
+  const p = productoPorId(pdState.productId);
   if(!p){
     return `<div class="app-shell"><div class="sin-resultados">
       <p>Este producto ya no está en el catálogo.</p>
@@ -7715,13 +7878,13 @@ function renderProductDetail(){
   </div>`;
 }
 
-function stockOf(id){ const p = PRODUCTS.find(x=>x.id===id); return p ? (p.stock||0) : 0; }
+function stockOf(id){ const p = productoPorId(id); return p ? (p.stock||0) : 0; }
 
 /* Agregar desde la ficha ya no cierra nada: la ficha es una página y se
    queda donde está. El aviso lo da el toast, y el contador del pill que
    flota sobre la galería sube al instante. */
 function addFromDetail(id){
-  const p = PRODUCTS.find(x=>x.id===id);
+  const p = productoPorId(id);
   const color = p ? (p.images||[]).map(colorFromImageUrl)[pdState.activeIndex] : null;
   let agregado = false;
   for(let i=0;i<pdState.qty;i++) agregado = addToCart(id, null, color, true) || agregado;
@@ -7790,7 +7953,7 @@ function loadCart(){
      changeQty busca por id + color. */
   state.cart = guardado
     .map(c => ({ id: Number(c && c.id), qty: Math.floor(Number(c && c.qty)), color: (c && c.color) || null }))
-    .filter(c => Number.isFinite(c.id) && c.qty > 0 && PRODUCTS.some(p => p.id === c.id))
+    .filter(c => Number.isFinite(c.id) && c.qty > 0 && TODOS.some(p => p.id === c.id))
     .map(c => ({ id: c.id, qty: Math.min(c.qty, stockOf(c.id)), color: c.color }))
     .filter(c => c.qty > 0);
 
@@ -7899,12 +8062,26 @@ function medioPago(key){
 /* Los medios que se pueden elegir ahora mismo: el de pago en tienda solo
    aparece si va a recoger. */
 function mediosDisponibles(){
+  if(carritoTendencia()) return MEDIOS_PAGO.filter(m => m.key === 'yape');
   return MEDIOS_PAGO.filter(m => !m.soloRecojo || state.entrega === 'tienda');
+}
+/* Con algo de Chipao Tendencia en el carrito, el pedido entero va por agencia
+   Shalom y se paga con Yape: son las únicas opciones que se muestran. Se fija
+   el estado aquí (y no solo se esconden las filas) para que el total, el
+   resumen y el botón de pagar digan lo mismo que se ve. */
+function carritoTendencia(){
+  return state.cart.some(c => esTendencia(productoPorId(c.id)));
+}
+function fijarOpcionesTendencia(){
+  if(!carritoTendencia()) return;
+  state.entrega = 'peru';
+  state.motoPropio = false;
+  state.pago = 'yape';
 }
 
 function cartSubtotal(){
   return state.cart.reduce((s,c)=>{
-    const p = PRODUCTS.find(x=>x.id===c.id);
+    const p = productoPorId(c.id);
     return p ? s + p.price*c.qty : s;
   },0);
 }
@@ -8145,6 +8322,8 @@ function costeEnvioTexto(subtotal, entrega){
    cualquier medio de pago. Se apaga solo cuando empieza el sorteo. */
 const SORTEO_MINIMO = 20, SORTEO_DOBLE = 100;
 function sorteoCuponesHtml(subtotal){
+  /* El sorteo es solo de Chipao Music: en Tendencia ni se nombra. */
+  if(modoTendencia()) return '';
   if(subtotal <= 0 || Date.now() >= SORTEO_HASTA) return '';
   const n = subtotal >= SORTEO_DOBLE ? 2 : subtotal >= SORTEO_MINIMO ? 1 : 0;
   const meta = n === 0 ? SORTEO_MINIMO : SORTEO_DOBLE;
@@ -8180,7 +8359,7 @@ function filaRadio(sel, titulo, nota, coste, accion, logo, regalo, marca){
     <span class="opcion-texto">
       <span class="opcion-titulo">${escapeHtml(titulo)}</span>
       ${nota?`<span class="opcion-nota">${escapeHtml(nota)}</span>`:''}
-      ${regalo && Date.now() < SORTEO_HASTA ? '<span class="opcion-regalo">Participas en el sorteo navideño</span>':''}
+      ${regalo && Date.now() < SORTEO_HASTA && !carritoTendencia() ? '<span class="opcion-regalo">Participas en el sorteo navideño</span>':''}
     </span>
     ${coste?`<span class="opcion-coste">${escapeHtml(coste)}</span>`:''}
   </button>`;
@@ -8234,6 +8413,7 @@ function cabeceraPedidoEscritorio(titulo, migaTexto){
 
 /* ------------------------------ /carrito ------------------------------ */
 function renderCarrito(){
+  fijarOpcionesTendencia();
   const esc = esEscritorio();
 
   if(!state.cart.length){
@@ -8252,7 +8432,7 @@ function renderCarrito(){
   const { subtotal, total, desde } = totalesParaMostrar();
 
   const lineas = state.cart.map(c=>{
-    const p = PRODUCTS.find(x=>x.id===c.id);
+    const p = productoPorId(c.id);
     if(!p) return '';
     /* La miniatura tiene que ser la del color de ESTA línea: si no, dos
        colores del mismo producto salen con la misma foto. */
@@ -8289,12 +8469,13 @@ function renderCarrito(){
     <div class="opciones">
       ${filaRadio(state.entrega==='peru', 'Recojo en agencia Shalom', 'En Lima, Callao o provincia · lo recoges en la agencia',
          costeEnvioTexto(subtotal,'peru'), "setEntrega('peru')", ICONO_ENTREGA.shalom)}
+      ${carritoTendencia() ? '' : `
       ${filaRadio(state.entrega==='tienda' && state.motoPropio, 'Mando mi motorizado',
          'Tu motorizado recoge en Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',true)", ICONO_ENTREGA.moto)}
       ${filaRadio(state.entrega==='tienda' && !state.motoPropio, 'Recojo en tienda',
          'Av. Los Héroes 382 · listo en 1 hora', 'Gratis', "setEntrega('tienda',false)", ICONO_ENTREGA.tienda)}
       ${filaRadio(state.entrega==='lima', 'Envío a Lima Metropolitana', 'Recíbelo en menos de 24h',
-         costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')", ICONO_ENTREGA.camion)}
+         costeEnvioTexto(subtotal,'lima'), "setEntrega('lima')", ICONO_ENTREGA.camion)}`}
     </div>`;
 
   /* Escritorio: las líneas a la izquierda y el panel de entrega y totales
@@ -8340,6 +8521,7 @@ function renderCarrito(){
 /* ------------------------------ /checkout ------------------------------ */
 function renderCheckout(){
   if(!state.cart.length) return renderCarrito();
+  fijarOpcionesTendencia();
 
   const medio = medioPago(state.pago);
   const conAgencia = state.entrega==='peru' && !!state.agencia;
@@ -8388,7 +8570,7 @@ function renderCheckout(){
      submit de los campos de al lado. */
   if(esEscritorio()){
     const items = state.cart.map(c=>{
-      const p = PRODUCTS.find(x=>x.id===c.id);
+      const p = productoPorId(c.id);
       if(!p) return '';
       const fotos = p.images || [];
       const iColor = c.color ? fotos.findIndex(u => colorFromImageUrl(u) === c.color) : -1;
@@ -8590,6 +8772,11 @@ function loadClarity(){
    GOOGLE_ADS_LABELS. No hace nada si aún no configuraste tus etiquetas. */
 function trackAdsConversion(labelKey, value){
   if(!googleAdsConfigured() || typeof gtag !== 'function') return;
+  /* Las campañas son de Chipao Music: nada de Chipao Tendencia cuenta como
+     conversión -ni estar en /tendencia, ni un carrito con productos de ahí,
+     que es lo que sigue en pie hasta que se confirma el pago con Yape-. Si
+     contara, Google optimizaría los anuncios de Chipao con ventas ajenas. */
+  if(modoTendencia() || carritoTendencia()) return;
   const label = GOOGLE_ADS_LABELS[labelKey];
   if(!label || label.includes('PEGA_AQUI')) return;
   const params = { send_to: `${GOOGLE_ADS_CONVERSION_ID}/${label}` };
@@ -8698,6 +8885,7 @@ async function submitOrder(e){
     return;
   }
 
+  fijarOpcionesTendencia();
   const medio = medioPago(state.pago);
 
   /* La tarjeta se cobra en línea; el resto se cierra en el chat. */
@@ -8713,7 +8901,7 @@ async function submitOrder(e){
 
   const { subtotal, ship, provincia, total } = computeOrderTotals();
   const lineas = state.cart.map(c=>{
-    const p = PRODUCTS.find(x=>x.id===c.id);
+    const p = productoPorId(c.id);
     if(!p) return '';
     return `• ${c.qty}x ${p.name}${c.color ? ` (${c.color})` : ''} — ${fmt(p.price*c.qty)}`;
   }).filter(Boolean).join('\n');
@@ -8731,7 +8919,7 @@ ${state.entrega === 'tienda' ? 'Recojo en tienda: Gratis' : `Envío: ${ship>0?fm
 Total: ${fmt(total)}
 
 Entrega: ${entregaTexto}
-Medio de pago: ${medio.label}${medio.regalo && Date.now() < SORTEO_HASTA ? ' (participa en el sorteo navideño)' : ''}
+Medio de pago: ${medio.label}${medio.regalo && Date.now() < SORTEO_HASTA && !carritoTendencia() ? ' (participa en el sorteo navideño)' : ''}
 
 Cliente: ${datos.nombre}
 Teléfono: ${datos.telefono}
@@ -9055,7 +9243,7 @@ async function payWithMercadoPago(comprador){
   /* El color va en el título para que aparezca en el comprobante de Mercado
      Pago y en el correo que le llega al cliente. */
   const items = state.cart.map(c=>{
-    const p = PRODUCTS.find(x=>x.id===c.id);
+    const p = productoPorId(c.id);
     return { title: p.name + (c.color ? ' (' + c.color + ')' : ''), quantity: c.qty, unit_price: p.price };
   });
   const { ship, provincia } = computeOrderTotals();
@@ -10012,7 +10200,7 @@ function chipColoresHtml(p){
    es un sí o un no, no algo para dejar a medias en el cuadro de texto hasta
    acordarse de tocar "Guardar cambios". */
 async function toggleColoresNombre(id, btn){
-  const p = PRODUCTS.find(x => x.id === id);
+  const p = productoPorId(id);
   if(!p) return;
   const input = document.getElementById('name-' + id);
   const puesto = !tieneSufijoColores(p.name);
@@ -10161,7 +10349,7 @@ function cerrarEditorAdmin(){
   pintarEditorAdmin();
 }
 function pintarEditorAdmin(){
-  const p = PRODUCTS.find(x => x.id === adminEditId);
+  const p = productoPorId(adminEditId);
   const caja = document.getElementById('admin-editor');
   const split = document.getElementById('admin-split');
   if(!caja || !split) return;
@@ -10183,7 +10371,7 @@ function cambiarTabEditor(k){
 let adminCatFiltro = '';
 function filteredAdminProducts(){
   const q = adminSearchQuery.trim().toLowerCase();
-  return PRODUCTS.filter(p =>
+  return adminCatalogo().filter(p =>
     (!q || p.name.toLowerCase().includes(q)) &&
     (!adminCatFiltro || p.cat === adminCatFiltro) &&
     (adminPestana !== 'ofertas' || enOferta(p)));
@@ -10213,6 +10401,23 @@ function onAdminSearchInput(val){
    teléfono pasa a una tira de botones arriba). Productos y Ofertas comparten
    lista; Tienda y apariencia lleva los temas; Taller, sus precios. */
 let adminPestana = 'productos';
+/* ¿Qué tienda se edita? Las dos comparten panel y formulario; cambia solo
+   qué productos se listan y a cuál va el producto nuevo. */
+let adminTienda = 'chipao';
+function adminCatalogo(){ return adminTienda === 'tendencia' ? productosTendencia() : PRODUCTS; }
+function cambiarTiendaAdmin(t){
+  adminTienda = t;
+  adminPestana = 'productos';
+  adminEditId = null;
+  adminSearchQuery = '';
+  adminCatFiltro = '';
+  render();
+  window.scrollTo({top:0});
+}
+function selectorTiendaAdminHtml(){
+  const b = (k, t) => `<button type="button" class="admin-tienda-btn${adminTienda === k ? ' activa' : ''}" aria-pressed="${adminTienda === k}" onclick="cambiarTiendaAdmin('${k}')">${t}</button>`;
+  return `<div class="admin-tiendas" role="group" aria-label="Tienda que editas">${b('chipao', 'Chipao Music')}${b('tendencia', 'Chipao Tendencia')}</div>`;
+}
 function cambiarPestanaAdmin(p){
   adminPestana = p;
   adminEditId = null;
@@ -10226,15 +10431,17 @@ const SECCIONES_ADMIN = [
   ['taller', 'Taller'],
 ];
 function menuAdminHtml(){
-  return `<nav class="admin-menu" aria-label="Secciones del panel">${SECCIONES_ADMIN.map(([k, t]) =>
+  /* Tendencia no tiene ofertas, temas ni taller propios: solo productos. */
+  const secciones = adminTienda === 'tendencia' ? SECCIONES_ADMIN.slice(0, 1) : SECCIONES_ADMIN;
+  return `<nav class="admin-menu" aria-label="Secciones del panel">${secciones.map(([k, t]) =>
     `<button type="button" class="admin-menu-item${adminPestana === k ? ' activa' : ''}" onclick="cambiarPestanaAdmin('${k}')">${t}</button>`
   ).join('')}</nav>`;
 }
 /* El marco común de todas las secciones: cabecera, menú y contenido. */
 function adminMarcoHtml(titulo, cuerpo, conResumen){
-  const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
-  const ofertas = PRODUCTS.filter(enOferta).length;
-  const vendidas = PRODUCTS.filter(x => x.featured).length;
+  const sinStock = adminCatalogo().filter(x => (x.stock || 0) <= 0).length;
+  const ofertas = adminCatalogo().filter(enOferta).length;
+  const vendidas = adminCatalogo().filter(x => x.featured).length;
   return `
   <div class="app-shell admin">
     <header class="admin-head">
@@ -10243,10 +10450,11 @@ function adminMarcoHtml(titulo, cuerpo, conResumen){
           <span class="admin-eyebrow">Panel de la tienda</span>
           <h1>${titulo}</h1>
         </div>
+        ${selectorTiendaAdminHtml()}
         <button type="button" class="admin-salir" onclick="salirDelPanel()">Salir</button>
       </div>
       ${conResumen ? `<div class="admin-resumen">
-        <span class="admin-dato"><b>${PRODUCTS.length}</b> en catálogo</span>
+        <span class="admin-dato"><b>${adminCatalogo().length}</b> en catálogo</span>
         <span class="admin-dato${sinStock ? ' alerta' : ''}"><b>${sinStock}</b> sin stock</span>
         <span class="admin-dato"><b>${ofertas}</b> en oferta</span>
         <span class="admin-dato"><b>${vendidas}</b> más vendida</span>
@@ -10384,8 +10592,10 @@ function renderAdminPanel(){
     <p class="banner-nota">Es la barra roja con el contador y los tres mayores descuentos, arriba de la portada y del catálogo. Un clic y cambia para todos.</p>` : '';
   const nuevoHtml = enOfertas ? '' : `
     ${renderNewProductForm()}`;
-  return adminMarcoHtml(enOfertas ? 'Ofertas' : 'Tus productos', `
+  const enTendencia = adminTienda === 'tendencia';
+  return adminMarcoHtml(enOfertas ? 'Ofertas' : enTendencia ? 'Chipao Tendencia' : 'Tus productos', `
     <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
+    ${enTendencia ? '<p class="banner-nota">Estos productos solo salen en <a href="/tendencia" target="_blank" rel="noopener">chipaomusic.com/tendencia</a>, que no está enlazada desde la tienda. Usan el mismo carrito, envío por Shalom y pago con Yape. La categoría que elijas no se muestra en ningún lado.</p>' : ''}
     ${bannerHtml}
     <div class="admin-barra">
       <input type="text" id="admin-search" placeholder="Buscar producto por nombre..." value="${escapeHtml(adminSearchQuery)}" oninput="onAdminSearchInput(this.value)">
@@ -10398,7 +10608,7 @@ function renderAdminPanel(){
     ${nuevoHtml}
     <div class="admin-split${adminEditId ? ' editando' : ''}" id="admin-split">
       <div class="admin-list" id="admin-list">${renderAdminListHtml()}</div>
-      <aside class="admin-editor-caja" id="admin-editor">${(() => { const p = PRODUCTS.find(x => x.id === adminEditId); return p ? adminEditorHtml(p) : ''; })()}</aside>
+      <aside class="admin-editor-caja" id="admin-editor">${(() => { const p = productoPorId(adminEditId); return p ? adminEditorHtml(p) : ''; })()}</aside>
     </div>`, true);
 }
 
@@ -10430,7 +10640,7 @@ async function guardarProducto(p, cambios){
    interruptor del banner: no tiene sentido pedir "Guardar cambios" para algo
    que es un sí o un no. */
 async function toggleMasVendida(id, btn){
-  const p = PRODUCTS.find(x => x.id === id);
+  const p = productoPorId(id);
   if(!p) return;
   const puesta = !p.featured;
   btn.disabled = true;
@@ -10455,11 +10665,11 @@ async function toggleMasVendida(id, btn){
 function pintarResumenAdmin(){
   const caja = document.querySelector('.admin-resumen');
   if(!caja) return;
-  const sinStock = PRODUCTS.filter(x => (x.stock || 0) <= 0).length;
-  const ofertas = PRODUCTS.filter(enOferta).length;
-  const vendidas = PRODUCTS.filter(x => x.featured).length;
+  const sinStock = adminCatalogo().filter(x => (x.stock || 0) <= 0).length;
+  const ofertas = adminCatalogo().filter(enOferta).length;
+  const vendidas = adminCatalogo().filter(x => x.featured).length;
   caja.innerHTML = `
-    <span class="admin-dato"><b>${PRODUCTS.length}</b> en catálogo</span>
+    <span class="admin-dato"><b>${adminCatalogo().length}</b> en catálogo</span>
     <span class="admin-dato${sinStock ? ' alerta' : ''}"><b>${sinStock}</b> sin stock</span>
     <span class="admin-dato"><b>${ofertas}</b> en oferta</span>
     <span class="admin-dato"><b>${vendidas}</b> más vendida</span>`;
@@ -10553,7 +10763,7 @@ function toggleDescEditor(id){
 }
 
 async function saveProduct(id, btnEl){
-  const p = PRODUCTS.find(x=>x.id===id);
+  const p = productoPorId(id);
   if(!p) return;
 
   const name = document.getElementById(`name-${id}`).value.trim();
@@ -10583,7 +10793,7 @@ async function saveProduct(id, btnEl){
     const res = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
-      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, extraCats, description, video: video||null, ...imagesToBody(imgs) })
+      body: JSON.stringify({ name, cat, sub, price, old, badge, stock, featured, extraCats, description, video: video||null, tienda: adminTienda, ...imagesToBody(imgs) })
     });
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
@@ -10651,7 +10861,7 @@ async function createProduct(btnEl){
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al crear');
 
-    PRODUCTS.push({ id: data.id, name, cat, sub, price, old, badge, stock, featured, extraCats, description, images: imgs.filter(Boolean), video: video||null });
+    separarTiendas([...TODOS, { id: data.id, name, cat, sub, price, old, badge, stock, featured, extraCats, description, images: imgs.filter(Boolean), video: video||null, tienda: adminTienda }]);
     PRICE_MAX = Math.max(...PRODUCTS.map(x=>x.price));
     if(state.priceMax < PRICE_MAX) state.priceMax = PRICE_MAX;
     if(state.view==='shop') render();
@@ -10665,7 +10875,7 @@ async function createProduct(btnEl){
 }
 
 async function deleteProduct(id, btnEl){
-  const p = PRODUCTS.find(x=>x.id===id);
+  const p = productoPorId(id);
   if(!p) return;
   if(!confirm(`¿Eliminar "${p.name}"? Esta acción no se puede deshacer.`)) return;
 
@@ -10681,7 +10891,7 @@ async function deleteProduct(id, btnEl){
     const data = await res.json();
     if(!res.ok || data.error) throw new Error(data.error || 'Error al eliminar');
 
-    PRODUCTS = PRODUCTS.filter(x=>x.id!==id);
+    separarTiendas(TODOS.filter(x=>x.id!==id));
     if(adminEditId === id) adminEditId = null;
     PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(x=>x.price)) : 3000;
     if(state.priceMax > PRICE_MAX) state.priceMax = PRICE_MAX;
@@ -10904,6 +11114,7 @@ function renderNavEscritorio(){
      se llama al cruzar el punto de quiebre, ver checkBreakpoint). */
   if(!esEscritorio()){ el.innerHTML = ''; return; }
   const enCarrito = ['carrito','checkout','pedido'].includes(state.view);
+  if(modoTendencia()){ el.innerHTML = navTendenciaHtml(enCarrito); return; }
   const fotos = fotosBarraCategorias(new Set());
   const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
   const maxDto = ofertas.length ? Math.max(...ofertas.map(pctDescuento)) : 0;
@@ -10959,6 +11170,41 @@ function renderNavEscritorio(){
       <a class="nav-ofertas${state.view==='shop' && state.offersOnly ? ' activo' : ''}" href="/ofertas"
          onclick="cerrarNavBuscar();cerrarMenuCategorias();goOffers();return false;">Ofertas${maxDto > 0 ? ` −${maxDto}%` : ''}</a>
     </nav>`;
+}
+
+/* Cabecera de escritorio de Chipao Tendencia: la misma fila de arriba
+   (marca, buscador, asesor y carrito), sin la barra de categorías. */
+function navTendenciaHtml(enCarrito){
+  return `
+    <div class="nav-esc-inner">
+      <a class="nav-esc-marca" href="/tendencia" onclick="goTendencia();return false;">
+        <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Tendencia" width="44" height="44"></logo-gorro>
+        <span>
+          <b>Chipao Tendencia</b>
+          <i>Productos en tendencia</i>
+        </span>
+      </a>
+
+      <div class="nav-buscar">
+        <div class="nav-buscar-caja">
+          ${iconSvg('search')}
+          <input id="tendBuscarInput" type="search" autocomplete="off" enterkeyhint="search"
+                 aria-label="Buscar en Chipao Tendencia"
+                 placeholder="Busca en Chipao Tendencia…"
+                 value="${escapeHtml(tendQuery)}"
+                 oninput="onTendBuscar(this.value, this)">
+        </div>
+      </div>
+
+      <a class="nav-esc-asesor" target="_blank" rel="noopener"
+         href="${waHref('Hola, quiero hablar con un asesor sobre Chipao Tendencia.')}"
+         onclick="trackAdsConversion('whatsapp')">
+        <span class="ico-wa">${iconWhatsapp}</span>Hablar con un asesor</a>
+
+      <a class="nav-esc-carrito${enCarrito?' activo':''}" id="navCarrito"
+         href="/carrito" onclick="goCart();return false;"
+         aria-label="Ver el carrito">${navCarritoHtml()}</a>
+    </div>`;
 }
 
 /* Al elegir algo del menú la barra se vuelve a pintar con el ratón todavía
@@ -11031,7 +11277,7 @@ async function refrescarOfertas(){
     const res = await fetch(`${PRODUCTS_API_URL}/products`);
     const data = await res.json();
     if(!data.error && Array.isArray(data.products) && data.products.length){
-      PRODUCTS = data.products;
+      separarTiendas(data.products);
       PRICE_MAX = Math.max(...PRODUCTS.map(p => p.price));
       if(state.priceMax > PRICE_MAX) state.priceMax = PRICE_MAX;
       render();
@@ -11125,6 +11371,7 @@ function renderBandaOferta(){
 function renderCabeceraMovil(){
   const el = document.getElementById('cabeceraMovil');
   if(!el) return;
+  if(!esEscritorio() && state.view === 'tendencia'){ el.innerHTML = cabeceraMovilTendenciaHtml(); return; }
   if(esEscritorio() || state.view !== 'home'){ el.innerHTML = ''; return; }
 
   const unidades = state.cart.reduce((n,c)=>n+c.qty, 0);
@@ -11152,6 +11399,35 @@ function renderCabeceraMovil(){
         ${iconSvg('search')}
         <span>Busca “cajón”, “ukelele”, “teclado”…</span>
       </a>
+    </div>
+  </div>`;
+}
+
+function cabeceraMovilTendenciaHtml(){
+  const unidades = state.cart.reduce((n,c)=>n+c.qty, 0);
+  return `
+  <div class="cab-movil">
+    <div class="cab-franja">Envío por Shalom a todo el Perú · Pago con Yape</div>
+    <div class="cab-fila">
+      <logo-gorro><img class="cab-logo" src="/img/logo-redondo.webp"
+           alt="Chipao Tendencia" width="34" height="34"></logo-gorro>
+      <div class="cab-texto">
+        <b>Chipao Tendencia</b>
+        <i>Productos en tendencia</i>
+      </div>
+      <a class="cab-wa" href="${waHref('Hola, tengo una consulta sobre Chipao Tendencia.')}" target="_blank" rel="noopener"
+         onclick="trackAdsConversion('whatsapp')" aria-label="Escríbenos por WhatsApp">${iconWhatsapp}</a>
+      <a class="cab-carrito" href="/carrito" onclick="goCart();return false;" aria-label="Ver el carrito">
+        ${iconSvg('cart')}${unidades > 0 ? `<span class="cab-badge">${unidades}</span>` : ''}
+      </a>
+    </div>
+    <div class="cab-buscar">
+      <label class="buscador-falso tend-buscar-movil">
+        ${iconSvg('search')}
+        <input id="tendBuscarMovil" type="search" autocomplete="off" enterkeyhint="search"
+               aria-label="Buscar en Chipao Tendencia" placeholder="Busca en Chipao Tendencia…"
+               value="${escapeHtml(tendQuery)}" oninput="onTendBuscar(this.value, this)">
+      </label>
     </div>
   </div>`;
 }
@@ -11204,6 +11480,7 @@ function render(){
     : state.view==='pedido'   ? renderPedido()
     : state.view==='politica' ? renderPolitica()
     : state.view==='taller'   ? renderTaller()
+    : state.view==='tendencia' ? renderTendencia()
     : state.view==='admin'      ? renderAdminPanel()
     : state.view==='adminLogin' ? renderAdminLoginPage()
     : renderShop();
@@ -11231,6 +11508,9 @@ function render(){
      WhatsApp no pintan nada mientras se edita el catálogo. */
   const enPanel = state.view==='admin' || state.view==='adminLogin';
   document.body.classList.toggle('en-panel', enPanel);
+  /* En Chipao Tendencia se esconde lo que lleva a la tienda de Chipao: las
+     categorías del pie y el taller, y la franja dice cómo se compra ahí. */
+  document.body.classList.toggle('modo-tendencia', modoTendencia());
   if(enPanel) document.getElementById('app').setAttribute('data-clarity-mask', 'true');
   else document.getElementById('app').removeAttribute('data-clarity-mask');
   document.body.classList.toggle('en-taller', state.view==='taller');

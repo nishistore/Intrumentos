@@ -134,7 +134,9 @@ export default {
           extraCats: r.extra_cats ? r.extra_cats.split(",").filter(Boolean) : [],
           description: r.description || null,
           images: IMAGE_FIELDS.map((f) => r[f]).filter(Boolean),
-          video: r.video || null
+          video: r.video || null,
+          // 'chipao' o 'tendencia' (la tienda oculta de /tendencia).
+          tienda: r.tienda || "chipao"
         }));
         return json({ products });
       } catch (err) {
@@ -153,7 +155,7 @@ export default {
         if (!name || !cat || !sub || !Number.isFinite(price)) {
           return json({ error: "Faltan campos obligatorios: name, cat, sub, price" }, 400);
         }
-        const columns = ["name", "cat", "sub", "price", "old", "badge", "stock", "featured", "extra_cats", "description", "video", ...IMAGE_FIELDS];
+        const columns = ["name", "cat", "sub", "price", "old", "badge", "stock", "featured", "extra_cats", "description", "video", "tienda", ...IMAGE_FIELDS];
         const values = [
           name,
           cat,
@@ -166,6 +168,7 @@ export default {
           extraCatsATexto(body.extraCats),
           body.description ?? null,
           body.video ?? null,
+          body.tienda === "tendencia" ? "tendencia" : "chipao",
           ...IMAGE_FIELDS.map((f) => body[f] ?? null)
         ];
         const placeholders = columns.map(() => "?").join(", ");

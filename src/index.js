@@ -154,6 +154,14 @@ function isOffer(p) {
 /* Pide el catálogo a la API. Se cachea en el borde 5 minutos para no
    golpear la API en cada visita. Si falla devolvemos lista vacía: la página
    se sirve igual, solo sin el contenido específico de esa ruta. */
+/* Los productos de la tienda oculta /tendencia viven en la misma tabla (para
+   que el carrito, Yape y Shalom funcionen igual), marcados con tienda =
+   'tendencia'. Fuera de esa página no existen: ni en el sitemap, ni en las
+   fichas, ni en las listas de schema.org. */
+function esDeChipao(p) {
+  return p.tienda !== 'tendencia';
+}
+
 async function fetchProducts() {
   try {
     const res = await fetch(PRODUCTS_API_URL + '/products', {
@@ -945,6 +953,12 @@ const RUTAS_DE_SESION = {
     title: 'Finalizar pedido | Chipao Music',
     description: 'Elige cómo recibes tu pedido y con qué medio de pago quieres cerrarlo.',
   },
+  /* Tienda aparte, solo por enlace directo: no sale en el menú ni en el
+     sitemap, y va con noindex como todas las de esta lista. */
+  '/tendencia': {
+    title: 'Chipao Tendencia | Chipao Music',
+    description: 'Productos en tendencia de Chipao Music, con envío por Shalom a todo el Perú y pago con Yape.',
+  },
 };
 
 /* Páginas de ayuda: texto fijo, con URL propia y sí indexables — al revés que
@@ -1596,7 +1610,7 @@ class HeadExtras {
        <img> reutilice la descarga en vez de pedirla otra vez. */
     if (this.portada && this.products && this.products.length) {
       const c = this.products
-        .filter(x => (x.stock || 0) > 0 && x.cat !== 'accesorios' && (x.images || []).length)
+        .filter(x => esDeChipao(x) && (x.stock || 0) > 0 && x.cat !== 'accesorios' && (x.images || []).length)
         .sort((a, b) => b.price - a.price);
       const enOferta = x => Boolean(x.old && x.old > x.price);
       const hero = c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0];
@@ -1690,7 +1704,7 @@ const sitio = {
     const url = new URL(request.url);
 
     if (url.pathname === '/sitemap.xml') {
-      const products = await fetchProducts();
+      const products = (await fetchProducts()).filter(esDeChipao);
       /* Sin catálogo preferimos que Google reintente más tarde antes que
          darle una lista incompleta que le haga olvidar productos. */
       if (!products.length) {
@@ -1754,12 +1768,15 @@ const sitio = {
     /* Las dos cosas que se incrustan en el HTML se piden a la vez -el
        catálogo a la API, el interruptor del banner a la base-: en fila una
        detrás de otra sumaban sus dos esperas al TTFB. */
-    const [products, bannerPromo, taller, tema] = await Promise.all([
+    const [todos, bannerPromo, taller, tema] = await Promise.all([
       fetchProducts(),
       bannerActivo(env, ctx),
       preciosTaller(env, ctx),
       temaActivo(env, ctx),
     ]);
+    /* `todos` solo se incrusta en el HTML (el cliente separa las dos tiendas);
+       para todo lo que ve Google, únicamente los de Chipao. */
+    const products = todos.filter(esDeChipao);
     const route = routeFor(url.pathname, products);
     if (route && route.ayuda === '/taller') {
       route.meta.schema = withContext({ '@graph': [
@@ -1784,7 +1801,7 @@ const sitio = {
       }
     }
     agregaListaDeProductos(route, products);
-    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, products, bannerPromo, taller, tema);
+    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, todos, bannerPromo, taller, tema);
 
     /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
        una categoría inventada o una ruta que no es ninguna pantalla (route en
