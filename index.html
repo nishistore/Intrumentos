@@ -5061,7 +5061,9 @@ function buildBottomNav(){
   const enCarrito = state.cart.reduce((s,c)=>s+c.qty,0);
   /* Enlaces de verdad, no botones: así se pueden abrir en otra pestaña y el
      rastreador ve a dónde llevan. El onclick evita la recarga. */
-  const items = modoTendencia() ? BOTTOM_NAV_TENDENCIA : BOTTOM_NAV;
+  const items = modoTendencia()
+    ? BOTTOM_NAV_TENDENCIA.filter(x => BUSCADOR_TENDENCIA || x.icon !== 'search')
+    : BOTTOM_NAV;
   el.innerHTML = items.map(item=>{
     const badge = (item.badge && enCarrito>0)
       ? `<span class="tab-badge">${enCarrito}</span>` : '';
@@ -5184,6 +5186,9 @@ function irCatalogoTienda(){ if(modoTendencia()) inicioTendencia(); else goShop(
 /* El buscador de la cabecera, en modo Tendencia, filtra las tarjetas de esta
    página en vez de buscar en el catálogo de Chipao. */
 let tendQuery = '';
+/* Apagado mientras haya pocos productos (pedido del dueño, 18-11-2026). Para
+   volver a enseñarlo en la cabecera y en la barra de abajo: true. */
+const BUSCADOR_TENDENCIA = false;
 function normalizaBusqueda(t){
   return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
@@ -11305,7 +11310,7 @@ function navTendenciaHtml(enCarrito){
         </span>
       </a>
 
-      <div class="nav-buscar">
+      ${BUSCADOR_TENDENCIA ? `<div class="nav-buscar">
         <div class="nav-buscar-caja">
           ${iconSvg('search')}
           <input id="tendBuscarInput" type="search" autocomplete="off" enterkeyhint="search"
@@ -11314,7 +11319,7 @@ function navTendenciaHtml(enCarrito){
                  value="${escapeHtml(tendQuery)}"
                  oninput="onTendBuscar(this.value, this)">
         </div>
-      </div>
+      </div>` : '<div class="nav-buscar"></div>'}
 
       <a class="nav-esc-asesor" target="_blank" rel="noopener"
          href="${waHref(MENSAJE_WA_TENDENCIA)}"
@@ -11541,14 +11546,14 @@ function cabeceraMovilTendenciaHtml(){
         ${iconSvg('cart')}${unidades > 0 ? `<span class="cab-badge">${unidades}</span>` : ''}
       </a>
     </div>
-    <div class="cab-buscar">
+    ${BUSCADOR_TENDENCIA ? `<div class="cab-buscar">
       <label class="buscador-falso tend-buscar-movil">
         ${iconSvg('search')}
         <input id="tendBuscarMovil" type="search" autocomplete="off" enterkeyhint="search"
                aria-label="Buscar en Chipao Tendencia" placeholder="Busca en Chipao Tendencia…"
                value="${escapeHtml(tendQuery)}" oninput="onTendBuscar(this.value, this)">
       </label>
-    </div>
+    </div>` : ''}
   </div>`;
 }
 
