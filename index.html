@@ -4084,6 +4084,31 @@ body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{displ
 .tend-precio s{color:var(--muted);font-size:13px;font-weight:400;}
 .tend-agregar{width:100%;min-height:44px;border:0;border-radius:10px;background:var(--navy-bar);color:#fff;font:inherit;font-weight:700;cursor:pointer;}
 .tend-agregar:disabled{background:var(--navy-line);color:var(--muted);cursor:default;}
+.tend-foto{display:block;}
+.tend-nombre a{color:inherit;text-decoration:none;}
+.tend-video{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;}
+.tf-volver{display:inline-block;margin:0 0 14px;color:var(--ink);font-size:14px;text-decoration:none;}
+.tf-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;}
+@media (min-width:900px){.tf-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;align-items:start;}}
+.tf-principal{position:relative;padding-top:100%;background:var(--navy-mid);border-radius:var(--radius-md);overflow:hidden;}
+.tf-principal img,.tf-principal video,.tf-principal iframe,.tf-principal .tend-sinfoto{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+.tf-principal img{object-fit:contain;background:#fff;}
+.tf-principal video{background:#000;object-fit:contain;}
+.tf-thumbs{display:flex;gap:8px;margin-top:10px;overflow-x:auto;}
+.tf-thumb{flex:0 0 64px;height:64px;padding:0;border:2px solid transparent;border-radius:10px;overflow:hidden;background:var(--navy-mid);cursor:pointer;}
+.tf-thumb.sel{border-color:var(--navy-bar);}
+.tf-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.tf-thumb-video{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#111;color:#fff;font-size:18px;}
+.tf-thumb-video small{font-size:10px;margin-top:2px;}
+.tf-nombre{margin:0 0 8px;font-size:26px;line-height:1.2;color:var(--brown-heading);}
+.tf-precio{font-size:24px;color:var(--brown-heading);margin-bottom:6px;}
+.tf-precio s{font-size:16px;color:var(--muted);}
+.tf-ahorras{display:inline-block;font-size:13px;font-weight:700;color:var(--ok);margin-left:4px;}
+.tf-envio{margin:0 0 16px;color:var(--ink);font-size:14px;}
+.tf-wa{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;margin-top:10px;border:1px solid var(--navy-line);border-radius:10px;color:var(--cream);font-weight:700;text-decoration:none;}
+.tf-wa svg{width:18px;height:18px;}
+.tf-desc{margin-top:20px;color:var(--ink);line-height:1.6;}
+.tf-desc p{margin:0 0 10px;}
 .tend-vacio{text-align:center;color:var(--muted);padding:48px 0;}
 /* Selector de tienda en el panel */
 /* En Chipao Tendencia no hay categorías: los campos siguen en el formulario
@@ -4791,6 +4816,7 @@ function productSchema(p){
    de producto cerrado (según el estado actual: inicio, categoría u ofertas) */
 function currentViewPath(){
   if(state.view==='tendencia') return '/tendencia';
+  if(state.view==='tendenciaProducto'){ const p = productoPorId(tendFicha.id); return p ? hrefTendencia(p) : '/tendencia'; }
   if(state.view!=='shop') return '/';
   if(state.offersOnly) return '/ofertas';
   if(state.activeCat){
@@ -4900,6 +4926,8 @@ function routeFromPath(push){
   }
   if(path === '/ofertas'){ goOffers(push); return true; }
   if(path === '/tendencia'){ goTendencia(push); return true; }
+  const tendMatch = path.match(/^\/tendencia\/(\d+)/);
+  if(tendMatch){ goTendenciaProducto(Number(tendMatch[1]), push); return true; }
   if(path === '/tienda'){ goShop(null, null, push); return true; }
   if(path === '/'){ goHome(push); return true; }
   // URL desconocida (por ejemplo un producto que ya se eliminó): mostramos el
@@ -5112,12 +5140,13 @@ function goTendencia(push){
 function tarjetaTendenciaHtml(p){
   const foto = (p.images || [])[0];
   const agotado = (p.stock || 0) <= 0;
+  const ir = `href="${hrefTendencia(p)}" onclick="goTendenciaProducto(${p.id});return false;"`;
   return `<article class="tend-card">
-    <div class="tend-foto">${foto
+    <a class="tend-foto" ${ir} aria-label="Ver ${escapeHtml(p.name)}">${foto
       ? `<img src="${escapeHtml(fotoUrl(foto, ANCHO_TARJETA))}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
-      : '<span class="tend-sinfoto" aria-hidden="true"></span>'}</div>
+      : '<span class="tend-sinfoto" aria-hidden="true"></span>'}${p.video ? '<span class="tend-video" aria-hidden="true">▶ Video</span>' : ''}</a>
     <div class="tend-info">
-      <h2 class="tend-nombre">${escapeHtml(p.name)}</h2>
+      <h2 class="tend-nombre"><a ${ir}>${escapeHtml(p.name)}</a></h2>
       ${p.description ? `<p class="tend-desc">${escapeHtml(p.description)}</p>` : ''}
       <div class="tend-precio">
         <b>${fmt(p.price)}</b>${enOferta(p) ? ` <s>${fmt(p.old)}</s>` : ''}
@@ -5133,7 +5162,7 @@ function tarjetaTendenciaHtml(p){
 /* El mismo WhatsApp de Chipao, con un mensaje que dice de dónde viene. */
 const MENSAJE_WA_TENDENCIA = 'Quisiera ayuda con este producto en tendencia';
 function modoTendencia(){
-  return state.view === 'tendencia'
+  return state.view === 'tendencia' || state.view === 'tendenciaProducto'
     || (VISTAS_DE_COMPRA.includes(state.view) && (carritoTendencia() || ultimaTienda === 'tendencia'));
 }
 /* De qué tienda viene el visitante, para que el carrito, el pago y el pedido
@@ -5143,7 +5172,7 @@ const VISTAS_DE_COMPRA = ['carrito','checkout','pedido','politica'];
 let ultimaTienda = (() => { try{ return sessionStorage.getItem('chipao-ultima-tienda') || 'chipao'; }catch(e){ return 'chipao'; } })();
 function apuntarTienda(){
   let t = null;
-  if(state.view === 'tendencia') t = 'tendencia';
+  if(state.view === 'tendencia' || state.view === 'tendenciaProducto') t = 'tendencia';
   else if(!VISTAS_DE_COMPRA.includes(state.view) && state.view !== 'admin' && state.view !== 'adminLogin') t = 'chipao';
   if(!t || t === ultimaTienda) return;
   ultimaTienda = t;
@@ -5189,6 +5218,71 @@ function buscarEnTendencia(){
   const input = document.getElementById('tendBuscarMovil') || document.getElementById('tendBuscarInput');
   if(input) input.focus();
 }
+/* ---- Ficha de un producto de Tendencia: /tendencia/<id>-<nombre> ----
+   Es aparte de la ficha de Chipao (esa tiene reseñas, categorías, taller,
+   recomendados de Chipao y una URL que Google indexa). Esta vive bajo
+   /tendencia, que el Worker sirve con noindex. */
+function hrefTendencia(p){ return '/tendencia/' + p.id + '-' + slugify(p.name); }
+let tendFicha = { id: null, slide: 0 };
+function goTendenciaProducto(id, push){
+  const p = productoPorId(id);
+  if(!esTendencia(p)){ goTendencia(push); return; }
+  tendFicha = { id, slide: 0 };
+  state.view = 'tendenciaProducto';
+  navigateTo(hrefTendencia(p), push);
+  setPageMeta(p.name + ' | Chipao Tendencia',
+    (p.description || 'Producto en tendencia').slice(0, 150) + ' · Envío por Shalom a todo el Perú y pago con Yape.');
+  setBreadcrumbSchema(null);
+  render();
+  if(push !== false) window.scrollTo({top:0});
+}
+function tendSlide(i){
+  tendFicha.slide = i;
+  render();
+}
+function renderTendenciaProducto(){
+  const p = productoPorId(tendFicha.id);
+  if(!esTendencia(p)) return renderTendencia();
+  const slides = [...(p.images || []).map(url => ({type:'image', url})), ...(p.video ? [{type:'video', url:p.video}] : [])];
+  if(tendFicha.slide >= slides.length) tendFicha.slide = 0;
+  const activo = slides[tendFicha.slide];
+  let principal;
+  if(!activo) principal = '<span class="tend-sinfoto" aria-hidden="true"></span>';
+  else if(activo.type === 'image') principal = `<img src="${escapeHtml(fotoUrl(activo.url, ANCHO_GALERIA))}" alt="${escapeHtml(p.name)}" decoding="async">`;
+  else {
+    const embed = toEmbedUrl(activo.url);
+    principal = embed
+      ? `<iframe src="${escapeHtml(embed)}" title="${escapeHtml(p.name)}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
+      : `<video src="${escapeHtml(activo.url)}" controls playsinline autoplay muted></video>`;
+  }
+  const miniaturas = slides.length > 1 ? `<div class="tf-thumbs">${slides.map((s, i) => `
+      <button type="button" class="tf-thumb${i === tendFicha.slide ? ' sel' : ''}" onclick="tendSlide(${i})"
+        aria-label="${s.type === 'image' ? 'Ver foto ' + (i + 1) : 'Ver el video'}">
+        ${s.type === 'image'
+          ? `<img src="${escapeHtml(fotoUrl(s.url, ANCHO_MINIATURA))}" alt="" loading="lazy" decoding="async">`
+          : '<span class="tf-thumb-video">▶<small>Video</small></span>'}
+      </button>`).join('')}</div>` : '';
+  const agotado = (p.stock || 0) <= 0;
+  const parrafos = String(p.description || '').split(/\n+/).map(t => t.trim()).filter(Boolean);
+  return `<div class="app-shell tendencia tend-ficha">
+    <a class="tf-volver" href="/tendencia" onclick="goTendencia();return false;">‹ Volver a Chipao Tendencia</a>
+    <div class="tf-layout">
+      <div class="tf-galeria">
+        <div class="tf-principal${activo && activo.type === 'video' ? ' es-video' : ''}">${principal}</div>
+        ${miniaturas}
+      </div>
+      <div class="tf-info">
+        <h1 class="tf-nombre">${escapeHtml(p.name)}</h1>
+        <div class="tf-precio"><b>${fmt(p.price)}</b>${enOferta(p) ? ` <s>${fmt(p.old)}</s> <span class="tf-ahorras">Ahorras ${fmt(p.old - p.price)}</span>` : ''}</div>
+        <p class="tf-envio">${agotado ? 'Agotado por ahora' : 'En stock'} · Envío por Shalom a todo el Perú · Pago con Yape</p>
+        <button type="button" class="tend-agregar" ${agotado ? 'disabled' : ''} onclick="addToCart(${p.id}, this)">${agotado ? 'Agotado' : 'Agregar al carrito'}</button>
+        <a class="tf-wa" target="_blank" rel="noopener" href="${waHref(MENSAJE_WA_TENDENCIA + ': ' + p.name)}">${iconWhatsapp} Consultar por WhatsApp</a>
+        ${parrafos.length ? `<div class="tf-desc">${parrafos.map(t => `<p>${escapeHtml(t)}</p>`).join('')}</div>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
 function renderTendencia(){
   return `<div class="app-shell tendencia">
     <header class="tend-head">
@@ -11397,7 +11491,7 @@ function renderBandaOferta(){
 function renderCabeceraMovil(){
   const el = document.getElementById('cabeceraMovil');
   if(!el) return;
-  if(!esEscritorio() && state.view === 'tendencia'){ el.innerHTML = cabeceraMovilTendenciaHtml(); return; }
+  if(!esEscritorio() && (state.view === 'tendencia' || state.view === 'tendenciaProducto')){ el.innerHTML = cabeceraMovilTendenciaHtml(); return; }
   if(esEscritorio() || state.view !== 'home'){ el.innerHTML = ''; return; }
 
   const unidades = state.cart.reduce((n,c)=>n+c.qty, 0);
@@ -11508,6 +11602,7 @@ function render(){
     : state.view==='politica' ? renderPolitica()
     : state.view==='taller'   ? renderTaller()
     : state.view==='tendencia' ? renderTendencia()
+    : state.view==='tendenciaProducto' ? renderTendenciaProducto()
     : state.view==='admin'      ? renderAdminPanel()
     : state.view==='adminLogin' ? renderAdminLoginPage()
     : renderShop();

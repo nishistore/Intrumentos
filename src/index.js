@@ -1158,6 +1158,11 @@ function routeFor(pathname, products) {
   const ayuda = ayudaMeta(pathname);
   if (ayuda) return { meta: ayuda, ayuda: pathname };
 
+  /* Fichas de Chipao Tendencia: noindex, como la propia /tendencia. */
+  if (/^\/tendencia\/\d+(-[a-z0-9-]*)?$/.test(pathname)) {
+    return { meta: Object.assign({ path: pathname }, RUTAS_DE_SESION['/tendencia']), noIndex: true };
+  }
+
   const sesion = sesionMeta(pathname);
   if (sesion) return { meta: sesion, noIndex: true };
 
