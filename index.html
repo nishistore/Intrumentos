@@ -4148,7 +4148,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
 <div class="franja-util">
   <div class="franja-util-inner">
     <span class="solo-chipao"><b class="franja-gratis">Envío a todo el Perú</b> · Yape o tarjeta · Recojo en 1 hora</span>
-    <span class="solo-tendencia"><b class="franja-gratis">Envío gratis por Shalom a todo el Perú</b> · Pago con Yape</span>
+    <span class="solo-tendencia"><b class="franja-gratis">Envío gratis por Shalom desde S/ 100</b> · Pago con Yape</span>
     <div class="franja-derecha">
       <a class="franja-taller solo-chipao" href="/taller" onclick="goTaller();return false;">✦ Taller de reparación</a>
       <span class="solo-chipao">Av. Los Héroes 382, San Juan de Miraflores</span>
@@ -4210,7 +4210,7 @@ if(Date.now() >= Date.UTC(2026, 11, 25, 2, 0)) document.getElementById('franjaSo
         <logo-gorro><img src="/img/logo-redondo.webp" alt="Chipao Music" class="logo-mark"></logo-gorro>
       </div>
       <p class="solo-chipao">Instrumentos musicales para todos los niveles: estudiantes, colegios, artistas y orquestas. Cuerda, viento, percusión, teclados y audio en un solo lugar.</p>
-      <p class="solo-tendencia"><b>Chipao Tendencia</b><br>Productos en tendencia con envío gratis por Shalom a todo el Perú y pago con Yape.</p>
+      <p class="solo-tendencia"><b>Chipao Tendencia</b><br>Productos en tendencia con envío gratis por Shalom desde S/ 100 y pago con Yape.</p>
       <div class="footer-social">
         <a href="https://www.facebook.com/instrumentoschipao/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#e9ecf5"><path d="M13.5 21v-7.8h2.6l.4-3h-3v-1.9c0-.87.24-1.46 1.5-1.46h1.6V4.14C15.94 4.06 15.08 4 14.06 4c-2.13 0-3.6 1.3-3.6 3.68v2.05H7.9v3h2.56V21h3.04z"/></svg></a>
         <a href="https://www.instagram.com/instrumentos_chipao/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#e9ecf5" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1" fill="#e9ecf5" stroke="none"/></svg></a>
@@ -5138,7 +5138,7 @@ function goTendencia(push){
   state.view = 'tendencia';
   navigateTo('/tendencia', push);
   setPageMeta('Chipao Tendencia | Chipao Music',
-    'Productos en tendencia de Chipao Music, con envío gratis por Shalom a todo el Perú y pago con Yape.');
+    'Productos en tendencia de Chipao Music, con envío gratis por Shalom desde S/ 100 y pago con Yape.');
   setBreadcrumbSchema(null);
   render();
   if(push !== false) window.scrollTo({top:0,behavior:'smooth'});
@@ -5240,7 +5240,7 @@ function goTendenciaProducto(id, push){
   state.view = 'tendenciaProducto';
   navigateTo(hrefTendencia(p), push);
   setPageMeta(p.name + ' | Chipao Tendencia',
-    (p.description || 'Producto en tendencia').slice(0, 150) + ' · Envío gratis por Shalom a todo el Perú y pago con Yape.');
+    (p.description || 'Producto en tendencia').slice(0, 150) + ' · Envío gratis por Shalom desde S/ 100 y pago con Yape.');
   setBreadcrumbSchema(null);
   render();
   if(push !== false) window.scrollTo({top:0});
@@ -5283,7 +5283,7 @@ function renderTendenciaProducto(){
       <div class="tf-info">
         <h1 class="tf-nombre">${escapeHtml(p.name)}</h1>
         <div class="tf-precio"><b>${fmt(p.price)}</b>${enOferta(p) ? ` <s>${fmt(p.old)}</s> <span class="tf-ahorras">Ahorras ${fmt(p.old - p.price)}</span>` : ''}</div>
-        <p class="tf-envio">${agotado ? 'Agotado por ahora' : 'En stock'} · Envío gratis por Shalom a todo el Perú · Pago con Yape</p>
+        <p class="tf-envio">${agotado ? 'Agotado por ahora' : 'En stock'} · Envío gratis por Shalom desde S/ 100 · Pago con Yape</p>
         <button type="button" class="tend-agregar" ${agotado ? 'disabled' : ''} onclick="addToCart(${p.id}, this)">${agotado ? 'Agotado' : 'Agregar al carrito'}</button>
         <a class="tf-wa" target="_blank" rel="noopener" href="${waHref(MENSAJE_WA_TENDENCIA + ': ' + p.name)}">${iconWhatsapp} Consultar por WhatsApp</a>
         ${parrafos.length ? `<div class="tf-desc">${parrafos.map(t => `<p>${escapeHtml(t)}</p>`).join('')}</div>` : ''}
@@ -5296,7 +5296,7 @@ function renderTendencia(){
   return `<div class="app-shell tendencia">
     <header class="tend-head">
       <h1>Chipao Tendencia</h1>
-      <p>Envío gratis por Shalom a todo el Perú y pago con Yape.</p>
+      <p>Envío gratis por Shalom desde S/ 100 y pago con Yape.</p>
     </header>
     <div class="tend-grid" id="tendGrid">${tendGridHtml()}</div>
   </div>`;
@@ -8231,15 +8231,31 @@ function agenciaEnLima(a){
   const g = a ? String(a[0] || '') : '';
   return g.startsWith('Lima Metropolitana') || g.startsWith('Callao');
 }
-/* Envío gratis por Shalom a todo el Perú, solo cuando TODO el carrito es de
-   Chipao Tendencia. Un carrito mezclado paga el envío normal. Misma regla en
-   el servidor (envioGratisTendencia en src/pagos.js). */
+/* Envío gratis por Shalom a todo el Perú desde S/ 100 en productos, solo
+   cuando TODO el carrito es de Chipao Tendencia (18-11-2026). Por debajo, o
+   con el carrito mezclado, el envío normal: S/ 10 Lima y Callao, S/ 15
+   provincia. Misma regla en el servidor (src/pagos.js). */
+const ENVIO_GRATIS_TENDENCIA = 100;
 function carritoSoloTendencia(){
   return state.cart.length > 0 && state.cart.every(c => esTendencia(productoPorId(c.id)));
 }
+function envioGratisTendencia(subtotal){
+  return carritoSoloTendencia() && subtotal >= ENVIO_GRATIS_TENDENCIA;
+}
+/* La barra del carrito: cuánto falta para el envío gratis. */
+function envioGratisTendenciaHtml(subtotal){
+  if(!carritoSoloTendencia() || subtotal <= 0) return '';
+  const ok = subtotal >= ENVIO_GRATIS_TENDENCIA;
+  const pct = ok ? 100 : Math.max(4, Math.min(100, Math.round(subtotal * 100 / ENVIO_GRATIS_TENDENCIA)));
+  return `<div class="envio-prog${ok ? ' ok' : ''}" role="status">
+    <p>${ok ? '¡Tu envío por Shalom es gratis!' : `Agrega <b>${fmt(ENVIO_GRATIS_TENDENCIA - subtotal)}</b> más y tu envío es gratis.`}</p>
+    <div class="envio-barra"><i style="width:${pct}%"></i></div>
+    <small>Envío gratis por Shalom a todo el Perú en compras desde ${fmt(ENVIO_GRATIS_TENDENCIA)}.</small>
+  </div>`;
+}
 function shippingCost(subtotal, entrega){
   if(subtotal <= 0) return 0;
-  if(carritoSoloTendencia()) return 0;
+  if(envioGratisTendencia(subtotal)) return 0;
   const e = entrega || state.entrega;
   if(e === 'tienda') return 0;
   if(e === 'peru' && agenciaEnLima(state.agencia)) return SHIPPING_FEE_LIMA;
@@ -8249,7 +8265,7 @@ function shippingCost(subtotal, entrega){
 /* El adicional de la agencia Shalom se cobra solo en agencias de provincia. */
 function provinceSurcharge(subtotal, entrega){
   if(subtotal <= 0) return 0;
-  if(carritoSoloTendencia()) return 0;
+  if(envioGratisTendencia(subtotal)) return 0;
   return (entrega || state.entrega) === 'peru' && !agenciaEnLima(state.agencia) ? PROVINCE_SURCHARGE : 0;
 }
 
@@ -8317,9 +8333,9 @@ function agenciaShalomHtml(){
       <div class="agencia-buscador">
         <div class="agencia-tabs" role="tablist">
           <button type="button" role="tab" class="agencia-tab${enLima?' sel':''}" aria-selected="${enLima}" onclick="elegirSeccionAgencia('lima')">
-            Lima y Callao<small>${carritoSoloTendencia() ? 'Gratis' : fmt(SHIPPING_FEE_LIMA)}</small></button>
+            Lima y Callao<small>${envioGratisTendencia(cartSubtotal()) ? 'Gratis' : fmt(SHIPPING_FEE_LIMA)}</small></button>
           <button type="button" role="tab" class="agencia-tab${enLima?'':' sel'}" aria-selected="${!enLima}" onclick="elegirSeccionAgencia('provincia')">
-            Provincias<small>${carritoSoloTendencia() ? 'Gratis' : fmt(SHIPPING_FEE + PROVINCE_SURCHARGE)} · 1 a 3 días útiles</small></button>
+            Provincias<small>${envioGratisTendencia(cartSubtotal()) ? 'Gratis' : fmt(SHIPPING_FEE + PROVINCE_SURCHARGE)} · 1 a 3 días útiles</small></button>
         </div>
         <label class="campo">
           <span>Busca tu agencia Shalom</span>
@@ -8448,7 +8464,7 @@ function cabeceraPedido(titulo, alVolver){
 function costeEnvioTexto(subtotal, entrega){
   /* La agencia cuesta S/ 10 en Lima y Callao y S/ 15 en provincia: hasta que
      elija una, el radio dice desde cuánto. */
-  if(carritoSoloTendencia()) return 'Gratis';
+  if(envioGratisTendencia(subtotal)) return 'Gratis';
   if(entrega === 'peru' && subtotal > 0 && !state.agencia) return 'Desde ' + fmt(SHIPPING_FEE_LIMA);
   const c = shippingCost(subtotal, entrega) + provinceSurcharge(subtotal, entrega);
   return c > 0 ? fmt(c) : 'Gratis';
@@ -8509,7 +8525,7 @@ function filaRadio(sel, titulo, nota, coste, accion, logo, regalo, marca){
    y al elegirla sale el total exacto. */
 function totalesParaMostrar(){
   const t = computeOrderTotals();
-  if(state.entrega !== 'peru' || state.agencia || t.subtotal <= 0 || carritoSoloTendencia()) return { ...t, desde:'' };
+  if(state.entrega !== 'peru' || state.agencia || t.subtotal <= 0 || envioGratisTendencia(t.subtotal)) return { ...t, desde:'' };
   return { ...t, ship:SHIPPING_FEE_LIMA, provincia:0, total:t.subtotal + SHIPPING_FEE_LIMA, desde:'Desde ' };
 }
 function resumenTotalesHtml(etiquetaTotal){
@@ -8602,7 +8618,7 @@ function renderCarrito(){
   }).join('');
 
   const entregaHtml = `
-    ${sorteoCuponesHtml(subtotal)}
+    ${sorteoCuponesHtml(subtotal)}${envioGratisTendenciaHtml(subtotal)}
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
       ${filaRadio(state.entrega==='peru', 'Recojo en agencia Shalom', 'En Lima, Callao o provincia · lo recoges en la agencia',
@@ -10733,7 +10749,7 @@ function renderAdminPanel(){
   const enTendencia = adminTienda === 'tendencia';
   return adminMarcoHtml(enOfertas ? 'Ofertas' : enTendencia ? 'Chipao Tendencia' : 'Tus productos', `
     <div class="admin-warn">Base de datos en vivo: cada cambio que guardes aquí se aplica al instante para todos tus visitantes, sin recargar nada ni tocar código.</div>
-    ${enTendencia ? '<p class="banner-nota">Estos productos solo salen en <a href="/tendencia" target="_blank" rel="noopener">chipaomusic.com/tendencia</a>, que no está enlazada desde la tienda. Usan el mismo carrito, envío gratis por Shalom y pago con Yape.</p>' : ''}
+    ${enTendencia ? '<p class="banner-nota">Estos productos solo salen en <a href="/tendencia" target="_blank" rel="noopener">chipaomusic.com/tendencia</a>, que no está enlazada desde la tienda. Usan el mismo carrito, envío por Shalom (gratis desde S/ 100) y pago con Yape.</p>' : ''}
     ${bannerHtml}
     <div class="admin-barra">
       <input type="text" id="admin-search" placeholder="Buscar producto por nombre..." value="${escapeHtml(adminSearchQuery)}" oninput="onAdminSearchInput(this.value)">
@@ -11545,7 +11561,7 @@ function cabeceraMovilTendenciaHtml(){
   const unidades = state.cart.reduce((n,c)=>n+c.qty, 0);
   return `
   <div class="cab-movil">
-    <div class="cab-franja">Envío gratis por Shalom a todo el Perú · Pago con Yape</div>
+    <div class="cab-franja">Envío gratis por Shalom desde S/ 100 · Pago con Yape</div>
     <div class="cab-fila">
       <logo-gorro><img class="cab-logo" src="/img/logo-redondo.webp"
            alt="Chipao Tendencia" width="34" height="34"></logo-gorro>
