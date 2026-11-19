@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Color de la barra del navegador (Chrome de Android, Safari). Arranca en
+     el negro de la franja y pintarBarraNavegador() lo cambia al color de lo
+     que haya arriba del todo: verde con el sorteo, rojo en Halloween… -->
+<meta name="theme-color" content="#17140F">
 <title>Instrumentos Musicales en Lima | Chipao Music</title>
 <meta name="description" content="Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Guitarras, teclados, percusión, viento y accesorios. Envíos a todo el Perú y recojo en tienda.">
 <link rel="canonical" href="https://chipaomusic.com/">
@@ -11674,6 +11678,26 @@ function render(){
   /* Y tampoco el pie: la barra fija se le montaría encima. La ficha es una
      pantalla de decisión, termina en el CTA. */
   document.body.classList.toggle('en-ficha', conBarraFija);
+  pintarBarraNavegador();
+}
+
+/* La barra del navegador toma el color de la franja que esté arriba del
+   todo, sin listas de colores a mano: mira qué hay en el primer píxel de la
+   pantalla y sube hasta el primer elemento con fondo. Así sigue sola al
+   sorteo, a los temas (Navidad, Halloween) y a Tendencia. Solo con la página
+   arriba: si se repinta a media página, lo de arriba no es la franja. */
+function pintarBarraNavegador(){
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(!meta || window.scrollY > 4) return;
+  let el = document.elementFromPoint(window.innerWidth / 2, 1);
+  while(el){
+    const fondo = getComputedStyle(el).backgroundColor;
+    if(fondo && fondo !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(fondo)){
+      if(meta.getAttribute('content') !== fondo) meta.setAttribute('content', fondo);
+      return;
+    }
+    el = el.parentElement;
+  }
 }
 document.getElementById('app').classList.add('cargando');
 document.getElementById('app').innerHTML = `
