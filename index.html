@@ -4229,6 +4229,11 @@ body.ti-sin-scroll{overflow:hidden;}
 .ti-sello{position:absolute;top:-11px;left:14px;padding:2px 10px;border-radius:999px;background:#6a2bc2;color:#ffe14d;font-size:11px;font-weight:800;}
 .ti-seguir{display:block;width:100%;min-height:56px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff8a1f,#f05a00);color:#fff;font:inherit;font-size:18px;font-weight:900;cursor:pointer;}
 .ti-pie{margin:10px 0 0;font-size:12px;color:var(--muted);text-align:center;}
+/* "Coordinar pago por WhatsApp" en "Tu pedido" de Tendencia (opción B). */
+.btn-wa-coordinar{display:flex;align-items:center;justify-content:center;gap:10px;flex:1 1 100%;width:100%;min-height:48px;margin-top:10px;border:2px solid #25d366;border-radius:999px;background:#fff;color:#128c4a;font:inherit;font-size:15px;font-weight:800;cursor:pointer;}
+.btn-wa-coordinar svg{width:22px;height:22px;flex:0 0 22px;}
+.btn-wa-coordinar:hover{background:#effcf4;}
+.app-shell.con-barra.con-dos-botones{padding-bottom:calc(var(--app-cta-h) + 120px + env(safe-area-inset-bottom));}
 /* Botón de pagar en "Tu pedido" de Tendencia (opción A, 21-11-2026): morado,
    redondo y con el mismo latido que "¡Pide el tuyo hoy!" (tiLatido). */
 .btn-app.btn-tendencia{border-radius:999px;background:linear-gradient(180deg,#8b3ff0,#5b1fa6);color:#fff;font-weight:900;font-size:18px;box-shadow:0 6px 16px rgba(91,31,166,.40);animation:tiLatido 2.2s ease-in-out infinite;}
@@ -9265,6 +9270,7 @@ function renderCheckout(){
             ${resumenTotalesHtml('Total a pagar')}
             <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
             <button type="submit" class="btn-app ${ctaClase} ped-cta${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>
+            ${unaPagina ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
             <p class="ped-nota">${notaCierre}</p>
           </div>
         </aside>
@@ -9273,7 +9279,7 @@ function renderCheckout(){
   }
 
   return `
-  <div class="app-shell con-barra">
+  <div class="app-shell con-barra${unaPagina ? ' con-dos-botones' : ''}">
     ${unaPagina ? cabeceraPedido('Tu pedido', 'volverDelCarrito()') : cabeceraPedido('Pago y confirmación', 'goCart()')}
     ${lineasArriba}
 
@@ -9296,6 +9302,7 @@ function renderCheckout(){
       <div class="barra-fija con-aviso">
         <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
         <button type="submit" class="btn-app ${ctaClase}${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>
+        ${unaPagina ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
       </div>
     </form>
   </div>`;
@@ -9516,6 +9523,35 @@ function avisarDatosFaltantes(falta){
     primero.scrollIntoView({ behavior:'smooth', block:'center' });
     if(primero.focus && primero.tagName !== 'DIV') primero.focus({ preventScroll:true });
   }
+}
+
+/* Chipao Tendencia (21-11-2026): "Coordinar pago por WhatsApp" bajo el botón
+   de Yape. Solo pide nombre y teléfono (Yape pide todo). Abre el chat con el
+   pedido armado y NO cierra el pedido: el carrito sigue por si luego paga
+   con Yape. */
+function coordinarPorWhatsapp(){
+  const falta = datosFaltantes().filter(f => f.id === 'coNombre' || f.id === 'coTelefono');
+  if(falta.length){ avisarDatosFaltantes(falta); return; }
+  limpiarErroresDatos();
+  const datos = leerDatosDelFormulario();
+  const { total } = computeOrderTotals();
+  const lineas = state.cart.map(c => {
+    const p = productoPorId(c.id);
+    return p ? `• ${c.qty}x ${p.name}${c.color ? ` (${c.color})` : ''} — ${fmt(totalLinea(p, c.qty))}` : '';
+  }).filter(Boolean).join('\n');
+  const agencia = state.agencia ? `${state.agencia[1]} (${state.agencia[0]})` : 'por elegir';
+  const mensaje =
+`Hola, quiero coordinar el pago de mi pedido de Chipao Tendencia:
+
+${lineas}
+
+Envío por Shalom: Gratis
+Total: ${fmt(total)}
+
+Nombre: ${datos.nombre}
+Teléfono: ${datos.telefono}${datos.email ? `\nCorreo: ${datos.email}` : ''}
+Agencia Shalom: ${agencia}${datos.direccion ? `\nRecoge: ${datos.direccion}` : ''}`;
+  window.open(waHref(mensaje), '_blank', 'noopener');
 }
 
 async function submitOrder(e){
