@@ -957,7 +957,7 @@ const RUTAS_DE_SESION = {
      sitemap, y va con noindex como todas las de esta lista. */
   '/tendencia': {
     title: 'Chipao Tendencia | Chipao Music',
-    description: 'Productos en tendencia de Chipao Music, con envío gratis por Shalom desde S/ 100 y pago con Yape.',
+    description: 'Productos en tendencia de Chipao Music, con envío gratis por Shalom y pago con Yape.',
   },
 };
 

@@ -605,12 +605,13 @@ async function crearPedido(request, env) {
   }
 
   const subtotal = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
-  /* Chipao Tendencia: envío gratis por Shalom desde S/ 100 cuando TODO el
-     pedido es de esa tienda (un carrito mezclado, o por debajo de S/ 100,
+  /* Chipao Tendencia: envío gratis por Shalom SIEMPRE (desde el 21-11-2026;
+     antes desde S/ 100) cuando TODO el pedido es de esa tienda (un carrito
+     mezclado
      paga el envío normal). Misma regla que envioGratisTendencia() en
      index.html. */
   const soloTendencia = items.length > 0 && items.every(i => productos.get(i.id).tienda === 'tendencia');
-  const t = soloTendencia && subtotal >= 100
+  const t = soloTendencia
     ? { subtotal, envio: 0, provincia: 0, total: subtotal }
     : calcularTotales(subtotal, entrega, agencia);
 
