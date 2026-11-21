@@ -4229,6 +4229,12 @@ body.ti-sin-scroll{overflow:hidden;}
 .ti-sello{position:absolute;top:-11px;left:14px;padding:2px 10px;border-radius:999px;background:#6a2bc2;color:#ffe14d;font-size:11px;font-weight:800;}
 .ti-seguir{display:block;width:100%;min-height:56px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff8a1f,#f05a00);color:#fff;font:inherit;font-size:18px;font-weight:900;cursor:pointer;}
 .ti-pie{margin:10px 0 0;font-size:12px;color:var(--muted);text-align:center;}
+/* Botón de pagar en "Tu pedido" de Tendencia (opción A, 21-11-2026): morado,
+   redondo y con el mismo latido que "¡Pide el tuyo hoy!" (tiLatido). */
+.btn-app.btn-tendencia{border-radius:999px;background:linear-gradient(180deg,#8b3ff0,#5b1fa6);color:#fff;font-weight:900;font-size:18px;box-shadow:0 6px 16px rgba(91,31,166,.40);animation:tiLatido 2.2s ease-in-out infinite;}
+.btn-app.btn-tendencia:hover{background:linear-gradient(180deg,#7a2bd6,#4e168f);}
+.btn-app.btn-tendencia:disabled{animation:none;opacity:.7;}
+@media (prefers-reduced-motion:reduce){.btn-app.btn-tendencia{animation:none;}}
 /* Packs en "Tu pedido" de Tendencia (opción B, 21-11-2026). */
 .pk-lista{display:flex;flex-direction:column;gap:14px;margin:4px 0 18px;}
 .pk{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:16px 12px 12px;border:2px solid #e4d9f3;border-radius:16px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
@@ -9258,7 +9264,7 @@ function renderCheckout(){
             <div class="res-items">${items}</div>`}
             ${resumenTotalesHtml('Total a pagar')}
             <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
-            <button type="submit" class="btn-app ${ctaClase} ped-cta" id="btnConfirmar">${ctaTexto}</button>
+            <button type="submit" class="btn-app ${ctaClase} ped-cta${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>
             <p class="ped-nota">${notaCierre}</p>
           </div>
         </aside>
@@ -9289,7 +9295,7 @@ function renderCheckout(){
 
       <div class="barra-fija con-aviso">
         <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
-        <button type="submit" class="btn-app ${ctaClase}" id="btnConfirmar">${ctaTexto}</button>
+        <button type="submit" class="btn-app ${ctaClase}${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>
       </div>
     </form>
   </div>`;
