@@ -8433,6 +8433,9 @@ function addToCart(id, btnEl, color, sinIr){
   return true;
 }
 function changeQty(id, color, delta){
+  /* En la página única de Tendencia el formulario está debajo: que cambiar
+     la cantidad no borre lo que ya se escribió. */
+  if(document.getElementById('pedidoForm')) leerDatosDelFormulario();
   const item = state.cart.find(c=>mismaLinea(c, id, color));
   if(!item) return;
   const available = stockOf(id);
@@ -8940,6 +8943,7 @@ function resumenTotalesHtml(etiquetaTotal){
    en uno. Solo existe en escritorio: el handoff del teléfono cierra la línea
    con el stepper y aquí hay sitio para un enlace explícito. */
 function quitarLinea(id, color){
+  if(document.getElementById('pedidoForm')) leerDatosDelFormulario();
   state.cart = state.cart.filter(c => !mismaLinea(c, id, color));
   updateCartCount();
   render();
@@ -8973,39 +8977,11 @@ function renderCarrito(){
       : `<div class="app-shell">${cabeceraPedido('Tu carrito', 'volverDelCarrito()')}${vacio}</div>`;
   }
 
+  if(carritoSoloTendencia()) return renderCheckout();
+
   const { subtotal, total, desde } = totalesParaMostrar();
 
-  const lineas = state.cart.map(c=>{
-    const p = productoPorId(c.id);
-    if(!p) return '';
-    /* La miniatura tiene que ser la del color de ESTA línea: si no, dos
-       colores del mismo producto salen con la misma foto. */
-    const fotos = p.images || [];
-    const iColor = c.color ? fotos.findIndex(u => colorFromImageUrl(u) === c.color) : -1;
-    const foto = fotos[iColor >= 0 ? iColor : 0];
-    const meta = [c.color, (p.stock||0) > 0 ? 'Entrega inmediata' : 'Bajo pedido'].filter(Boolean).join(' · ');
-    const colorArg = c.color ? `'${String(c.color).replace(/'/g, "\\'")}'` : 'null';
-    return `
-    <div class="linea">
-      <span class="linea-thumb">
-        ${foto ? `<img src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
-      </span>
-      <span class="linea-texto">
-        <span class="linea-nombre">${escapeHtml(p.name)}</span>
-        <span class="linea-meta">${escapeHtml(meta)}</span>
-        ${esc ? `<span class="linea-unitario">${fmt(p.price)} c/u</span>` : ''}
-        <span class="linea-pie">
-          <span class="linea-total">${fmt(totalLinea(p, c.qty))}</span>
-          <span class="stepper">
-            <button type="button" onclick="changeQty(${p.id}, ${colorArg}, -1)" aria-label="Quitar uno">−</button>
-            <span class="stepper-n">${c.qty}</span>
-            <button type="button" onclick="changeQty(${p.id}, ${colorArg}, 1)" aria-label="Agregar uno">+</button>
-          </span>
-        </span>
-        ${esc ? `<button type="button" class="linea-quitar" onclick="quitarLinea(${p.id}, ${colorArg})">Quitar</button>` : ''}
-      </span>
-    </div>`;
-  }).join('');
+  const lineas = lineasCarritoHtml(esc);
 
   const entregaHtml = `
     ${sorteoCuponesHtml(subtotal)}
@@ -9062,10 +9038,51 @@ function renderCarrito(){
   </div>`;
 }
 
+/* Las líneas del carrito (foto, nombre, total y − / +). Las usa el carrito y,
+   en Chipao Tendencia, la página única de pedido (renderCheckout). */
+function lineasCarritoHtml(esc){
+  return state.cart.map(c=>{
+    const p = productoPorId(c.id);
+    if(!p) return '';
+    /* La miniatura tiene que ser la del color de ESTA línea: si no, dos
+       colores del mismo producto salen con la misma foto. */
+    const fotos = p.images || [];
+    const iColor = c.color ? fotos.findIndex(u => colorFromImageUrl(u) === c.color) : -1;
+    const foto = fotos[iColor >= 0 ? iColor : 0];
+    const meta = [c.color, (p.stock||0) > 0 ? 'Entrega inmediata' : 'Bajo pedido'].filter(Boolean).join(' · ');
+    const colorArg = c.color ? `'${String(c.color).replace(/'/g, "\\'")}'` : 'null';
+    return `
+    <div class="linea">
+      <span class="linea-thumb">
+        ${foto ? `<img src="${fotoUrl(foto, ANCHO_MINIATURA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">` : iconSvg(iconFor(p))}
+      </span>
+      <span class="linea-texto">
+        <span class="linea-nombre">${escapeHtml(p.name)}</span>
+        <span class="linea-meta">${escapeHtml(meta)}</span>
+        ${esc ? `<span class="linea-unitario">${fmt(p.price)} c/u</span>` : ''}
+        <span class="linea-pie">
+          <span class="linea-total">${fmt(totalLinea(p, c.qty))}</span>
+          <span class="stepper">
+            <button type="button" onclick="changeQty(${p.id}, ${colorArg}, -1)" aria-label="Quitar uno">−</button>
+            <span class="stepper-n">${c.qty}</span>
+            <button type="button" onclick="changeQty(${p.id}, ${colorArg}, 1)" aria-label="Agregar uno">+</button>
+          </span>
+        </span>
+        ${esc ? `<button type="button" class="linea-quitar" onclick="quitarLinea(${p.id}, ${colorArg})">Quitar</button>` : ''}
+      </span>
+    </div>`;
+  }).join('');
+}
+
 /* ------------------------------ /checkout ------------------------------ */
 function renderCheckout(){
   if(!state.cart.length) return renderCarrito();
   fijarOpcionesTendencia();
+  /* Chipao Tendencia (21-11-2026): carrito y pago en UNA sola página, con
+     las líneas arriba (− / +) y un único botón. Solo si TODO el carrito es
+     de Tendencia; un carrito mezclado sigue con carrito + pago aparte. */
+  const unaPagina = carritoSoloTendencia();
+  const lineasArriba = unaPagina ? `<div class="lineas">${lineasCarritoHtml(esEscritorio())}</div>` : '';
 
   const medio = medioPago(state.pago);
   const conAgencia = state.entrega==='peru' && !!state.agencia;
@@ -9134,9 +9151,10 @@ function renderCheckout(){
 
     return `
     <div class="app-shell ped-esc">
-      ${cabeceraPedidoEscritorio('Pago y confirmación','Pago')}
+      ${cabeceraPedidoEscritorio(unaPagina ? 'Tu pedido' : 'Pago y confirmación', unaPagina ? 'Tu pedido' : 'Pago')}
       <form id="pedidoForm" class="ped-layout" onsubmit="submitOrder(event)" oninput="limpiarErrorCampo(event)" novalidate>
         <div class="ped-izq">
+          ${unaPagina ? `<div class="ped-card">${lineasArriba}</div>` : ''}
           <div class="ped-card">
             <div class="bloque-titulo">Medio de pago</div>
             <div class="opciones rejilla">
@@ -9151,15 +9169,15 @@ function renderCheckout(){
             ${camposHtml}
             <div class="campo-resumen">
               ${escapeHtml(entregaResumen)}
-              <a href="/carrito" onclick="goCart();return false;">Cambiar</a>
+              ${unaPagina ? '' : '<a href="/carrito" onclick="goCart();return false;">Cambiar</a>'}
             </div>
           </div>
         </div>
 
         <aside class="ped-der">
           <div class="ped-panel">
-            <div class="bloque-titulo">Tu pedido</div>
-            <div class="res-items">${items}</div>
+            ${unaPagina ? '<div class="bloque-titulo">Resumen</div>' : `<div class="bloque-titulo">Tu pedido</div>
+            <div class="res-items">${items}</div>`}
             ${resumenTotalesHtml('Total a pagar')}
             <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
             <button type="submit" class="btn-app ${ctaClase} ped-cta" id="btnConfirmar">${ctaTexto}</button>
@@ -9172,7 +9190,8 @@ function renderCheckout(){
 
   return `
   <div class="app-shell con-barra">
-    ${cabeceraPedido('Pago y confirmación', 'goCart()')}
+    ${unaPagina ? cabeceraPedido('Tu pedido', 'volverDelCarrito()') : cabeceraPedido('Pago y confirmación', 'goCart()')}
+    ${lineasArriba}
 
     <div class="bloque-titulo">Medio de pago</div>
     <div class="opciones">
