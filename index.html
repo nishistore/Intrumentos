@@ -9191,11 +9191,17 @@ function renderCheckout(){
                placeholder="Ej. 987654321" pattern="[0-9]{9}" maxlength="9" required
                title="Nueve dígitos, como 987654321" value="${escapeHtml(state.datos.telefono)}">
       </label>
-      ${medio.key==='yape' ? `
+      ${medio.key==='yape' && !unaPagina ? `
       <label class="campo">
         <span>Correo (ahí te llega la confirmación)</span>
         <input id="coEmail" type="email" inputmode="email" autocomplete="email"
                placeholder="Ej. maria@gmail.com" maxlength="120" required value="${escapeHtml(state.datos.email||'')}">
+      </label>` : ''}
+      ${unaPagina ? `
+      <label class="campo">
+        <span>¿De qué color lo deseas?</span>
+        <input id="coColor" type="text" autocomplete="off" maxlength="60"
+               placeholder="Escribe el color que prefieres" value="${escapeHtml(state.datos.color||'')}">
       </label>` : ''}
       ${state.entrega==='peru' ? agenciaShalomHtml() : ''}
       <label class="campo">
@@ -9208,7 +9214,9 @@ function renderCheckout(){
   const notaCierre = medio.key === 'tarjeta'
     ? 'Al continuar te llevamos a Mercado Pago para pagar con tarjeta. Al volver te confirmamos el pedido.'
     : medio.key === 'yape'
-    ? 'Al continuar te mostramos el número de Yape. Tienes 30 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante y te llega la confirmación por correo.'
+    ? (unaPagina
+      ? 'Al continuar te mostramos el número de Yape. Tienes 30 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante.'
+      : 'Al continuar te mostramos el número de Yape. Tienes 30 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante y te llega la confirmación por correo.')
     : 'Al confirmar, tu pedido llega armado al WhatsApp de la tienda con productos, color y forma de entrega. Un asesor valida el stock y te da los datos para pagar.';
   const ctaTexto = medio.key === 'tarjeta' ? 'Pagar con Mercado Pago'
     : medio.key === 'yape' ? 'Continuar al pago con Yape' : 'Confirmar pedido por WhatsApp';
@@ -9447,6 +9455,7 @@ function leerDatosDelFormulario(){
     telefono: v('coTelefono').trim(),
     email: v('coEmail').trim(),
     direccion: v('coDireccion').trim(),
+    color: v('coColor').trim(),   // solo existe en "Tu pedido" de Tendencia
   };
   return state.datos;
 }
@@ -9549,7 +9558,7 @@ Envío por Shalom: Gratis
 Total: ${fmt(total)}
 
 Nombre: ${datos.nombre}
-Teléfono: ${datos.telefono}${datos.email ? `\nCorreo: ${datos.email}` : ''}
+Teléfono: ${datos.telefono}${datos.email ? `\nCorreo: ${datos.email}` : ''}${datos.color ? `\nColor: ${datos.color}` : ''}
 Agencia Shalom: ${agencia}${datos.direccion ? `\nRecoge: ${datos.direccion}` : ''}`;
   window.open(waHref(mensaje), '_blank', 'noopener');
 }
@@ -9563,6 +9572,9 @@ async function submitOrder(e){
   if(!datos.nombre || !datos.telefono || !datos.direccion) return;
   /* El pedido y el WhatsApp tienen que decir que viene un motorizado. */
   if(state.entrega === 'tienda' && state.motoPropio) datos = {...datos, direccion: 'Mando mi motorizado · ' + datos.direccion};
+  /* Tendencia: el color pedido viaja junto a "quién recoge", que ya sale en
+     el panel de pedidos y en los correos. */
+  if(datos.color && carritoSoloTendencia()) datos = {...datos, direccion: datos.direccion + ' · Color: ' + datos.color};
   if(state.entrega === 'peru' && !state.agencia){
     showToast('Elige la agencia Shalom donde recoges tu pedido');
     return;
@@ -9841,7 +9853,7 @@ function renderPedidoYape(){
     return `<div class="app-shell"><div class="pedido-ok">
       <span class="pedido-check">✓</span>
       <h1 class="pedido-titulo">¡Pago confirmado!</h1>
-      <p class="pedido-copy">Pedido <strong>#${id}</strong> por ${fmt(p.total)}. Te enviamos la confirmación por correo. Si no la ves, revisa la carpeta de spam.</p>
+      <p class="pedido-copy">Pedido <strong>#${id}</strong> por ${fmt(p.total)}. ${modoTendencia() ? 'Guarda tu código: si tienes dudas, escríbenos por WhatsApp con él.' : 'Te enviamos la confirmación por correo. Si no la ves, revisa la carpeta de spam.'}</p>
       <button type="button" class="btn-app oscuro" onclick="terminarPedido()">Seguir comprando</button>
       ${enlaceAyuda}
     </div></div>`;
@@ -9850,7 +9862,7 @@ function renderPedidoYape(){
     return `<div class="app-shell"><div class="pedido-ok">
       <span class="pedido-check yape-espera">…</span>
       <h1 class="pedido-titulo">Estamos revisando tu pago</h1>
-      <p class="pedido-copy">Pedido <strong>#${id}</strong> por ${fmt(p.total)}. Recibimos tu captura y la confirmamos a mano. Esta pantalla se actualiza sola y también te escribimos por correo.</p>
+      <p class="pedido-copy">Pedido <strong>#${id}</strong> por ${fmt(p.total)}. Recibimos tu captura y la confirmamos a mano. Esta pantalla se actualiza sola${modoTendencia() ? '' : ' y también te escribimos por correo'}.</p>
       ${enlaceAyuda}
     </div></div>`;
   }
@@ -9907,7 +9919,7 @@ function renderPedidoYape(){
       <div class="yape-aviso" id="yapeAviso" role="alert" hidden></div>
       <p class="yape-sin-captura">¿Ya yapeaste? Sube la captura ahora, si no tu pedido se queda sin confirmar.</p>
 
-      <p class="yape-nota">Pagos desde S/ 200 los confirmamos a mano y te avisamos por correo. La captura debe ser de un pago hecho después de crear este pedido.</p>
+      <p class="yape-nota">Pagos desde S/ 200 los confirmamos a mano${modoTendencia() ? '' : ' y te avisamos por correo'}. La captura debe ser de un pago hecho después de crear este pedido.</p>
       ${enlaceAyuda}
     </div>
   </div>`;

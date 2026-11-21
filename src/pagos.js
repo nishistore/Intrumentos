@@ -344,6 +344,7 @@ export function textoDeHtml(html) {
 }
 
 export async function enviarCorreo(env, { para, asunto, html }) {
+  if (!para) return false;   // pedidos de Tendencia sin correo
   if (!env.RESEND_API_KEY) {
     console.log('[pagos] sin RESEND_API_KEY, no se envía:', asunto, '->', para);
     return false;
@@ -549,7 +550,9 @@ async function crearPedido(request, env) {
   const direccion = String(datos.direccion || '').trim();
   if (nombre.length < 2 || nombre.length > 80) return json({ error: 'Escribe tu nombre y apellido.' }, 400);
   if (!/^\d{9}$/.test(telefono)) return json({ error: 'El teléfono debe tener 9 dígitos.' }, 400);
-  if (email.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+  /* El correo puede venir vacío SOLO en pedidos de Chipao Tendencia (no lo
+     piden desde el 21-11-2026); eso se comprueba abajo, con los productos. */
+  if (email && (email.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))) {
     return json({ error: 'Escribe un correo válido: ahí te llega la confirmación.' }, 400);
   }
   if (direccion.length < 3 || direccion.length > 300) return json({ error: 'Falta la dirección o quién recoge.' }, 400);
@@ -611,6 +614,7 @@ async function crearPedido(request, env) {
      paga el envío normal). Misma regla que envioGratisTendencia() en
      index.html. */
   const soloTendencia = items.length > 0 && items.every(i => productos.get(i.id).tienda === 'tendencia');
+  if (!email && !soloTendencia) return json({ error: 'Escribe un correo válido: ahí te llega la confirmación.' }, 400);
   const t = soloTendencia
     ? { subtotal, envio: 0, provincia: 0, total: subtotal }
     : calcularTotales(subtotal, entrega, agencia);
