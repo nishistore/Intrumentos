@@ -362,7 +362,7 @@ function fila(p) {
     h += '<div class="detalle">';
     if (p.nota) h += '<p class="nota">' + esc(p.nota) + '</p>';
     h += '<ul>';
-    p.items.forEach(function (i) { h += '<li>' + esc(i.qty) + ' × ' + esc(i.name) + (i.color ? ' (' + esc(i.color) + ')' : '') + ' — ' + esc(soles(i.price * i.qty)) + '</li>'; });
+    p.items.forEach(function (i) { h += '<li>' + esc(i.qty) + ' × ' + esc(i.name) + (i.color ? ' (' + esc(i.color) + ')' : '') + ' — ' + esc(soles(i.total != null ? i.total : i.price * i.qty)) + '</li>'; });
     h += '</ul>';
     if (p.envio || p.provincia) h += '<p class="gris">Incluye envío ' + esc(soles(p.envio + p.provincia)) + '</p>';
     h += '<p><b>' + esc(p.entrega) + '</b><br>' + esc(p.direccion) + '</p>';

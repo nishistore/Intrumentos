@@ -365,9 +365,36 @@ export async function enviarCorreo(env, { para, asunto, html }) {
   }
 }
 
+/* Precio por pack de Chipao Tendencia. En la descripción del producto, una
+   línea "#pack 2 149" quiere decir "2 unidades por S/ 149". Para cualquier
+   cantidad se cobra la combinación más barata de packs y unidades sueltas
+   (4 = pack de 3 + 1 suelta). Sin packs, precio × cantidad. Es la MISMA
+   cuenta que totalLinea() en index.html: si cambias una, cambia la otra. */
+function packsDe(p) {
+  const packs = {};
+  if (!p || p.tienda !== 'tendencia') return packs;
+  for (const t of String(p.description || '').split(/\n+/)) {
+    const m = /^#pack\s+(\d+)\s+(\d+(?:\.\d+)?)$/i.exec(t.trim());
+    if (m && Number(m[1]) >= 2) packs[Number(m[1])] = Number(m[2]);
+  }
+  return packs;
+}
+export function totalLinea(p, qty) {
+  const packs = packsDe(p);
+  const tamanos = Object.keys(packs).map(Number);
+  if (!tamanos.length) return p.price * qty;
+  const mejor = [0];
+  for (let n = 1; n <= qty; n++) {
+    let m = mejor[n - 1] + p.price;
+    for (const k of tamanos) if (k <= n) m = Math.min(m, mejor[n - k] + packs[k]);
+    mejor[n] = m;
+  }
+  return Math.round(mejor[qty] * 100) / 100;
+}
+
 function lineasHtml(items) {
   return items.map(i =>
-    `<li>${i.qty} × ${escapeHtml(i.name)}${i.color ? ` (${escapeHtml(i.color)})` : ''} — ${soles(i.price * i.qty)}</li>`
+    `<li>${i.qty} × ${escapeHtml(i.name)}${i.color ? ` (${escapeHtml(i.color)})` : ''} — ${soles(i.total != null ? i.total : i.price * i.qty)}</li>`
   ).join('');
 }
 
@@ -558,7 +585,7 @@ async function crearPedido(request, env) {
   const ids = [...new Set(lineas.map(l => l.id))];
   const marcas = ids.map(() => '?').join(',');
   const { results } = await env.DB.prepare(
-    `SELECT id, name, price, stock, tienda FROM products WHERE id IN (${marcas})`
+    `SELECT id, name, price, stock, tienda, description FROM products WHERE id IN (${marcas})`
   ).bind(...ids).all();
   const productos = new Map(results.map(r => [r.id, r]));
   const pedidoPorProducto = new Map();
@@ -567,7 +594,7 @@ async function crearPedido(request, env) {
     const p = productos.get(l.id);
     if (!p) return json({ error: 'Un producto del carrito ya no está disponible.' }, 409);
     pedidoPorProducto.set(l.id, (pedidoPorProducto.get(l.id) || 0) + l.qty);
-    items.push({ id: l.id, name: p.name, price: p.price, qty: l.qty, color: l.color });
+    items.push({ id: l.id, name: p.name, price: p.price, qty: l.qty, color: l.color, total: totalLinea(p, l.qty) });
   }
   for (const [id, qty] of pedidoPorProducto) {
     const p = productos.get(id);
@@ -577,7 +604,7 @@ async function crearPedido(request, env) {
     }
   }
 
-  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const subtotal = Math.round(items.reduce((s, i) => s + i.total, 0) * 100) / 100;
   /* Chipao Tendencia: envío gratis por Shalom desde S/ 100 cuando TODO el
      pedido es de esa tienda (un carrito mezclado, o por debajo de S/ 100,
      paga el envío normal). Misma regla que envioGratisTendencia() en

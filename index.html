@@ -4069,6 +4069,10 @@ body.en-taller footer.site{margin-top:0;}
 .tend-head{text-align:center;margin:8px 0 24px;}
 .solo-tendencia{display:none;}
 body.modo-tendencia .solo-chipao{display:none !important;}
+/* Sin cabecera en las páginas de Tendencia (21-11-2026): que el contenedor
+   vacío no deje una franja blanca arriba. */
+body.modo-tendencia .nav-esc:empty{display:none;}
+body.modo-tendencia .franja-util{display:none;}
 body.modo-tendencia .solo-tendencia{display:inline;}
 body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{display:block;}
 .tend-buscar-movil input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:16px;color:var(--cream);outline:none;padding:0;}
@@ -4116,6 +4120,115 @@ body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{displ
 .tf-wa svg{width:18px;height:18px;}
 .tf-desc{margin-top:20px;color:var(--ink);line-height:1.6;}
 .tf-desc p{margin:0 0 10px;}
+/* ---- Ficha de Tendencia, estilo "landing de producto" (20-11-2026) ----
+   Tonos durazno solo dentro de .tend-ficha. Sin :has(), dvh ni color-mix
+   (Safari viejos de los clientes). */
+.tend-ficha{--tf-durazno:#fff1ec;--tf-acento:#e2553f;--tf-acento-osc:#b8402d;--tf-verde:#1f8a4c;--tf-linea:#f1d9d0;padding-bottom:40px;}
+.tf-principal .tf-sello{position:absolute;top:12px;left:12px;width:auto;height:auto;padding:6px 12px;border-radius:999px;background:var(--tf-acento);color:#fff;font-weight:800;font-size:15px;}
+.tf-aviso{display:inline-block;margin:0 0 12px;padding:6px 12px;border-radius:999px;background:var(--tf-durazno);color:var(--tf-acento-osc);font-size:12px;font-weight:700;letter-spacing:.02em;}
+.tf-nombre{font-size:30px;letter-spacing:-.01em;}
+.tf-bajada{margin:0 0 14px;color:var(--ink);font-size:16px;line-height:1.5;}
+.tf-datos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 18px;}
+.tf-datos div{padding:10px 6px;border:1px solid var(--tf-linea);border-radius:12px;background:#fff;text-align:center;}
+.tf-datos b{display:block;font-size:18px;color:var(--brown-heading);}
+.tf-datos span{display:block;font-size:12px;color:var(--muted);margin-top:2px;}
+.tf-etiqueta{margin:0 0 8px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brown-heading);}
+.tf-cants{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.tf-cant{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:2px solid var(--navy-line);border-radius:14px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
+.tf-cant.sel{border-color:var(--tf-acento);background:var(--tf-durazno);}
+.tf-cant-radio{flex:0 0 20px;height:20px;border:2px solid var(--navy-line);border-radius:50%;background:#fff;}
+.tf-cant.sel .tf-cant-radio{border:6px solid var(--tf-acento);}
+.tf-cant-txt{flex:1;min-width:0;}
+.tf-cant-txt b,.tf-cant-precio b{display:block;font-size:16px;color:var(--brown-heading);}
+.tf-cant-txt small,.tf-cant-precio small{display:block;font-size:12px;color:var(--muted);}
+.tf-cant-precio{text-align:right;}
+.tf-cant-precio small{color:var(--tf-verde);font-weight:700;}
+.tf-cant-pop{position:absolute;top:-10px;right:14px;padding:2px 10px;border-radius:999px;background:var(--tf-acento);color:#fff;font-size:11px;font-weight:800;}
+.tf-total{padding:14px;border-radius:14px;background:#faf7f4;margin-bottom:12px;}
+.tf-total-fila{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px;padding:3px 0;}
+.tf-total-fila b{font-size:20px;color:var(--brown-heading);}
+.tf-total-fila s{color:var(--muted);font-size:14px;}
+.tf-gratis{color:var(--tf-verde) !important;font-weight:800;}
+.tf-total-fila .tf-gratis{font-size:14px;}
+.tf-ahorro-hoy{margin:6px 0 0;color:var(--tf-verde);font-weight:700;font-size:14px;}
+.tf-falta{margin:6px 0 0;color:var(--muted);font-size:13px;}
+.tf-cta{min-height:56px;border-radius:14px;font-size:17px;background:var(--tf-acento);}
+.tf-cta:not(:disabled):hover{background:var(--tf-acento-osc);}
+.tf-garantias{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;margin:12px 0 4px;padding:0;list-style:none;font-size:13px;color:var(--ink);}
+.tf-garantias li{display:flex;align-items:center;gap:5px;}
+.tf-garantias svg,.tf-lista svg{width:16px;height:16px;flex:0 0 16px;color:var(--tf-verde);}
+.tf-anclas{display:flex;gap:8px;overflow-x:auto;margin:36px 0 8px;padding:10px 0;border-top:1px solid var(--navy-line);border-bottom:1px solid var(--navy-line);}
+.tf-anclas a{flex:0 0 auto;padding:8px 14px;border-radius:999px;background:var(--tf-durazno);color:var(--tf-acento-osc);font-size:14px;font-weight:700;text-decoration:none;}
+.tf-seccion{max-width:760px;margin:0 auto;padding:36px 0 8px;scroll-margin-top:80px;}
+.tf-kicker{margin:0 0 6px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--tf-acento);}
+.tf-seccion h2{margin:0 0 16px;font-size:26px;line-height:1.2;color:var(--brown-heading);}
+.tf-seccion > p{color:var(--ink);line-height:1.6;}
+.tf-lista{margin:12px 0 0;padding:0;list-style:none;}
+.tf-lista li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--navy-line);color:var(--ink);}
+.tf-lista svg{margin-top:3px;}
+.tf-pasos{display:grid;gap:12px;margin:0;padding:0;list-style:none;}
+@media (min-width:700px){.tf-pasos{grid-template-columns:repeat(3,minmax(0,1fr));}}
+.tf-pasos li{padding:18px;border-radius:16px;background:var(--tf-durazno);}
+.tf-pasos span{display:block;font-size:28px;font-weight:800;color:var(--tf-acento);margin-bottom:6px;}
+.tf-pasos b{display:block;font-size:17px;color:var(--brown-heading);}
+.tf-pasos p{margin:6px 0 0;font-size:14px;color:var(--ink);line-height:1.5;}
+.tf-tabla{border:1px solid var(--navy-line);border-radius:14px;overflow:hidden;}
+.tf-tabla-fila{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:8px;padding:12px 14px;border-top:1px solid var(--navy-line);font-size:14px;color:var(--ink);}
+.tf-tabla-fila span:not(:first-child){text-align:center;}
+.tf-tabla-cab{border-top:0;background:#faf7f4;font-weight:800;font-size:12px;color:var(--brown-heading);}
+.tf-nota{font-size:13px !important;color:var(--muted) !important;}
+.tf-faq details{border-bottom:1px solid var(--navy-line);}
+.tf-faq summary{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:52px;cursor:pointer;font-weight:700;color:var(--brown-heading);list-style:none;}
+.tf-faq summary::-webkit-details-marker{display:none;}
+.tf-faq summary::after{content:'+';font-size:22px;color:var(--tf-acento);}
+.tf-faq details[open] summary::after{content:'–';}
+.tf-faq details p{margin:0 0 14px;color:var(--ink);line-height:1.6;}
+.tf-cierre{margin:40px 0 0;padding:36px 20px;border-radius:20px;background:var(--navy-bar);color:#fff;text-align:center;}
+.tf-cierre h2{margin:0 0 8px;font-size:26px;color:#fff;}
+.tf-cierre p{margin:0 0 18px;opacity:.85;}
+.tf-cierre-btn{min-height:52px;padding:0 32px;border:0;border-radius:14px;background:var(--tf-acento);color:#fff;font:inherit;font-size:16px;font-weight:800;cursor:pointer;}
+.tf-cierre-btn:disabled{opacity:.5;cursor:default;}
+.tf-barra{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;align-items:center;gap:12px;padding:10px 16px max(10px, env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--navy-line);box-shadow:0 -6px 20px rgba(0,0,0,.08);transform:translateY(110%);transition:transform .25s ease;}
+.tf-barra.visible{transform:none;}
+@media (min-width:900px){.tf-barra{display:none;}}
+.tf-barra-precio b{display:block;font-size:18px;color:var(--brown-heading);}
+.tf-barra-precio s{font-size:13px;color:var(--muted);}
+.tf-barra .tend-agregar{flex:1;max-width:360px;margin-left:auto;min-height:48px;border-radius:12px;background:var(--tf-acento);}
+/* ---- Ficha "solo imágenes" de Tendencia (21-11-2026) ----
+   Morado y naranja, como las imágenes que se suben para estas fichas. */
+.app-shell.ti-pagina{max-width:none;padding:0 0 120px;}
+.app-shell.ti-pagina .ti-tira{max-width:600px;margin:0 auto;padding:0;background:#fff;}
+.ti-tira img{display:block;width:100%;height:auto;}
+.ti-barra{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 16px max(10px, env(safe-area-inset-bottom));background:#fff;border-top:1px solid #eadff7;box-shadow:0 -6px 20px rgba(60,20,110,.12);text-align:center;}
+.ti-barra p{margin:6px 0 0;font-size:12px;color:var(--muted);}
+.ti-cta{display:block;width:100%;max-width:520px;min-height:56px;margin:0 auto;border:0;border-radius:999px;background:linear-gradient(180deg,#ff8a1f,#f05a00);color:#fff;font:inherit;font-size:19px;font-weight:900;letter-spacing:.01em;cursor:pointer;box-shadow:0 6px 16px rgba(240,90,0,.35);animation:tiLatido 2.2s ease-in-out infinite;}
+.ti-cta:disabled{background:#c9c2d3;box-shadow:none;animation:none;cursor:default;}
+@keyframes tiLatido{0%,70%,100%{transform:scale(1);}80%{transform:scale(1.04);}90%{transform:scale(.99);}}
+@media (prefers-reduced-motion:reduce){.ti-cta{animation:none;}}
+body.ti-sin-scroll{overflow:hidden;}
+.ti-hoja{position:fixed;top:0;right:0;bottom:0;left:0;z-index:200;visibility:hidden;}
+.ti-hoja.abierta{visibility:visible;}
+.ti-fondo{position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(20,8,40,.55);opacity:0;transition:opacity .2s ease;}
+.ti-hoja.abierta .ti-fondo{opacity:1;}
+.ti-panel{position:absolute;left:0;right:0;bottom:0;max-width:520px;max-height:90vh;margin:0 auto;overflow-y:auto;padding:22px 16px max(16px, env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:#fff;transform:translateY(100%);transition:transform .25s ease;}
+.ti-hoja.abierta .ti-panel{transform:none;}
+.ti-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:50%;background:#f3eefa;color:#4a1a8c;font-size:24px;line-height:1;cursor:pointer;}
+.ti-kicker{margin:0 0 4px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f05a00;}
+.ti-panel h2{margin:0 48px 16px 0;font-size:20px;line-height:1.25;color:#3d1477;}
+.ti-packs{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.ti-pack{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:16px 14px;border:2px solid #e4d9f3;border-radius:16px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
+.ti-pack.sel{border-color:#6a2bc2;background:#f6f0ff;}
+.ti-radio{flex:0 0 22px;height:22px;border:2px solid #cbb9e6;border-radius:50%;background:#fff;}
+.ti-pack.sel .ti-radio{border:7px solid #6a2bc2;}
+.ti-pack-txt{flex:1;min-width:0;}
+.ti-pack-txt b{display:block;font-size:17px;color:#3d1477;}
+.ti-pack-txt small{display:block;margin-top:2px;font-size:12px;font-weight:700;color:#1f8a4c;}
+.ti-pack-precio{text-align:right;}
+.ti-pack-precio b{display:block;font-size:20px;color:#f05a00;}
+.ti-pack-precio s{font-size:13px;color:var(--muted);}
+.ti-sello{position:absolute;top:-11px;left:14px;padding:2px 10px;border-radius:999px;background:#6a2bc2;color:#ffe14d;font-size:11px;font-weight:800;}
+.ti-seguir{display:block;width:100%;min-height:56px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff8a1f,#f05a00);color:#fff;font:inherit;font-size:18px;font-weight:900;cursor:pointer;}
+.ti-pie{margin:10px 0 0;font-size:12px;color:var(--muted);text-align:center;}
 /* La barra de abajo de Tendencia lleva menos botones que la de Chipao (2 o 3
    en vez de 4): van juntos y centrados en vez de pegados a la izquierda. */
 body.modo-tendencia .bottom-nav{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,120px);justify-content:center;column-gap:40px;}
@@ -4508,6 +4621,40 @@ let TODOS = [];
 function esTendencia(p){ return p && p.tienda === 'tendencia'; }
 function productosTendencia(){ return TODOS.filter(esTendencia); }
 function productoPorId(id){ return TODOS.find(x => x.id === id); }
+/* Ajustes escondidos en la descripción de un producto de Tendencia: las
+   líneas que empiezan con "#" no se muestran nunca.
+     #solo-imagenes  -> la ficha es una tira de imágenes con un solo botón
+     #pack 2 149     -> 2 unidades por S/ 149 (se pueden poner varios)
+   El cobro lo hace src/pagos.js con la MISMA cuenta (totalLinea): si cambias
+   una, cambia la otra. */
+function lineasDescripcion(p){
+  return String((p && p.description) || '').split(/\n+/).map(t => t.trim()).filter(Boolean);
+}
+function descripcionVisible(p){ return lineasDescripcion(p).filter(t => t.charAt(0) !== '#').join('\n'); }
+function soloImagenes(p){ return esTendencia(p) && lineasDescripcion(p).some(t => /^#solo-imagenes$/i.test(t)); }
+function packsDe(p){
+  const packs = {};
+  if(!esTendencia(p)) return packs;
+  lineasDescripcion(p).forEach(t => {
+    const m = /^#pack\s+(\d+)\s+(\d+(?:\.\d+)?)$/i.exec(t);
+    if(m && Number(m[1]) >= 2) packs[Number(m[1])] = Number(m[2]);
+  });
+  return packs;
+}
+/* Total de una línea del carrito: la combinación más barata de packs y
+   unidades sueltas (4 = pack de 3 + 1). Sin packs, precio × cantidad. */
+function totalLinea(p, qty){
+  const packs = packsDe(p);
+  const tamanos = Object.keys(packs).map(Number);
+  if(!tamanos.length) return p.price * qty;
+  const mejor = [0];
+  for(let n = 1; n <= qty; n++){
+    let m = mejor[n - 1] + p.price;
+    tamanos.forEach(k => { if(k <= n) m = Math.min(m, mejor[n - k] + packs[k]); });
+    mejor[n] = m;
+  }
+  return Math.round(mejor[qty] * 100) / 100;
+}
 function separarTiendas(lista){
   TODOS = lista;
   PRODUCTS = lista.filter(p => !esTendencia(p));
@@ -5159,7 +5306,7 @@ function tarjetaTendenciaHtml(p){
       : '<span class="tend-sinfoto" aria-hidden="true"></span>'}${p.video ? '<span class="tend-video" aria-hidden="true">▶ Video</span>' : ''}</a>
     <div class="tend-info">
       <h2 class="tend-nombre"><a ${ir}>${escapeHtml(p.name)}</a></h2>
-      ${p.description ? `<p class="tend-desc">${escapeHtml(p.description)}</p>` : ''}
+      ${descripcionVisible(p) ? `<p class="tend-desc">${escapeHtml(descripcionVisible(p))}</p>` : ''}
       <div class="tend-precio">
         <b>${fmt(p.price)}</b>${enOferta(p) ? ` <s>${fmt(p.old)}</s>` : ''}
       </div>
@@ -5246,7 +5393,7 @@ function goTendenciaProducto(id, push){
   state.view = 'tendenciaProducto';
   navigateTo(hrefTendencia(p), push);
   setPageMeta(p.name + ' | Chipao Tendencia',
-    (p.description || 'Producto en tendencia').slice(0, 150) + ' · Envío gratis por Shalom desde S/ 100 y pago con Yape.');
+    (descripcionVisible(p) || 'Producto en tendencia').slice(0, 150) + ' · Envío gratis por Shalom desde S/ 100 y pago con Yape.');
   setBreadcrumbSchema(null);
   render();
   if(push !== false) window.scrollTo({top:0});
@@ -5258,6 +5405,7 @@ function tendSlide(i){
 function renderTendenciaProducto(){
   const p = productoPorId(tendFicha.id);
   if(!esTendencia(p)) return renderTendencia();
+  if(soloImagenes(p)) return renderTendenciaImagenes(p);
   const slides = [...(p.images || []).map(url => ({type:'image', url})), ...(p.video ? [{type:'video', url:p.video}] : [])];
   if(tendFicha.slide >= slides.length) tendFicha.slide = 0;
   const activo = slides[tendFicha.slide];
@@ -5278,24 +5426,242 @@ function renderTendenciaProducto(){
           : '<span class="tf-thumb-video">▶<small>Video</small></span>'}
       </button>`).join('')}</div>` : '';
   const agotado = (p.stock || 0) <= 0;
-  const parrafos = String(p.description || '').split(/\n+/).map(t => t.trim()).filter(Boolean);
+  const oferta = enOferta(p);
+  /* La descripción del panel se reparte: la primera línea es la bajada bajo
+     el nombre; las que empiezan con "-" o "•" salen como lista con check; el
+     resto, como párrafos en "Detalles". */
+  const lineas = lineasDescripcion(p).filter(t => t.charAt(0) !== '#');
+  const bajada = lineas[0] && lineas[0].toLowerCase() !== p.name.toLowerCase() ? lineas[0] : '';
+  const resto = lineas.slice(1);
+  const vinetas = resto.filter(t => /^[-•*]\s*/.test(t)).map(t => t.replace(/^[-•*]\s*/, ''));
+  const parrafos = resto.filter(t => !/^[-•*]\s*/.test(t));
+  /* Cantidades: 1, 2 y 3 (o menos si no hay stock). Cada tarjeta enseña el
+     total y lo que se ahorra frente al precio anterior. */
+  const maxCant = Math.max(1, Math.min(3, p.stock || 1));
+  if(!tendFicha.cant || tendFicha.cant > maxCant) tendFicha.cant = 1;
+  const cant = tendFicha.cant;
+  const total = totalLinea(p, cant);
+  const ahorro = oferta ? p.old * cant - total : 0;
+  const envioGratis = total >= ENVIO_GRATIS_TENDENCIA;
+  const tarjetasCant = Array.from({length: maxCant}, (_, i) => i + 1).map(n => {
+    const t = totalLinea(p, n);
+    const etiqueta = n === 1 ? '1 unidad' : n + ' unidades';
+    const extra = t >= ENVIO_GRATIS_TENDENCIA ? 'Envío gratis' : (oferta ? 'Ahorras ' + fmt(p.old * n - t) : '');
+    return `<button type="button" class="tf-cant${n === cant ? ' sel' : ''}" onclick="tendCant(${n})" aria-pressed="${n === cant}">
+        ${n === 2 && maxCant > 2 ? '<span class="tf-cant-pop">Más pedido</span>' : ''}
+        <span class="tf-cant-radio" aria-hidden="true"></span>
+        <span class="tf-cant-txt"><b>${etiqueta}</b><small>${fmt(p.price)} c/u</small></span>
+        <span class="tf-cant-precio"><b>${fmt(t)}</b>${extra ? `<small>${extra}</small>` : ''}</span>
+      </button>`;
+  }).join('');
+  const faltaEnvio = ENVIO_GRATIS_TENDENCIA - total;
+  const botonTxt = agotado ? 'Agotado' : 'Agregar al carrito' + (ahorro ? ' · Ahorras ' + fmt(ahorro) : '');
+  const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const preguntas = [
+    ['¿Cómo pago?', 'Con Yape. Al finalizar el pedido te mostramos el número y el monto exacto; subes la captura del pago y lo validamos.'],
+    ['¿A dónde me llega?', 'Enviamos por Shalom a la agencia que elijas, en Lima o en provincia. Recoges tu pedido en esa agencia con tu DNI.'],
+    ['¿Cuánto cuesta el envío?', `Es gratis si tu pedido de Chipao Tendencia llega a ${fmt(ENVIO_GRATIS_TENDENCIA)}. Si no, cuesta S/ 10 a Lima y Callao, y S/ 15 a provincia.`],
+    ['¿Puedo pedir más de 3?', 'Sí. Agrega el producto y sube la cantidad en el carrito, o escríbenos por WhatsApp y te ayudamos.'],
+    ['¿Tengo dudas sobre el producto?', 'Escríbenos por WhatsApp desde el botón de esta página y te respondemos con fotos o más detalles.'],
+  ];
   return `<div class="app-shell tendencia tend-ficha">
     <a class="tf-volver" href="/tendencia" onclick="goTendencia();return false;"><span aria-hidden="true">‹</span> Ver más productos</a>
     <div class="tf-layout">
       <div class="tf-galeria">
-        <div class="tf-principal${activo && activo.type === 'video' ? ' es-video' : ''}">${principal}</div>
+        <div class="tf-principal${activo && activo.type === 'video' ? ' es-video' : ''}">
+          ${principal}
+          ${oferta ? `<span class="tf-sello">-${Math.round((1 - p.price / p.old) * 100)}%</span>` : ''}
+        </div>
         ${miniaturas}
       </div>
       <div class="tf-info">
+        <p class="tf-aviso">${oferta ? 'Oferta por tiempo limitado' : 'Producto en tendencia'} · Envío gratis desde ${fmt(ENVIO_GRATIS_TENDENCIA)}</p>
         <h1 class="tf-nombre">${escapeHtml(p.name)}</h1>
-        <div class="tf-precio"><b>${fmt(p.price)}</b>${enOferta(p) ? ` <s>${fmt(p.old)}</s> <span class="tf-ahorras">Ahorras ${fmt(p.old - p.price)}</span>` : ''}</div>
-        <p class="tf-envio">${agotado ? 'Agotado por ahora' : 'En stock'} · Envío gratis por Shalom desde S/ 100 · Pago con Yape</p>
-        <button type="button" class="tend-agregar" ${agotado ? 'disabled' : ''} onclick="addToCart(${p.id}, this)">${agotado ? 'Agotado' : 'Agregar al carrito'}</button>
+        ${bajada ? `<p class="tf-bajada">${escapeHtml(bajada)}</p>` : ''}
+        <div class="tf-datos">
+          <div><b>${agotado ? '0' : (p.stock > 20 ? '20+' : p.stock)}</b><span>En stock</span></div>
+          <div><b>Yape</b><span>Pago</span></div>
+          <div><b>Shalom</b><span>Envío</span></div>
+        </div>
+        ${agotado ? '' : `<p class="tf-etiqueta">Elige la cantidad</p>
+        <div class="tf-cants">${tarjetasCant}</div>`}
+        <div class="tf-total">
+          <div class="tf-total-fila"><span>Total de hoy</span><span>${ahorro ? `<s>${fmt(p.old * cant)}</s> ` : ''}<b>${fmt(total)}</b></span></div>
+          <div class="tf-total-fila"><span>Envío por Shalom</span><span>${envioGratis ? '<b class="tf-gratis">GRATIS</b>' : 'S/ 10 Lima · S/ 15 provincia'}</span></div>
+          ${ahorro ? `<p class="tf-ahorro-hoy">Estás ahorrando ${fmt(ahorro)} hoy</p>` : ''}
+          ${!envioGratis && !agotado ? `<p class="tf-falta">Te faltan ${fmt(faltaEnvio)} para el envío gratis.</p>` : ''}
+        </div>
+        <button type="button" class="tend-agregar tf-cta" id="tfCta" ${agotado ? 'disabled' : ''} onclick="tendAgregar(${p.id}, this)">${botonTxt}</button>
+        <ul class="tf-garantias">
+          <li>${check} Pago con Yape</li>
+          <li>${check} Envío a todo el Perú</li>
+          <li>${check} Atención por WhatsApp</li>
+        </ul>
         <a class="tf-wa" target="_blank" rel="noopener" href="${waHref(MENSAJE_WA_TENDENCIA + ': ' + p.name)}">${iconWhatsapp} Consultar por WhatsApp</a>
-        ${parrafos.length ? `<div class="tf-desc">${parrafos.map(t => `<p>${escapeHtml(t)}</p>`).join('')}</div>` : ''}
       </div>
     </div>
+
+    <nav class="tf-anclas" aria-label="Secciones">
+      ${parrafos.length || vinetas.length ? '<a href="#tf-detalles">Detalles</a>' : ''}
+      <a href="#tf-como">Cómo comprar</a>
+      <a href="#tf-envio">Envío</a>
+      <a href="#tf-preguntas">Preguntas</a>
+    </nav>
+
+    ${parrafos.length || vinetas.length ? `<section class="tf-seccion" id="tf-detalles">
+      <p class="tf-kicker">Detalles</p>
+      <h2>Lo que tienes que saber</h2>
+      ${parrafos.map(t => `<p>${escapeHtml(t)}</p>`).join('')}
+      ${vinetas.length ? `<ul class="tf-lista">${vinetas.map(t => `<li>${check}<span>${escapeHtml(t)}</span></li>`).join('')}</ul>` : ''}
+    </section>` : ''}
+
+    <section class="tf-seccion" id="tf-como">
+      <p class="tf-kicker">Cómo comprar</p>
+      <h2>Tres pasos y listo</h2>
+      <ol class="tf-pasos">
+        <li><span>01</span><b>Agrégalo al carrito</b><p>Elige cuántas unidades quieres y agrega el producto.</p></li>
+        <li><span>02</span><b>Paga con Yape</b><p>Te mostramos el monto exacto y subes la captura del pago.</p></li>
+        <li><span>03</span><b>Recoge en Shalom</b><p>Lo enviamos a la agencia Shalom que elijas y lo recoges con tu DNI.</p></li>
+      </ol>
+    </section>
+
+    <section class="tf-seccion" id="tf-envio">
+      <p class="tf-kicker">Envío</p>
+      <h2>Cuánto cuesta que te llegue</h2>
+      <div class="tf-tabla">
+        <div class="tf-tabla-fila tf-tabla-cab"><span>Destino</span><span>Menos de ${fmt(ENVIO_GRATIS_TENDENCIA)}</span><span>Desde ${fmt(ENVIO_GRATIS_TENDENCIA)}</span></div>
+        <div class="tf-tabla-fila"><span>Lima y Callao</span><span>S/ 10</span><span class="tf-gratis">Gratis</span></div>
+        <div class="tf-tabla-fila"><span>Provincia</span><span>S/ 15</span><span class="tf-gratis">Gratis</span></div>
+      </div>
+      <p class="tf-nota">El envío gratis vale cuando todo el carrito es de Chipao Tendencia.</p>
+    </section>
+
+    <section class="tf-seccion" id="tf-preguntas">
+      <p class="tf-kicker">Preguntas</p>
+      <h2>Lo que más nos preguntan</h2>
+      <div class="tf-faq">${preguntas.map(([q, r], i) => `<details${i === 0 ? ' open' : ''}><summary>${q}</summary><p>${r}</p></details>`).join('')}</div>
+    </section>
+
+    <section class="tf-cierre">
+      <h2>${escapeHtml(p.name)}</h2>
+      <p>${oferta ? `Hoy a ${fmt(p.price)} en vez de ${fmt(p.old)}.` : `A ${fmt(p.price)}.`} Envío gratis por Shalom desde ${fmt(ENVIO_GRATIS_TENDENCIA)}.</p>
+      <button type="button" class="tf-cierre-btn" ${agotado ? 'disabled' : ''} onclick="tendAgregar(${p.id}, this)">${agotado ? 'Agotado' : 'Agregar al carrito'}</button>
+    </section>
+
+    ${agotado ? '' : `<div class="tf-barra" id="tfBarra">
+      <div class="tf-barra-precio"><b>${fmt(total)}</b>${ahorro ? `<s>${fmt(p.old * cant)}</s>` : ''}</div>
+      <button type="button" class="tend-agregar" onclick="tendAgregar(${p.id}, this)">Agregar al carrito</button>
+    </div>`}
   </div>`;
+}
+/* Ficha "solo imágenes" (#solo-imagenes en la descripción, 21-11-2026): las
+   fotos del producto una debajo de otra, a todo el ancho, y un único botón
+   fijo abajo. El botón abre una hoja con los packs (#pack) y de ahí va al
+   carrito; si el producto no tiene packs, va directo al carrito. */
+function packsFicha(p){
+  const maxCant = Math.max(1, Math.min(p.stock || 1, 20));
+  return [1].concat(Object.keys(packsDe(p)).map(Number).sort((a, b) => a - b)).filter(n => n <= maxCant);
+}
+function renderTendenciaImagenes(p){
+  const fotos = p.images || [];
+  const agotado = (p.stock || 0) <= 0;
+  const cants = packsFicha(p);
+  if(cants.indexOf(tendFicha.cant) < 0) tendFicha.cant = cants[1] || 1;
+  const sello = n => cants.length < 3 ? '' : n === cants[1] ? 'Más vendido' : n === cants[cants.length - 1] ? 'Mayor ahorro' : '';
+  const tarjetas = cants.map(n => {
+    const t = totalLinea(p, n);
+    const antes = Math.max(p.old || 0, p.price) * n;
+    const s = sello(n);
+    const nota = [antes > t ? 'Ahorras ' + fmt(antes - t) : '', t >= ENVIO_GRATIS_TENDENCIA ? 'Envío gratis' : ''].filter(Boolean).join(' · ');
+    return `<button type="button" class="ti-pack${n === tendFicha.cant ? ' sel' : ''}" data-n="${n}" data-total="${fmt(t)}"
+        aria-pressed="${n === tendFicha.cant}" onclick="tiPack(${n})">
+        ${s ? `<span class="ti-sello">${s}</span>` : ''}
+        <span class="ti-radio" aria-hidden="true"></span>
+        <span class="ti-pack-txt"><b>${n === 1 ? '1 unidad' : n + ' unidades'}</b>${nota ? `<small>${nota}</small>` : ''}</span>
+        <span class="ti-pack-precio"><b>${fmt(t)}</b>${antes > t ? `<s>${fmt(antes)}</s>` : ''}</span>
+      </button>`;
+  }).join('');
+  return `<div class="app-shell tendencia ti-pagina">
+    <h1 class="oculto-visual">${escapeHtml(p.name)}</h1>
+    <div class="ti-tira">
+      ${fotos.length ? fotos.map((u, i) => `<img src="${escapeHtml(fotoUrl(u, ANCHO_GALERIA))}" alt="${escapeHtml(p.name)} · imagen ${i + 1}"
+        ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`).join('')
+        : '<span class="tend-sinfoto" aria-hidden="true"></span>'}
+    </div>
+    <div class="ti-barra">
+      <button type="button" class="ti-cta" ${agotado ? 'disabled' : ''} onclick="tiAbrir(${p.id})">${agotado ? 'Agotado' : '¡Pide el tuyo hoy!'}</button>
+      <p>Pago con Yape · Envío por Shalom a todo el Perú</p>
+    </div>
+    ${agotado || cants.length < 2 ? '' : `<div class="ti-hoja" id="tiHoja" aria-hidden="true">
+      <div class="ti-fondo" onclick="tiCerrar()"></div>
+      <div class="ti-panel" role="dialog" aria-modal="true" aria-labelledby="tiTitulo">
+        <button type="button" class="ti-x" onclick="tiCerrar()" aria-label="Cerrar">×</button>
+        <p class="ti-kicker">Elige tu oferta</p>
+        <h2 id="tiTitulo">${escapeHtml(p.name)}</h2>
+        <div class="ti-packs">${tarjetas}</div>
+        <button type="button" class="ti-seguir" id="tiSeguir" onclick="tiComprar(${p.id})">Continuar · ${fmt(totalLinea(p, tendFicha.cant))}</button>
+        <p class="ti-pie">Pagas con Yape al finalizar · Recoges en la agencia Shalom que elijas</p>
+      </div>
+    </div>`}
+  </div>`;
+}
+function tiAbrir(id){
+  const hoja = document.getElementById('tiHoja');
+  if(!hoja){ tendFicha.cant = 1; tiComprar(id); return; }
+  hoja.classList.add('abierta');
+  hoja.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('ti-sin-scroll');
+  const sel = hoja.querySelector('.ti-pack.sel');
+  if(sel) sel.focus();
+}
+function tiCerrar(){
+  const hoja = document.getElementById('tiHoja');
+  document.body.classList.remove('ti-sin-scroll');
+  if(!hoja) return;
+  hoja.classList.remove('abierta');
+  hoja.setAttribute('aria-hidden', 'true');
+}
+/* Cambiar de pack no vuelve a pintar la página: solo marca la tarjeta y
+   cambia el total del botón. */
+function tiPack(n){
+  tendFicha.cant = n;
+  document.querySelectorAll('.ti-pack').forEach(b => {
+    const si = Number(b.dataset.n) === n;
+    b.classList.toggle('sel', si);
+    b.setAttribute('aria-pressed', String(si));
+    if(si){ const s = document.getElementById('tiSeguir'); if(s) s.textContent = 'Continuar · ' + b.dataset.total; }
+  });
+}
+function tiComprar(id){
+  const n = tendFicha.cant || 1;
+  let ok = false;
+  for(let i = 0; i < n; i++){ if(addToCart(id, null, null, true)) ok = true; else break; }
+  tiCerrar();
+  if(ok) goCart();
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') tiCerrar(); });
+function tendCant(n){
+  tendFicha.cant = n;
+  const y = window.scrollY;
+  render();
+  window.scrollTo(0, y);
+}
+/* Agrega la cantidad elegida de una vez y va al carrito. addToCart ya frena
+   si se pasa del stock. */
+function tendAgregar(id, btn){
+  const n = tendFicha.cant || 1;
+  let ok = false;
+  for(let i = 0; i < n; i++){ if(addToCart(id, btn, null, true)) ok = true; else break; }
+  if(ok) goCart();
+}
+/* La barra fija de abajo solo aparece cuando el botón principal ya no se ve. */
+function vigilarBarraTendencia(){
+  const cta = document.getElementById('tfCta');
+  const barra = document.getElementById('tfBarra');
+  if(!cta || !barra || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(([e]) => {
+    barra.classList.toggle('visible', !e.isIntersecting && e.boundingClientRect.top < 0);
+  }).observe(cta);
 }
 
 function renderTendencia(){
@@ -8217,7 +8583,7 @@ function fijarOpcionesTendencia(){
 function cartSubtotal(){
   return state.cart.reduce((s,c)=>{
     const p = productoPorId(c.id);
-    return p ? s + p.price*c.qty : s;
+    return p ? s + totalLinea(p, c.qty) : s;
   },0);
 }
 
@@ -8249,6 +8615,8 @@ function envioGratisTendencia(subtotal){
   return carritoSoloTendencia() && subtotal >= ENVIO_GRATIS_TENDENCIA;
 }
 /* La barra del carrito: cuánto falta para el envío gratis. */
+/* Sin usar desde el 21-11-2026: el dueño pidió quitar la barra del carrito
+   de Tendencia (el envío gratis se sigue aplicando igual). */
 function envioGratisTendenciaHtml(subtotal){
   if(!carritoSoloTendencia() || subtotal <= 0) return '';
   const ok = subtotal >= ENVIO_GRATIS_TENDENCIA;
@@ -8613,7 +8981,7 @@ function renderCarrito(){
         <span class="linea-meta">${escapeHtml(meta)}</span>
         ${esc ? `<span class="linea-unitario">${fmt(p.price)} c/u</span>` : ''}
         <span class="linea-pie">
-          <span class="linea-total">${fmt(p.price * c.qty)}</span>
+          <span class="linea-total">${fmt(totalLinea(p, c.qty))}</span>
           <span class="stepper">
             <button type="button" onclick="changeQty(${p.id}, ${colorArg}, -1)" aria-label="Quitar uno">−</button>
             <span class="stepper-n">${c.qty}</span>
@@ -8626,7 +8994,7 @@ function renderCarrito(){
   }).join('');
 
   const entregaHtml = `
-    ${sorteoCuponesHtml(subtotal)}${envioGratisTendenciaHtml(subtotal)}
+    ${sorteoCuponesHtml(subtotal)}
     <div class="bloque-titulo">¿Cómo lo recibes?</div>
     <div class="opciones">
       ${filaRadio(state.entrega==='peru', 'Recojo en agencia Shalom', 'En Lima, Callao o provincia · lo recoges en la agencia',
@@ -8649,7 +9017,7 @@ function renderCarrito(){
       <div class="ped-layout">
         <div class="ped-izq">
           <div class="lineas">${lineas}</div>
-          <a class="seguir-catalogo" href="${modoTendencia() ? '/tendencia' : '/tienda'}" onclick="irCatalogoTienda();return false;">+ Seguir viendo el catálogo</a>
+          <a class="seguir-catalogo solo-chipao" href="${modoTendencia() ? '/tendencia' : '/tienda'}" onclick="irCatalogoTienda();return false;">+ Seguir viendo el catálogo</a>
         </div>
         <aside class="ped-der">
           <div class="ped-panel">
@@ -8666,7 +9034,7 @@ function renderCarrito(){
   <div class="app-shell con-barra">
     ${cabeceraPedido('Tu carrito', 'irInicioTienda()')}
     <div class="lineas">${lineas}</div>
-    <a class="seguir-catalogo movil" href="${modoTendencia() ? '/tendencia' : '/tienda'}" onclick="irCatalogoTienda();return false;">+ Seguir viendo el catálogo</a>
+    <a class="seguir-catalogo movil solo-chipao" href="${modoTendencia() ? '/tendencia' : '/tienda'}" onclick="irCatalogoTienda();return false;">+ Seguir viendo el catálogo</a>
 
     ${entregaHtml}
 
@@ -8746,7 +9114,7 @@ function renderCheckout(){
           <span class="res-item-nombre">${escapeHtml(p.name)}${c.color ? ` · ${escapeHtml(c.color)}` : ''}</span>
           <span class="res-item-linea">${c.qty} × ${fmt(p.price)}</span>
         </span>
-        <span class="res-item-total">${fmt(p.price * c.qty)}</span>
+        <span class="res-item-total">${fmt(totalLinea(p, c.qty))}</span>
       </div>`;
     }).join('');
 
@@ -9065,7 +9433,7 @@ async function submitOrder(e){
   const lineas = state.cart.map(c=>{
     const p = productoPorId(c.id);
     if(!p) return '';
-    return `• ${c.qty}x ${p.name}${c.color ? ` (${c.color})` : ''} — ${fmt(p.price*c.qty)}`;
+    return `• ${c.qty}x ${p.name}${c.color ? ` (${c.color})` : ''} — ${fmt(totalLinea(p, c.qty))}`;
   }).filter(Boolean).join('\n');
 
   const numero = nuevoNumeroPedido();
@@ -11276,6 +11644,7 @@ function renderNavEscritorio(){
      se llama al cruzar el punto de quiebre, ver checkBreakpoint). */
   if(!esEscritorio()){ el.innerHTML = ''; return; }
   const enCarrito = ['carrito','checkout','pedido'].includes(state.view);
+  if(state.view === 'tendencia' || state.view === 'tendenciaProducto'){ el.innerHTML = ''; return; } // sin cabecera, ver renderCabeceraMovil
   if(modoTendencia()){ el.innerHTML = navTendenciaHtml(enCarrito); return; }
   const fotos = fotosBarraCategorias(new Set());
   const ofertas = PRODUCTS.filter(x => enOferta(x) && (x.stock||0) > 0);
@@ -11533,7 +11902,10 @@ function renderBandaOferta(){
 function renderCabeceraMovil(){
   const el = document.getElementById('cabeceraMovil');
   if(!el) return;
-  if(!esEscritorio() && (state.view === 'tendencia' || state.view === 'tendenciaProducto')){ el.innerHTML = cabeceraMovilTendenciaHtml(); return; }
+  /* 21-11-2026: el dueño pidió quitar la franja y la cabecera (logo, nombre,
+     WhatsApp y carrito) en las páginas de Chipao Tendencia. El carrito se
+     sigue alcanzando con la barra de abajo o con el botón de compra. */
+  if(state.view === 'tendencia' || state.view === 'tendenciaProducto'){ el.innerHTML = ''; return; }
   if(esEscritorio() || state.view !== 'home'){ el.innerHTML = ''; return; }
 
   const unidades = state.cart.reduce((n,c)=>n+c.qty, 0);
@@ -11655,6 +12027,7 @@ function render(){
   renderWaFlotante();
   prepararBarraCompra();
   montarVitrina();
+  vigilarBarraTendencia();
   /* El alto real de la barra fija de la ficha, para que los recomendados
      puedan dejarle sitio y no queden por debajo. */
   const barraFicha = document.querySelector('.ficha-barra');
@@ -11666,7 +12039,7 @@ function render(){
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
-  const conBarraFija = state.view==='producto' || state.view==='checkout' || state.view==='pedido'
+  const conBarraFija = state.view==='producto' || state.view==='tendenciaProducto' || state.view==='checkout' || state.view==='pedido'
     || (state.view==='carrito' && state.cart.length > 0);
   /* El panel no es la tienda: las pestañas de abajo, el pie y el botón de
      WhatsApp no pintan nada mientras se edita el catálogo. */
