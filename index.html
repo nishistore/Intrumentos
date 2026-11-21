@@ -8445,7 +8445,16 @@ function changeQty(id, color, delta){
   /* Bajar de uno elimina la línea, como pide el handoff. */
   if(item.qty <= 0) state.cart = state.cart.filter(c=>!mismaLinea(c, id, color));
   updateCartCount();
+  if(volverAFichaTendencia(id)) return;
   render();
+}
+/* Chipao Tendencia (21-11-2026): si al quitar un producto de Tendencia el
+   carrito queda vacío, se vuelve a la ficha de ese producto en vez de
+   enseñar "Aún no hay nada aquí". En Chipao Music no hace nada. */
+function volverAFichaTendencia(id){
+  if(state.cart.length || !esTendencia(productoPorId(id))) return false;
+  goTendenciaProducto(id);
+  return true;
 }
 /* El carrito vive en el navegador del cliente (localStorage), así que
    sobrevive a un F5, a cerrar la pestaña y a volver desde Mercado Pago o
@@ -8946,6 +8955,7 @@ function quitarLinea(id, color){
   if(document.getElementById('pedidoForm')) leerDatosDelFormulario();
   state.cart = state.cart.filter(c => !mismaLinea(c, id, color));
   updateCartCount();
+  if(volverAFichaTendencia(id)) return;
   render();
 }
 
