@@ -2740,6 +2740,20 @@ body[data-tema="halloween"] .sorteo-prog .envio-barra i{background:#B84A12;}
   font:600 12.5px/1 var(--app-sans);color:var(--app-ink);
 }
 .agencia-buscador{margin-top:3px;}
+/* 22-11-2026: "Buscar agencia" como botón rojo de Shalom (pedido del dueño,
+   con una imagen de referencia). La marca va en texto, sin imagen. */
+.agencia-invita .btn-shalom{
+  display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border:0;border-radius:12px;
+  background:linear-gradient(90deg,#c40d16 0%,#e8231f 55%,#ff6a1a 100%);color:#fff;
+  font:700 14.5px/1 var(--app-sans);box-shadow:0 6px 16px rgba(214,32,26,.32);
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+.agencia-invita .btn-shalom:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(214,32,26,.40);}
+.agencia-invita .btn-shalom:active{transform:translateY(0);}
+.agencia-invita .btn-shalom span,.agencia-invita .btn-shalom svg{flex:none;white-space:nowrap;}
+.btn-shalom .sh-marca{font:italic 900 16px/1 Arial,Helvetica,sans-serif;letter-spacing:.02em;transform:skewX(-6deg);}
+.btn-shalom .sh-sep{width:1.5px;height:22px;background:rgba(255,255,255,.75);border-radius:1px;}
+@media (max-width:520px){.agencia-invita .btn-shalom{flex:1 1 100%;justify-content:center;}}
 /* Dos pestañas: Lima y Callao (S/ 10) y Provincias (S/ 15). */
 .agencia-tabs{
   display:flex;gap:4px;margin:12px 0 10px;padding:4px;border-radius:12px;
@@ -8798,7 +8812,7 @@ function agenciaShalomHtml(){
   return `
     <div class="agencia-invita">
       <span><b>Elige tu agencia Shalom.</b> Ahí recoges tu pedido; busca la más cercana a ti.</span>
-      <button type="button" onclick="abrirBuscadorAgencia()">Buscar agencia</button>
+      <button type="button" class="btn-shalom" onclick="abrirBuscadorAgencia()"><span class="sh-marca">SHALOM</span><span class="sh-sep" aria-hidden="true"></span><span>Buscar agencia</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>`;
 }
 
