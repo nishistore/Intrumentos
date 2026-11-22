@@ -2526,6 +2526,18 @@ footer.site .footer-bottom{
 .opcion.marca-yape{--m1:#F1E6F5;--m2:#B98BC8;--m3:#3F1D4D;}
 .opcion.marca-tarjeta{--m1:#E3EEF8;--m2:#8FB6DA;--m3:#143A5C;}
 .opcion.marca-whatsapp{--m1:#E1F2E7;--m2:#8CC4A1;--m3:#14492B;}
+/* Pago contra entrega (solo Chipao Tendencia): tarjeta menta con borde verde,
+   radio verde y caja verde con el paquete. */
+/* Mismos tamaños que la fila de Yape (padding, caja de 40px, letra): solo
+   cambian los colores. */
+.opcion.marca.marca-contraentrega{--m1:#fff;--m2:#b9e4cf;--m3:#13814f;}
+.opcion.marca.marca-contraentrega.sel{background:#ecfaf3;border-color:#169b62;box-shadow:0 0 0 2px #fff,0 0 0 4px #169b62;}
+.opcion.marca.marca-contraentrega .opcion-logo{box-shadow:none;}
+.opcion.marca.marca-contraentrega .opcion-logo svg{width:21px;height:21px;}
+.opcion.marca.marca-contraentrega .opcion-radio{border-color:#169b62;}
+.opcion.marca.marca-contraentrega .opcion-punto{background:#169b62;}
+.opcion.marca.marca-contraentrega .opcion-titulo{color:#111827;}
+.opcion.marca.marca-contraentrega .opcion-nota{color:#4b5563;}
 .opcion.marca.sel{border-color:var(--app-ink);box-shadow:0 0 0 2px #fff,0 0 0 4px var(--app-ink);}
 .opcion.marca .opcion-radio{border-color:var(--m3);}
 .opcion.marca .opcion-punto{background:var(--m3);}
@@ -8651,10 +8663,10 @@ const MEDIOS_PAGO = [
   { key:'tienda',   label:'Pago en tienda al recoger',  nota:'Pagas en efectivo o por Yape cuando lo recojas',     soloRecojo:true },
   /* Solo Chipao Tendencia (22-11-2026), y solo con TODO el carrito de
      Tendencia: pide nombre y teléfono y abre WhatsApp con el pedido. */
-  { key:'contraentrega', label:'Contra entrega', nota:'Pagas cuando recibes tu pedido', soloTendencia:true,
-    marcador:{ fondo:'#1f9d55', tinta:'#fff', icono:'billete' } },
+  { key:'contraentrega', label:'Pago contra entrega', nota:'Paga cuando recibas tu pedido', soloTendencia:true,
+    marca:'contraentrega', marcador:{ fondo:'#169b62', tinta:'#fff', icono:'paquete' } },
 ];
-const iconoBillete = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>`;
+const iconoPaquete = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="m7.5 4.27 9 5.15"/><path d="M3.29 7 12 12l8.71-5"/><path d="M12 22V12"/></svg>`;
 function esContraEntrega(){ return state.pago === 'contraentrega' && carritoSoloTendencia(); }
 
 /* La caja del logo. Con archivo pinta la imagen; sin archivo, el marcador de
@@ -8667,7 +8679,7 @@ function logoPagoHtml(m){
   if(m.marcador){
     /* La transferencia no tiene marca que enseñar -son varios bancos- asi que
        lleva un dibujo generico de banco, que se entiende igual. */
-    const dentro = m.marcador.icono === 'banco' ? iconoBanco : m.marcador.icono === 'billete' ? iconoBillete : escapeHtml(m.marcador.texto);
+    const dentro = m.marcador.icono === 'banco' ? iconoBanco : m.marcador.icono === 'paquete' ? iconoPaquete : escapeHtml(m.marcador.texto);
     return `<span class="opcion-logo marcador" style="background:${m.marcador.fondo};color:${m.marcador.tinta}">${dentro}</span>`;
   }
   return '';
@@ -9347,7 +9359,7 @@ function renderCheckout(){
             <div class="opciones rejilla">
               ${mediosDisponibles().map(m => filaRadio(
                   state.pago===m.key, m.label, m.nota,
-                  '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo, m.logo && m.key)).join('')}
+                  '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo, m.marca || (m.logo && m.key))).join('')}
 </div>
           </div>
 
@@ -9386,7 +9398,7 @@ function renderCheckout(){
     <div class="opciones">
       ${mediosDisponibles().map(m => filaRadio(
           state.pago===m.key, m.label, m.nota,
-          '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo, m.logo && m.key)).join('')}
+          '', `setPago('${m.key}')`, logoPagoHtml(m), m.regalo, m.marca || (m.logo && m.key))).join('')}
     </div>
 
     <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)" oninput="limpiarErrorCampo(event)" novalidate>
