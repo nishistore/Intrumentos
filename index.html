@@ -4260,6 +4260,10 @@ body.ti-sin-scroll{overflow:hidden;}
 .btn-app.btn-tendencia:hover{background:linear-gradient(180deg,#2577e0,#0a409a);}
 .btn-app.btn-tendencia:disabled{animation:none;opacity:.7;}
 @media (prefers-reduced-motion:reduce){.btn-app.btn-tendencia{animation:none;}}
+.btn-app.btn-tendencia.ce-verde{background:linear-gradient(180deg,#2bb361,#178a45);box-shadow:0 6px 16px rgba(23,138,69,.35);}
+.btn-app.btn-tendencia.ce-verde:hover{background:linear-gradient(180deg,#25a457,#137a3c);}
+.aviso-contraentrega{margin:12px 0 4px;padding:12px 14px;border-radius:12px;background:#eaf7ee;border:1px solid #bfe5cc;color:#14532d;font-size:13.5px;line-height:1.45;}
+.aviso-contraentrega b{display:block;margin-bottom:2px;}
 /* Packs en "Tu pedido" de Tendencia (opción B, 21-11-2026). */
 .pk-lista{display:flex;flex-direction:column;gap:14px;margin:4px 0 18px;}
 .pk{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:16px 12px 12px;border:2px solid #d3e4fb;border-radius:16px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
@@ -8646,7 +8650,13 @@ const MEDIOS_PAGO = [
   { key:'tarjeta',  label:'Tarjeta de crédito o débito', nota:'Visa o Mastercard · pago en línea con Mercado Pago', logo:'/pagos/mercadopago.png' },
   { key:'whatsapp', label:'Coordinar el pago por WhatsApp', nota:'Tu pedido llega armado al chat y un asesor te guía', logo:'/pagos/whatsapp.svg', regalo:true },
   { key:'tienda',   label:'Pago en tienda al recoger',  nota:'Pagas en efectivo o por Yape cuando lo recojas',     soloRecojo:true },
+  /* Solo Chipao Tendencia (22-11-2026), y solo con TODO el carrito de
+     Tendencia: pide nombre y teléfono y abre WhatsApp con el pedido. */
+  { key:'contraentrega', label:'Contra entrega', nota:'Pagas cuando recibes tu pedido', soloTendencia:true,
+    marcador:{ fondo:'#1f9d55', tinta:'#fff', icono:'billete' } },
 ];
+const iconoBillete = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>`;
+function esContraEntrega(){ return state.pago === 'contraentrega' && carritoSoloTendencia(); }
 
 /* La caja del logo. Con archivo pinta la imagen; sin archivo, el marcador de
    color, que ya deja ver cómo queda la fila. Sin ninguno de los dos no pinta
@@ -8658,7 +8668,7 @@ function logoPagoHtml(m){
   if(m.marcador){
     /* La transferencia no tiene marca que enseñar -son varios bancos- asi que
        lleva un dibujo generico de banco, que se entiende igual. */
-    const dentro = m.marcador.icono === 'banco' ? iconoBanco : escapeHtml(m.marcador.texto);
+    const dentro = m.marcador.icono === 'banco' ? iconoBanco : m.marcador.icono === 'billete' ? iconoBillete : escapeHtml(m.marcador.texto);
     return `<span class="opcion-logo marcador" style="background:${m.marcador.fondo};color:${m.marcador.tinta}">${dentro}</span>`;
   }
   return '';
@@ -8669,13 +8679,14 @@ const PAGO_INICIAL = 'yape';
 
 function medioPago(key){
   if(key === 'tarjeta' && !PAGO_TARJETA) return MEDIOS_PAGO[0];
+  if(key === 'contraentrega' && !carritoSoloTendencia()) return MEDIOS_PAGO[0];
   return MEDIOS_PAGO.find(m => m.key === key) || MEDIOS_PAGO[0];
 }
 /* Los medios que se pueden elegir ahora mismo: el de pago en tienda solo
    aparece si va a recoger. */
 function mediosDisponibles(){
-  if(carritoTendencia()) return MEDIOS_PAGO.filter(m => m.key === 'yape');
-  return MEDIOS_PAGO.filter(m => (!m.soloRecojo || state.entrega === 'tienda')
+  if(carritoTendencia()) return MEDIOS_PAGO.filter(m => m.key === 'yape' || (m.key === 'contraentrega' && carritoSoloTendencia()));
+  return MEDIOS_PAGO.filter(m => !m.soloTendencia && (!m.soloRecojo || state.entrega === 'tienda')
     && (m.key !== 'tarjeta' || PAGO_TARJETA));
 }
 /* Con algo de Chipao Tendencia en el carrito, el pedido entero va por agencia
@@ -8689,7 +8700,7 @@ function fijarOpcionesTendencia(){
   if(!carritoTendencia()) return;
   state.entrega = 'peru';
   state.motoPropio = false;
-  state.pago = 'yape';
+  if(!esContraEntrega()) state.pago = 'yape';
 }
 
 function cartSubtotal(){
@@ -8922,8 +8933,12 @@ function filtrarAgencias(q){
 }
 
 function setPago(valor){
+  /* Cambiar de medio no borra lo ya escrito ni sube la página. */
+  if(document.getElementById('pedidoForm')) leerDatosDelFormulario();
   state.pago = valor;
+  const y = window.scrollY;
   render();
+  window.scrollTo(0, y);
 }
 
 /* ======================================================================
@@ -9240,7 +9255,20 @@ function renderCheckout(){
     : state.entrega==='peru' ? (conAgencia ? `Envío a agencia Shalom · ${state.agencia[1]}` : 'Agencia Shalom · falta elegir la agencia')
     : 'Envío a domicilio · Lima Metropolitana';
 
-  const camposHtml = `
+  const contraEntrega = esContraEntrega();
+  const camposHtml = contraEntrega ? `
+      <label class="campo">
+        <span>Nombre y apellido</span>
+        <input id="coNombre" type="text" autocomplete="name" placeholder="Ej. María Torres" required value="${escapeHtml(state.datos.nombre)}">
+      </label>
+      <label class="campo">
+        <span>Teléfono / WhatsApp</span>
+        <input id="coTelefono" type="tel" inputmode="numeric" autocomplete="tel"
+               placeholder="Ej. 987654321" pattern="[0-9]{9}" maxlength="9" required
+               title="Nueve dígitos, como 987654321" value="${escapeHtml(state.datos.telefono)}">
+      </label>
+      <div class="aviso-contraentrega"><b>¡Listo, solo eso!</b>
+        Te escribimos por WhatsApp para confirmar la dirección, el color y el día de entrega. Pagas al recibir tu pedido.</div>` : `
       <label class="campo">
         <span>Nombre y apellido</span>
         <input id="coNombre" type="text" autocomplete="name" placeholder="Ej. María Torres" required value="${escapeHtml(state.datos.nombre)}">
@@ -9271,14 +9299,17 @@ function renderCheckout(){
               : state.entrega==='peru' ? 'Nombre y DNI, como figura en el documento' : 'Calle, número, distrito, referencia'}" required>${escapeHtml(state.datos.direccion)}</textarea>
       </label>`;
 
-  const notaCierre = medio.key === 'tarjeta'
+  const notaCierre = contraEntrega
+    ? 'Al continuar se abre WhatsApp con tu pedido listo: solo envía el mensaje y te confirmamos.'
+    : medio.key === 'tarjeta'
     ? 'Al continuar te llevamos a Mercado Pago para pagar con tarjeta. Al volver te confirmamos el pedido.'
     : medio.key === 'yape'
     ? (unaPagina
       ? 'Al continuar te mostramos el número de Yape. Tienes 30 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante.'
       : 'Al continuar te mostramos el número de Yape. Tienes 30 minutos para pagar y subir la captura del comprobante: validamos tu pago al instante y te llega la confirmación por correo.')
     : 'Al confirmar, tu pedido llega armado al WhatsApp de la tienda con productos, color y forma de entrega. Un asesor valida el stock y te da los datos para pagar.';
-  const ctaTexto = medio.key === 'tarjeta' ? 'Pagar con Mercado Pago'
+  const ctaTexto = contraEntrega ? 'Pedir contra entrega'
+    : medio.key === 'tarjeta' ? 'Pagar con Mercado Pago'
     : medio.key === 'yape' ? 'Continuar al pago con Yape' : 'Confirmar pedido por WhatsApp';
   const ctaClase = medio.key === 'tarjeta' || medio.key === 'yape' ? 'terracota' : 'verde';
 
@@ -9324,10 +9355,10 @@ function renderCheckout(){
           <div class="ped-card datos">
             <div class="bloque-titulo">Tus datos</div>
             ${camposHtml}
-            <div class="campo-resumen">
+            ${contraEntrega ? '' : `<div class="campo-resumen">
               ${escapeHtml(entregaResumen)}
               ${unaPagina ? '' : '<a href="/carrito" onclick="goCart();return false;">Cambiar</a>'}
-            </div>
+            </div>`}
           </div>
         </div>
 
@@ -9337,8 +9368,8 @@ function renderCheckout(){
             <div class="res-items">${items}</div>`}
             ${resumenTotalesHtml('Total a pagar')}
             <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
-            <button type="submit" class="btn-app ${ctaClase} ped-cta${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>
-            ${unaPagina ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
+            <button type="submit" class="btn-app ${ctaClase} ped-cta${unaPagina ? ' btn-tendencia' : ''}${contraEntrega ? ' ce-verde' : ''}" id="btnConfirmar">${ctaTexto}</button>
+            ${unaPagina && !contraEntrega ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
             <p class="ped-nota">${notaCierre}</p>
           </div>
         </aside>
@@ -9361,7 +9392,7 @@ function renderCheckout(){
     <form id="pedidoForm" class="datos" onsubmit="submitOrder(event)" oninput="limpiarErrorCampo(event)" novalidate>
       <div class="bloque-titulo">Tus datos</div>
       ${camposHtml}
-      <div class="campo-resumen">${escapeHtml(entregaResumen)}</div>
+      ${contraEntrega ? '' : `<div class="campo-resumen">${escapeHtml(entregaResumen)}</div>`}
 
       ${resumenTotalesHtml('Total a pagar')}
 
@@ -9369,8 +9400,8 @@ function renderCheckout(){
 
       <div class="barra-fija con-aviso">
         <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
-        <button type="submit" class="btn-app ${ctaClase}${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>
-        ${unaPagina ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
+        <button type="submit" class="btn-app ${ctaClase}${unaPagina ? ' btn-tendencia' : ''}${contraEntrega ? ' ce-verde' : ''}" id="btnConfirmar">${ctaTexto}</button>
+        ${unaPagina && !contraEntrega ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
       </div>
     </form>
   </div>`;
@@ -9623,8 +9654,34 @@ Agencia Shalom: ${agencia}${datos.direccion ? `\nRecoge: ${datos.direccion}` : '
   window.open(waHref(mensaje), '_blank', 'noopener');
 }
 
+/* Chipao Tendencia (22-11-2026): "Contra entrega". Solo nombre y teléfono;
+   abre WhatsApp con el pedido armado. Como "Coordinar por WhatsApp", NO
+   cierra el pedido: si el cliente no envía el mensaje, el carrito sigue. */
+function pedirContraEntrega(){
+  const falta = datosFaltantes().filter(f => f.id === 'coNombre' || f.id === 'coTelefono');
+  if(falta.length){ avisarDatosFaltantes(falta); return; }
+  limpiarErroresDatos();
+  const datos = leerDatosDelFormulario();
+  const { total } = computeOrderTotals();
+  const lineas = state.cart.map(c => {
+    const p = productoPorId(c.id);
+    return p ? `• ${c.qty}x ${p.name}${c.color ? ` (${c.color})` : ''} — ${fmt(totalLinea(p, c.qty))}` : '';
+  }).filter(Boolean).join('\n');
+  const mensaje =
+`Hola, quiero hacer un pedido CONTRA ENTREGA en Chipao Tendencia:
+
+${lineas}
+
+Total: ${fmt(total)} (pago al recibir)
+
+Nombre: ${datos.nombre}
+Teléfono: ${datos.telefono}`;
+  window.open(waHref(mensaje), '_blank', 'noopener');
+}
+
 async function submitOrder(e){
   e.preventDefault();
+  if(esContraEntrega()){ pedirContraEntrega(); return; }
   const falta = datosFaltantes();
   if(falta.length){ avisarDatosFaltantes(falta); return; }
   limpiarErroresDatos();
