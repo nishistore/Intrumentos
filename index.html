@@ -4260,8 +4260,7 @@ body.ti-sin-scroll{overflow:hidden;}
 .btn-app.btn-tendencia:hover{background:linear-gradient(180deg,#2577e0,#0a409a);}
 .btn-app.btn-tendencia:disabled{animation:none;opacity:.7;}
 @media (prefers-reduced-motion:reduce){.btn-app.btn-tendencia{animation:none;}}
-.btn-app.btn-tendencia.ce-verde{background:linear-gradient(180deg,#2bb361,#178a45);box-shadow:0 6px 16px rgba(23,138,69,.35);}
-.btn-app.btn-tendencia.ce-verde:hover{background:linear-gradient(180deg,#25a457,#137a3c);}
+.btn-wa-coordinar.ce-boton{margin-top:0;}
 .aviso-contraentrega{margin:12px 0 4px;padding:12px 14px;border-radius:12px;background:#eaf7ee;border:1px solid #bfe5cc;color:#14532d;font-size:13.5px;line-height:1.45;}
 .aviso-contraentrega b{display:block;margin-bottom:2px;}
 /* Packs en "Tu pedido" de Tendencia (opción B, 21-11-2026). */
@@ -9368,7 +9367,8 @@ function renderCheckout(){
             <div class="res-items">${items}</div>`}
             ${resumenTotalesHtml('Total a pagar')}
             <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
-            <button type="submit" class="btn-app ${ctaClase} ped-cta${unaPagina ? ' btn-tendencia' : ''}${contraEntrega ? ' ce-verde' : ''}" id="btnConfirmar">${ctaTexto}</button>
+            ${contraEntrega ? `<button type="submit" class="btn-wa-coordinar ce-boton" id="btnConfirmar">${iconWhatsapp} Pedir contra entrega</button>`
+              : `<button type="submit" class="btn-app ${ctaClase} ped-cta${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>`}
             ${unaPagina && !contraEntrega ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
             <p class="ped-nota">${notaCierre}</p>
           </div>
@@ -9400,7 +9400,8 @@ function renderCheckout(){
 
       <div class="barra-fija con-aviso">
         <div id="avisoDatos" class="aviso-datos" role="alert" hidden></div>
-        <button type="submit" class="btn-app ${ctaClase}${unaPagina ? ' btn-tendencia' : ''}${contraEntrega ? ' ce-verde' : ''}" id="btnConfirmar">${ctaTexto}</button>
+        ${contraEntrega ? `<button type="submit" class="btn-wa-coordinar ce-boton" id="btnConfirmar">${iconWhatsapp} Pedir contra entrega</button>`
+          : `<button type="submit" class="btn-app ${ctaClase}${unaPagina ? ' btn-tendencia' : ''}" id="btnConfirmar">${ctaTexto}</button>`}
         ${unaPagina && !contraEntrega ? `<button type="button" class="btn-wa-coordinar" onclick="coordinarPorWhatsapp()">${iconWhatsapp} Coordinar pago por WhatsApp</button>` : ''}
       </div>
     </form>
