@@ -4217,6 +4217,8 @@ body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{displ
 .app-shell.ti-pagina{max-width:none;padding:0 0 120px;}
 .app-shell.ti-pagina .ti-tira{max-width:600px;margin:0 auto;padding:0;background:#fff;}
 .ti-tira img{display:block;width:100%;height:auto;}
+.ti-marco{position:relative;}
+.ti-video{position:absolute;display:block;object-fit:cover;border-radius:4% / 7%;background:#e9f2fd;}
 .ti-barra{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 16px max(10px, env(safe-area-inset-bottom));background:#fff;border-top:1px solid #d3e4fb;box-shadow:0 -6px 20px rgba(13,50,120,.12);text-align:center;}
 .ti-barra p{margin:6px 0 0;font-size:12px;color:var(--muted);}
 .ti-cta{display:block;width:100%;max-width:520px;min-height:56px;margin:0 auto;border:0;border-radius:999px;background:linear-gradient(180deg,#ff8a1f,#f05a00);color:#fff;font:inherit;font-size:19px;font-weight:900;letter-spacing:.01em;cursor:pointer;box-shadow:0 6px 16px rgba(240,90,0,.35);animation:tiLatido 2.2s ease-in-out infinite;}
@@ -4676,6 +4678,20 @@ function lineasDescripcion(p){
 }
 function descripcionVisible(p){ return lineasDescripcion(p).filter(t => t.charAt(0) !== '#').join('\n'); }
 function soloImagenes(p){ return esTendencia(p) && lineasDescripcion(p).some(t => /^#solo-imagenes$/i.test(t)); }
+/* #video <nº de foto> <archivo.mp4> <izq> <arriba> <ancho> <alto> (en % de
+   la foto): pone un video mudo en bucle encima del hueco de esa foto. El mp4
+   va directo de r2.dev y no por /img/, porque el iPhone pide el video por
+   trozos (Range) y /img/ no los sirve. */
+function videosDe(p){
+  const vids = {};
+  if(!esTendencia(p)) return vids;
+  lineasDescripcion(p).forEach(t => {
+    const m = /^#video\s+(\d+)\s+([\w.-]+\.mp4)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)$/i.exec(t);
+    if(m) vids[Number(m[1]) - 1] = { src: R2_PUBLICO + m[2], poster: R2_PUBLICO + m[2].replace(/\.mp4$/i, '-poster.webp'),
+      izq: m[3], arriba: m[4], ancho: m[5], alto: m[6] };
+  });
+  return vids;
+}
 function packsDe(p){
   const packs = {};
   if(!esTendencia(p)) return packs;
@@ -5638,6 +5654,7 @@ function packsFicha(p){
 }
 function renderTendenciaImagenes(p){
   const fotos = p.images || [];
+  const videos = videosDe(p);
   const agotado = (p.stock || 0) <= 0;
   const cants = packsFicha(p);
   if(cants.indexOf(tendFicha.cant) < 0) tendFicha.cant = cants[1] || 1;
@@ -5658,8 +5675,15 @@ function renderTendenciaImagenes(p){
   return `<div class="app-shell tendencia ti-pagina">
     <h1 class="oculto-visual">${escapeHtml(p.name)}</h1>
     <div class="ti-tira">
-      ${fotos.length ? fotos.map((u, i) => `<img src="${escapeHtml(fotoUrl(u, ANCHO_GALERIA))}" alt="${escapeHtml(p.name)} · imagen ${i + 1}"
-        ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`).join('')
+      ${fotos.length ? fotos.map((u, i) => {
+        const img = `<img src="${escapeHtml(fotoUrl(u, ANCHO_GALERIA))}" alt="${escapeHtml(p.name)} · imagen ${i + 1}"
+        ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
+        const v = videos[i];
+        if(!v) return img;
+        return `<div class="ti-marco">${img}<video class="ti-video" src="${escapeHtml(v.src)}" poster="${escapeHtml(v.poster)}"
+          style="left:${v.izq}%;top:${v.arriba}%;width:${v.ancho}%;height:${v.alto}%"
+          autoplay muted loop playsinline preload="metadata" aria-label="Video de envíos"></video></div>`;
+      }).join('')
         : '<span class="tend-sinfoto" aria-hidden="true"></span>'}
     </div>
     <div class="ti-barra">
