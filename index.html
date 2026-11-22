@@ -4072,6 +4072,10 @@ body.modo-tendencia .solo-chipao{display:none !important;}
 /* Sin cabecera en las páginas de Tendencia (21-11-2026): que el contenedor
    vacío no deje una franja blanca arriba. */
 body.modo-tendencia .nav-esc:empty{display:none;}
+/* 22-11-2026: el dueño pidió que en Chipao Tendencia no salgan ni la
+   cabecera de escritorio (logo, "Hablar con un asesor", carrito) ni el pie,
+   en NINGUNA página de Tendencia (también carrito, pago y pedido). */
+body.modo-tendencia .nav-esc,body.modo-tendencia footer.site{display:none !important;}
 body.modo-tendencia .franja-util{display:none;}
 body.modo-tendencia .solo-tendencia{display:inline;}
 body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{display:block;}
