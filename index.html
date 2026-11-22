@@ -4195,11 +4195,11 @@ body.modo-tendencia p.solo-tendencia,body.modo-tendencia h4.solo-tendencia{displ
 .tf-barra-precio s{font-size:13px;color:var(--muted);}
 .tf-barra .tend-agregar{flex:1;max-width:360px;margin-left:auto;min-height:48px;border-radius:12px;background:var(--tf-acento);}
 /* ---- Ficha "solo imágenes" de Tendencia (21-11-2026) ----
-   Morado y naranja, como las imágenes que se suben para estas fichas. */
+   Azul y naranja, como las imágenes del irrigador (22-11-2026; antes morado). */
 .app-shell.ti-pagina{max-width:none;padding:0 0 120px;}
 .app-shell.ti-pagina .ti-tira{max-width:600px;margin:0 auto;padding:0;background:#fff;}
 .ti-tira img{display:block;width:100%;height:auto;}
-.ti-barra{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 16px max(10px, env(safe-area-inset-bottom));background:#fff;border-top:1px solid #eadff7;box-shadow:0 -6px 20px rgba(60,20,110,.12);text-align:center;}
+.ti-barra{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 16px max(10px, env(safe-area-inset-bottom));background:#fff;border-top:1px solid #d3e4fb;box-shadow:0 -6px 20px rgba(13,50,120,.12);text-align:center;}
 .ti-barra p{margin:6px 0 0;font-size:12px;color:var(--muted);}
 .ti-cta{display:block;width:100%;max-width:520px;min-height:56px;margin:0 auto;border:0;border-radius:999px;background:linear-gradient(180deg,#ff8a1f,#f05a00);color:#fff;font:inherit;font-size:19px;font-weight:900;letter-spacing:.01em;cursor:pointer;box-shadow:0 6px 16px rgba(240,90,0,.35);animation:tiLatido 2.2s ease-in-out infinite;}
 .ti-cta:disabled{background:#c9c2d3;box-shadow:none;animation:none;cursor:default;}
@@ -4212,21 +4212,21 @@ body.ti-sin-scroll{overflow:hidden;}
 .ti-hoja.abierta .ti-fondo{opacity:1;}
 .ti-panel{position:absolute;left:0;right:0;bottom:0;max-width:520px;max-height:90vh;margin:0 auto;overflow-y:auto;padding:22px 16px max(16px, env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:#fff;transform:translateY(100%);transition:transform .25s ease;}
 .ti-hoja.abierta .ti-panel{transform:none;}
-.ti-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:50%;background:#f3eefa;color:#4a1a8c;font-size:24px;line-height:1;cursor:pointer;}
+.ti-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:50%;background:#eaf2fd;color:#0b2f7a;font-size:24px;line-height:1;cursor:pointer;}
 .ti-kicker{margin:0 0 4px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f05a00;}
-.ti-panel h2{margin:0 48px 16px 0;font-size:20px;line-height:1.25;color:#3d1477;}
+.ti-panel h2{margin:0 48px 16px 0;font-size:20px;line-height:1.25;color:#0b2f7a;}
 .ti-packs{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
-.ti-pack{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:16px 14px;border:2px solid #e4d9f3;border-radius:16px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
-.ti-pack.sel{border-color:#6a2bc2;background:#f6f0ff;}
-.ti-radio{flex:0 0 22px;height:22px;border:2px solid #cbb9e6;border-radius:50%;background:#fff;}
-.ti-pack.sel .ti-radio{border:7px solid #6a2bc2;}
+.ti-pack{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:16px 14px;border:2px solid #d3e4fb;border-radius:16px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
+.ti-pack.sel{border-color:#1565d8;background:#eef5ff;}
+.ti-radio{flex:0 0 22px;height:22px;border:2px solid #a9c8f2;border-radius:50%;background:#fff;}
+.ti-pack.sel .ti-radio{border:7px solid #1565d8;}
 .ti-pack-txt{flex:1;min-width:0;}
-.ti-pack-txt b{display:block;font-size:17px;color:#3d1477;}
+.ti-pack-txt b{display:block;font-size:17px;color:#0b2f7a;}
 .ti-pack-txt small{display:block;margin-top:2px;font-size:12px;font-weight:700;color:#1f8a4c;}
 .ti-pack-precio{text-align:right;}
 .ti-pack-precio b{display:block;font-size:20px;color:#f05a00;}
 .ti-pack-precio s{font-size:13px;color:var(--muted);}
-.ti-sello{position:absolute;top:-11px;left:14px;padding:2px 10px;border-radius:999px;background:#6a2bc2;color:#ffe14d;font-size:11px;font-weight:800;}
+.ti-sello{position:absolute;top:-11px;left:14px;padding:2px 10px;border-radius:999px;background:#1565d8;color:#ffe14d;font-size:11px;font-weight:800;}
 .ti-seguir{display:block;width:100%;min-height:56px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff8a1f,#f05a00);color:#fff;font:inherit;font-size:18px;font-weight:900;cursor:pointer;}
 .ti-pie{margin:10px 0 0;font-size:12px;color:var(--muted);text-align:center;}
 /* "Coordinar pago por WhatsApp" en "Tu pedido" de Tendencia (opción B). */
@@ -4234,26 +4234,26 @@ body.ti-sin-scroll{overflow:hidden;}
 .btn-wa-coordinar svg{width:22px;height:22px;flex:0 0 22px;}
 .btn-wa-coordinar:hover{background:#effcf4;}
 .app-shell.con-barra.con-dos-botones{padding-bottom:calc(var(--app-cta-h) + 120px + env(safe-area-inset-bottom));}
-/* Botón de pagar en "Tu pedido" de Tendencia (opción A, 21-11-2026): morado,
+/* Botón de pagar en "Tu pedido" de Tendencia (opción A, 21-11-2026): azul desde el 22-11,
    redondo y con el mismo latido que "¡Pide el tuyo hoy!" (tiLatido). */
-.btn-app.btn-tendencia{border-radius:999px;background:linear-gradient(180deg,#8b3ff0,#5b1fa6);color:#fff;font-weight:900;font-size:18px;box-shadow:0 6px 16px rgba(91,31,166,.40);animation:tiLatido 2.2s ease-in-out infinite;}
-.btn-app.btn-tendencia:hover{background:linear-gradient(180deg,#7a2bd6,#4e168f);}
+.btn-app.btn-tendencia{border-radius:999px;background:linear-gradient(180deg,#2f86f0,#0d4fb8);color:#fff;font-weight:900;font-size:18px;box-shadow:0 6px 16px rgba(13,79,184,.40);animation:tiLatido 2.2s ease-in-out infinite;}
+.btn-app.btn-tendencia:hover{background:linear-gradient(180deg,#2577e0,#0a409a);}
 .btn-app.btn-tendencia:disabled{animation:none;opacity:.7;}
 @media (prefers-reduced-motion:reduce){.btn-app.btn-tendencia{animation:none;}}
 /* Packs en "Tu pedido" de Tendencia (opción B, 21-11-2026). */
 .pk-lista{display:flex;flex-direction:column;gap:14px;margin:4px 0 18px;}
-.pk{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:16px 12px 12px;border:2px solid #e4d9f3;border-radius:16px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
-.pk.sel{border-color:#6a2bc2;background:#f6f0ff;}
-.pk-radio{flex:0 0 20px;height:20px;border:2px solid #cbb9e6;border-radius:50%;background:#fff;}
-.pk.sel .pk-radio{border:6px solid #6a2bc2;}
-.pk-foto{flex:0 0 48px;width:48px;height:48px;border-radius:10px;object-fit:cover;background:#f3eefa;}
+.pk{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:16px 12px 12px;border:2px solid #d3e4fb;border-radius:16px;background:#fff;font:inherit;color:var(--ink);text-align:left;cursor:pointer;}
+.pk.sel{border-color:#1565d8;background:#eef5ff;}
+.pk-radio{flex:0 0 20px;height:20px;border:2px solid #a9c8f2;border-radius:50%;background:#fff;}
+.pk.sel .pk-radio{border:6px solid #1565d8;}
+.pk-foto{flex:0 0 48px;width:48px;height:48px;border-radius:10px;object-fit:cover;background:#eaf2fd;}
 .pk-txt{flex:1;min-width:0;}
-.pk-txt b{display:block;font-size:15px;color:#3d1477;}
+.pk-txt b{display:block;font-size:15px;color:#0b2f7a;}
 .pk-txt small{display:block;margin-top:2px;font-size:12px;font-weight:700;color:#1f8a4c;}
 .pk-precio{text-align:right;white-space:nowrap;}
 .pk-precio b{display:block;font-size:19px;color:#f05a00;}
 .pk-precio s{font-size:12px;color:#999;}
-.pk-sello{position:absolute;top:-11px;left:12px;padding:2px 10px;border-radius:999px;background:#6a2bc2;color:#ffe14d;font-size:11px;font-weight:800;}
+.pk-sello{position:absolute;top:-11px;left:12px;padding:2px 10px;border-radius:999px;background:#1565d8;color:#ffe14d;font-size:11px;font-weight:800;}
 .pk-sello.naranja{background:#f05a00;color:#fff;}
 /* La barra de abajo de Tendencia lleva menos botones que la de Chipao (2 o 3
    en vez de 4): van juntos y centrados en vez de pegados a la izquierda. */
