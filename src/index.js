@@ -284,6 +284,68 @@ async function apiBanner(request, env, ctx) {
   return respuestaJson({ ok: true, activo });
 }
 
+/* ====================== PAGO CON TARJETA =========================
+
+   22-11-2026: el dueño quitó del pago de Chipao Music la opción "Tarjeta de
+   crédito o débito" (Mercado Pago), pero quiere poder volver a ponerla con
+   un botón del panel (pestaña "Tienda y apariencia"). Mismo camino que el
+   banner: clave `pago_tarjeta` en `settings`, '1' o '0', viaja dentro del
+   HTML y la cambia solo quien tenga la clave de administrador.
+
+   Por defecto APAGADA: si la base no contesta, no aparece. */
+const CLAVE_TARJETA = 'pago_tarjeta';
+const CACHE_TARJETA = new Request('https://chipaomusic.com/__pago-tarjeta');
+
+async function tarjetaActiva(env, ctx) {
+  try {
+    const cacheado = await caches.default.match(CACHE_TARJETA);
+    if (cacheado) return (await cacheado.text()) === '1';
+  } catch { /* sin caché vamos a la base */ }
+
+  let activa = false;
+  try {
+    const fila = await env.DB.prepare(
+      'SELECT value FROM settings WHERE key = ?').bind(CLAVE_TARJETA).first();
+    if (fila) activa = fila.value === '1';
+  } catch {
+    return activa;
+  }
+
+  const guardar = caches.default.put(CACHE_TARJETA, new Response(activa ? '1' : '0', {
+    headers: { 'cache-control': 'max-age=' + BANNER_TTL },
+  })).catch(() => {});
+  if (ctx) ctx.waitUntil(guardar); else await guardar;
+  return activa;
+}
+
+async function apiTarjeta(request, env, ctx) {
+  if (request.method === 'GET') {
+    return respuestaJson({ activo: await tarjetaActiva(env, ctx) });
+  }
+  if (request.method !== 'PUT') {
+    return respuestaJson({ error: 'Método no permitido' }, 405);
+  }
+  if (!await claveDeAdminValida(request.headers.get('X-Admin-Secret'))) {
+    return respuestaJson({ error: 'No autorizado' }, 401);
+  }
+  let activo;
+  try {
+    activo = Boolean((await request.json()).activo);
+  } catch {
+    return respuestaJson({ error: 'Falta el campo activo' }, 400);
+  }
+  try {
+    await env.DB.prepare(
+      "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, datetime('now')) " +
+      'ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at'
+    ).bind(CLAVE_TARJETA, activo ? '1' : '0').run();
+  } catch (err) {
+    return respuestaJson({ error: String(err) }, 500);
+  }
+  try { await caches.default.delete(CACHE_TARJETA); } catch { /* da igual */ }
+  return respuestaJson({ ok: true, activo });
+}
+
 /* ====================== TEMA ESTACIONAL ==============================
 
    Navidad, Halloween y Criolla, un botón cada uno en el panel. Mismo camino que el
@@ -1598,8 +1660,9 @@ class SetHtml {
    es el mismo que usa setPageSchema() en index.html, así que cuando arranca
    el JS reutiliza este bloque en vez de duplicarlo. */
 class HeadExtras {
-  constructor(schema, noindex, products, bannerPromo, taller, portada) {
+  constructor(schema, noindex, products, bannerPromo, taller, portada, tarjeta) {
     this.portada = portada;
+    this.tarjeta = tarjeta;
     this.schema = schema;
     this.noindex = noindex;
     this.products = products;
@@ -1648,6 +1711,9 @@ class HeadExtras {
        separado, la barra se vería aparecer o desaparecer a medio camino. */
     el.append('<script type="application/json" id="banner-promo">{"activo":'
       + (this.bannerPromo === false ? 'false' : 'true') + '}</scr' + 'ipt>', { html: true });
+    /* El interruptor del pago con tarjeta (ver tarjetaActiva). */
+    el.append('<script type="application/json" id="pago-tarjeta">{"activo":'
+      + (this.tarjeta === true ? 'true' : 'false') + '}</scr' + 'ipt>', { html: true });
     /* Los precios del taller, que también se editan desde el panel. */
     if (this.taller) {
       el.append('<script type="application/json" id="taller-precios">'
@@ -1656,7 +1722,7 @@ class HeadExtras {
   }
 }
 
-function rewrite(response, route, body, pathname, products, bannerPromo, taller, tema) {
+function rewrite(response, route, body, pathname, products, bannerPromo, taller, tema, tarjeta) {
   const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
@@ -1674,7 +1740,7 @@ function rewrite(response, route, body, pathname, products, bannerPromo, taller,
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller, pathname === '/'))
+    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller, pathname === '/', tarjeta))
     .on('body', new SetAttr('data-tema', tema || 'normal'));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
@@ -1753,6 +1819,7 @@ const sitio = {
     }
 
     if (url.pathname === '/api/banner-promo') return apiBanner(request, env, ctx);
+    if (url.pathname === '/api/pago-tarjeta') return apiTarjeta(request, env, ctx);
     if (url.pathname === '/api/taller') return apiTaller(request, env, ctx);
     if (url.pathname === '/api/tema') return apiTema(request, env, ctx);
 
@@ -1773,11 +1840,12 @@ const sitio = {
     /* Las dos cosas que se incrustan en el HTML se piden a la vez -el
        catálogo a la API, el interruptor del banner a la base-: en fila una
        detrás de otra sumaban sus dos esperas al TTFB. */
-    const [todos, bannerPromo, taller, tema] = await Promise.all([
+    const [todos, bannerPromo, taller, tema, tarjeta] = await Promise.all([
       fetchProducts(),
       bannerActivo(env, ctx),
       preciosTaller(env, ctx),
       temaActivo(env, ctx),
+      tarjetaActiva(env, ctx),
     ]);
     /* `todos` solo se incrusta en el HTML (el cliente separa las dos tiendas);
        para todo lo que ve Google, únicamente los de Chipao. */
@@ -1806,7 +1874,7 @@ const sitio = {
       }
     }
     agregaListaDeProductos(route, products);
-    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, todos, bannerPromo, taller, tema);
+    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, todos, bannerPromo, taller, tema, tarjeta);
 
     /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
        una categoría inventada o una ruta que no es ninguna pantalla (route en

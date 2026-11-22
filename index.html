@@ -4734,9 +4734,25 @@ function leerBannerPromo(){
   }
 }
 
+/* 22-11-2026: el pago con tarjeta (Mercado Pago) se enciende y apaga desde
+   el panel, pestaña "Tienda y apariencia". El Worker lo deja en el bloque
+   #pago-tarjeta (ver tarjetaActiva en src/index.js). Por defecto apagado:
+   sin bloque -servidor local- no aparece. */
+let PAGO_TARJETA = false;
+function leerPagoTarjeta(){
+  const bloque = document.getElementById('pago-tarjeta');
+  if(!bloque) return false;
+  try{
+    return JSON.parse(bloque.textContent).activo === true;
+  }catch(err){
+    return false;
+  }
+}
+
 /* El arranque, compartido por las dos vias (catalogo incrustado o API). */
 function arrancarConProductos(lista){
   BANNER_PROMO = leerBannerPromo();
+  PAGO_TARJETA = leerPagoTarjeta();
   TALLER_PRECIOS = leerTallerPrecios();
   separarTiendas(lista);
   PRICE_MAX = PRODUCTS.length ? Math.max(...PRODUCTS.map(p=>p.price)) : 3000;
@@ -8614,13 +8630,15 @@ function logoPagoHtml(m){
 const PAGO_INICIAL = 'yape';
 
 function medioPago(key){
+  if(key === 'tarjeta' && !PAGO_TARJETA) return MEDIOS_PAGO[0];
   return MEDIOS_PAGO.find(m => m.key === key) || MEDIOS_PAGO[0];
 }
 /* Los medios que se pueden elegir ahora mismo: el de pago en tienda solo
    aparece si va a recoger. */
 function mediosDisponibles(){
   if(carritoTendencia()) return MEDIOS_PAGO.filter(m => m.key === 'yape');
-  return MEDIOS_PAGO.filter(m => !m.soloRecojo || state.entrega === 'tienda');
+  return MEDIOS_PAGO.filter(m => (!m.soloRecojo || state.entrega === 'tienda')
+    && (m.key !== 'tarjeta' || PAGO_TARJETA));
 }
 /* Con algo de Chipao Tendencia en el carrito, el pedido entero va por agencia
    Shalom y se paga con Yape: son las únicas opciones que se muestran. Se fija
@@ -11280,7 +11298,12 @@ function renderAdminPanel(){
       ${temaBotonHtml('halloween', '🎃 Halloween')}
       ${temaBotonHtml('criolla', '🎶 Criolla')}
     </div>
-    <p class="banner-nota">Cambia los colores de la franja de arriba, el contador de ofertas y las categorías, para todos los visitantes.</p>`, false);
+    <p class="banner-nota">Cambia los colores de la franja de arriba, el contador de ofertas y las categorías, para todos los visitantes.</p>
+    <h2 class="admin-sec-titulo">Medios de pago</h2>
+    <div class="admin-actions">
+      <button class="btn-outline banner-btn${PAGO_TARJETA ? ' puesto' : ''}" id="tarjeta-btn" onclick="togglePagoTarjeta(this)">${textoBotonTarjeta()}</button>
+    </div>
+    <p class="banner-nota">${notaBotonTarjeta()}</p>`, false);
   }
 
   const enOfertas = adminPestana === 'ofertas';
@@ -11404,6 +11427,40 @@ async function toggleBannerPromo(btn){
     showToast('No se pudo cambiar el banner. Revisa tu clave de administrador.');
     setTimeout(()=>pintarBotonBanner(btn), 1600);
   }
+}
+
+/* El interruptor del pago con tarjeta, igual que el del banner. Solo
+   funciona en el sitio de verdad: en localhost no hay Worker. */
+function textoBotonTarjeta(){
+  return PAGO_TARJETA ? 'Desactivar pago con tarjeta' : 'Activar pago con tarjeta';
+}
+function notaBotonTarjeta(){
+  return PAGO_TARJETA
+    ? 'Ahora SÍ sale "Tarjeta de crédito o débito" (Mercado Pago) en el pago de Chipao Music.'
+    : 'Ahora NO sale "Tarjeta de crédito o débito" (Mercado Pago) en el pago de Chipao Music. Un clic y vuelve a salir para todos.';
+}
+async function togglePagoTarjeta(btn){
+  const nuevo = !PAGO_TARJETA;
+  btn.textContent = nuevo ? 'Activando...' : 'Desactivando...';
+  btn.disabled = true;
+  try{
+    const res = await fetch('/api/pago-tarjeta', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': sessionAdminSecret },
+      body: JSON.stringify({ activo: nuevo })
+    });
+    const data = await res.json();
+    if(!res.ok || data.error) throw new Error(data.error || 'Error al guardar');
+    PAGO_TARJETA = Boolean(data.activo);
+    showToast(PAGO_TARJETA ? 'Pago con tarjeta activado' : 'Pago con tarjeta desactivado');
+  }catch(err){
+    showToast('No se pudo cambiar el pago con tarjeta. Revisa tu clave de administrador.');
+  }
+  btn.textContent = textoBotonTarjeta();
+  btn.classList.toggle('puesto', PAGO_TARJETA);
+  btn.disabled = false;
+  const nota = btn.parentElement && btn.parentElement.nextElementSibling;
+  if(nota) nota.textContent = notaBotonTarjeta();
 }
 
 function pintarBotonBanner(btn){
