@@ -10,11 +10,12 @@
   document.body.appendChild(bar);
   scroll(animate(bar,{transform:['scaleX(0)','scaleX(1)']},{ease:'linear'}));
 
+  /* Las secciones y tarjetas de producto YA NO aparecen con fundido. Empezaban
+     en opacidad 0 y solo se veían del todo al llegar al 65-85 % de la
+     pantalla: la foto ya estaba bajada, pero el cliente la veía "cargando".
+     Quitado el 2026-11-23 al comparar con screens4you.se, que no anima nada.
+     Si se quiere volver a animar algo, que sea solo transform, nunca opacity. */
   const done = new WeakSet();
-  function reveal(el, from){
-    if(!el || done.has(el)) return; done.add(el);
-    scroll(animate(el, from, {ease:'linear'}), {target: el, offset:['start end','start 0.65']});
-  }
   function aplicar(){
     // Portada: la foto del producto estrella se acerca / sube con parallax
     document.querySelectorAll('.hero-venta .hv-gancho img').forEach(img=>{
@@ -22,18 +23,10 @@
       scroll(animate(img,{transform:['scale(1) translateY(0px)','scale(1.12) translateY(-30px)']},{ease:'linear'}),
              {target: img.closest('.hero-venta'), offset:['start start','end start']});
     });
-    // Secciones: aparecen con fade + desplazamiento ligado al scroll
-    document.querySelectorAll('.vitrina,.prueba,.kit,.cierre,.reco').forEach(s=>
-      reveal(s,{opacity:[0,1],transform:['translateY(60px)','translateY(0px)']}));
-    // Tarjetas con escalonado: cada una empieza un poco más tarde
-    document.querySelectorAll('.vitrina .tv, .reco .tv').forEach((c,i)=>{
-      if(done.has(c)) return; done.add(c);
-      const o = (i%4)*0.04;
-      scroll(animate(c,{opacity:[0,1],transform:['translateY(50px) scale(.94)','translateY(0) scale(1)']},{ease:'linear'}),
-             {target:c, offset:['start end', `start ${0.85-o}`]});
-    });
-    // Bloque oscuro de cierre: zoom suave
+    // Bloque oscuro de cierre: zoom suave. Con `done`, para no sumar otra
+    // animación de scroll cada vez que cambia algo dentro de #app.
     document.querySelectorAll('.cierre,.kit').forEach(s=>{
+      if(done.has(s)) return; done.add(s);
       scroll(animate(s,{transform:['scale(.94)','scale(1)']},{ease:'linear'}),{target:s,offset:['start end','center center']});
     });
   }

@@ -6457,7 +6457,18 @@ document.addEventListener('mouseover', e => {
   img.removeAttribute('data-src');
 });
 
-function appProductCard(p, altoFoto, conAgregar){
+/* Las primeras tarjetas de una categoría se ven sin hacer scroll: van sin
+   loading="lazy" (que las hacía esperar a que el navegador calculara la
+   página) y las dos primeras con prioridad alta. El Worker les pone además un
+   <link rel="preload"> en el <head> con la MISMA URL (ver precargaTarjetas en
+   src/index.js): si cambias este número, cámbialo también allí. */
+const TARJETAS_PRIORITARIAS = 4;
+function atributosFotoTarjeta(i){
+  if(i == null || i >= TARJETAS_PRIORITARIAS) return 'loading="lazy"';
+  return i < 2 ? 'fetchpriority="high"' : '';
+}
+
+function appProductCard(p, altoFoto, conAgregar, posicion){
   const href = hrefProducto(p);
   const foto = (p.images || [])[0];
   const stock = p.stock || 0;
@@ -6466,7 +6477,7 @@ function appProductCard(p, altoFoto, conAgregar){
   <a class="pcard" href="${href}" onclick="openProductDetail(${p.id});return false;">
     <div class="pcard-foto" style="height:${altoFoto}px">
       ${foto
-        ? `<img src="${fotoUrl(foto, ANCHO_TARJETA)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`
+        ? `<img src="${fotoUrl(foto, ANCHO_TARJETA)}" alt="${escapeHtml(p.name)}" ${atributosFotoTarjeta(posicion)} decoding="async">`
         : `<span class="pcard-sinfoto">${iconSvg(iconFor(p))}</span>`}
       ${foto && (p.images || [])[1] ? `<img class="pcard-foto2" data-src="${fotoUrl(p.images[1], ANCHO_TARJETA)}" alt="" decoding="async">` : ''}
       ${enOferta(p) ? `<span class="pcard-off">-${pctDescuento(p)}%</span>` : ''}
@@ -7698,7 +7709,7 @@ function renderShop(){
        anuncio ocupa su lugar y lleva a la misma ficha. */
     const anuncios = anunciosGrillaHtml(list);
     const conAnuncio = new Set(anuncios.map(a=>a.id));
-    const tarjetas = list.filter(p=>!conAnuncio.has(p.id)).map(p=>appProductCard(p, 118, esEscritorio()));
+    const tarjetas = list.filter(p=>!conAnuncio.has(p.id)).map((p,i)=>appProductCard(p, 118, esEscritorio(), i));
     anuncios.forEach((a,k)=>tarjetas.splice(Math.min(2+k, tarjetas.length), 0, a.html));
     cuerpo = `<div class="grid-app">${tarjetas.join('')}</div>`;
   }

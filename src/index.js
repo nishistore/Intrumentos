@@ -1639,6 +1639,54 @@ async function sirveFoto(request, env, ctx) {
   return respuesta;
 }
 
+/* ===================== PRECARGA DE FOTOS EN EL <head> =====================
+
+   La tarjeta pide la foto a 560 en el teléfono y a 700 desde 900px de ancho
+   (ANCHO_TARJETA_MOVIL, ANCHO_TARJETA y ANCHO_ESCRITORIO en index.html). El
+   preload tiene que pedir EXACTAMENTE la misma URL que luego pinta el JS, o la
+   foto se baja dos veces: por eso van dos <link>, uno por tamaño de pantalla,
+   y el navegador solo usa el que coincide con su `media`. */
+const ANCHO_TARJETA_MOVIL = 560;
+const ANCHO_TARJETA = 700;
+const ANCHO_ESCRITORIO = 900;
+
+function precargaFoto(foto, alta) {
+  const prio = alta ? ' fetchpriority="high"' : '';
+  const link = (ancho, media) => '<link rel="preload" as="image" href="'
+    + escapeHtml(fotoUrl(foto, ancho)) + '" media="' + media + '"' + prio + '>';
+  return link(ANCHO_TARJETA_MOVIL, '(max-width: ' + (ANCHO_ESCRITORIO - 1) + 'px)')
+    + link(ANCHO_TARJETA, '(min-width: ' + ANCHO_ESCRITORIO + 'px)');
+}
+
+/* Igual que ANUNCIOS_GRILLA de index.html (solo id y categoría): el producto
+   con anuncio no sale como tarjeta normal, así que no se precarga su foto. */
+const PRODUCTOS_CON_ANUNCIO = [
+  { id: 216, cat: 'audio' },
+  { id: 249, cat: 'cuerda' },
+  { id: 234, cat: 'cuerda' },
+  { id: 260, cat: 'cuerda' },
+];
+
+/* Mismo número que TARJETAS_PRIORITARIAS de index.html. */
+const TARJETAS_PRIORITARIAS = 4;
+
+/* Los productos de las primeras tarjetas de /categoria/<cat> y
+   /categoria/<cat>/<sub>, en el mismo orden que renderShop() en index.html:
+   el del catálogo, sin reordenar, quitando los que tienen anuncio. */
+function primerasTarjetas(route, products) {
+  if (!route || !route.cat) return [];
+  const cat = route.cat;
+  const lista = products.filter(p => esDeChipao(p) && productInCat(p, cat.key)
+    && (!route.sub || productInSub(p, route.sub)));
+  const conAnuncio = new Set(PRODUCTOS_CON_ANUNCIO
+    .filter(a => a.cat === cat.key)
+    .filter(a => lista.some(p => p.id === a.id && (p.stock || 0) > 0))
+    .map(a => a.id));
+  return lista.filter(p => !conAnuncio.has(p.id))
+    .slice(0, TARJETAS_PRIORITARIAS)
+    .filter(p => (p.images || []).length);
+}
+
 /* ========================= REESCRITURA DEL HTML ====================== */
 
 class SetAttr {
@@ -1660,7 +1708,8 @@ class SetHtml {
    es el mismo que usa setPageSchema() en index.html, así que cuando arranca
    el JS reutiliza este bloque en vez de duplicarlo. */
 class HeadExtras {
-  constructor(schema, noindex, products, bannerPromo, taller, portada, tarjeta) {
+  constructor(schema, noindex, products, bannerPromo, taller, portada, tarjeta, route) {
+    this.route = route;
     this.portada = portada;
     this.tarjeta = tarjeta;
     this.schema = schema;
@@ -1682,10 +1731,14 @@ class HeadExtras {
         .sort((a, b) => b.price - a.price);
       const enOferta = x => Boolean(x.old && x.old > x.price);
       const hero = c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0];
-      if (hero) {
-        const href = fotoUrl(hero.images[0], 700).replace(/"/g, '&quot;');
-        el.prepend('<link rel="preload" as="image" href="' + href + '" fetchpriority="high">', { html: true });
-      }
+      if (hero) el.prepend(precargaFoto(hero.images[0], true), { html: true });
+    }
+    /* Las primeras tarjetas de una categoría, por lo mismo: sin esto el
+       navegador no sabía qué fotos pedir hasta que el JS armaba la parrilla. */
+    if (this.route && this.products && this.products.length) {
+      const links = primerasTarjetas(this.route, this.products)
+        .map((p, i) => precargaFoto(p.images[0], i < 2)).join('');
+      if (links) el.prepend(links, { html: true });
     }
     if (this.noindex) {
       el.append('<meta name="robots" content="noindex,follow">', { html: true });
@@ -1740,7 +1793,7 @@ function rewrite(response, route, body, pathname, products, bannerPromo, taller,
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
-    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller, pathname === '/', tarjeta))
+    .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller, pathname === '/', tarjeta, route))
     .on('body', new SetAttr('data-tema', tema || 'normal'));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
