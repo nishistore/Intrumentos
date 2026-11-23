@@ -1737,20 +1737,8 @@ class HeadExtras {
        del head la pide en cuanto llega el primer byte. Misma regla que
        heroProducto() en index.html y misma URL que imgProducto(), para que el
        <img> reutilice la descarga en vez de pedirla otra vez. */
-    if (this.portada && this.products && this.products.length) {
-      const c = this.products
-        .filter(x => esDeChipao(x) && (x.stock || 0) > 0 && x.cat !== 'accesorios' && (x.images || []).length)
-        .sort((a, b) => b.price - a.price);
-      const enOferta = x => Boolean(x.old && x.old > x.price);
-      const hero = c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0];
-      if (hero) el.prepend(precargaFotos([hero.images[0]], 1), { html: true });
-    }
-    /* Las primeras tarjetas de una categoría, por lo mismo: sin esto el
-       navegador no sabía qué fotos pedir hasta que el JS armaba la parrilla. */
-    if (this.route && this.products && this.products.length) {
-      const script = precargaFotos(primerasTarjetas(this.route, this.products).map(p => p.images[0]), 2);
-      if (script) el.prepend(script, { html: true });
-    }
+    /* (El preload va ahora detrás del <meta name="viewport">: ver
+       scriptPrecarga y DespuesDe más abajo.) */
     if (this.noindex) {
       el.append('<meta name="robots" content="noindex,follow">', { html: true });
     }
@@ -1786,6 +1774,31 @@ class HeadExtras {
   }
 }
 
+/* El script de precarga de fotos de la página (portada o categoría), o ''.
+   La portada: la foto del producto gancho, misma regla que heroProducto() en
+   index.html. Las categorías: las primeras tarjetas (primerasTarjetas). */
+function scriptPrecarga(route, products, portada) {
+  if (!products || !products.length) return '';
+  if (portada) {
+    const c = products
+      .filter(x => esDeChipao(x) && (x.stock || 0) > 0 && x.cat !== 'accesorios' && (x.images || []).length)
+      .sort((a, b) => b.price - a.price);
+    const enOferta = x => Boolean(x.old && x.old > x.price);
+    const hero = c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0];
+    return hero ? precargaFotos([hero.images[0]], 1) : '';
+  }
+  return precargaFotos(primerasTarjetas(route, products).map(p => p.images[0]), 2);
+}
+
+/* Va DETRÁS del <meta name="viewport">, no al principio del <head>: hasta que
+   el navegador lee esa etiqueta, el teléfono cree medir 980px de ancho y el
+   script elegía la foto de escritorio (700) en vez de la de 560. Medido el
+   2026-11-23: con el script delante del viewport el móvil bajaba las de 700. */
+class DespuesDe {
+  constructor(html) { this.html = html; }
+  element(el) { if (this.html) el.after(this.html, { html: true }); }
+}
+
 function rewrite(response, route, body, pathname, products, bannerPromo, taller, tema, tarjeta) {
   const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
@@ -1804,6 +1817,7 @@ function rewrite(response, route, body, pathname, products, bannerPromo, taller,
     .on('meta[name="twitter:description"]', new SetAttr('content', m.description))
     .on('meta[name="twitter:image"]', new SetAttr('content', image))
     .on('link[rel="canonical"]', new SetAttr('href', url))
+    .on('meta[name="viewport"]', new DespuesDe(scriptPrecarga(route, products, pathname === '/')))
     .on('head', new HeadExtras(m.schema, noindex, products, bannerPromo, taller, pathname === '/', tarjeta, route))
     .on('body', new SetAttr('data-tema', tema || 'normal'));
 

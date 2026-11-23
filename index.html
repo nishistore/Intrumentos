@@ -6460,8 +6460,8 @@ document.addEventListener('mouseover', e => {
 /* Las primeras tarjetas de una categoría se ven sin hacer scroll: van sin
    loading="lazy" (que las hacía esperar a que el navegador calculara la
    página) y las dos primeras con prioridad alta. El Worker les pone además un
-   <link rel="preload"> en el <head> con la MISMA URL (ver precargaTarjetas en
-   src/index.js): si cambias este número, cámbialo también allí. */
+   <link rel="preload"> en el <head> con la MISMA URL (ver primerasTarjetas y
+   scriptPrecarga en src/index.js): si cambias este número, cámbialo también allí. */
 const TARJETAS_PRIORITARIAS = 4;
 function atributosFotoTarjeta(i){
   if(i == null || i >= TARJETAS_PRIORITARIAS) return 'loading="lazy"';
