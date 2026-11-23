@@ -25,7 +25,7 @@ import { manejaSorteo } from './sorteo.js';
 
 const SITE_ORIGIN = 'https://chipaomusic.com';
 const PRODUCTS_API_URL = 'https://chipao-productos-api.nishistore.workers.dev';
-const DEFAULT_OG_IMAGE = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-2.jpg';
+const DEFAULT_OG_IMAGE = 'https://pub-52acb879922b427f958ddbe0c729bbfc.r2.dev/og-chipao-music-3.jpg';
 
 const SITE_TITLE = 'Instrumentos Musicales en Lima | Chipao Music';
 const DEFAULT_META_DESCRIPTION = 'Tienda de instrumentos musicales en San Juan de Miraflores, Lima. Guitarras, teclados, percusión, viento y accesorios. Envíos a todo el Perú y recojo en tienda.';
