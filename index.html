@@ -3993,6 +3993,40 @@ body[data-tema="halloween"] .franja-sorteo{background:#B84A12;}
 .bt2-dsct{font:italic 400 2.4em/1 'Archivo Black',var(--app-black);text-transform:uppercase;letter-spacing:.03em;margin-top:-.1em;white-space:nowrap;display:inline-block !important;padding-right:.06em;}
 .bt2-cinta{display:inline-block !important;margin-top:1.2em;padding:.6em 1.2em;border-left:.25em solid #d4b066;background:rgba(43,36,24,.9);font:800 1.5em/1.1 var(--app-sans);font-style:italic;}
 .bn-css .bt2-cond{position:static;margin-top:1.1em;text-align:left;font:500 .95em/1 var(--app-sans);color:#b9ad92;z-index:3;pointer-events:none;}
+/* Slide de reseñas de Google: claro, para alternar con el rojo del sorteo y el
+   negro del taller. Mismas medidas en em que el del taller. */
+.bn-css.bn-css-resenas{background:radial-gradient(circle at 18% 40%,#fff3d6 0%,transparent 55%),linear-gradient(100deg,#fffaf0 0%,#f6efe2 100%);color:#17140F;text-decoration:none;}
+.bn-css-resenas::before{border-color:rgba(214,161,60,.45);}
+.br-izq{left:5%;top:0;bottom:0;width:27%;display:flex !important;flex-direction:column;justify-content:center;z-index:2;}
+.br-sobre{display:flex !important;align-items:center;gap:.5em;font:800 1.15em/1 var(--app-sans);letter-spacing:.18em;text-transform:uppercase;color:#6E655A;}
+.br-g{width:1.6em;height:1.6em;flex:none;}
+.br-nota{font:400 9.5em/1 'Archivo Black',var(--app-black);letter-spacing:-.03em;margin-top:.08em;}
+.br-estrellas{font-size:2.6em;line-height:1;color:#F5B301;letter-spacing:.06em;margin-top:-.05em;}
+.br-cuenta{font:500 1.35em/1.3 var(--app-sans);color:#4b4337;margin-top:.5em;}
+.br-cuenta b{color:#17140F;}
+.br-btn{display:inline-block !important;align-self:flex-start;margin-top:1.1em;padding:.75em 1.5em;border-radius:999px;background:#17140F;color:#fff;font:800 1.3em/1 var(--app-sans);}
+.br-citas{left:36%;right:4.5%;top:0;bottom:0;display:flex !important;align-items:center;gap:1.4em;z-index:2;}
+.br-cita{flex:1 1 0;display:flex !important;flex-direction:column;background:#fff;border:.08em solid #ece3d3;border-radius:1em;padding:1.6em 1.5em;box-shadow:0 .6em 1.6em rgba(80,60,20,.12);min-height:17em;}
+.br-est{color:#F5B301;font-size:1.3em;letter-spacing:.05em;}
+.br-txt{font:500 1.45em/1.4 var(--app-sans);color:#2a251d;margin-top:.6em;flex:1;}
+.br-firma{font:700 1.15em/1 var(--app-sans);color:#6E655A;margin-top:1em;}
+@media (max-width:899px){
+  .bn-css.bn-css-resenas{padding-top:120%;}
+  .br-izq{left:0;right:0;top:2.4em;bottom:auto;width:auto;align-items:center;text-align:center;}
+  .br-sobre{font-size:.95em;justify-content:center;}
+  .br-fila{display:flex !important;align-items:center;gap:.8em;margin-top:.5em;}
+  .br-col{text-align:left;}
+  .br-nota{font-size:5.4em;margin:0;}
+  .br-estrellas{font-size:1.9em;margin:0;}
+  .br-cuenta{font-size:1.1em;margin-top:.3em;}
+  .br-btn{position:absolute;left:0;right:0;margin:0 auto;top:23.4em;align-self:auto;font-size:1.25em;padding:.75em 1.4em;width:max-content;}
+  .br-citas{left:6%;right:6%;top:10.4em;bottom:auto;flex-direction:column;gap:.7em;}
+  .br-cita{min-height:0;padding:.85em 1em;width:100%;flex:none;}
+  .br-cita:nth-child(3){display:none !important;}
+  .br-est{font-size:1em;}
+  .br-txt{font-size:1.06em;margin-top:.3em;}
+  .br-firma{font-size:.95em;margin-top:.6em;}
+}
 @media (max-width:899px){
   .banner-carrusel{margin-top:18px;}
   .bn-flecha{display:none;}
@@ -10317,7 +10351,38 @@ const BANNERS_PORTADA = [
     img:'/sorteo/banner-sorteo.jpg', movil:'/sorteo/banner-sorteo-movil.jpg',
     alt:'Sorteo navideño: gana un violín 4/4 completo o un teclado Vozzex' },
   { tipo:'taller', hasta:null },
+  { tipo:'resenas', hasta:null },
 ];
+
+/* Slide de reseñas reales de la ficha de Google Maps. El texto va citado de
+   Google (recortado con "…", sin cambiar palabras) y firmado con nombre e
+   inicial del apellido. Todo el slide lleva a las reseñas en Google Maps.
+   El número y el promedio salen de STORE_RATING / STORE_REVIEW_COUNT. */
+const RESENAS_LINK = 'https://www.google.com/maps/place/Chipao+Music/@-12.0905203,-76.9901927,13z/data=!4m8!3m7!1s0x9105b95fa7a26deb:0x53e1a17f2332de34!8m2!3d-12.1530556!4d-76.9750485!9m1!1b1!16s%2Fg%2F11fn7v7bc6?hl=es';
+const RESENAS_SLIDE = [
+  { texto:'Son mis caseros de alta confianza! Desde años. Tienen muy buen trato, amabilidad y buena explicación.', firma:'Carlos S.' },
+  { texto:'La reparación quedó muy bien… Se nota que trabajan con cuidado y cariño por los instrumentos.', firma:'Victor D.' },
+  { texto:'Recomiendo mucho este lugar. El trato es muy amable y los instrumentos son de primera calidad.', firma:'Sebas C.' },
+];
+
+function bannerResenasSlideHtml(){
+  const nota = String(STORE_RATING).replace('.', ',');
+  const g = '<svg class="br-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+  const citas = RESENAS_SLIDE.map(r => `
+          <span class="br-cita"><span class="br-est">★★★★★</span><span class="br-txt">“${escapeHtml(r.texto)}”</span><span class="br-firma">${escapeHtml(r.firma)} · Google</span></span>`).join('');
+  return `
+      <a class="bn-slide bn-css bn-css-resenas" href="${RESENAS_LINK}" target="_blank" rel="noopener" aria-label="Ver las ${STORE_REVIEW_COUNT} reseñas de Chipao Music en Google (${nota} de 5)">
+        <span class="br-izq">
+          <span class="br-sobre">${g}Reseñas en Google</span>
+          <span class="br-fila"><span class="br-nota">${nota}</span><span class="br-col">
+            <span class="br-estrellas">★★★★★</span>
+            <span class="br-cuenta"><b>${STORE_REVIEW_COUNT} clientes</b> nos calificaron</span></span></span>
+          <span class="br-btn">Ver todas las reseñas ›</span>
+        </span>
+        <span class="br-citas">${citas}
+        </span>
+      </a>`;
+}
 
 /* Banner del taller, dibujado con HTML y CSS (no imagen): el texto se ve nítido
    en cualquier pantalla, el botón es un WhatsApp de verdad y para cambiar la
@@ -10361,7 +10426,7 @@ function bannerTallerSlideHtml(){
 function bannerSorteoHtml(){
   const vigentes = BANNERS_PORTADA.filter(b => !b.hasta || Date.now() < b.hasta);
   if(!vigentes.length) return '';
-  const slides = vigentes.map((b, n) => b.tipo === 'taller' ? bannerTallerSlideHtml() : `
+  const slides = vigentes.map((b, n) => b.tipo === 'taller' ? bannerTallerSlideHtml() : b.tipo === 'resenas' ? bannerResenasSlideHtml() : `
       <a class="bn-slide" href="${b.href}" aria-label="${b.alt}">
         <picture>
           <source media="(max-width:899px)" srcset="${b.movil}">
