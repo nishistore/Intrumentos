@@ -1644,18 +1644,30 @@ async function sirveFoto(request, env, ctx) {
    La tarjeta pide la foto a 560 en el teléfono y a 700 desde 900px de ancho
    (ANCHO_TARJETA_MOVIL, ANCHO_TARJETA y ANCHO_ESCRITORIO en index.html). El
    preload tiene que pedir EXACTAMENTE la misma URL que luego pinta el JS, o la
-   foto se baja dos veces: por eso van dos <link>, uno por tamaño de pantalla,
-   y el navegador solo usa el que coincide con su `media`. */
+   foto se baja dos veces. No se usan dos <link> con `media`: en la prueba del
+   2026-11-23 un navegador de 375px pidió también las de 700. En su lugar va un
+   script mínimo al principio del <head> que hace la misma pregunta que
+   esEscritorio() de index.html y crea solo los <link> que tocan.
+
+   `fotos` es una lista de URLs de foto; las `alta` primeras van con prioridad
+   alta. */
 const ANCHO_TARJETA_MOVIL = 560;
 const ANCHO_TARJETA = 700;
 const ANCHO_ESCRITORIO = 900;
 
-function precargaFoto(foto, alta) {
-  const prio = alta ? ' fetchpriority="high"' : '';
-  const link = (ancho, media) => '<link rel="preload" as="image" href="'
-    + escapeHtml(fotoUrl(foto, ancho)) + '" media="' + media + '"' + prio + '>';
-  return link(ANCHO_TARJETA_MOVIL, '(max-width: ' + (ANCHO_ESCRITORIO - 1) + 'px)')
-    + link(ANCHO_TARJETA, '(min-width: ' + ANCHO_ESCRITORIO + 'px)');
+function precargaFotos(fotos, alta) {
+  const rutas = fotos.map(f => fotoUrl(f, ANCHO_TARJETA)).filter(r => r && r.startsWith('/cdn-cgi/'));
+  if (!rutas.length) return '';
+  const lista = JSON.stringify(rutas).replace(/</g, LT_ESCAPE);
+  return '<script>(function(){try{'
+    + 'var esc=window.matchMedia("(min-width:' + ANCHO_ESCRITORIO + 'px)").matches;'
+    + 'var r=' + lista + ';'
+    + 'for(var i=0;i<r.length;i++){var l=document.createElement("link");'
+    + 'l.rel="preload";l.as="image";'
+    + 'l.href=esc?r[i]:r[i].replace("width=' + ANCHO_TARJETA + ',","width=' + ANCHO_TARJETA_MOVIL + ',");'
+    + 'if(i<' + alta + ')l.setAttribute("fetchpriority","high");'
+    + 'document.head.appendChild(l);}'
+    + '}catch(e){}})();</scr' + 'ipt>';
 }
 
 /* Igual que ANUNCIOS_GRILLA de index.html (solo id y categoría): el producto
@@ -1731,14 +1743,13 @@ class HeadExtras {
         .sort((a, b) => b.price - a.price);
       const enOferta = x => Boolean(x.old && x.old > x.price);
       const hero = c.find(x => x.featured && enOferta(x)) || c.find(x => x.featured) || c[0];
-      if (hero) el.prepend(precargaFoto(hero.images[0], true), { html: true });
+      if (hero) el.prepend(precargaFotos([hero.images[0]], 1), { html: true });
     }
     /* Las primeras tarjetas de una categoría, por lo mismo: sin esto el
        navegador no sabía qué fotos pedir hasta que el JS armaba la parrilla. */
     if (this.route && this.products && this.products.length) {
-      const links = primerasTarjetas(this.route, this.products)
-        .map((p, i) => precargaFoto(p.images[0], i < 2)).join('');
-      if (links) el.prepend(links, { html: true });
+      const script = precargaFotos(primerasTarjetas(this.route, this.products).map(p => p.images[0]), 2);
+      if (script) el.prepend(script, { html: true });
     }
     if (this.noindex) {
       el.append('<meta name="robots" content="noindex,follow">', { html: true });
