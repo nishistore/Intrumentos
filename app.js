@@ -891,6 +891,7 @@ function goShop(catKey, subKey, push){
   const mismaCat = state.view==='shop' && !state.offersOnly && state.activeCat === (catKey || null);
   state.view='shop';
   state.activeCat = catKey || null;
+  if(!mismaCat) state.subsAbiertos = false;
   if(subKey){
     state.activeSubs = new Set([subKey]);
   }else if(!mismaCat){
@@ -2966,6 +2967,7 @@ function chipsFiltroHtml(){
    la fila de chips y había que desplazar para encontrarlas. */
 
 function quitarSubs(){ state.activeSubs = new Set(); trasFiltrar(); }
+function abrirSubs(si){ state.subsAbiertos = si; trasFiltrar(); }
 
 function subsMovilHtml(){
   const cat = CATEGORIES.find(c=>c.key===state.activeCat);
@@ -2975,21 +2977,15 @@ function subsMovilHtml(){
   const todo = productosDeCategoria(cat.key).length;
   const ningunaPuesta = !state.activeSubs.size;
 
-  /* Con un tipo ya elegido los mosaicos sobran: ocupaban media pantalla antes
-     de llegar al primer producto. Queda una sola fila con lo elegido y la salida
-     para cambiar de tipo. */
-  if(!ningunaPuesta){
-    const elegidos = subs.filter(s => state.activeSubs.has(s.key)).map(s => s.label).join(', ');
-    return `
-  <div class="subs-bloque">
-    <div class="sub-elegido">
-      <span class="se-texto"><em>Tipo</em><b>${escapeHtml(elegidos)}</b></span>
-      <button type="button" class="se-cambiar" onclick="quitarSubs()">Cambiar tipo</button>
-    </div>
-  </div>`;
-  }
-
-  const mosaicos = subs.map(s=>{
+  /* Dos filas de mosaicos y un botón para ver el resto ahí mismo: la grilla
+     entera ocupaba media pantalla antes del primer producto. Los tipos sin
+     productos (los de "Consúltanos") van al final. Si el tipo elegido quedó en
+     la parte escondida, la grilla se abre sola para que se vea marcado. */
+  const ordenados = subs.filter(s => cuantos(s).length).concat(subs.filter(s => !cuantos(s).length));
+  const VISIBLES = 2;
+  const escondidoActivo = ordenados.slice(VISIBLES).some(s => state.activeSubs.has(s.key));
+  const abierto = state.subsAbiertos || escondidoActivo || ordenados.length <= VISIBLES + 1;
+  const mosaicos = ordenados.map(s=>{
     const lista = cuantos(s);
     const n = lista.length;
     const conFoto = lista.find(p=>p.id === s.fotoId && fotoDe(p)) || lista.find(p=>fotoDe(p));
@@ -3000,7 +2996,7 @@ function subsMovilHtml(){
       <a class="sub-mosaico vacia" target="_blank" rel="noopener"
          href="${waHref('Hola, quiero consultar por ' + s.label.toLowerCase() + '.')}" onclick="trackAdsConversion('whatsapp')">
         <span class="sm-foto"></span>
-        <span class="sm-texto"><b>${escapeHtml(s.label)}</b><em>Consúltanos ›</em></span>
+        <span class="sm-texto"><b>${escapeHtml(s.label)}</b><em>Consultar ›</em></span>
       </a>`;
     }
     return `
@@ -3008,15 +3004,19 @@ function subsMovilHtml(){
       <span class="sm-foto">${foto}</span>
       <span class="sm-texto"><b>${escapeHtml(s.label)}</b><em>${n} modelo${n!==1?'s':''}</em></span>
     </button>`;
-  }).join('');
+  });
+  const resto = ordenados.length - VISIBLES;
+  const boton = ordenados.length <= VISIBLES + 1 ? '' : abierto
+    ? (escondidoActivo ? '' : `<button type="button" class="sub-mosaico mas" onclick="abrirSubs(false)">Ver menos ▴</button>`)
+    : `<button type="button" class="sub-mosaico mas" onclick="abrirSubs(true)">+${resto} tipos ▾</button>`;
   return `
   <div class="subs-bloque">
-    <div class="subs-eyebrow">Elige el tipo</div>
     <div class="subs-mosaicos">
       <button type="button" class="sub-mosaico todo${ningunaPuesta?' activo':''}" aria-pressed="${ningunaPuesta?'true':'false'}" onclick="quitarSubs()">
         <span class="sm-texto"><b>Ver todo</b><em>${todo} productos</em></span>
       </button>
-      ${mosaicos}
+      ${(abierto ? mosaicos : mosaicos.slice(0, VISIBLES)).join('')}
+      ${boton}
     </div>
   </div>`;
 }

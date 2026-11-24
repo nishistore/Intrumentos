@@ -1872,24 +1872,16 @@ a.eyebrow-terracota:active{opacity:.6;}
 
 /* ---------------- subcategorías en el teléfono ---------------- */
 .subs-bloque{margin-top:14px;}
-.subs-eyebrow{font:700 11px/1 var(--app-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--app-muted);margin-bottom:9px;}
-/* Fila que reemplaza a los mosaicos cuando ya hay un tipo elegido. */
-.sub-elegido{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:9px 10px 9px 14px;border:1.5px solid var(--app-ink);border-radius:var(--app-r-card);background:var(--app-surface);}
-.se-texto{min-width:0;display:flex;align-items:baseline;gap:8px;}
-.se-texto em{font:700 11px/1 var(--app-sans);letter-spacing:.08em;text-transform:uppercase;font-style:normal;color:var(--app-muted);flex:none;}
-.se-texto b{font:700 14px/1.25 var(--app-sans);color:var(--app-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.se-cambiar{flex:none;padding:7px 12px;border:1px solid var(--app-line);border-radius:999px;background:var(--app-sunken);
-  font:600 12.5px/1 var(--app-sans);color:var(--app-ink);touch-action:manipulation;}
-/* Mosaicos con la foto de un producto de cada tipo. */
-.subs-mosaicos{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+/* Mosaicos con la foto de un producto de cada tipo: dos filas y un botón
+   para ver el resto. Más bajos que antes (56 px) para que quepa más. */
+.subs-mosaicos{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .sub-mosaico{
-  display:flex;align-items:center;gap:10px;min-height:68px;padding:8px 10px 8px 8px;
+  display:flex;align-items:center;gap:9px;min-height:56px;padding:6px 10px 6px 6px;
   border:1.5px solid var(--app-line);border-radius:var(--app-r-card);background:var(--app-surface);
   text-align:left;color:var(--app-ink);text-decoration:none;touch-action:manipulation;
 }
 .sub-mosaico .sm-foto{
-  flex:none;width:52px;height:52px;border-radius:var(--app-r-img);
+  flex:none;width:42px;height:42px;border-radius:var(--app-r-img);
   background:var(--app-sunken);overflow:hidden;
 }
 .sub-mosaico .sm-foto img{display:block;width:100%;height:100%;object-fit:contain;}
@@ -1897,6 +1889,10 @@ a.eyebrow-terracota:active{opacity:.6;}
 .sub-mosaico b{display:block;font:700 13.5px/1.2 var(--app-sans);}
 .sub-mosaico em{display:block;margin-top:3px;font:500 12px/1.2 var(--app-sans);font-style:normal;color:var(--app-muted);}
 .sub-mosaico.todo{padding-left:14px;}
+.sub-mosaico.vacia{border-style:dashed;padding-left:14px;}
+.sub-mosaico.vacia .sm-foto{display:none;}
+.sub-mosaico.vacia b,.sub-mosaico.vacia em{color:var(--app-muted);}
+.sub-mosaico.mas{justify-content:center;padding:6px 10px;background:var(--app-sunken);font:700 13.5px/1.2 var(--app-sans);}
 .sub-mosaico.activo{border-color:var(--app-ink);background:var(--app-sunken);box-shadow:0 0 0 1px var(--app-ink);}
 .sub-mosaico.vacia{border-style:dashed;}
 .sub-mosaico.vacia b,.sub-mosaico.vacia em{color:var(--app-muted);}
