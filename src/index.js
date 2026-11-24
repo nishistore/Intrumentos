@@ -1799,7 +1799,31 @@ class DespuesDe {
   element(el) { if (this.html) el.after(this.html, { html: true }); }
 }
 
-function rewrite(response, route, body, pathname, products, bannerPromo, taller, tema, tarjeta) {
+/* ======================= EL CÓDIGO DE LA TIENDA ======================
+   Desde el 24-11-2026 el JS de la tienda es /app.js y no un <script> dentro
+   de index.html: así el navegador lo guarda y quien vuelve, o entra a otra
+   ficha desde Google, baja ~45 KB en vez de ~165 KB.
+
+   Para poder guardarlo un año sin servir nunca uno viejo, la URL lleva la
+   versión: el etag que Workers Assets ya calcula del contenido. Cambia el
+   archivo → cambia el etag → cambia la URL. Se pregunta una vez por isolate
+   (tras un despliegue arrancan isolates nuevos, así que no se queda pegado).
+   Si no se puede leer, el HTML sale con /app.js a secas, que se revalida en
+   cada visita como antes: más lento, nunca roto. */
+const RUTA_APP = '/app.js';
+let versionApp = null;
+
+async function leeVersionApp(env, url) {
+  if (versionApp) return versionApp;
+  try {
+    const r = await env.ASSETS.fetch(new Request(url.origin + RUTA_APP, { method: 'HEAD' }));
+    const etag = (r.headers.get('etag') || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
+    if (r.ok && etag) versionApp = etag;
+  } catch (e) { /* sin versión: /app.js a secas */ }
+  return versionApp;
+}
+
+function rewrite(response, route, body, pathname, products, bannerPromo, taller, tema, tarjeta, version) {
   const noindex = !route || Boolean(route.noIndex);
   const m = route ? route.meta : homeMeta();
   const url = SITE_ORIGIN + (noindex ? pathname : m.path);
@@ -1822,6 +1846,14 @@ function rewrite(response, route, body, pathname, products, bannerPromo, taller,
     .on('body', new SetAttr('data-tema', tema || 'normal'));
 
   if (body) rewriter.on('main#app', new SetHtml(body));
+  /* El <script> y su preload, con la MISMA URL: si difieren, el navegador
+     baja el archivo dos veces. */
+  if (version) {
+    const src = RUTA_APP + '?v=' + version;
+    rewriter
+      .on('script[src="' + RUTA_APP + '"]', new SetAttr('src', src))
+      .on('link[rel="preload"][href="' + RUTA_APP + '"]', new SetAttr('href', src));
+  }
 
   return rewriter.transform(response);
 }
@@ -1905,6 +1937,14 @@ const sitio = {
 
     const response = await env.ASSETS.fetch(request);
 
+    /* /app.js con versión: inmutable, un año (ver leeVersionApp). Sin ?v= se
+       queda con el max-age=0 de Assets, por si alguien lo pide a mano. */
+    if (url.pathname === RUTA_APP && url.searchParams.has('v') && response.ok) {
+      const cabeceras = new Headers(response.headers);
+      cabeceras.set('cache-control', 'public, max-age=31536000, immutable');
+      return new Response(response.body, { status: response.status, headers: cabeceras });
+    }
+
     /* Solo tocamos el HTML del SPA. Imágenes, robots.txt y la página del
        sorteo (/testeo) salen tal cual. */
     const type = response.headers.get('content-type') || '';
@@ -1918,12 +1958,13 @@ const sitio = {
     /* Las dos cosas que se incrustan en el HTML se piden a la vez -el
        catálogo a la API, el interruptor del banner a la base-: en fila una
        detrás de otra sumaban sus dos esperas al TTFB. */
-    const [todos, bannerPromo, taller, tema, tarjeta] = await Promise.all([
+    const [todos, bannerPromo, taller, tema, tarjeta, version] = await Promise.all([
       fetchProducts(),
       bannerActivo(env, ctx),
       preciosTaller(env, ctx),
       temaActivo(env, ctx),
       tarjetaActiva(env, ctx),
+      leeVersionApp(env, url),
     ]);
     /* `todos` solo se incrusta en el HTML (el cliente separa las dos tiendas);
        para todo lo que ve Google, únicamente los de Chipao. */
@@ -1952,7 +1993,7 @@ const sitio = {
       }
     }
     agregaListaDeProductos(route, products);
-    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, todos, bannerPromo, taller, tema, tarjeta);
+    const salida = rewrite(response, route, bodyFor(route, products, taller), url.pathname, todos, bannerPromo, taller, tema, tarjeta, version);
 
     /* 404 de verdad para lo que no existe: un producto retirado del catálogo,
        una categoría inventada o una ruta que no es ninguna pantalla (route en
