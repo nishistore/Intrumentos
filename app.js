@@ -3550,6 +3550,43 @@ function setActiveSlide(i){
   render();
 }
 
+/* Precarga de la galería de la ficha. Antes cada foto grande se pedía recién
+   al tocarla, y si el Cloudflare de Lima no la tenía guardada tardaba hasta 3 s
+   en reescalarla (medido el 2026-11-25 en el teclado 276: foto 3 = 2,9 s de
+   espera del servidor). Ahora, cuando la foto que se ve ya cargó, se piden las
+   demás en segundo plano: pesan 25-290 KB en AVIF, poco para lo que se gana.
+   Primero las vecinas (la siguiente y la anterior), que son las que se tocan
+   primero, y luego el resto. Se recuerda lo ya pedido para no repetir. */
+const galeriaPrecargada = new Set();
+function precargarGaleria(fotos, activa){
+  if(!fotos || fotos.length < 2) return;
+  const n = fotos.length;
+  const orden = [];
+  for(let d = 1; d < n; d++){
+    orden.push((activa + d) % n);
+    if(d < n - d) orden.push((activa - d + n) % n);
+  }
+  const vistos = new Set();
+  const urls = orden.filter(i => !vistos.has(i) && vistos.add(i))
+    .map(i => fotoUrl(fotos[i], ANCHO_GALERIA))
+    .filter(u => !galeriaPrecargada.has(u));
+  if(!urls.length) return;
+  const arrancar = () => urls.forEach(u => {
+    galeriaPrecargada.add(u);
+    const im = new Image();
+    im.decoding = 'async';
+    im.src = u;
+  });
+  /* Esperar a que la foto visible termine, para no quitarle ancho de banda. */
+  const visible = document.querySelector('.ficha-galeria img, .fe-foto img, .tf-galeria img');
+  if(visible && !visible.complete){
+    visible.addEventListener('load', arrancar, { once: true });
+    visible.addEventListener('error', arrancar, { once: true });
+  }else{
+    setTimeout(arrancar, 0);
+  }
+}
+
 /* La foto de la ficha, a pantalla completa. Solo aplica a fotos, no a video
    ni a los iframes de YouTube: esos ya tienen su propio control. */
 function abrirFotoZoom(){
@@ -7954,6 +7991,13 @@ function render(){
   prepararBarraCompra();
   montarVitrina();
   vigilarBarraTendencia();
+  if(state.view === 'producto'){
+    const pf = productoPorId(pdState.productId);
+    if(pf) precargarGaleria(pf.images, pdState.activeIndex);
+  }else if(state.view === 'tendenciaProducto'){
+    const pf = productoPorId(tendFicha.id);
+    if(pf) precargarGaleria(pf.images, tendFicha.slide);
+  }
   /* El alto real de la barra fija de la ficha, para que los recomendados
      puedan dejarle sitio y no queden por debajo. */
   const barraFicha = document.querySelector('.ficha-barra');
