@@ -3578,7 +3578,7 @@ function precargarGaleria(fotos, activa){
     im.src = u;
   });
   /* Esperar a que la foto visible termine, para no quitarle ancho de banda. */
-  const visible = document.querySelector('.ficha-galeria img, .fe-foto img, .tf-galeria img');
+  const visible = document.querySelector('.ficha-pista img[fetchpriority="high"], .ficha-galeria img, .fe-foto img, .tf-galeria img');
   if(visible && !visible.complete){
     visible.addEventListener('load', arrancar, { once: true });
     visible.addEventListener('error', arrancar, { once: true });
@@ -3589,7 +3589,8 @@ function precargarGaleria(fotos, activa){
 
 /* La foto de la ficha, a pantalla completa. Solo aplica a fotos, no a video
    ni a los iframes de YouTube: esos ya tienen su propio control. */
-function abrirFotoZoom(){
+function abrirFotoZoom(i){
+  if(typeof i === 'number') pdState.activeIndex = i;
   const p = productoPorId(pdState.productId);
   const url = p && (p.images || [])[pdState.activeIndex];
   if(!url) return;
@@ -3725,47 +3726,81 @@ function distanciaDedos(t){
   }, { passive: false });
 })();
 
-/* Deslizar sobre la foto para cambiar de color en el teléfono. Los swatches
-   siguen ahí: esto es un atajo, no un reemplazo, porque un gesto no se ve y
-   nadie lo descubre si no lo prueba.
+/* Galería del teléfono: una tira con todas las fotos, una al lado de otra,
+   que se desliza con el scroll nativo del navegador y se detiene en cada foto
+   (scroll-snap). Así la foto sigue al dedo y la siguiente ya está ahí.
 
-   Da la vuelta al llegar al final: con cuatro o cinco colores, volver al
-   primero es más cómodo que chocar contra un tope.
+   Antes era una sola foto y un gesto que, al soltar, redibujaba la página
+   entera: se veía un instante el fondo rayado vacío y la foto nueva entraba
+   con un fundido (vídeo del dueño, 25-11-2026).
 
-   El listener va en el documento y no en la galería porque render() rehace
-   el HTML entero en cada cambio: uno puesto sobre el elemento moriría con la
-   primera foto. */
-let gestoFicha = null;
-
-function cambiarSlideFicha(paso){
-  const p = productoPorId(pdState.productId);
-  if(!p) return;
-  const total = (p.images || []).length + (p.video ? 1 : 0);
-  if(total < 2) return;
-  setActiveSlide((pdState.activeIndex + paso + total) % total);
-  const el = document.querySelector('.ficha-galeria img, .ficha-galeria video');
-  if(el) el.classList.add(paso > 0 ? 'entra-der' : 'entra-izq');
+   Cuando la tira se queda quieta se actualiza pdState.activeIndex y se llama
+   a render() para que los puntitos, el color y el mensaje de WhatsApp sigan a
+   la foto. render() conserva la MISMA tira (ver conservarPistaFicha): si la
+   rehiciera, las fotos volverían a parpadear. */
+function pistaFichaHtml(p, slides, colores){
+  return `<div class="ficha-pista" data-pid="${p.id}" data-n="${slides.length}">
+    ${slides.map((s, i) => {
+      if(s.type === 'image'){
+        const alt = p.name + (colores[i] ? ' — ' + colores[i] : '') + (i ? ' · imagen ' + (i + 1) : '');
+        return `<div class="ficha-slide"><button type="button" class="ficha-foto-zoom-btn" onclick="abrirFotoZoom(${i})" aria-label="Ampliar foto">
+          <img src="${fotoUrl(s.url, ANCHO_GALERIA)}" alt="${escapeHtml(alt)}" decoding="async" fetchpriority="${i === pdState.activeIndex ? 'high' : 'low'}">
+        </button></div>`;
+      }
+      const embed = toEmbedUrl(s.url);
+      return `<div class="ficha-slide">${embed
+        ? `<iframe src="${embed}" title="${escapeHtml(p.name)}" loading="lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
+        : `<video src="${s.url}" controls playsinline preload="none"></video>`}</div>`;
+    }).join('')}
+  </div>`;
 }
 
-document.addEventListener('touchstart', (e) => {
-  const g = e.target.closest && e.target.closest('.ficha-galeria');
-  if(!g || e.touches.length !== 1){ gestoFicha = null; return; }
-  gestoFicha = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
-}, { passive: true });
+/* Lleva la tira a la foto activa. 'suave' solo cuando la misma tira sigue en
+   pantalla (se tocó un puntito o un color); al abrir la ficha, de golpe. */
+function colocarPistaFicha(pista, suave){
+  const ancho = pista.clientWidth;
+  if(!ancho) return;
+  const destino = pdState.activeIndex * ancho;
+  if(Math.abs(pista.scrollLeft - destino) < 2) return;
+  if(suave && 'scrollBehavior' in document.documentElement.style){
+    pista.scrollTo({ left: destino, behavior: 'smooth' });
+  }else{
+    pista.scrollLeft = destino;
+  }
+}
 
-document.addEventListener('touchend', (e) => {
-  const g = gestoFicha;
-  gestoFicha = null;
-  if(!g || !e.changedTouches.length) return;
-  const dx = e.changedTouches[0].clientX - g.x;
-  const dy = e.changedTouches[0].clientY - g.y;
-  /* Tres filtros: que haya recorrido, que sea claramente horizontal -si no,
-     robaríamos el scroll de la página- y que no sea un arrastre lento. */
-  if(Math.abs(dx) < 45) return;
-  if(Math.abs(dx) < Math.abs(dy) * 1.6) return;
-  if(Date.now() - g.t > 700) return;
-  cambiarSlideFicha(dx < 0 ? 1 : -1);
-}, { passive: true });
+/* Lo llama render(): antes de rehacer el HTML guarda la tira vieja y,
+   después, la vuelve a poner en lugar de la nueva si es del mismo producto. */
+function guardarPistaFicha(){
+  const pista = document.querySelector('.ficha-pista');
+  return pista ? { pista, izq: pista.scrollLeft } : null;
+}
+function conservarPistaFicha(vieja){
+  const nueva = document.querySelector('.ficha-pista');
+  if(!nueva) return;
+  if(vieja && vieja.pista.dataset.pid === nueva.dataset.pid && vieja.pista.dataset.n === nueva.dataset.n){
+    nueva.replaceWith(vieja.pista);
+    vieja.pista.scrollLeft = vieja.izq;
+    colocarPistaFicha(vieja.pista, true);
+  }else{
+    colocarPistaFicha(nueva, false);
+  }
+}
+
+/* El scroll no burbujea, por eso se escucha en fase de captura. El evento
+   scrollend no existe en los Safari viejos: se espera a que pasen 120 ms sin
+   scroll. */
+let quietaPistaFicha = null;
+document.addEventListener('scroll', (e) => {
+  const pista = e.target;
+  if(!pista || !pista.classList || !pista.classList.contains('ficha-pista')) return;
+  clearTimeout(quietaPistaFicha);
+  quietaPistaFicha = setTimeout(() => {
+    if(!pista.isConnected || !pista.clientWidth) return;
+    const i = Math.round(pista.scrollLeft / pista.clientWidth);
+    if(i !== pdState.activeIndex && i >= 0 && i < Number(pista.dataset.n)) setActiveSlide(i);
+  }, 120);
+}, true);
 
 /* Stepper de cantidad del panel de compra de escritorio. En el teléfono la
    barra fija solo tiene el CTA y se agrega de uno en uno, así que pdState.qty
@@ -4023,8 +4058,8 @@ function renderProductDetail(){
   <div class="app-shell ficha">
     ${cabeceraFicha}
 
-    <div class="ficha-galeria">
-      ${galeria}
+    <div class="ficha-galeria${slides.length > 1 ? ' con-pista' : ''}">
+      ${slides.length > 1 ? pistaFichaHtml(p, slides, colores) : galeria}
       ${(slides.length > 1 && slides.length > 8) ? `<span class="ficha-contador">${pdState.activeIndex + 1} de ${slides.length}</span>` : ''}
     </div>
     ${puntosHtml}
@@ -7969,6 +8004,7 @@ function render(){
      portada sin recargar: se tocaba la lupa y el buscador aparecía a media
      pantalla. */
   document.documentElement.classList.remove('ruta-portada');
+  const pistaVieja = guardarPistaFicha();
   document.getElementById('app').innerHTML =
       state.view==='home'     ? renderHome()
     : state.view==='search'   ? renderSearch()
@@ -7983,6 +8019,7 @@ function render(){
     : state.view==='admin'      ? renderAdminPanel()
     : state.view==='adminLogin' ? renderAdminLoginPage()
     : renderShop();
+  conservarPistaFicha(pistaVieja);
   buildNavLists();
   renderNavEscritorio();
   renderCabeceraMovil();

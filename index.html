@@ -1951,14 +1951,24 @@ a.eyebrow-terracota:active{opacity:.6;}
      horizontal: sin esto, deslizar de lado arrastra la página. */
   touch-action:pan-y;
 }
-/* La foto nueva entra por el lado hacia el que se deslizó, para que el gesto
-   se sienta como pasar una página y no como un parpadeo. */
-@keyframes fichaEntraDer{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
-@keyframes fichaEntraIzq{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:none;}}
-.ficha-galeria .entra-der{animation:fichaEntraDer .22s ease-out;}
-.ficha-galeria .entra-izq{animation:fichaEntraIzq .22s ease-out;}
-@media (prefers-reduced-motion: reduce){
-  .ficha-galeria .entra-der,.ficha-galeria .entra-izq{animation:none;}
+/* Con varias fotos la galería es una tira que se desliza con el scroll
+   nativo y se detiene en cada foto (ver pistaFichaHtml en app.js). El
+   navegador tiene que poder moverla de lado, así que aquí no va pan-y. */
+.ficha-galeria.con-pista{touch-action:auto;background:#fff;}
+.ficha-pista{
+  display:flex;width:100%;height:100%;
+  overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  scrollbar-width:none;
+}
+.ficha-pista::-webkit-scrollbar{display:none;}
+.ficha-slide{
+  flex:0 0 100%;width:100%;height:100%;
+  scroll-snap-align:center;scroll-snap-stop:always;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;
 }
 .ficha-galeria img,
 .ficha-galeria video,
