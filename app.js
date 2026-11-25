@@ -357,6 +357,9 @@ function arrancarConProductos(lista){
   checkPaymentReturnStatus();
   checkAdminUrlTrigger();
   checkProductUrlTrigger();
+  /* El primer pintado ya salió con la grilla entera: desde aquí, cada toque
+     pinta solo las primeras tarjetas (ver completarGrilla). */
+  grillaDiferible = true;
 }
 
 async function fetchProducts(){
@@ -2818,10 +2821,17 @@ function barraCompraHtml(){
    se esconde si el usuario vuelve arriba. Con IntersectionObserver para no
    colgarse de un listener de scroll. */
 let vigiaBarraCompra = null;
+/* Una variable CSS en <html> obliga a recalcular el estilo de TODA la página,
+   aunque se escriba el mismo valor. render() escribe tres en cada toque y
+   casi nunca cambian, así que solo se tocan si cambian (INP). */
+function varRaiz(nombre, valor){
+  const st = document.documentElement.style;
+  if(st.getPropertyValue(nombre) !== valor) st.setProperty(nombre, valor);
+}
 function prepararBarraCompra(){
   if(vigiaBarraCompra){ vigiaBarraCompra.disconnect(); vigiaBarraCompra = null; }
   const nav = document.getElementById('bottomNav');
-  if(nav) document.documentElement.style.setProperty('--nav-real', nav.offsetHeight + 'px');
+  if(nav) varRaiz('--nav-real', nav.offsetHeight + 'px');
   const barra = document.querySelector('.barra-compra');
   const ctas  = document.querySelector('.hv-ctas');
   /* Marca el body para que reserve el hueco de la barra (ver
@@ -3184,6 +3194,45 @@ function anunciosGrillaHtml(list){
   }).filter(Boolean);
 }
 
+/* Grilla del catálogo por partes (INP, 25-11-2026). Pintar las ~150
+   tarjetas de "Todo el catálogo" eran 126 KB de HTML y ~1.500 elementos en
+   CADA toque (filtro, categoría, volver), unos 30 ms en un PC y 150-200 en un
+   Android de gama media: es el INP de 254 ms que marcaba PageSpeed. Ahora
+   render() pinta solo las primeras (las que caben en pantalla y un poco más)
+   y el resto se agrega en tandas justo después de que el navegador pinte.
+
+   NO se difiere en el primer pintado ni al volver con el botón atrás
+   (popstate): ahí el navegador restaura el scroll justo después de pintar y,
+   con la lista a medias, dejaría al cliente más arriba de donde estaba. */
+let grillaDiferible = false;
+let grillaPendiente = null;
+let grillaTurno = 0;
+function completarGrilla(){
+  const resto = grillaPendiente;
+  grillaPendiente = null;
+  if(!resto) return;
+  const grid = document.querySelector('#app .grid-app');
+  if(!grid) return;
+  const turno = ++grillaTurno;
+  let i = resto.desde;
+  const tanda = () => {
+    /* Si entretanto se volvió a pintar, esta grilla ya no existe. */
+    if(turno !== grillaTurno || !grid.isConnected) return;
+    const hasta = Math.min(i + 24, resto.lista.length);
+    let html = '';
+    for(let k = i; k < hasta; k++) html += appProductCard(resto.lista[k], 118, resto.esc, k);
+    grid.insertAdjacentHTML('beforeend', html);
+    i = hasta;
+    if(i < resto.lista.length) setTimeout(tanda, 0);
+  };
+  /* rAF + setTimeout = "después del próximo pintado". El temporizador de
+     respaldo cubre las pestañas en segundo plano, donde rAF no corre. */
+  let hecho = false;
+  const una = () => { if(!hecho){ hecho = true; tanda(); } };
+  requestAnimationFrame(() => setTimeout(una, 0));
+  setTimeout(una, 250);
+}
+
 function renderShop(){
   const list = getFilteredProducts();
   const cat = CATEGORIES.find(c=>c.key===state.activeCat);
@@ -3259,8 +3308,13 @@ function renderShop(){
        anuncio ocupa su lugar y lleva a la misma ficha. */
     const anuncios = anunciosGrillaHtml(list);
     const conAnuncio = new Set(anuncios.map(a=>a.id));
-    const tarjetas = list.filter(p=>!conAnuncio.has(p.id)).map((p,i)=>appProductCard(p, 118, esEscritorio(), i));
+    const sinAnuncio = list.filter(p=>!conAnuncio.has(p.id));
+    const esc = esEscritorio();
+    const primeras = grillaDiferible ? (esc ? 16 : 10) : sinAnuncio.length;
+    const tarjetas = sinAnuncio.slice(0, primeras).map((p,i)=>appProductCard(p, 118, esc, i));
     anuncios.forEach((a,k)=>tarjetas.splice(Math.min(2+k, tarjetas.length), 0, a.html));
+    /* El HTML del resto se arma recién en completarGrilla, por tandas. */
+    grillaPendiente = sinAnuncio.length > primeras ? { lista: sinAnuncio, desde: primeras, esc } : null;
     cuerpo = `<div class="grid-app">${tarjetas.join('')}</div>`;
   }
 
@@ -5772,7 +5826,10 @@ document.getElementById('footerLocation').innerHTML = `
 /* Sincroniza la página (categoría/producto/ofertas/inicio) con el botón
    "atrás"/"adelante" del navegador */
 window.addEventListener('popstate', ()=>{
-  routeFromPath(false);
+  /* Grilla entera: el navegador va a restaurar el scroll (ver completarGrilla). */
+  const antes = grillaDiferible;
+  grillaDiferible = false;
+  try{ routeFromPath(false); }finally{ grillaDiferible = antes; }
 });
 
 /* ======================================================================
@@ -8020,6 +8077,7 @@ function render(){
     : state.view==='adminLogin' ? renderAdminLoginPage()
     : renderShop();
   conservarPistaFicha(pistaVieja);
+  if(state.view === 'shop') completarGrilla(); else grillaPendiente = null;
   buildNavLists();
   renderNavEscritorio();
   renderCabeceraMovil();
@@ -8038,11 +8096,11 @@ function render(){
   /* El alto real de la barra fija de la ficha, para que los recomendados
      puedan dejarle sitio y no queden por debajo. */
   const barraFicha = document.querySelector('.ficha-barra');
-  if(barraFicha) document.documentElement.style.setProperty('--ficha-barra-real', barraFicha.offsetHeight + 'px');
+  if(barraFicha) varRaiz('--ficha-barra-real', barraFicha.offsetHeight + 'px');
   /* Y el de la cabecera de la ficha, que en los Safari sin overflow:clip va
      fija y necesita que el contenido le deje su hueco exacto. */
   const cabFicha = document.querySelector('.ficha-head');
-  if(cabFicha) document.documentElement.style.setProperty('--ficha-head-real', cabFicha.offsetHeight + 'px');
+  if(cabFicha) varRaiz('--ficha-head-real', cabFicha.offsetHeight + 'px');
   /* La ficha no lleva barra inferior: trae su propia barra fija con el CTA y
      el botón de WhatsApp, y el carrito está en el pill que flota sobre la
      galería. Dos barras apiladas dejarían el CTA a media pantalla. */
@@ -8062,7 +8120,10 @@ function render(){
   /* Y tampoco el pie: la barra fija se le montaría encima. La ficha es una
      pantalla de decisión, termina en el CTA. */
   document.body.classList.toggle('en-ficha', conBarraFija);
-  pintarBarraNavegador();
+  /* Mide la página (elementFromPoint, getComputedStyle) y obligaba a
+     maquetarla otra vez dentro del toque. Solo cambia el color de la barra del
+     navegador, así que puede esperar a que se pinte (INP). */
+  requestAnimationFrame(() => setTimeout(pintarBarraNavegador, 0));
 }
 
 /* La barra del navegador toma el color de la franja que esté arriba del
